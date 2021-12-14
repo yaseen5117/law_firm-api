@@ -13,10 +13,10 @@ class CreatePetitionLayersTable extends Migration
      */
     public function up()
     {
-        Schema::create('petition_layers', function (Blueprint $table) {
+        Schema::create('petition_lawyers', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('petition_id');  
-            $table->unsignedBigInteger('layer_id');             
+            $table->unsignedBigInteger('lawyer_id');             
             $table->integer("display_order")->nullable();               
             $table->timestamps();
             $table->softDeletes();
