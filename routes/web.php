@@ -21,3 +21,7 @@ Route::resource('petitions', 'App\Http\Controllers\PetitionsController');
 Route::resource('users', 'App\Http\Controllers\UsersController');
 
 
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
