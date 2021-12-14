@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sample;
+use App\Models\User;
 use Illuminate\Http\Request;
 
-class SampleController extends Controller
+class UsersController extends Controller
 {
     
     /**
@@ -14,16 +14,16 @@ class SampleController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $directory="sample.";
-    private $title_singular="Sample";
-    private $title_prural="Samples";
-    private $route_name="admin.sample";
+    private $directory="users.";
+    private $title_singular="User";
+    private $title_prural="Users";
+    private $route_name="users";
     private $model;
 
 
     public function __construct()
     {
-        $this->model = new Sample;
+        $this->model = new User;
     }
 
     public function index()
@@ -57,6 +57,14 @@ class SampleController extends Controller
     {
         try {
             
+
+            $request->validate([
+                'first_name' => 'required|max:255',
+                'last_name' => 'required|max:255',
+                'email' => 'email|required|max:255',
+                'password' => 'required|min:6|max:50',
+                
+            ]);
             
 
             $record=$this->model::query()->create($request->except('_token','rates'));

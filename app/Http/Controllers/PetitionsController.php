@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sample;
+use App\Models\Petition;
 use Illuminate\Http\Request;
 
-class SampleController extends Controller
+class PetitionsController extends Controller
 {
     
     /**
@@ -14,16 +14,16 @@ class SampleController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $directory="sample.";
-    private $title_singular="Sample";
-    private $title_prural="Samples";
-    private $route_name="admin.sample";
+    private $directory="petitions.";
+    private $title_singular="Petitions";
+    private $title_prural="Petitions";
+    private $route_name="petitions";
     private $model;
 
 
     public function __construct()
     {
-        $this->model = new Sample;
+        $this->model = new Petition;
     }
 
     public function index()
