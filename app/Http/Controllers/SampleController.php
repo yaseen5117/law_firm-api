@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Shuttle;
+use App\Models\Shuttle;
 use Illuminate\Http\Request;
 
 class ShuttleController extends Controller
