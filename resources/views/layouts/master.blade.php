@@ -19,6 +19,7 @@
 
     <!-- Custom styles for this template-->
     <link href="{{ asset('admin-template/css/sb-admin-2.min.css') }}" rel="stylesheet">
+    @yield('css')                    
 
 </head>
 
@@ -95,6 +96,9 @@
     <!-- Page level custom scripts -->
     <script src="{{ asset('admin-template/js/demo/chart-area-demo.js') }}"></script>
     <script src="{{ asset('admin-template/js/demo/chart-pie-demo.js') }}"></script>
+    @yield('javascript')                    
+
+
 
 </body>
 

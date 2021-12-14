@@ -25,8 +25,8 @@
                                             <thead>
                                             <tr>
                                                 
-                                                <th>Title</th>
-                                                <th>Display Order</th>
+                                                <th>Name</th>
+                                                <th>Email</th>
                                                 <th class="text-center">Action</th>
 
                                             </tr>
@@ -35,8 +35,8 @@
                                             @foreach($records as $record)
                                                 <tr data-delete="{{ route($route_name.'.destroy', $record) }}">
                                                     
-                                                    <td>{{ $record->title }}</td>
-                                                    <td>{{ $record->display_order }}</td>
+                                                    <td>{{ $record->first_name . ' ' . $record->last_name }}</td>
+                                                    <td>{{ $record->email }}</td>
 
                                                     <td class="text-center">
 

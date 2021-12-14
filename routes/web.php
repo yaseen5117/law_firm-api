@@ -14,5 +14,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('dashboard', function () {
-    return view('layouts.main');
+    return view('layouts.master');
 });
+
+Route::resource('petitions', 'App\Http\Controllers\PetitionsController');
+Route::resource('users', 'App\Http\Controllers\UsersController');
+
+
