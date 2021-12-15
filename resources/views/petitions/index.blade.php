@@ -19,10 +19,74 @@
                             <h6 class="m-0 font-weight-bold text-primary">Circle Buttons</h6>
                         </div> -->
                         <div class="card-body">
+
+                            <form id="search_form">
+
+                                    <div class='row'>    
+                                        
+                                        <div class="text-primary form-group col-lg-4">
+                                             
+                                            <label class="font-weight-bold"> Title:</label>
+                                            <input type='text' class="form-control" autocomplete="off" id="title" name="title" @if(isset($request->title)) value="{{ $request->title }}" @endif  />  
+
+                                        </div> 
+
+                                        <div class="text-primary form-group col-lg-4">
+                                            <label class="font-weight-bold">Client:</label>
+                                            <select id="client_id" name="client_id" class="form-control"  value="">
+                                                    <option value="">--All--</option>
+                                                    
+                                                    @foreach ($clients as $client)
+
+                                                    <option  value="{{$client->id}}" @if(@$request->client_id == $client->id) selected @endif>
+                                                        {{$client->first_name}} {{$client->last_name}}
+                                                    </option>
+
+                                                    @endforeach
+
+                                        
+                                                </select>
+                                                
+                                        </div>
+
+                                        <div class="text-primary form-group col-lg-4">
+                                            <label class="font-weight-bold">Court:</label>
+                                            <select id="court_id" name="court_id" class="form-control"  value="">
+                                                    <option value="">--All--</option>
+                                                    
+                                                    @foreach ($courts as $court)
+
+                                                    <option  value="{{$court->id}}"  @if(@$request->court_id == $court->id) selected @endif>
+                                                        {{$court->title}}
+                                                    </option>
+
+                                                    @endforeach
+
+                                        
+                                                </select>
+                                                
+                                        </div>
+                                        
+                                    </div>
+
+                                    <div class="row">
+
+                                        <div class="text-primary form-group col-lg-3">
+
+                                                   <input type="submit"  class="btn btn-success mt-1" id="search_btn" value="Search" />
+                                                   <a href="{{url('/petitions')}}" class="btn btn-danger mt-1">Reset Search</a>
+
+                                        </div>
+
+                                    </div>
+
+                            </form>
+
+
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <div class="table-responsive">
-                                        <table class="table table-hover normal-table">
+                                        <table class="table table-hover normal-table" @if(count(@$records) == 0) hidden @endif>
                                             <thead>
                                             <tr>
                                                 
@@ -71,4 +135,7 @@
 
             
         
+@endsection
+@section('javascript')
+@include('petitions._partials.js')
 @endsection

@@ -26,13 +26,29 @@ class UsersController extends Controller
         $this->model = new User;
     }
 
-    public function index()
+    public function index(Request $request)
     {
 
         $data['title_singular']=$this->title_singular;
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
-        $data['records']=$this->model::orderby('display_order')->paginate(10);
+        
+        $data['records']=$this->model::where('first_name','Like', '%'.$request->name.'%');
+
+        if(isset($request->email))
+        {
+            $data['records'] = $data['records']->where('email','Like', '%'.$request->email.'%');
+        }
+
+        if(isset($request->phone))
+        {
+             $data['records'] = $data['records']->where('phone','Like', '%'.$request->phone.'%');           
+        }
+            
+        $data['records']=$data['records']->orderby('first_name')->paginate(10);
+
+        $data['request'] = $request;
+
         return view($this->directory."index",$data);
     }
 

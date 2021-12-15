@@ -29,13 +29,31 @@ class PetitionsController extends Controller
         $this->model = new Petition;
     }
 
-    public function index()
+    public function index(Request $request)
     {
 
         $data['title_singular']=$this->title_singular;
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
-        $data['records']=$this->model::orderby('display_order')->paginate(10);
+        $data['courts']=Court::orderby('display_order')->get();
+        $data['clients']=User::role('client')->orderby('first_name')->get(); 
+
+        $data['records']=$this->model::where('name','Like', '%'.$request->title.'%');
+
+        if(isset($request->client_id))
+        {
+            $data['records'] = $data['records']->where('client_id','=',$request->client_id);
+        }
+
+        if(isset($request->court_id))
+        {
+             $data['records'] = $data['records']->where('court_id','=',$request->court_id);           
+        }
+            
+        $data['records']=$data['records']->orderby('display_order')->paginate(10);
+
+        $data['request'] = $request;
+        
 
         return view($this->directory."index",$data);
     }
@@ -55,7 +73,7 @@ class PetitionsController extends Controller
         $data['clients']=User::role('client')->orderby('first_name')->get();
         $data['petition_status']=PetitionStatus::orderby('display_order')->get();
         $data['courts']=Court::orderby('display_order')->get();
-        $data['clients']=User::role('client')->orderby('first_name')->get();        
+     
 
         return view($this->directory."create",$data);
     }
@@ -120,9 +138,6 @@ class PetitionsController extends Controller
         $data['clients']=User::role('client')->orderby('first_name')->get();
         $data['petition_status']=PetitionStatus::orderby('display_order')->get();
         $data['courts']=Court::orderby('display_order')->get();
-
-        $data['clients']=User::role('client')->orderby('first_name')->get();        
-        //$data['rates']=Rate::orderby('display_order')->get();;
 
         return view($this->directory."edit",$data);
     }

@@ -19,10 +19,50 @@
                             <h6 class="m-0 font-weight-bold text-primary">Circle Buttons</h6>
                         </div> -->
                         <div class="card-body">
+                            
+                            <form id="search_form">
+
+                                    <div class='row'>    
+                                        
+                                        <div class="text-primary form-group col-lg-4">
+                                             
+                                            <label class="font-weight-bold"> Name:</label>
+                                            <input type='text' class="form-control" autocomplete="off" id="name" name="name" @if(isset($request->name)) value="{{ $request->name }}" @endif  />  
+
+                                        </div> 
+
+                                        <div class="text-primary form-group col-lg-4">
+                                            <label class="font-weight-bold">Email:</label>
+                                            <input type='text' class="form-control" autocomplete="off" id="email" name="email" @if(isset($request->email)) value="{{ $request->email }}" @endif  />
+                                                
+                                        </div>
+
+                                        <div class="text-primary form-group col-lg-4">
+                                            <label class="font-weight-bold">Phone No:</label>
+                                            <input type='text' class="form-control" autocomplete="off" id="phone" name="phone" @if(isset($request->phone)) value="{{ $request->phone }}" @endif  />
+                                                
+                                        </div>
+                                        
+                                    </div>
+
+                                    <div class="row">
+
+                                        <div class="text-primary form-group col-lg-3">
+
+                                                   <input type="submit"  class="btn btn-success mt-1" id="search_btn" value="Search" />
+                                                   <a href="{{url('/users')}}" class="btn btn-danger mt-1">Reset Search</a>
+
+                                        </div>
+
+                                    </div>
+
+                            </form>
+
+
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <div class="table-responsive">
-                                        <table class="table table-hover normal-table">
+                                        <table class="table table-hover normal-table" @if(count(@$records) == 0) hidden @endif>
                                             <thead>
                                             <tr>
                                                 
@@ -65,4 +105,7 @@
 
             
         
+@endsection
+@section('javascript')
+@include('users._partials.js')
 @endsection

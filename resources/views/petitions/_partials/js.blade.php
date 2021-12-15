@@ -1,5 +1,21 @@
 <script type="text/javascript">
-	 
+
+$(document).ready(function () {
+
+ $('#search_form').on('submit', function (e) {
+       
+       var title = $("#title").val();
+       var client_id = $("#client_id").val();
+       var court_id = $("#court_id").val();
+
+       if(title == "" && client_id == "" && court_id == "")
+       {
+         e.preventDefault();
+       }
+
+    });
+
+});
 
 	function checkExistingClient() {
 
