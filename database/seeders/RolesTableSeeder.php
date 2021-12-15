@@ -58,7 +58,7 @@ class RolesTableSeeder extends Seeder
             'last_name' => '1',
             'email' => 'judge@qc.com',
             'password' => bcrypt('test1234'),
-            'role' => 'judge'
+         
         ]);
 
         $JudgeUser->assignRole($judge);
@@ -67,8 +67,7 @@ class RolesTableSeeder extends Seeder
             'first_name' => 'Lawyer',
             'last_name' => '1',
             'email' => 'lawyer@qc.com',
-            'password' => bcrypt('test1234'),
-            'role' => 'lawyer'
+            'password' => bcrypt('test1234'),            
         ]);
 
         $LawyerUser->assignRole($lawyer);
@@ -77,8 +76,7 @@ class RolesTableSeeder extends Seeder
             'first_name' => 'Staff',
             'last_name' => '1',
             'email' => 'staff@qc.com',
-            'password' => bcrypt('test1234'),
-            'role' => 'staff'
+            'password' => bcrypt('test1234'),            
         ]);
 
         $StaffUser->assignRole($staff);
@@ -87,8 +85,7 @@ class RolesTableSeeder extends Seeder
             'first_name' => 'Client',
             'last_name' => '1',
             'email' => 'client@qc.com',
-            'password' => bcrypt('test1234'),
-            'role' => 'client'
+            'password' => bcrypt('test1234'),           
         ]);
 
         $ClientUser->assignRole($client);
