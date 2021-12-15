@@ -52,14 +52,11 @@ class PetitionsController extends Controller
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
         $data['directory']=$this->directory;
-<<<<<<< HEAD
         $data['clients']=User::role('client')->orderby('first_name')->get();
         $data['petition_status']=PetitionStatus::orderby('display_order')->get();
         $data['courts']=Court::orderby('display_order')->get();
-        
-=======
         $data['clients']=User::role('client')->orderby('first_name')->get();        
->>>>>>> 375d886901e2cd36b23a42c11b0ad791ccda19e1
+
         return view($this->directory."create",$data);
     }
 
@@ -92,17 +89,10 @@ class PetitionsController extends Controller
                 $client_id = $ClientUser->id;
              }
 
-            
-             $petition = new Petition();
-
-             $petition->client_id = $client_id;
-             $petition->court_id = $request->court_id;
-             $petition->name = $request->name;
-             $petition->writ_number = $request->writ_number;
-             $petition->judgement = $request->judgement;
-             $petition->order_sheet = $request->order_sheet;
-             $petition->status = $request->status_id;
-             $petition->save();
+            $request->merge([
+                    'client_id'=>$client_id
+            ]);  
+            $record=$this->model::query()->create($request->except('_token','first_name','last_name','email','password','phone'));
 
             $request->session()->flash('success', 'Created successfully!');
 
@@ -129,14 +119,14 @@ class PetitionsController extends Controller
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
         $data['record']=$this->model::find($id);
-<<<<<<< HEAD
+
         $data['clients']=User::role('client')->orderby('first_name')->get();
         $data['petition_status']=PetitionStatus::orderby('display_order')->get();
         $data['courts']=Court::orderby('display_order')->get();
-=======
+
         $data['clients']=User::role('client')->orderby('first_name')->get();        
         //$data['rates']=Rate::orderby('display_order')->get();;
->>>>>>> 375d886901e2cd36b23a42c11b0ad791ccda19e1
+
         return view($this->directory."edit",$data);
     }
 
@@ -151,17 +141,14 @@ class PetitionsController extends Controller
     {
         try {
 
-             $client_id = "";
-
              $client = User::role('client')->find($request->client_id);
              
-             if($client != null)
+             if($client)
              {
                  $client_id = $client->id;
              }
              else
              {
-
                 $ClientUser = User::create([
                     'first_name' => $request->first_name,
                     'last_name' => $request->last_name,
@@ -169,25 +156,15 @@ class PetitionsController extends Controller
                     'phone' => $request->phone,
                     'password' => bcrypt('test1234'),           
                 ]);
-               
-                
                 $ClientUser->assignRole('client');
-                
-
                 $client_id = $ClientUser->id;
              }
 
-            
-             $petition = Petition::find($id);
-
-             $petition->client_id = $client_id;
-             $petition->court_id = $request->court_id;
-             $petition->name = $request->name;
-             $petition->writ_number = $request->writ_number;
-             $petition->judgement = $request->judgement;
-             $petition->order_sheet = $request->order_sheet;
-             $petition->status = $request->status_id;
-             $petition->save();
+             $request->merge([
+                    'client_id'=>$client_id
+             ]);  
+             $record = $this->model::query()->findOrFail($id);
+             $record->update($request->except('_token','first_name','last_name','email','password','phone'));
 
 
             $request->session()->flash('success', 'Updated successfully!');

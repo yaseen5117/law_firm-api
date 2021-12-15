@@ -65,7 +65,7 @@
         <div class="col-md-5">    
             <div class="form-group">
                 <label for="status_id">Status<span style="color: red">*</span></label>
-                <select name="status_id" class="form-control">
+                <select name="status" class="form-control">
                        <option value="">--Select--</option>
                     
                     @foreach($petition_status as $status)
