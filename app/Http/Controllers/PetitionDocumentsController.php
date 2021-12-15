@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\PetitionDocument;
 use App\Models\Sample;
 use Illuminate\Http\Request;
+use Session;
+use Storage;
 
 class PetitionDocumentsController extends Controller
 {
@@ -43,23 +45,34 @@ class PetitionDocumentsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create(Request $request)
-    {         
+    {        
         $data['title_singular']=$this->title_singular;
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
         $data['directory']=$this->directory;
+        $data['petition_id'] = $request->petition_id;
         //$data['rates']=Rate::orderby('display_order')->get();;
         
         return view($this->directory."create",$data);
     }
-
+    public function moveFile($from_directory, $to_directory)
+    {
+        if (Storage::exists($from_directory)) {
+            Storage::move($from_directory, $to_directory);
+        }
+    }
     public function store(Request $request)
     {
-        try {
+        try {            
             
+            $this->validatePetitionDocuments($request);
+          
+            if (Session::has('file.petition_document_file')) {
+                $request->merge(['file_name' => Session::get('file.petition_document_file')]);
+                $this->moveFile('petitions/' . Session::get('file.petition_document_file'), 'petitions/' . request()->petition_id . '/' . Session::get('file.petition_document_file'));
+            }  
             
-
-            $record=$this->model::query()->create($request->except('_token','rates'));
+            $record=$this->model::query()->create($request->except('_token','rates','petition_document_file'));
             /*$rates_data=[];
             if (count($request->rates)>0) {
                 DeliveryPointRate::where('delivery_point_id',$record->id)->delete();
@@ -74,7 +87,7 @@ class PetitionDocumentsController extends Controller
 
             $request->session()->flash('success', 'Created successfully!');
 
-            return redirect(route($this->route_name.".index"));
+            return redirect(route($this->route_name.".create"));
 
         } catch (Exception $e) {
             
@@ -82,6 +95,15 @@ class PetitionDocumentsController extends Controller
             
             return redirect(route($this->route_name.".index"));
         }
+    }
+
+    public function validatePetitionDocuments(Request $request){
+        $validations = [
+            'title' => 'required|max:190',
+            //'petition_document_file' => 'required', 
+        ];
+
+        return request()->validate($validations);
     }
 
     /**
@@ -153,5 +175,16 @@ class PetitionDocumentsController extends Controller
         } catch (\Exception $e) {
             return response()->json('error', $e->getCode());
         }
+    }
+    
+    public function uploadPetitionDocuments(Request $request)
+    {   
+        $fileName = md5(microtime()) . '.' . $request->file('petition_document_file')->getClientOriginalExtension();
+        $request->file('petition_document_file')->storeAs('petitions/temp/'.request()->petition_id, $fileName);
+        Session::put('file.petition_document_file', $fileName);           
+        // if ($request->hasFile('petition_document_file')) {            
+        //     $fileNameToStore = storeFile($request->file('petition_document_file'), 'temp', 'petitions');
+        //     Session::put('file.petition_document_file', $fileNameToStore);
+        // }
     }
 }

@@ -23,3 +23,4 @@ Route::get('dashboard', [App\Http\Controllers\HomeController::class, 'index'])->
 Route::resource('petitions', 'App\Http\Controllers\PetitionsController');
 Route::resource('users', 'App\Http\Controllers\UsersController');
 Route::resource('petition_documents', 'App\Http\Controllers\PetitionDocumentsController');
+Route::post('upload_petition_documents', 'App\Http\Controllers\PetitionDocumentsController@uploadPetitionDocuments');

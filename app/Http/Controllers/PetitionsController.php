@@ -53,6 +53,8 @@ class PetitionsController extends Controller
         $data['route_name']=$this->route_name;
         $data['directory']=$this->directory;
         $data['clients']=User::role('client')->orderby('first_name')->get();        
+        $data['courts']=Court::orderby('title')->get();  
+        $data['petition_status']=PetitionStatus::orderby('title')->get();
         return view($this->directory."create",$data);
     }
 
@@ -122,7 +124,7 @@ class PetitionsController extends Controller
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
         $data['record']=$this->model::find($id); 
-        $data['id'] = $id;
+        $data['petition_id'] = $id;
  
         $data['clients']=User::role('client')->orderby('first_name')->get();
         $data['petition_status']=PetitionStatus::orderby('display_order')->get();

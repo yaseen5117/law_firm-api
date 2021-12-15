@@ -14,17 +14,58 @@
 	});
 </script>
 <script>
-    const inputElement1 = document.querySelector('input[id="file_name"]');
+    const inputElement1 = document.querySelector('input[id="petition_document_file"]');
     const pond1 = FilePond.create( inputElement1 );
 	 
    
-    // FilePond.setOptions({
-    //     server: {
-    //     url:"{{url('pictures_of_proposed_upload')}}",
-    //         headers:{
-    //             'X-CSRF-TOKEN': '{{ csrf_token()}}',
-    //         }
-    //     }
-    // });
-console.log(222);
+    FilePond.setOptions({
+        server: {
+        url:"{{url('upload_petition_documents')}}",
+            headers:{
+                'X-CSRF-TOKEN': '{{ csrf_token()}}',
+            }
+        }
+    });
+ 
+	$('#petition_document').on('submit', function (e) {
+            e.preventDefault();
+            
+            $('.btn').attr('disabled', true);
+            
+            $('#validation_errors').html("Please wait...")          
+           
+            $.ajax({
+                url : $(this).attr('action'),
+                type: $(this).attr('method'),
+                data: new FormData(this), 
+                headers: {
+                    'X-CSRF-TOKEN': '{{csrf_token()}}'
+                },                    
+                contentType: false,
+                processData: false
+            })
+            .done(function(response) {
+                $('.btn').attr('disabled', false);
+                window.location.href = response.redirect_url;
+            })
+            .fail(function(errors) {
+                $('.btn').attr('disabled', false);
+                // $('#validation_errors').hide();
+                $('#validation_errors').html("<ul>");
+                $('#validation_errors').addClass('alert alert-danger');
+                
+                $.each(errors.responseJSON.errors, function (indexInArray, value) {
+                    console.log(value); 
+                    $("#validation_errors").append("<li>"+value+"</li>")
+                });
+
+                $('#validation_errors').append("</ul>");
+
+            })
+            .always(function() {
+                $('.btn').attr('disabled', false);
+            });
+        
+            
+        });
 </script>
