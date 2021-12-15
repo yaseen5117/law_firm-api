@@ -62,15 +62,12 @@ class PetitionsController extends Controller
 
     public function store(Request $request)
     {
+
         try {
 
-             $client_id = "";
-
-             $client = User::role('client')->find($request->client_id);
-             
-             if($client != null)
+             if($request->check_client_cb)
              {
-                 $client_id = $client->id;
+                 $client_id = $request->client_id;
              }
              else
              {
@@ -92,7 +89,7 @@ class PetitionsController extends Controller
             $request->merge([
                     'client_id'=>$client_id
             ]);  
-            $record=$this->model::query()->create($request->except('_token','first_name','last_name','email','password','phone'));
+            $record=$this->model::query()->create($request->except('_token','first_name','last_name','email','password','phone','check_client_cb'));
 
             $request->session()->flash('success', 'Created successfully!');
 
@@ -140,10 +137,8 @@ class PetitionsController extends Controller
     public function update(Request $request, $id)
     {
         try {
-
-             $client = User::role('client')->find($request->client_id);
              
-             if($client)
+             if($request->check_client_cb)
              {
                  $client_id = $client->id;
              }
@@ -164,7 +159,7 @@ class PetitionsController extends Controller
                     'client_id'=>$client_id
              ]);  
              $record = $this->model::query()->findOrFail($id);
-             $record->update($request->except('_token','first_name','last_name','email','password','phone'));
+             $record->update($request->except('_token','first_name','last_name','email','password','phone','check_client_cb'));
 
 
             $request->session()->flash('success', 'Updated successfully!');
@@ -183,12 +178,13 @@ class PetitionsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
         try {
             $this->model::destroy($id);
-            return redirect('/petitions');
-            return response()->json('success', 200);
+            $request->session()->flash('success', 'Deleted successfully!');
+            return redirect(route($this->route_name.".index"));
+            // return response()->json('success', 200);
         } catch (\Exception $e) {
             return response()->json('error', $e->getCode());
         }
