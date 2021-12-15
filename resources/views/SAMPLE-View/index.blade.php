@@ -17,6 +17,7 @@
                         <!-- <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">Circle Buttons</h6>
                         </div> -->
+                        @include('shared.errors')
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
