@@ -14,23 +14,36 @@ class StatusesTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('statuses')->truncate();
-        DB::table('statuses')->insert([
+        DB::table('petition_statuses')->truncate();
+        DB::table('petition_statuses')->insert([
 
-            'title' => 'Approved',             
+            'id' => 1,             
+            'title' => 'Submitted',             
             'display_order' => '1',           
              
         ]);
-        DB::table('statuses')->insert([
 
-            'title' => 'Reject',             
+        DB::table('petition_statuses')->insert([
+
+            'id' => 2,             
+            'title' => 'Approved',             
             'display_order' => '2',           
              
         ]);
-        DB::table('statuses')->insert([
 
-            'title' => 'Pending',             
+        DB::table('petition_statuses')->insert([
+
+            'id' => 3,             
+            'title' => 'In Progress',             
             'display_order' => '3',           
+             
+        ]);
+
+        DB::table('petition_statuses')->insert([
+
+            'id' => 4,             
+            'title' => 'Closed',             
+            'display_order' => '4',           
              
         ]);
     }
