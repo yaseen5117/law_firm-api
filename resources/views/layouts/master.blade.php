@@ -5,6 +5,7 @@
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -20,7 +21,63 @@
 
     <link href="{{ asset('admin-template/css/sb-admin-2.min.css') }}" rel="stylesheet">
     <!-- Custom styles for this template-->
-    @yield('css')                    
+    @yield('css')     
+
+    <style>
+      .custom_fieldset{
+        margin: 8px 2px;
+        padding:0px  2px 0px 3px;
+        border: 1px solid #cfcfcf;
+      }
+      .datepicker.datepicker-dropdown.dropdown-menu {
+              z-index: 999999;
+      }
+      input[type='number'] {
+          -moz-appearance:textfield;
+      }
+      
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+          /* display: none; <- Crashes Chrome on hover */
+          -webkit-appearance: none;
+          margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+      }
+
+      form.cmxform label.error, label.error {
+          color: red;
+      }
+      #overlay { 
+        
+        opacity:    0.5; 
+          background: #000; 
+          width:      100%;
+          height:     100%; 
+          z-index:    2000;
+          top:        0; 
+          left:       0; 
+          position:   fixed; 
+        }
+        #img-load {
+            width: 50px;
+            height: 57px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin: -28px 0 0 -25px;
+        }
+        .field-required:after{
+              content:" *";
+              color:red;
+        }
+
+        .required:after{
+          content:" *";
+          color:red;
+        }
+        .text-danger{
+          color: red!important;
+        }
+  </style>               
 
 </head>
 
@@ -28,6 +85,10 @@
 
     <!-- Page Wrapper -->
     <div id="wrapper">
+    <div id="overlay">
+     <i id="img-load"  class="fas fa-cog fa-spin fa-4x "></i>
+
+    </div>
 
     @include('layouts.sidebar')
 
@@ -97,6 +158,98 @@
     <!-- Page level custom scripts -->
     <script src="{{ asset('admin-template/js/demo/chart-area-demo.js') }}"></script>
     <script src="{{ asset('admin-template/js/demo/chart-pie-demo.js') }}"></script>
+
+    <!-- Customer scripts and CSS -->
+    <script type="text/javascript" src="{{asset('jquery_widgets/masked_input.js')}}"></script>
+    <script src="{{url('/')}}/plugins/sweetalert/sweetalert.min.js"></script>
+    <link rel="stylesheet" href="{{url('/')}}/plugins/sweetalert/sweetalert.css">
+    <script src="{{url('/')}}/plugins/moment/moment.js"></script>
+    <script src="{{url('/')}}/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <link rel="stylesheet" href="{{url('/')}}/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+
+    <script src="{{url('/')}}/plugins/select2/dist/js/select2.min.js"></script>
+    <link rel="stylesheet" href="{{url('/')}}/plugins/select2/dist/css/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="{{asset('plugins/full_calender.css')}}"/>
+    <script type="text/javascript" src="{{asset('plugins/full_calender.js')}}"></script>
+    <script src="{{url('/')}}/plugins/tiny_mce/tinymce.min.js"></script>
+
+    <script src="{{ asset('plugins/chart.js/new-2.7.2/Chart.bundle.js') }}"></script>
+
+    <script src="{{url('/')}}/js/main.js?v={{time()}}"></script>
+
+    <script type="text/javascript">
+        tinymce.init({
+        theme: "modern",
+        mode : "specific_textareas",
+        editor_selector : "mceEditor",
+        plugins: [
+            "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+            "searchreplace wordcount visualblocks visualchars code fullscreen",
+            "insertdatetime media nonbreaking save table contextmenu directionality",
+            "emoticons template paste textcolor colorpicker textpattern imagetools moxiemanager",
+             "insertdatetime media table contextmenu jbimages"
+        ],
+      
+      relative_urls : false,
+      remove_script_host : false,
+      convert_urls : true,
+      document_base_url : "{{url('/')}}",
+      
+        image_advtab: true,
+        templates: [
+            {title: 'Test template 1', content: 'Test 1'},
+            {title: 'Test template 2', content: 'Test 2'}
+        ]
+    });
+    var g_readTerms = false;
+    </script>
+
+    <script>
+      @if(Session::has('success'))
+        flashMessage = {
+          type: "success",
+          description: "{{ Session::pull('success') }}"
+        };
+      @elseif(Session::has('info'))
+        flashMessage = {
+          type: "info",
+          description: "{{ Session::pull('info') }}"
+        };
+      @elseif(Session::has('warning'))
+        flashMessage = {
+          type: "warning",
+          description: "{{ Session::pull('warning') }}"
+        };
+      @elseif(Session::has('error'))
+        flashMessage = {
+          type: "error",
+          description: "{{ Session::pull('error') }}"
+        };
+      @endif
+
+      if(typeof flashMessage !== 'undefined'){
+        GLOBAL.displayFlashMessage(flashMessage);
+      }
+    </script>
+<script type="text/javascript">
+
+    $(document).ready(function($) {
+        $('#overlay').hide();
+    });
+     
+    $( document ).ajaxStart(function() {
+      $('#overlay').show();
+    });
+
+    $( document ).ajaxComplete(function(response,status) {
+      $('#overlay').fadeOut();
+      if(status.status==401){
+        alert("Opps! Seems you couldn't submit form for a longtime your session is expired. Please try again");
+        location.reload();
+      }
+    });
+  </script>
+
     @yield('javascript')                    
 
 
