@@ -30,6 +30,6 @@ class CreatePetitionLayersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('petition_layers');
+        Schema::dropIfExists('petition_lawyers');
     }
 }
