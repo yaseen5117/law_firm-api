@@ -45,8 +45,12 @@
 
                                                         <a href="{{ route($route_name.'.edit', $record) }}"><i
                                                                     class="fa fa-pencil btn btn-primary btn-sm"></i></a>
-                                                        <a href="#" data-delete-trigger><i
+                                                        <a href="#" data-delete-trigger  onclick="event.preventDefault(); document.getElementById('delete-form').submit();"><i
                                                                     class="fa fa-trash btn btn-danger btn-sm"></i></a>
+                                                            <form id="delete-form" method="POST" action="{{ url('petitions/'.$record->id.'') }}"  >
+                                                               @method('DELETE')
+                                                               @csrf
+                                                            </form>
                                                     </td>
                                                 </tr>
                                             
