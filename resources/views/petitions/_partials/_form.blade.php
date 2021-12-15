@@ -31,9 +31,9 @@
                 <label for="title">Client <span style="color: red">*</span></label>
                 <select name="client_id" class="form-control">
                     <option value="">--Select--</option>
-                    <option value="1">Dummy 1</option>
-                    <option value="2">Dummy 2</option>
-                    <option value="3">Dummy 3</option>
+                    @foreach($clients as $client)
+                    <option value="{{$client->id}}">{{$client->fullName()}}</option>
+                    @endforeach()
                 </select>
             </div>
         </div>
@@ -42,7 +42,6 @@
                 <label for="court_id">Court<span style="color: red">*</span></label>
                 <select name="court_id" class="form-control">
                     <option value="">--Select--</option>
-                    <option value="1">Dummy 1</option>
                     <option value="2">Dummy 2</option>
                     <option value="3">Dummy 3</option>
                 </select>

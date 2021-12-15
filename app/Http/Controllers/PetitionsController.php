@@ -49,7 +49,7 @@ class PetitionsController extends Controller
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
         $data['directory']=$this->directory;
-        //$data['rates']=Rate::orderby('display_order')->get();;
+        $data['clients']=User::role('client')->orderby('first_name')->get();;
         
         return view($this->directory."create",$data);
     }
