@@ -38,8 +38,8 @@
                                                 <tr data-delete="{{ route($route_name.'.destroy', $record) }}">
                                                     
                                                     <td>{{ $record->name }}</td>
-                                                    <td>{{ $record->client_id }}</td>
-                                                    <td>{{ $record->court_id }}</td>
+                                                    <td>{{ $record->client->first_name }} {{ $record->client->last_name }}</td>
+                                                    <td>{{ $record->court->title }}</td>
 
                                                     <td class="text-center">
 
