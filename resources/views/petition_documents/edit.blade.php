@@ -19,16 +19,7 @@
 
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                    
-                                <ul class="nav nav-tabs mb-5">
-                                    <li class="nav-item">
-                                    <a class="nav-link active" href="#">Application</a>
-                                    </li>
-                                    <li class="nav-item">
-                                    <a class="nav-link" href="#">Application Documents</a>
-                                    </li>                                       
-                                </ul>
-                                    
+
                                     @include($directory.'_partials._form', [
                                         'url' => route($route_name.'.update', $record),
                                         'record' => $record,
