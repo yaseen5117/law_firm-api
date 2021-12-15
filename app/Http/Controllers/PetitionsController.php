@@ -52,10 +52,14 @@ class PetitionsController extends Controller
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
         $data['directory']=$this->directory;
+<<<<<<< HEAD
         $data['clients']=User::role('client')->orderby('first_name')->get();
         $data['petition_status']=PetitionStatus::orderby('display_order')->get();
         $data['courts']=Court::orderby('display_order')->get();
         
+=======
+        $data['clients']=User::role('client')->orderby('first_name')->get();        
+>>>>>>> 375d886901e2cd36b23a42c11b0ad791ccda19e1
         return view($this->directory."create",$data);
     }
 
@@ -125,12 +129,15 @@ class PetitionsController extends Controller
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
         $data['record']=$this->model::find($id);
+<<<<<<< HEAD
         $data['clients']=User::role('client')->orderby('first_name')->get();
         $data['petition_status']=PetitionStatus::orderby('display_order')->get();
         $data['courts']=Court::orderby('display_order')->get();
+=======
+        $data['clients']=User::role('client')->orderby('first_name')->get();        
+        //$data['rates']=Rate::orderby('display_order')->get();;
+>>>>>>> 375d886901e2cd36b23a42c11b0ad791ccda19e1
         return view($this->directory."edit",$data);
-
-
     }
 
     /**
