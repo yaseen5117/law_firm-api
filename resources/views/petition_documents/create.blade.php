@@ -19,6 +19,9 @@
 
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                @include('petitions._partials.tabs',[
+                                'petition_documents_view'=>1,                                 
+                                ])
 
                                     @include($directory.'_partials._form', [
                                         'url' => route($route_name.'.store'),

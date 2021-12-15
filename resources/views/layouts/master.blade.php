@@ -20,6 +20,7 @@
         rel="stylesheet">
 
     <link href="{{ asset('admin-template/css/sb-admin-2.min.css') }}" rel="stylesheet">
+    <link href="{{url('/')}}/plugins/filepond/css/filepond.css" rel="stylesheet">
     <!-- Custom styles for this template-->
     @yield('css')     
 
@@ -176,7 +177,11 @@
     <script src="{{ asset('plugins/chart.js/new-2.7.2/Chart.bundle.js') }}"></script>
 
     <script src="{{url('/')}}/js/main.js?v={{time()}}"></script>
-
+  
+    <script src="{{url('/')}}/plugins/filepond/js/filepond.js"></script>
+    <script src="{{url('/')}}/plugins/filepond/js/filepond.min.js"></script>
+    <script src="{{url('/')}}/plugins/filepond/js/filepond-plugin-image-preview.min.js"></script>
+    <script src="{{url('/')}}/plugins/filepond/js/filepond.jquery.js"></script>
     <script type="text/javascript">
         tinymce.init({
         theme: "modern",

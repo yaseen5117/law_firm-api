@@ -16,20 +16,22 @@
             </div>
         </div>
     </div>
-
-    
-
-
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-5">
             <div class="form-group">
-                <label for="title">Display Order <span style="color: red">*</span></label>
-                <input required="" autocomplete="off" style="width: 40%" type="text" name="display_order"  value="{{ isset($record) ? $record->display_order : old('display_order') }}"  class="form-control">
+                <label for="file_name">Document <span style="color: red">*</span></label>
+                <input type="file" value="{{ isset($record) ? $record->file_name : old('file_name') }}" class=" " name="file_name" id="file_name">
             </div>
         </div>
+    </div> 
+    <div class="row">
+        <div class="col-md-5">
+            <div class="form-group">
+                <label for="comments">Comments <span style="color: red"></span></label>
+                <textarea class="form-control" id="comments" name="comments">{{ isset($record) ? $record->comments : old('comments') }}</textarea>
+            </div>
+        </div>         
     </div>
-
-    
 
     <button type="submit" class="btn btn-primary m-t-10">{{ isset($record) ? 'Edit '.$title_singular : 'Add '.$title_singular }}</button>
 

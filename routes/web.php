@@ -22,3 +22,4 @@ Auth::routes();
 Route::get('dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::resource('petitions', 'App\Http\Controllers\PetitionsController');
 Route::resource('users', 'App\Http\Controllers\UsersController');
+Route::resource('petition_documents', 'App\Http\Controllers\PetitionDocumentsController');
