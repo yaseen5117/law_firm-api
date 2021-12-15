@@ -7,7 +7,7 @@
 
             <h1 class="h3 mb-4 text-gray-800">{{$title_prural}}</h1>
             <p class="m-t-10">
-                <a href="{{ route($route_name.'.create?petition_id='.$petition_id) }}" class="btn btn-success">Add {{$title_singular}}</a>
+                <a href="{{ route($route_name.'.create') }}" class="btn btn-success">Add {{$title_singular}}</a>
             </p>
 
             <div class="row">
