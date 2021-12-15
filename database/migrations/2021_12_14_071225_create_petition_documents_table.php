@@ -18,6 +18,7 @@ class CreatePetitionDocumentsTable extends Migration
             $table->unsignedBigInteger('petition_id');  
             $table->string('title')->nullable();
             $table->string('file_name')->nullable();
+            $table->text('comments')->nullable();
             $table->integer("display_order")->nullable();               
             $table->timestamps();
             $table->softDeletes();
