@@ -138,6 +138,7 @@ class PetitionsController extends Controller
         $data['clients']=User::role('client')->orderby('first_name')->get();
         $data['petition_status']=PetitionStatus::orderby('display_order')->get();
         $data['courts']=Court::orderby('display_order')->get();
+        $data['petition_id']=$id;
 
         return view($this->directory."edit",$data);
     }

@@ -86,8 +86,8 @@ class PetitionDocumentsController extends Controller
             }*/
 
             $request->session()->flash('success', 'Created successfully!');
-
-            return redirect(route($this->route_name.".create"));
+            
+            //return redirect(route($this->route_name.".create"));
 
         } catch (Exception $e) {
             
@@ -178,13 +178,20 @@ class PetitionDocumentsController extends Controller
     }
     
     public function uploadPetitionDocuments(Request $request)
-    {   
-        $fileName = md5(microtime()) . '.' . $request->file('petition_document_file')->getClientOriginalExtension();
-        $request->file('petition_document_file')->storeAs('petitions/temp/'.request()->petition_id, $fileName);
-        Session::put('file.petition_document_file', $fileName);           
-        // if ($request->hasFile('petition_document_file')) {            
-        //     $fileNameToStore = storeFile($request->file('petition_document_file'), 'temp', 'petitions');
-        //     Session::put('file.petition_document_file', $fileNameToStore);
-        // }
+    {    
+        try {
+            if ($request->hasFile('petition_document_file')) {            
+                $fileNameToStore = storeFile($request->file('petition_document_file'), $request->petition_id, 'petitions');
+                Session::put('file.petition_document_file', $fileNameToStore);
+            }
+        } catch (\Exception $e) {
+            return response()->json('error', $e->getCode());
+        }            
+    }
+    public function fetchPetitionDocuments(){
+        $petition_documents = PetitionDocument::all();
+        return response()->json([
+            'petition_documents' => $petition_documents,
+        ]);
     }
 }
