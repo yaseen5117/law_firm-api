@@ -23,48 +23,51 @@
                             <form id="search_form">
 
                                     <div class='row'>    
-                                        
-                                        <div class="text-primary form-group col-lg-4">
-                                             
-                                            <label class="font-weight-bold"> Title:</label>
-                                            <input type='text' class="form-control" autocomplete="off" id="title" name="title" @if(isset($request->title)) value="{{ $request->title }}" @endif  />  
+                                        <div class="col-lg-4">
+                                            <div class="form-group">  
+                                                <label class="font-weight-bold"> Title:</label>
+                                                <input type='text' class="form-control" autocomplete="off" id="title" name="title" value="{{request()->title }}"  />  
 
-                                        </div> 
-
-                                        <div class="text-primary form-group col-lg-4">
-                                            <label class="font-weight-bold">Client:</label>
-                                            <select id="client_id" name="client_id" class="form-control"  value="">
-                                                    <option value="">--All--</option>
-                                                    
-                                                    @foreach ($clients as $client)
-
-                                                    <option  value="{{$client->id}}" @if(@$request->client_id == $client->id) selected @endif>
-                                                        {{$client->first_name}} {{$client->last_name}}
-                                                    </option>
-
-                                                    @endforeach
-
-                                        
-                                                </select>
-                                                
+                                            </div>
                                         </div>
 
-                                        <div class="text-primary form-group col-lg-4">
-                                            <label class="font-weight-bold">Court:</label>
-                                            <select id="court_id" name="court_id" class="form-control"  value="">
-                                                    <option value="">--All--</option>
+                                        <div class="col-lg-4"> 
+                                            <div class="form-group">
+                                                <label class="font-weight-bold">Client:</label>
+                                                <select id="client_id" name="client_id" class="form-control"  value="">
+                                                        <option value="">--All--</option>
+                                                        
+                                                        @foreach ($clients as $client)
+
+                                                        <option  value="{{$client->id}}" @if(request()->client_id == $client->id) selected @endif>
+                                                            {{$client->first_name}} {{$client->last_name}}
+                                                        </option>
+
+                                                        @endforeach
+
+                                                    </select>
                                                     
-                                                    @foreach ($courts as $court)
+                                            </div>
+                                        </div>
 
-                                                    <option  value="{{$court->id}}"  @if(@$request->court_id == $court->id) selected @endif>
-                                                        {{$court->title}}
-                                                    </option>
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <label class="font-weight-bold">Court:</label>
+                                                <select id="court_id" name="court_id" class="form-control"  value="">
+                                                        <option value="">--All--</option>
+                                                        
+                                                        @foreach ($courts as $court)
 
-                                                    @endforeach
+                                                        <option  value="{{$court->id}}"  @if(@$request->court_id == $court->id) selected @endif>
+                                                            {{$court->title}}
+                                                        </option>
 
-                                        
-                                                </select>
-                                                
+                                                        @endforeach
+
+                                            
+                                                    </select>
+                                                    
+                                            </div>
                                         </div>
                                         
                                     </div>
@@ -74,7 +77,7 @@
                                         <div class="text-primary form-group col-lg-3">
 
                                                    <input type="submit"  class="btn btn-success mt-1" id="search_btn" value="Search" />
-                                                   <a href="{{url('/petitions')}}" class="btn btn-danger mt-1">Reset Search</a>
+                                                   <a href="{{url('/petitions')}}" class="btn btn-danger mt-1">Reset</a>
 
                                         </div>
 
@@ -86,35 +89,31 @@
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <div class="table-responsive">
-                                        <table class="table table-hover normal-table" @if(count(@$records) == 0) hidden @endif>
+                                        <table class="table table-hover normal-table" >
                                             <thead>
                                             <tr>
-                                                
-                                                <th>Title</th>
-                                                <th>Client</th>
-                                                <th>Court</th>
+                                                <th>Client Name</th>
+                                                <th>Writ Number</th>
+                                                <th>Case Nature</th>
+                                                <th>Case Status</th>
                                                 <th class="text-center">Action</th>
-
                                             </tr>
                                             </thead>
                                             <tbody>
                                             @foreach($records as $record)
                                                 <tr data-delete="{{ route($route_name.'.destroy', $record) }}">
                                                     
-                                                    <td>{{ $record->name }}</td>
                                                     <td>{{ $record->client->first_name }} {{ $record->client->last_name }}</td>
-                                                    <td>{{ $record->court->title }}</td>
+                                                    <td>{{ $record->writ_number }}</td>
+                                                    <td>{{ $record->case_type->title }}</td>
+                                                    <td>{{ $record->case_status->title }}</td>
 
                                                     <td class="text-center">
-
+                                                        <a href="#"><i class="fa fa-eye btn btn-warning btn-sm"></i></a>
                                                         <a href="{{ route($route_name.'.edit', $record) }}"><i
                                                                     class="fa fa-pencil btn btn-primary btn-sm"></i></a>
-                                                        <a href="#" data-delete-trigger  onclick="event.preventDefault(); document.getElementById('delete-form').submit();"><i
+                                                        <a href="#" data-delete-trigger><i
                                                                     class="fa fa-trash btn btn-danger btn-sm"></i></a>
-                                                            <form id="delete-form" method="POST" action="{{ url('petitions/'.$record->id.'') }}"  >
-                                                               @method('DELETE')
-                                                               @csrf
-                                                            </form>
                                                     </td>
                                                 </tr>
                                             

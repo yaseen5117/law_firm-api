@@ -6,8 +6,6 @@
         <input type="hidden" name="_method" value="put">
     @endif
 
-
-
     <div class="row">
         <div class="col-md-5">
             <div class="form-group">
@@ -56,26 +54,26 @@
         
         <div class="col-md-5">
             <div class="form-group">
-                <label for="title">Client First Name <span style="color: red">*</span></label>
+                <label for="title">First Name <span style="color: red">*</span></label>
                   <input type="text" value="" class="form-control" name="first_name" id="first_name" placeholder="" >
               </div>
         </div>
         
         <div class="col-md-5"><div class="form-group">
-            <label for="title">Client Last Name <span style="color: red">*</span></label>
+            <label for="title">Last Name <span style="color: red">*</span></label>
             <input type="text" value="" class="form-control" name="last_name" id="last_name" placeholder="" >
         </div>
         </div>
 
         <div class="col-md-5">
-            <div class="form-group"><label for="title">Client Phone<span style="color: red">*</span></label>
+            <div class="form-group"><label for="title">Phone<span style="color: red">*</span></label>
                 <input type="text" value="" class="form-control" name="phone" id="phone" placeholder="" >
             </div>
         </div>
 
         <div class="col-md-5">
             <div class="form-group">
-                <label for="title">Client Email<span style="color: red">*</span></label>
+                <label for="title">Email<span style="color: red">*</span></label>
                 <input type="text" value="" class="form-control" name="email" id="email" placeholder="" >
             </div>
         </div>
@@ -83,6 +81,106 @@
     </div>
 
     <div class="row">
+    @php $check_var = false; @endphp
+        <div class="col-md-5">    
+            <div class="form-group">
+                <label for="court_id">Judges<span style="color: red">*</span></label>
+                <select class="selectpicker form-control" multiple aria-label="select example" id="judges_dropdown" name="judges[]">
+
+                        @if(isset($record))
+                           
+                           @foreach($judges as $judge)
+                                
+                                @foreach($record->petition_judges as $selected_judge)
+
+                                    @if($selected_judge->judge_id == $judge->id)
+                                    
+                                      @php $check_var = true; @endphp
+                                    
+                                    @endif
+
+                                @endforeach
+
+                                @if($check_var)     
+                                    <option value="{{$judge->id}}" selected>{{$judge->first_name}} {{$judge->last_name}}</option>
+                                    @php $check_var = false; @endphp
+                                @else
+                                    <option value="{{$judge->id}}">{{$judge->first_name}} {{$judge->last_name}}</option>
+                                @endif
+                           
+                           @endforeach 
+
+                        @else
+
+                            @foreach($judges as $judge)
+
+                                <option value="{{$judge->id}}">{{$judge->first_name}} {{$judge->last_name}}</option>
+
+                            @endforeach
+
+                        @endif
+
+                </select>
+            </div>
+        </div>
+    
+        @php $check_var = false; @endphp
+        <div class="col-md-5">    
+            <div class="form-group">
+                <label for="court_id">Lawyer<span style="color: red">*</span></label>
+                <select class="selectpicker form-control" multiple aria-label="select example" id="lawyers_dropdown" name="lawyers[]">     
+                        
+                        @if(isset($record))
+
+                           @foreach($lawyers as $lawyer)
+
+                                @foreach($record->petition_lawyers as $selected_lawyer)
+                                    
+                                    @if($selected_lawyer->lawyer_id == $lawyer->id)
+                                    
+                                      @php $check_var = true; @endphp
+                                    
+                                    @endif
+
+                                @endforeach
+
+                                @if($check_var)
+                                    <option value="{{$lawyer->id}}" selected>{{$lawyer->first_name}} {{$lawyer->last_name}}</option>
+                                    @php $check_var = false; @endphp
+                                @else
+                                    <option value="{{$lawyer->id}}">{{$lawyer->first_name}} {{$lawyer->last_name}}</option>
+                                @endif
+                           
+                           @endforeach 
+
+                        @else
+
+                            @foreach($lawyers as $lawyer)
+
+                                <option value="{{$lawyer->id}}">{{$lawyer->first_name}} {{$lawyer->last_name}}</option>
+
+                            @endforeach
+
+                        @endif
+                        
+                </select>
+            </div>
+        </div>
+    
+        <div class="col-md-5">    
+            <div class="form-group">
+                <label for="case_type_id">Case Type<span style="color: red">*</span></label>
+                <select name="case_type_id" class="form-control">
+                    <option value="">--Select--</option>
+                    @foreach($case_types as $case_type)
+                        
+                        <option value="{{$case_type->id}}" @if(@$record->case_type_id == $case_type->id) selected @endif>{{$case_type->title}}</option>
+                    
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
         <div class="col-md-5">    
             <div class="form-group">
                 <label for="court_id">Court<span style="color: red">*</span></label>
@@ -127,13 +225,6 @@
             </div>
         </div>
     </div>
-
-    
-
-
-
-
-    
 
     <button type="submit" class="btn btn-primary m-t-10">{{ isset($record) ? 'Edit '.$title_singular : 'Add '.$title_singular }}</button>
 
