@@ -29,7 +29,7 @@
 
         <div class="col-md-10 mt- mb-3">
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="1" id="check_client_cb" onclick="checkFunction()">
+              <input class="form-check-input" type="checkbox" value="1" name="check_client_cb" id="check_client_cb" onclick="checkExistingClient()">
               <label class="form-check-label" for="check_client_cb">
                 Existing Client
               </label>
@@ -39,11 +39,46 @@
     </div>
 
     <div class="row" id="existing_client">
-    
+        <div class="col-md-5">
+            <div class="form-group">
+                <label for="title">Client <span style="color: red">*</span></label>
+                <select name="client_id" id="client_id" class="form-control">
+                    <option value="">--Select--</option>
+                    @foreach($clients as $client)
+                    <option value="{{$client->id}}" @if(@$record->client_id == $client->id) selected @endif>{{$client->fullName()}}</option>
+                    @endforeach()
+                </select>
+            </div>
+        </div>
     </div>
 
     <div class="row" id="new_client">
         
+        <div class="col-md-5">
+            <div class="form-group">
+                <label for="title">Client First Name <span style="color: red">*</span></label>
+                  <input type="text" value="" class="form-control" name="first_name" id="first_name" placeholder="" >
+              </div>
+        </div>
+        
+        <div class="col-md-5"><div class="form-group">
+            <label for="title">Client Last Name <span style="color: red">*</span></label>
+            <input type="text" value="" class="form-control" name="last_name" id="last_name" placeholder="" >
+        </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="form-group"><label for="title">Client Phone<span style="color: red">*</span></label>
+                <input type="text" value="" class="form-control" name="phone" id="phone" placeholder="" >
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="form-group">
+                <label for="title">Client Email<span style="color: red">*</span></label>
+                <input type="text" value="" class="form-control" name="email" id="email" placeholder="" >
+            </div>
+        </div>
 
     </div>
 
@@ -65,7 +100,7 @@
         <div class="col-md-5">    
             <div class="form-group">
                 <label for="status_id">Status<span style="color: red">*</span></label>
-                <select name="status_id" class="form-control">
+                <select name="status" class="form-control">
                        <option value="">--Select--</option>
                     
                     @foreach($petition_status as $status)

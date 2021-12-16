@@ -29,13 +29,31 @@ class PetitionsController extends Controller
         $this->model = new Petition;
     }
 
-    public function index()
+    public function index(Request $request)
     {
 
         $data['title_singular']=$this->title_singular;
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
-        $data['records']=$this->model::orderby('display_order')->paginate(10);
+        $data['courts']=Court::orderby('display_order')->get();
+        $data['clients']=User::role('client')->orderby('first_name')->get(); 
+
+        $data['records']=$this->model::where('name','Like', '%'.$request->title.'%');
+
+        if(isset($request->client_id))
+        {
+            $data['records'] = $data['records']->where('client_id','=',$request->client_id);
+        }
+
+        if(isset($request->court_id))
+        {
+             $data['records'] = $data['records']->where('court_id','=',$request->court_id);           
+        }
+            
+        $data['records']=$data['records']->orderby('display_order')->paginate(10);
+
+        $data['request'] = $request;
+        
 
         return view($this->directory."index",$data);
     }
@@ -52,23 +70,22 @@ class PetitionsController extends Controller
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
         $data['directory']=$this->directory;
-        $data['clients']=User::role('client')->orderby('first_name')->get();        
-        $data['courts']=Court::orderby('title')->get();  
-        $data['petition_status']=PetitionStatus::orderby('title')->get();
+        $data['clients']=User::role('client')->orderby('first_name')->get();
+        $data['petition_status']=PetitionStatus::orderby('display_order')->get();
+        $data['courts']=Court::orderby('display_order')->get();
+     
+
         return view($this->directory."create",$data);
     }
 
     public function store(Request $request)
     {
+
         try {
 
-             $client_id = "";
-
-             $client = User::role('client')->find($request->client_id);
-             
-             if($client != null)
+             if($request->check_client_cb)
              {
-                 $client_id = $client->id;
+                 $client_id = $request->client_id;
              }
              else
              {
@@ -87,17 +104,10 @@ class PetitionsController extends Controller
                 $client_id = $ClientUser->id;
              }
 
-            
-             $petition = new Petition();
-
-             $petition->client_id = $client_id;
-             $petition->court_id = $request->court_id;
-             $petition->name = $request->name;
-             $petition->writ_number = $request->writ_number;
-             $petition->judgement = $request->judgement;
-             $petition->order_sheet = $request->order_sheet;
-             $petition->status = $request->status_id;
-             $petition->save();
+            $request->merge([
+                    'client_id'=>$client_id
+            ]);  
+            $record=$this->model::query()->create($request->except('_token','first_name','last_name','email','password','phone','check_client_cb'));
 
             $request->session()->flash('success', 'Created successfully!');
 
@@ -123,13 +133,12 @@ class PetitionsController extends Controller
         $data['title_singular']=$this->title_singular;
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
-        $data['record']=$this->model::find($id); 
-        $data['petition_id'] = $id;
- 
+        $data['record']=$this->model::find($id);
+
         $data['clients']=User::role('client')->orderby('first_name')->get();
         $data['petition_status']=PetitionStatus::orderby('display_order')->get();
         $data['courts']=Court::orderby('display_order')->get();
- 
+
         return view($this->directory."edit",$data);
     }
 
@@ -143,18 +152,13 @@ class PetitionsController extends Controller
     public function update(Request $request, $id)
     {
         try {
-
-             $client_id = "";
-
-             $client = User::role('client')->find($request->client_id);
              
-             if($client != null)
+             if($request->check_client_cb)
              {
                  $client_id = $client->id;
              }
              else
              {
-
                 $ClientUser = User::create([
                     'first_name' => $request->first_name,
                     'last_name' => $request->last_name,
@@ -162,25 +166,15 @@ class PetitionsController extends Controller
                     'phone' => $request->phone,
                     'password' => bcrypt('test1234'),           
                 ]);
-               
-                
                 $ClientUser->assignRole('client');
-                
-
                 $client_id = $ClientUser->id;
              }
 
-            
-             $petition = Petition::find($id);
-
-             $petition->client_id = $client_id;
-             $petition->court_id = $request->court_id;
-             $petition->name = $request->name;
-             $petition->writ_number = $request->writ_number;
-             $petition->judgement = $request->judgement;
-             $petition->order_sheet = $request->order_sheet;
-             $petition->status = $request->status_id;
-             $petition->save();
+             $request->merge([
+                    'client_id'=>$client_id
+             ]);  
+             $record = $this->model::query()->findOrFail($id);
+             $record->update($request->except('_token','first_name','last_name','email','password','phone','check_client_cb'));
 
 
             $request->session()->flash('success', 'Updated successfully!');
@@ -199,12 +193,13 @@ class PetitionsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
         try {
             $this->model::destroy($id);
-            return redirect('/petitions');
-            return response()->json('success', 200);
+            $request->session()->flash('success', 'Deleted successfully!');
+            return redirect(route($this->route_name.".index"));
+            // return response()->json('success', 200);
         } catch (\Exception $e) {
             return response()->json('error', $e->getCode());
         }

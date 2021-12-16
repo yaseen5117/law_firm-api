@@ -13,4 +13,14 @@ class Petition extends Model
 
     protected $guarded=[];
     protected $dates = ['deleted_at'];
+
+    public function court()
+    {
+        return $this->belongsTo('App\Models\Court','court_id','id');
+    }
+
+    public function client()
+    {
+        return $this->belongsTo('App\Models\User','client_id','id');
+    }
 }
