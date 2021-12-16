@@ -28,7 +28,7 @@
                                             <div class="form-group">
                                                  
                                                 <label class="font-weight-bold"> Name:</label>
-                                                <input type='text' class="form-control" autocomplete="off" id="name" name="name" @if(isset($request->name)) value="{{ $request->name }}" @endif  />  
+                                                <input type='text' class="form-control" autocomplete="off" id="name" name="name" @if(isset(request()->name)) value="{{ request()->name }}" @endif  />  
 
                                             </div> 
                                         </div>
@@ -36,7 +36,7 @@
                                         <div class=" col-lg-4">
                                             <div class="form-group">
                                                 <label class="font-weight-bold">Email:</label>
-                                                <input type='text' class="form-control" autocomplete="off" id="email" name="email" @if(isset($request->email)) value="{{ $request->email }}" @endif  />
+                                                <input type='text' class="form-control" autocomplete="off" id="email" name="email" @if(isset(request()->email)) value="{{ request()->email }}" @endif  />
                                                     
                                             </div>
                                         </div>
@@ -44,7 +44,7 @@
                                         <div class=" col-lg-4">
                                             <div class="form-group">
                                                 <label class="font-weight-bold">Phone No:</label>
-                                                <input type='text' class="form-control" autocomplete="off" id="phone" name="phone" @if(isset($request->phone)) value="{{ $request->phone }}" @endif  />
+                                                <input type='text' class="form-control" autocomplete="off" id="phone" name="phone" @if(isset(request()->phone)) value="{{ request()->phone }}" @endif  />
                                                     
                                             </div>
                                         </div>

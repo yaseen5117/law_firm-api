@@ -33,21 +33,19 @@ class UsersController extends Controller
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
         
-        $data['records']=$this->model::where('first_name','Like', '%'.$request->name.'%');
+        $query = $this->model::where('first_name','Like', '%'.$request->name.'%');
 
         if(isset($request->email))
         {
-            $data['records'] = $data['records']->where('email','Like', '%'.$request->email.'%');
+            $query = $query->where('email','Like', '%'.$request->email.'%');
         }
 
         if(isset($request->phone))
         {
-             $data['records'] = $data['records']->where('phone','Like', '%'.$request->phone.'%');           
+             $query = $query->where('phone','Like', '%'.$request->phone.'%');           
         }
             
-        $data['records']=$data['records']->orderby('first_name')->paginate(10);
-
-        $data['request'] = $request;
+        $data['records']=$query->orderby('first_name')->paginate(10);
 
         return view($this->directory."index",$data);
     }

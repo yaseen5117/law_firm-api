@@ -41,7 +41,7 @@ class PetitionsController extends Controller
         $data['courts']=Court::orderby('display_order')->get();
         $data['clients']=User::role('client')->orderby('first_name')->get(); 
          
-        $query =$this->model::where('name','Like', '%'.$request->title.'%');
+        $query = $this->model::where('name','Like', '%'.$request->title.'%');
 
         if(isset($request->client_id))
         {
