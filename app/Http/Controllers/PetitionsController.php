@@ -6,6 +6,7 @@ use App\Models\Petition;
 use App\Models\PetitionStatus;
 use App\Models\PetitionLawyer;
 use App\Models\PetitionJudge;
+use App\Models\CaseType;
 use App\Models\User;
 use App\Models\Court;
 use Illuminate\Http\Request;
@@ -72,6 +73,7 @@ class PetitionsController extends Controller
         $data['clients']=User::role('client')->orderby('first_name')->get();
         $data['petition_status']=PetitionStatus::orderby('display_order')->get();
         $data['courts']=Court::orderby('display_order')->get();
+        $data['case_types']=CaseType::orderby('display_order')->get();
         $data['judges']=User::role('judge')->orderby('first_name')->get(); 
         $data['lawyers']=User::role('lawyer')->orderby('first_name')->get();
 
@@ -161,6 +163,7 @@ class PetitionsController extends Controller
         $data['clients']=User::role('client')->orderby('first_name')->get();
         $data['petition_status']=PetitionStatus::orderby('display_order')->get();
         $data['courts']=Court::orderby('display_order')->get();
+        $data['case_types']=CaseType::orderby('display_order')->get();
         $data['judges']=User::role('judge')->orderby('first_name')->get(); 
         $data['lawyers']=User::role('lawyer')->orderby('first_name')->get();
  

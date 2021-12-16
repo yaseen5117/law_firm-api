@@ -166,6 +166,21 @@
                 </select>
             </div>
         </div>
+    
+        <div class="col-md-5">    
+            <div class="form-group">
+                <label for="case_type_id">Case Type<span style="color: red">*</span></label>
+                <select name="case_type_id" class="form-control">
+                    <option value="">--Select--</option>
+                    @foreach($case_types as $case_type)
+                        
+                        <option value="{{$case_type->id}}" @if(@$record->case_type_id == $case_type->id) selected @endif>{{$case_type->title}}</option>
+                    
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
         <div class="col-md-5">    
             <div class="form-group">
                 <label for="court_id">Court<span style="color: red">*</span></label>

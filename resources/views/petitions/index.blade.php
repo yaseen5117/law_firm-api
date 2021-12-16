@@ -92,9 +92,10 @@
                                         <table class="table table-hover normal-table" >
                                             <thead>
                                             <tr>
-                                                <th>Title</th>
-                                                <th>Client</th>
-                                                <th>Court</th>
+                                                <th>Client Name</th>
+                                                <th>Writ Number</th>
+                                                <th>Case Nature</th>
+                                                <th>Case Status</th>
                                                 <th class="text-center">Action</th>
                                             </tr>
                                             </thead>
@@ -102,12 +103,13 @@
                                             @foreach($records as $record)
                                                 <tr data-delete="{{ route($route_name.'.destroy', $record) }}">
                                                     
-                                                    <td>{{ $record->name }}</td>
                                                     <td>{{ $record->client->first_name }} {{ $record->client->last_name }}</td>
-                                                    <td>{{ $record->court->title }}</td>
+                                                    <td>{{ $record->writ_number }}</td>
+                                                    <td>{{ $record->case_type->title }}</td>
+                                                    <td>{{ $record->case_status->title }}</td>
 
                                                     <td class="text-center">
-
+                                                        <a href="#"><i class="fa fa-eye btn btn-warning btn-sm"></i></a>
                                                         <a href="{{ route($route_name.'.edit', $record) }}"><i
                                                                     class="fa fa-pencil btn btn-primary btn-sm"></i></a>
                                                         <a href="#" data-delete-trigger><i
