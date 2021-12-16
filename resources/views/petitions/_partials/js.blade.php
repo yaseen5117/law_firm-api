@@ -1,88 +1,82 @@
 <script type="text/javascript">
 
-$(document).ready(function () {
+	$(document).ready(function () {
 
- $('#search_form').on('submit', function (e) {
-       
-       var title = $("#title").val();
-       var client_id = $("#client_id").val();
-       var court_id = $("#court_id").val();
+		$('#judges_dropdown').selectpicker();
+    $('#lawyers_dropdown').selectpicker();
 
-       if(title == "" && client_id == "" && court_id == "")
-       {
-         e.preventDefault();
-       }
+		$('#search_form').on('submit', function (e) {
+			       
+			       var title = $("#title").val();
+			       var client_id = $("#client_id").val();
+			       var court_id = $("#court_id").val();
 
-    });
+			       if(title == "" && client_id == "" && court_id == "")
+			       {
+			         e.preventDefault();
+			       }
 
-});
+		});
+
+	});
 
 	function checkExistingClient() {
 
-       $(document).ready(function() {
+      $(document).ready(function() {
 
-		  var existingClientDiv = $("#existing_client");
+		    var existingClientDiv = $("#existing_client");
 	      var newClientDiv = $("#new_client");
 
-		  // If the checkbox is checked, display the output text
-		  if($("#check_client_cb").is(':checked'))
-		  {
-		  
+				  if($("#check_client_cb").is(':checked'))
+				  {
+				    existingClientDiv.show()
+				    newClientDiv.hide();
+				  }
+				  else
+				  {
+				    newClientDiv.show();
+		        existingClientDiv.hide();           
+				  }
 
-		    existingClientDiv.show()
-		    newClientDiv.hide();
-		   
-
-		  }
-		  else
-		  {
-		  
-		    newClientDiv.show();
-            existingClientDiv.hide();
-            
-		  
-		  }
-
-		});
+		  });
 	} 
 
 
 
 	$(document).ready(function() {
 
-	var existingClientDiv = $("#existing_client");
-	var newClientDiv = $("#new_client");
-
-    
-     var url_path = "{{Request::path()}}";
-
-	 const exact_path = url_path.split('/');
+		 var existingClientDiv = $("#existing_client");
+		 var newClientDiv = $("#new_client");
 	 
-	 if(exact_path[2] == "edit")
-	 {   
-            $('#check_client_cb').prop('checked', true);
-            existingClientDiv.show()
-		    newClientDiv.hide();
-		    
-
-	 }
-	 else
-	 {
-         newClientDiv.show();
-         existingClientDiv.hide();
-         
-
-	 }
+	   var url_path = "{{@$record}}";
+		 
+			 if(url_path)
+			 {   
+		      $('#check_client_cb').prop('checked', true);
+		      existingClientDiv.show()
+		      newClientDiv.hide();
+			 }
+			 else
+			 {
+			    newClientDiv.show();
+			    existingClientDiv.hide();
+			 }
 		
 		$(document).on('change', '#is_free', function(event) {
-			if ($(this).is(':checked')) {	
+			
+			if ($(this).is(':checked')) 
+			{	
 				$('#rates').hide();
-			}else{
-				$('#rates').show();
-
 			}
+			else
+			{
+				$('#rates').show();
+			}
+
 		});
 
 		$('#is_free').trigger('change');
+
 	});
+
 </script>

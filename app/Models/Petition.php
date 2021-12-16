@@ -23,4 +23,14 @@ class Petition extends Model
     {
         return $this->belongsTo('App\Models\User','client_id','id');
     }
+
+    public function petition_judges()
+    {
+        return $this->hasMany('App\Models\PetitionJudge','petition_id','id');
+    }
+
+    public function petition_lawyers()
+    {
+        return $this->hasMany('App\Models\PetitionLawyer','petition_id','id');
+    }
 }

@@ -23,48 +23,51 @@
                             <form id="search_form">
 
                                     <div class='row'>    
-                                        
-                                        <div class="text-primary form-group col-lg-4">
-                                             
-                                            <label class="font-weight-bold"> Title:</label>
-                                            <input type='text' class="form-control" autocomplete="off" id="title" name="title" value="{{request()->title }}"  />  
+                                        <div class="col-lg-4">
+                                            <div class="form-group">  
+                                                <label class="font-weight-bold"> Title:</label>
+                                                <input type='text' class="form-control" autocomplete="off" id="title" name="title" value="{{request()->title }}"  />  
 
-                                        </div> 
-
-                                        <div class="text-primary form-group col-lg-4">
-                                            <label class="font-weight-bold">Client:</label>
-                                            <select id="client_id" name="client_id" class="form-control"  value="">
-                                                    <option value="">--All--</option>
-                                                    
-                                                    @foreach ($clients as $client)
-
-                                                    <option  value="{{$client->id}}" @if(request()->client_id == $client->id) selected @endif>
-                                                        {{$client->first_name}} {{$client->last_name}}
-                                                    </option>
-
-                                                    @endforeach
-
-                                        
-                                                </select>
-                                                
+                                            </div>
                                         </div>
 
-                                        <div class="text-primary form-group col-lg-4">
-                                            <label class="font-weight-bold">Court:</label>
-                                            <select id="court_id" name="court_id" class="form-control"  value="">
-                                                    <option value="">--All--</option>
+                                        <div class="col-lg-4"> 
+                                            <div class="form-group">
+                                                <label class="font-weight-bold">Client:</label>
+                                                <select id="client_id" name="client_id" class="form-control"  value="">
+                                                        <option value="">--All--</option>
+                                                        
+                                                        @foreach ($clients as $client)
+
+                                                        <option  value="{{$client->id}}" @if(request()->client_id == $client->id) selected @endif>
+                                                            {{$client->first_name}} {{$client->last_name}}
+                                                        </option>
+
+                                                        @endforeach
+
+                                                    </select>
                                                     
-                                                    @foreach ($courts as $court)
+                                            </div>
+                                        </div>
 
-                                                    <option  value="{{$court->id}}"  @if(@$request->court_id == $court->id) selected @endif>
-                                                        {{$court->title}}
-                                                    </option>
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <label class="font-weight-bold">Court:</label>
+                                                <select id="court_id" name="court_id" class="form-control"  value="">
+                                                        <option value="">--All--</option>
+                                                        
+                                                        @foreach ($courts as $court)
 
-                                                    @endforeach
+                                                        <option  value="{{$court->id}}"  @if(@$request->court_id == $court->id) selected @endif>
+                                                            {{$court->title}}
+                                                        </option>
 
-                                        
-                                                </select>
-                                                
+                                                        @endforeach
+
+                                            
+                                                    </select>
+                                                    
+                                            </div>
                                         </div>
                                         
                                     </div>
