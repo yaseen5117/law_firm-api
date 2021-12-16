@@ -137,13 +137,13 @@ class PetitionsController extends Controller
 
             $request->session()->flash('success', 'Created successfully!');
 
-            return redirect(route($this->route_name.".index"));
+            // return redirect(route($this->route_name.".index"));
+            return response(["status"=>true,'message'=>'DONE','redirect_url'=>route($this->route_name.".index")], 200);
 
         } catch (Exception $e) {
             
-            $request->session()->flash('error', $e->getMessage());
-            
-            return redirect(route($this->route_name.".index"));
+            $getExceptionResponse = getExceptionResponseAjax($e);
+            return response($getExceptionResponse, 500);
         }
     }
 
@@ -246,12 +246,12 @@ class PetitionsController extends Controller
 
           
             $request->session()->flash('success', 'Updated successfully!');
-            return redirect(route($this->route_name.".index"));
+            return response(["status"=>true,'message'=>'DONE','redirect_url'=>route($this->route_name.".index")], 200);
         } 
         catch (\Exception $e) 
         { 
-            $request->session()->flash('error', $e->getMessage());
-            return redirect(route($this->route_name.".index"));
+            $getExceptionResponse = getExceptionResponseAjax($e);
+            return response($getExceptionResponse, 500);
         }
     }
 
