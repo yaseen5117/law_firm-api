@@ -27,7 +27,7 @@
                                         <div class="text-primary form-group col-lg-4">
                                              
                                             <label class="font-weight-bold"> Title:</label>
-                                            <input type='text' class="form-control" autocomplete="off" id="title" name="title" @if(isset($request->title)) value="{{ $request->title }}" @endif  />  
+                                            <input type='text' class="form-control" autocomplete="off" id="title" name="title" value="{{request()->title }}"  />  
 
                                         </div> 
 
@@ -38,7 +38,7 @@
                                                     
                                                     @foreach ($clients as $client)
 
-                                                    <option  value="{{$client->id}}" @if(@$request->client_id == $client->id) selected @endif>
+                                                    <option  value="{{$client->id}}" @if(request()->client_id == $client->id) selected @endif>
                                                         {{$client->first_name}} {{$client->last_name}}
                                                     </option>
 
@@ -74,7 +74,7 @@
                                         <div class="text-primary form-group col-lg-3">
 
                                                    <input type="submit"  class="btn btn-success mt-1" id="search_btn" value="Search" />
-                                                   <a href="{{url('/petitions')}}" class="btn btn-danger mt-1">Reset Search</a>
+                                                   <a href="{{url('/petitions')}}" class="btn btn-danger mt-1">Reset</a>
 
                                         </div>
 

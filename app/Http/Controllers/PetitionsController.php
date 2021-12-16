@@ -194,9 +194,7 @@ class PetitionsController extends Controller
     {
         try {
             $this->model::destroy($id);
-            $request->session()->flash('success', 'Deleted successfully!');
-            return redirect(route($this->route_name.".index"));
-            // return response()->json('success', 200);
+            return response()->json('success', 200);
         } catch (\Exception $e) {
             return response()->json('error', $e->getCode());
         }
