@@ -38,22 +38,19 @@ class PetitionsController extends Controller
         $data['courts']=Court::orderby('display_order')->get();
         $data['clients']=User::role('client')->orderby('first_name')->get(); 
 
-        $data['records']=$this->model::where('name','Like', '%'.$request->title.'%');
+        $query =$this->model::where('name','Like', '%'.$request->title.'%');
 
         if(isset($request->client_id))
         {
-            $data['records'] = $data['records']->where('client_id','=',$request->client_id);
+            $query  = $data['records']->where('client_id','=',$request->client_id);
         }
 
         if(isset($request->court_id))
         {
-             $data['records'] = $data['records']->where('court_id','=',$request->court_id);           
+            $query->where('court_id','=',$request->court_id);           
         }
             
-        $data['records']=$data['records']->orderby('display_order')->paginate(10);
-
-        $data['request'] = $request;
-        
+        $data['records']=$query->orderby('display_order')->paginate(10);
 
         return view($this->directory."index",$data);
     }

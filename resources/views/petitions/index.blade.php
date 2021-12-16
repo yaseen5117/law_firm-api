@@ -86,15 +86,13 @@
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <div class="table-responsive">
-                                        <table class="table table-hover normal-table" @if(count(@$records) == 0) hidden @endif>
+                                        <table class="table table-hover normal-table" >
                                             <thead>
                                             <tr>
-                                                
                                                 <th>Title</th>
                                                 <th>Client</th>
                                                 <th>Court</th>
                                                 <th class="text-center">Action</th>
-
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -109,12 +107,8 @@
 
                                                         <a href="{{ route($route_name.'.edit', $record) }}"><i
                                                                     class="fa fa-pencil btn btn-primary btn-sm"></i></a>
-                                                        <a href="#" data-delete-trigger  onclick="event.preventDefault(); document.getElementById('delete-form').submit();"><i
+                                                        <a href="#" data-delete-trigger><i
                                                                     class="fa fa-trash btn btn-danger btn-sm"></i></a>
-                                                            <form id="delete-form" method="POST" action="{{ url('petitions/'.$record->id.'') }}"  >
-                                                               @method('DELETE')
-                                                               @csrf
-                                                            </form>
                                                     </td>
                                                 </tr>
                                             
