@@ -1,4 +1,7 @@
 <script type="text/javascript">
+     
+     var fileUrl = '{{ asset("")."storage" }}';
+      
 	$(document).ready(function() {
 		
 		$(document).on('change', '#is_free', function(event) {
@@ -11,9 +14,32 @@
 		});
 
 		$('#is_free').trigger('change');
-	});
-</script>
-<script>
+
+        //start fetching the stored data from petition_documents table
+        fetchPetitionDocuments();
+        
+        function fetchPetitionDocuments(){
+             
+            $.ajax({
+                url : "/fetch_petition_documents",
+                type: "GET",
+                dataType: "json",
+                success: function(response){
+                    console.log(response.petition_documents);
+                    $('tbody').html("");
+                    $.each(response.petition_documents, function(key, item){
+                        $('tbody').append('<tr>\
+                        <td>'+item.title+'</td>\
+                        <td><a href="'+fileUrl+'/petitons/'+item.id+'/'+item.petition_document+'" target="_blank">Open File</a></td>\
+                        <td>'+item.comments+'</td>\
+                    </tr>');
+                    });
+                } 
+                
+            });             
+        }
+ //End fetching the stored data from petition_documents table
+        
     const inputElement1 = document.querySelector('input[id="petition_document_file"]');
     const pond1 = FilePond.create( inputElement1 );
 	 
@@ -32,7 +58,7 @@
             
             $('.btn').attr('disabled', true);
             
-            $('#validation_errors').html("Please wait...")          
+            //$('#validation_errors').html("Please wait...")          
            
             $.ajax({
                 url : $(this).attr('action'),
@@ -45,8 +71,9 @@
                 processData: false
             })
             .done(function(response) {
-                $('.btn').attr('disabled', false);
-                window.location.href = response.redirect_url;
+                $('.btn').attr('disabled', false);                 
+                fetchPetitionDocuments();
+                //window.location.href = response.redirect_url;
             })
             .fail(function(errors) {
                 $('.btn').attr('disabled', false);
@@ -68,4 +95,5 @@
         
             
         });
+    });
 </script>
