@@ -58,7 +58,7 @@
                                                         
                                                         @foreach ($courts as $court)
 
-                                                        <option  value="{{$court->id}}"  @if(@$request->court_id == $court->id) selected @endif>
+                                                        <option  value="{{$court->id}}"  @if(request()->court_id == $court->id) selected @endif>
                                                             {{$court->title}}
                                                         </option>
 

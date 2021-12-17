@@ -45,7 +45,7 @@ class PetitionsController extends Controller
 
         if(isset($request->client_id))
         {
-            $query  = $data['records']->where('client_id','=',$request->client_id);
+            $query  = $query->where('client_id','=',$request->client_id);
         }
 
         if(isset($request->court_id))
