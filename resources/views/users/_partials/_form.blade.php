@@ -1,4 +1,4 @@
-<form action="{{ $url }}" method="POST" role="form" class="m-b-20">
+<form action="{{ $url }}" method="POST" role="form" class="m-b-20" enctype="multipart/form-data">
 
     {{ csrf_field() }}
 
@@ -34,8 +34,17 @@
 
         <div class="col-md-5">
             <div class="form-group">
-                <label for="password">Password <span style="color: red">*</span></label>
-                <input  type="password" value="{{ isset($record) ? $record->password : old('password') }}" class="form-control" name="password" id="password" placeholder="" >
+                <label for="password">Password @if(!isset($record)) <span>*</span> @endif</label>
+                <input  type="password" value="" class="form-control" name="password" id="password" placeholder="" >
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                <label for="password">Profile Picture</label>                 
+                <input type="file" accept="image/x-png,image/gif,image/jpeg" id="profile_image_file" name="profile_image_file" value="">
+                @if(@$record->profile_image && isset($record->id))
+                    <img class="img-profile" width="70" height="70" src="{{asset('').'storage/users/'.$record->id.'/'.$record->profile_image}}" alt="">
+                @endif                 
             </div>
         </div>
     </div>

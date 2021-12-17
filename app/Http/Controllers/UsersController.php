@@ -79,9 +79,14 @@ class UsersController extends Controller
                 'password' => 'required|min:6|max:50',
                 
             ]);
-            
+            $fileName = md5(microtime()) . '.' . $request->file('profile_image_file')->getClientOriginalExtension();
 
-            $record=$this->model::query()->create($request->except('_token','rates'));
+            $request->merge([
+                'password' => bcrypt($request->password),
+                'profile_image' => $fileName
+            ]);
+
+            $record=$this->model::query()->create($request->except('_token','rates','profile_image_file'));
             /*$rates_data=[];
             if (count($request->rates)>0) {
                 DeliveryPointRate::where('delivery_point_id',$record->id)->delete();
@@ -93,6 +98,7 @@ class UsersController extends Controller
                     DeliveryPointRate::create($rates_data);
                 }
             }*/
+            $request->file('profile_image_file')->storeAs('users/' . $record->id . '/', $fileName);
 
             $request->session()->flash('success', 'Created successfully!');
 
@@ -134,9 +140,7 @@ class UsersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //dd($request->all());
-
-        
+        //dd($request->all());           
         
         $record = $this->model::query()->findOrFail($id);
         /*$rates_data=[];
@@ -150,9 +154,15 @@ class UsersController extends Controller
                 DeliveryPointRate::create($rates_data);
             }
         }*/
-        
+        $request->merge(['profile_image' => $request->file('profile_image_file') !== null ? storeFile($request->file('profile_image_file'), $id, 'users') : $record->profile_image]);
+
         try {
-            $record->update($request->except('_token', '_method','rates'));
+            if($request->password){
+                $request->merge(['password' => bcrypt($request->password)]);
+                $record->update($request->except('_token', '_method','rates','profile_image_file'));
+            }else{
+                $record->update($request->except('_token', '_method','rates','profile_image_file','password'));
+            }
             $request->session()->flash('success', 'Updated successfully!');
             return redirect(route($this->route_name.".index"));
         } catch (\Exception $e) {
