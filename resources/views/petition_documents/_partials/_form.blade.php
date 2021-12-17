@@ -41,6 +41,7 @@
                         <th>Title</th>
                         <th>Documents</th>
                         <th>Comments</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>

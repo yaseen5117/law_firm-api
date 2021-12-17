@@ -28,11 +28,18 @@
                     console.log(response.petition_documents);
                     $('tbody').html("");
                     $.each(response.petition_documents, function(key, item){
-                        $('tbody').append('<tr>\
-                        <td>'+item.title+'</td>\
-                        <td><a href="'+fileUrl+'/petitons/'+item.id+'/'+item.petition_document+'" target="_blank">Open File</a></td>\
-                        <td>'+item.comments+'</td>\
-                    </tr>');
+                        $('tbody').append('<tr>'+
+                        '<td>'+item.title+'</td>'+
+                        '<td>'+
+                        '<a href="#" target="_blank">Open File</a>'+
+                        '</td>'+
+                        '<td>'+item.comments+'</td>'+
+                        '<td>'+
+                        '<a  href="#" class="editBtn btn btn-sm btn-light" id=""  data-toggle="tooltip" data-placement="top" title="edit">'+
+                        '<i class="fa fa-edit"></i>'+
+                        '</a>'+
+                        '</td>'+
+                    '</tr>');
                     });
                 } 
                 
