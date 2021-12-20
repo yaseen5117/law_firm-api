@@ -30,10 +30,7 @@
             $.ajax({
                 url : $(this).attr('action'),
                 type: $(this).attr('method'),
-                data: new FormData(this), 
-                headers: {
-                    'X-CSRF-TOKEN': '{{csrf_token()}}'
-                },                    
+                data: new FormData(this),                     
                 contentType: false,
                 processData: false
             })

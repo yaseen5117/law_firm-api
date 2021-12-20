@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 class UsersController extends Controller
 {
     
+    
     /**
      * Display a listing of the resource.
      *
@@ -23,8 +24,10 @@ class UsersController extends Controller
 
     public function __construct()
     {
+        $this->middleware('auth');
         $this->model = new User;
     }
+
 
     public function index(Request $request)
     {
@@ -33,7 +36,7 @@ class UsersController extends Controller
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
         
-        $query = $this->model::where('first_name','Like', '%'.$request->name.'%');
+        $query = $this->model::where('first_name','Like', '%'.$request->name.'%')->orWhere('last_name','Like', '%'.$request->name.'%');
 
         if(isset($request->email))
         {
