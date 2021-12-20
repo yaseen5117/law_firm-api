@@ -141,7 +141,6 @@ class PetitionDocumentsController extends Controller
         //dd($request->all());
 
         
-        
         $record = $this->model::query()->findOrFail($id);
         /*$rates_data=[];
         if (count($request->rates)>0) {
@@ -154,11 +153,19 @@ class PetitionDocumentsController extends Controller
                 DeliveryPointRate::create($rates_data);
             }
         }*/
-        
+
+        if (Session::has('file.petition_document_file')) {
+            $request->merge(['file_name' => Session::get('file.petition_document_file')]);
+            $this->moveFile('petitions/' . Session::get('file.petition_document_file'), 'petitions/' . request()->petition_id . '/' . Session::get('file.petition_document_file'));
+        }  
+        $request->merge([
+            'petition_id' => $record->petition_id,
+        ]);
+
         try {
-            $record->update($request->except('_token', '_method','rates'));
+            $record->update($request->except('_token', '_method','rates','petition_document_file'));
             $request->session()->flash('success', 'Updated successfully!');
-            return redirect(route($this->route_name.".index"));
+            return redirect(route($this->directory.".create"));
         } catch (\Exception $e) {
             $request->session()->flash('error', $e->getMessage());
             return redirect(route($this->route_name.".index"));
@@ -192,8 +199,9 @@ class PetitionDocumentsController extends Controller
             return response()->json('error', $e->getCode());
         }            
     }
-    public function fetchPetitionDocuments(){
-        $petition_documents = PetitionDocument::all();
+    public function fetchPetitionDocuments(Request $request)
+    {        
+        $petition_documents = PetitionDocument::where('petition_id', $request->petition_id)->get();
         return response()->json([
             'petition_documents' => $petition_documents,
         ]);
