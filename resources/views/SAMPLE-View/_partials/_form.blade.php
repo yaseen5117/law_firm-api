@@ -1,4 +1,4 @@
-<form action="{{ $url }}" method="POST" role="form" class="m-b-20">
+<form id="sample_form" action="{{ $url }}" method="POST" role="form" class="m-b-20">
 
     {{ csrf_field() }}
 
@@ -30,7 +30,7 @@
     </div>
 
     
-
+    <div id="validation_errors"></div>
     <button type="submit" class="btn btn-primary m-t-10">{{ isset($record) ? 'Edit '.$title_singular : 'Add '.$title_singular }}</button>
 
 </form>
