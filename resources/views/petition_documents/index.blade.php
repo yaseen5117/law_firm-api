@@ -26,7 +26,8 @@
                                             <tr>
                                                 
                                                 <th>Title</th>
-                                                <th>Display Order</th>
+                                                <th>Documents</th>
+                                                <th>Comments</th>
                                                 <th class="text-center">Action</th>
 
                                             </tr>
@@ -36,7 +37,8 @@
                                                 <tr data-delete="{{ route($route_name.'.destroy', $record) }}">
                                                     
                                                     <td>{{ $record->title }}</td>
-                                                    <td>{{ $record->display_order }}</td>
+                                                    <td><a href="{{asset('').'storage/petitions/'.$record->petition_id.'/'.$record->file_name}}" target="_blank">Open File</a></td>
+                                                    <td>{{ $record->comments }}</td>                                                    
 
                                                     <td class="text-center">
 

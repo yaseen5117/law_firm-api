@@ -104,7 +104,7 @@ class PetitionDocumentsController extends Controller
     public function validatePetitionDocuments(Request $request){
         $validations = [
             'title' => 'required|max:190',
-            //'petition_document_file' => 'required', 
+            'petition_document_file' => 'required', 
         ];
 
         return request()->validate($validations);
@@ -140,7 +140,7 @@ class PetitionDocumentsController extends Controller
     {
         //dd($request->all());
 
-        
+        $this->validatePetitionDocuments($request);
         $record = $this->model::query()->findOrFail($id);
         /*$rates_data=[];
         if (count($request->rates)>0) {
