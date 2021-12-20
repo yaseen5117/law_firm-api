@@ -17,7 +17,7 @@ class CreatePetitionsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('client_id');
             $table->unsignedBigInteger('court_id');
-            $table->unsignedBigInteger('case_type_id');
+            $table->unsignedBigInteger('petition_type_id');
             $table->string('name');
             $table->string('writ_number')->nullable();
             $table->text('judgement')->nullable();

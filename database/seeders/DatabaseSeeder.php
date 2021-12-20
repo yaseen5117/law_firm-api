@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call([StatusesTableSeeder::class]); 
         $this->call([RolesTableSeeder::class]);             
         $this->call([CourtSeeder::class]);            
-        $this->call([CaseTypeSeeder::class]);             
+        $this->call([PetitionTypeSeeder::class]);             
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }

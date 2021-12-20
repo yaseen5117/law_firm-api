@@ -29,9 +29,9 @@ class Petition extends Model
         return $this->belongsTo('App\Models\User','client_id','id');
     }
 
-    public function case_type()
+    public function petition_type()
     {
-        return $this->belongsTo('App\Models\CaseType','case_type_id','id');
+        return $this->belongsTo('App\Models\PetitionType','petition_type_id','id');
     }
     
     public function petition_judges()

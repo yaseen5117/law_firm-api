@@ -1,9 +1,11 @@
 <script type="text/javascript">
+    
+    $(":input").inputmask();
 
 	$(document).ready(function () {
 
-	$('#judges_dropdown').selectpicker();
-    $('#lawyers_dropdown').selectpicker();
+    $('#judges_dropdown').select2({});
+    $('#lawyers_dropdown').select2({});
 
 		$('#search_form').on('submit', function (e) {
 			       

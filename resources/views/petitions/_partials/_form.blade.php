@@ -67,7 +67,7 @@
 
         <div class="col-md-5">
             <div class="form-group"><label for="title">Phone<span style="color: red">*</span></label>
-                <input type="text" value="" class="form-control" name="phone" id="phone" placeholder="" >
+                <input type="text" value="" class="form-control" name="phone"  placeholder="" data-inputmask="'mask': '9999-9999999'" maxlength = "12" >
             </div>
         </div>
 
@@ -84,8 +84,8 @@
     @php $check_var = false; @endphp
         <div class="col-md-5">    
             <div class="form-group">
-                <label for="court_id">Judges<span style="color: red">*</span></label>
-                <select class="selectpicker form-control" multiple aria-label="select example" id="judges_dropdown" name="judges[]">
+                <label for="court_id">Judges</label>
+                <select class="form-control" multiple aria-label="select example" id="judges_dropdown" name="judges[]">
 
                         @if(isset($record))
                            
@@ -127,8 +127,8 @@
         @php $check_var = false; @endphp
         <div class="col-md-5">    
             <div class="form-group">
-                <label for="court_id">Lawyer<span style="color: red">*</span></label>
-                <select class="selectpicker form-control" multiple aria-label="select example" id="lawyers_dropdown" name="lawyers[]">     
+                <label for="court_id">Lawyer</label>
+                <select class="form-control" multiple aria-label="select example" id="lawyers_dropdown" name="lawyers[]">     
                         
                         @if(isset($record))
 
@@ -169,12 +169,12 @@
     
         <div class="col-md-5">    
             <div class="form-group">
-                <label for="case_type_id">Case Type<span style="color: red">*</span></label>
-                <select name="case_type_id" class="form-control">
+                <label for="petition_type_id">Petition Type<span style="color: red">*</span></label>
+                <select name="petition_type_id" class="form-control">
                     <option value="">--Select--</option>
-                    @foreach($case_types as $case_type)
+                    @foreach($petition_types as $petition_type)
                         
-                        <option value="{{$case_type->id}}" @if(@$record->case_type_id == $case_type->id) selected @endif>{{$case_type->title}}</option>
+                        <option value="{{$petition_type->id}}" @if(@$record->petition_type_id == $petition_type->id) selected @endif>{{$petition_type->title}}</option>
                     
                     @endforeach
                 </select>
