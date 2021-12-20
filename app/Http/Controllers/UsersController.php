@@ -73,23 +73,27 @@ class UsersController extends Controller
     public function store(Request $request)
     {
         try {
-            
+            $fileName = "";
 
             $request->validate([
                 'first_name' => 'required|max:255',
                 'last_name' => 'required|max:255',
-                'email' => 'email|required|max:255',
+                'email' => 'required|email|max:255',
+                'email' => 'unique:users,email',
                 'password' => 'required|min:6|max:50',
+                'confirm_password' => 'required',
+                'password' => 'required_with:confirm_password|same:confirm_password',
+                'profile_image_file' => 'required',
                 
-            ]);
+            ]);             
             $fileName = md5(microtime()) . '.' . $request->file('profile_image_file')->getClientOriginalExtension();
-
+            
             $request->merge([
                 'password' => bcrypt($request->password),
                 'profile_image' => $fileName
-            ]);
+            ]);          
 
-            $record=$this->model::query()->create($request->except('_token','rates','profile_image_file'));
+            $record=$this->model::query()->create($request->except('_token','rates','profile_image_file','confirm_password'));
             /*$rates_data=[];
             if (count($request->rates)>0) {
                 DeliveryPointRate::where('delivery_point_id',$record->id)->delete();
@@ -104,8 +108,10 @@ class UsersController extends Controller
             $request->file('profile_image_file')->storeAs('users/' . $record->id . '/', $fileName);
 
             $request->session()->flash('success', 'Created successfully!');
-
-            return redirect(route($this->route_name.".index"));
+            return response([
+                "redirect_url" => url('users')
+            ], 200);
+            //return redirect(route($this->route_name.".index"));
 
         } catch (Exception $e) {
             
@@ -161,13 +167,20 @@ class UsersController extends Controller
 
         try {
             if($request->password){
+                request()->validate([
+                    'confirm_password' => 'required',
+                    'password' => 'required_with:confirm_password|same:confirm_password',
+                ]);
                 $request->merge(['password' => bcrypt($request->password)]);
-                $record->update($request->except('_token', '_method','rates','profile_image_file'));
+                $record->update($request->except('_token', '_method','rates','profile_image_file','confirm_password'));
             }else{
-                $record->update($request->except('_token', '_method','rates','profile_image_file','password'));
+                $record->update($request->except('_token', '_method','rates','profile_image_file','password','confirm_password'));
             }
             $request->session()->flash('success', 'Updated successfully!');
-            return redirect(route($this->route_name.".index"));
+            return response([
+                "redirect_url" => url('users')
+            ], 200);
+            //return redirect(route($this->route_name.".index"));
         } catch (\Exception $e) {
             $request->session()->flash('error', $e->getMessage());
             return redirect(route($this->route_name.".index"));
