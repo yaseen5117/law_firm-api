@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 class SampleController extends Controller
 {
     
+    
+    
     /**
      * Display a listing of the resource.
      *
@@ -23,6 +25,7 @@ class SampleController extends Controller
 
     public function __construct()
     {
+        $this->middleware('auth');
         $this->model = new Sample;
     }
 

@@ -11,6 +11,7 @@ use Storage;
 class PetitionDocumentsController extends Controller
 {
     
+    
     /**
      * Display a listing of the resource.
      *
@@ -26,8 +27,11 @@ class PetitionDocumentsController extends Controller
 
     public function __construct()
     {
+        $this->middleware('auth');
+
         $this->model = new PetitionDocument();
     }
+
 
     public function index()
     {
