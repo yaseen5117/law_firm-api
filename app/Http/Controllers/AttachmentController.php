@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Attachment;
+use App\Models\Petition;
+use App\Models\PetitionDocument;
+use App\Models\Sample;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Session;
+ 
 
-class UsersController extends Controller
+class AttachmentController extends Controller
 {
     
     
@@ -15,41 +21,28 @@ class UsersController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $directory="users.";
-    private $title_singular="User";
-    private $title_prural="Users";
-    private $route_name="users";
+    private $directory="petition_documents.";
+    private $title_singular="Petition Document";
+    private $title_prural="Petition Documents";
+    private $route_name="petition_documents";
     private $model;
 
 
     public function __construct()
     {
         $this->middleware('auth');
-        $this->model = new User;
+
+        $this->model = new Attachment();
     }
 
 
-    public function index(Request $request)
+    public function index()
     {
 
         $data['title_singular']=$this->title_singular;
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
-        
-        $query = $this->model::where('first_name','Like', '%'.$request->name.'%')->orWhere('last_name','Like', '%'.$request->name.'%');
-
-        if(isset($request->email))
-        {
-            $query = $query->where('email','Like', '%'.$request->email.'%');
-        }
-
-        if(isset($request->phone))
-        {
-             $query = $query->where('phone','Like', '%'.$request->phone.'%');           
-        }
-            
-        $data['records']=$query->orderby('first_name')->paginate(10);
-
+        $data['records']=$this->model::paginate(10);
         return view($this->directory."index",$data);
     }
 
@@ -58,41 +51,32 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        
+    public function create(Request $request)
+    {        
         $data['title_singular']=$this->title_singular;
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
         $data['directory']=$this->directory;
+        $data['petition_id'] = $request->petition_id;
+        $data['records']=$this->model::paginate(10);
         //$data['rates']=Rate::orderby('display_order')->get();;
-        
+        //dd($data['records']);
         return view($this->directory."create",$data);
     }
-
+    public function moveFile($from_directory, $to_directory)
+    {
+        if (Storage::exists($from_directory)) {
+            Storage::move($from_directory, $to_directory);
+        }
+    }
     public function store(Request $request)
     {
-        try {
-             
-            $request->validate([
-                'first_name' => 'required|max:255',
-                'last_name' => 'required|max:255',
-                'email' => 'required|email|max:255',
-                'email' => 'unique:users,email',
-                'password' => 'required|min:6|max:50',
-                'confirm_password' => 'required',
-                'password' => 'required_with:confirm_password|same:confirm_password',
-                'profile_image_file' => 'required',
-                
-            ]);             
-            $fileName = md5(microtime()) . '.' . $request->file('profile_image_file')->getClientOriginalExtension();
+        try {            
             
-            $request->merge([
-                'password' => bcrypt($request->password),
-                'profile_image' => $fileName
-            ]);          
-
-            $record=$this->model::query()->create($request->except('_token','rates','profile_image_file','confirm_password'));
+            $this->validatePetitionDocuments($request);
+          
+             
+            //$record=$this->model::query()->create($request->except('_token','rates'));
             /*$rates_data=[];
             if (count($request->rates)>0) {
                 DeliveryPointRate::where('delivery_point_id',$record->id)->delete();
@@ -104,13 +88,20 @@ class UsersController extends Controller
                     DeliveryPointRate::create($rates_data);
                 }
             }*/
-            $request->file('profile_image_file')->storeAs('users/' . $record->id . '/', $fileName);
+            $title = $request->title;
+            $file_original_name = 'petition_document_file';
+            $mime_type = "";
+            $attachmentable_id = $request->petition_id;
+            $attachmentable_type = "App\Models\Petition";
+            $root = "petitions";            
+            $comment = $request->comment;                         
+             
+            uploadFile($request,$title,$file_original_name,$comment,$mime_type,$attachmentable_id,$attachmentable_type,$root);
+
 
             $request->session()->flash('success', 'Created successfully!');
-            return response([
-                "redirect_url" => url('users')
-            ], 200);
-            //return redirect(route($this->route_name.".index"));
+            
+            //return redirect(route($this->route_name.".create"));
 
         } catch (Exception $e) {
             
@@ -118,6 +109,15 @@ class UsersController extends Controller
             
             return redirect(route($this->route_name.".index"));
         }
+    }
+
+    public function validatePetitionDocuments(Request $request){
+        $validations = [
+            'title' => 'required|max:190',
+            //'petition_document_file' => 'required', 
+        ];
+
+        return request()->validate($validations);
     }
 
     /**
@@ -132,7 +132,7 @@ class UsersController extends Controller
         $data['title_singular']=$this->title_singular;
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
-        $data['record']=$this->model::find($id);
+        $data['record']=$this->model::find($id);       
         //$data['rates']=Rate::orderby('display_order')->get();;
         return view($this->directory."edit",$data);
 
@@ -148,9 +148,10 @@ class UsersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //dd($request->all());           
-        
-        $record = $this->model::query()->findOrFail($id);
+        //dd($request->all());
+
+        $this->validatePetitionDocuments($request);
+        $record = $this->model::query()->findOrFail($id);         
         /*$rates_data=[];
         if (count($request->rates)>0) {
             DeliveryPointRate::where('delivery_point_id',$record->id)->delete();
@@ -162,24 +163,25 @@ class UsersController extends Controller
                 DeliveryPointRate::create($rates_data);
             }
         }*/
-        $request->merge(['profile_image' => $request->file('profile_image_file') !== null ? storeFile($request->file('profile_image_file'), $id, 'users') : $record->profile_image]);
+        
 
         try {
-            if($request->password){
-                request()->validate([
-                    'confirm_password' => 'required',
-                    'password' => 'required_with:confirm_password|same:confirm_password',
-                ]);
-                $request->merge(['password' => bcrypt($request->password)]);
-                $record->update($request->except('_token', '_method','rates','profile_image_file','confirm_password'));
-            }else{
-                $record->update($request->except('_token', '_method','rates','profile_image_file','password','confirm_password'));
-            }
+             
+            $title = $request->title;
+            $file_original_name = 'petition_document_file';
+            $mime_type = "";
+            $attachmentable_id = $request->petition_id;
+            $attachmentable_type = "App\Models\Petition";
+            $root = "petitions";            
+            $comment = $request->comment;
+            $request->merge([
+                'id' => $id
+            ]);                      
+             
+            uploadFile($request,$title,$file_original_name,$comment,$mime_type,$attachmentable_id,$attachmentable_type,$root);
+
             $request->session()->flash('success', 'Updated successfully!');
-            return response([
-                "redirect_url" => url('users')
-            ], 200);
-            //return redirect(route($this->route_name.".index"));
+            return redirect(route($this->directory.".create"));
         } catch (\Exception $e) {
             $request->session()->flash('error', $e->getMessage());
             return redirect(route($this->route_name.".index"));
@@ -200,5 +202,26 @@ class UsersController extends Controller
         } catch (\Exception $e) {
             return response()->json('error', $e->getCode());
         }
+    }
+    
+    public function uploadPetitionDocuments(Request $request)
+    {    
+        try{
+            $file_input_id = "petition_document_file";
+            $root_directory = "petitions";
+            $id = $request->petition_id;
+            upload($request,$root_directory,$file_input_id,$id);
+        }
+        catch(\Exception $e) {
+            return response()->json('error', $e->getCode());
+        }               
+    }
+    public function fetchPetitionDocuments(Request $request)
+    { 
+        $petition = Petition::find($request->petition_id);                     
+        $petition_documents = $petition->attachments;
+        return response()->json([
+            'petition_documents' => $petition_documents,
+        ]);
     }
 }

@@ -32,9 +32,9 @@
                         $('tbody').append('<tr>' +
                             '<td>' + item.title + '</td>' +
                             '<td>' +
-                            '<a href="{{asset("/storage/petitions/")}}/'+item.petition_id+'/'+item.file_name+'" target="_blank">Open File</a>' +
+                            '<a href="{{asset("/storage/petitions/")}}/'+item.attachmentable_id+'/'+item.file_name+'" target="_blank">Open File</a>' +
                             '</td>' +
-                            '<td>' + item.comments + '</td>' +
+                            '<td>' + item.comment + '</td>' +
                             '<td>' +
                             '<a  href="{{url("petition_documents")}}/'+item.id+'/edit" class="editBtn btn btn-sm btn-light" id=""  data-toggle="tooltip" data-placement="top" title="edit">' +
                             '<i class="fa fa-edit"></i>' +
