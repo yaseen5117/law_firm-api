@@ -10,6 +10,8 @@ use App\Models\PetitionType;
 use App\Models\User;
 use App\Models\Court;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Auth;
 
 class PetitionsController extends Controller
 {
@@ -36,6 +38,9 @@ class PetitionsController extends Controller
 
     public function index(Request $request)
     {
+        // Storage::disk('images')->get( $portfolio->picture)
+        // dd(Storage::get('/users/'.Auth::user()->id.'/'.Auth::user()->profile_image));
+
         $data['title_singular']=$this->title_singular;
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
