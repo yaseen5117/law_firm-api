@@ -218,7 +218,7 @@ class AttachmentController extends Controller
             return response()->json('error', $e->getCode());
         }               
     }
-    public function fetchPetitionDocuments(Request $request)
+    public function getDocuments(Request $request)
     { 
         $petition = Petition::find($request->petition_id);                     
         $petition_documents = $petition->attachments;
