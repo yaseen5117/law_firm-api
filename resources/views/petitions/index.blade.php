@@ -105,7 +105,7 @@
                                                     
                                                     <td>{{ $record->client->first_name }} {{ $record->client->last_name }}</td>
                                                     <td>{{ $record->writ_number }}</td>
-                                                    <td>{{ $record->case_type->title }}</td>
+                                                    <td>{{ $record->petition_type->title }}</td>
                                                     <td>{{ $record->case_status->title }}</td>
 
                                                     <td class="text-center">

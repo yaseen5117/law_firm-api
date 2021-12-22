@@ -174,6 +174,10 @@
     <script src="{{ asset('admin-template/js/demo/chart-area-demo.js') }}"></script>
     <script src="{{ asset('admin-template/js/demo/chart-pie-demo.js') }}"></script>
 
+    <!-- phone number mask scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/jquery.inputmask.bundle.js"></script>
+
     <!-- Customer scripts and CSS -->
     <script type="text/javascript" src="{{asset('jquery_widgets/masked_input.js')}}"></script>
     <script src="{{url('/')}}/plugins/sweetalert/sweetalert.min.js"></script>

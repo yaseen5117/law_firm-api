@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CaseType extends Model
+class PetitionType extends Model
 {
     use HasFactory;
 
-    protected $table = "case_types";
+    protected $table = "petition_types";
 }

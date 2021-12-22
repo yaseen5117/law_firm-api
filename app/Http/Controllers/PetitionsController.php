@@ -6,7 +6,7 @@ use App\Models\Petition;
 use App\Models\PetitionStatus;
 use App\Models\PetitionLawyer;
 use App\Models\PetitionJudge;
-use App\Models\CaseType;
+use App\Models\PetitionType;
 use App\Models\User;
 use App\Models\Court;
 use Illuminate\Http\Request;
@@ -36,7 +36,6 @@ class PetitionsController extends Controller
 
     public function index(Request $request)
     {
-
         $data['title_singular']=$this->title_singular;
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
@@ -57,6 +56,8 @@ class PetitionsController extends Controller
             
         $data['records']=$query->orderby('display_order')->paginate(10);
 
+
+
         return view($this->directory."index",$data);
     }
 
@@ -75,7 +76,7 @@ class PetitionsController extends Controller
         $data['clients']=User::role('client')->orderby('first_name')->get();
         $data['petition_status']=PetitionStatus::orderby('display_order')->get();
         $data['courts']=Court::orderby('display_order')->get();
-        $data['case_types']=CaseType::orderby('display_order')->get();
+        $data['petition_types']=PetitionType::orderby('display_order')->get();
         $data['judges']=User::role('judge')->orderby('first_name')->get(); 
         $data['lawyers']=User::role('lawyer')->orderby('first_name')->get();
 
@@ -86,12 +87,34 @@ class PetitionsController extends Controller
     {
         try {
 
+            
+
              if($request->check_client_cb)
              {
-                 $client_id = $request->client_id;
+                $request->validate([
+                'name' => 'required',
+                'writ_number' => 'required',
+                'client_id' => 'required',
+                'petition_type_id' => 'required',
+                'court_id' => 'required',
+                'status' => 'required',      
+                ]);
+
+                $client_id = $request->client_id;
              }
              else
              {
+                $request->validate([
+                'name' => 'required',
+                'writ_number' => 'required',
+                'first_name' => 'required|max:255',
+                'last_name' => 'required|max:255',
+                'email' => 'email|required|max:255',
+                'phone' => 'required|max:12|min:12',
+                'petition_type_id' => 'required',
+                'court_id' => 'required',
+                'status' => 'required',      
+                ]);
 
                 $ClientUser = User::create([
                     'first_name' => $request->first_name,
@@ -167,7 +190,7 @@ class PetitionsController extends Controller
         $data['courts']=Court::orderby('display_order')->get();
         $data['petition_id']=$id;
 
-        $data['case_types']=CaseType::orderby('display_order')->get();
+        $data['petition_types']=PetitionType::orderby('display_order')->get();
         $data['judges']=User::role('judge')->orderby('first_name')->get(); 
         $data['lawyers']=User::role('lawyer')->orderby('first_name')->get();
  
@@ -187,10 +210,30 @@ class PetitionsController extends Controller
              
              if($request->check_client_cb)
              {
+                $request->validate([
+                'name' => 'required',
+                'writ_number' => 'required',
+                'client_id' => 'required',
+                'petition_type_id' => 'required',
+                'court_id' => 'required',
+                'status' => 'required',      
+                ]);
                  $client_id = $request->client_id;
              }
              else
              {
+                $request->validate([
+                'name' => 'required',
+                'writ_number' => 'required',
+                'first_name' => 'required|max:255',
+                'last_name' => 'required|max:255',
+                'email' => 'email|required|max:255',
+                'phone' => 'required|max:12|min:12',
+                'petition_type_id' => 'required',
+                'court_id' => 'required',
+                'status' => 'required',      
+                ]);
+
                 $ClientUser = User::create([
                     'first_name' => $request->first_name,
                     'last_name' => $request->last_name,

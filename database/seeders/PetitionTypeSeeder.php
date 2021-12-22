@@ -4,7 +4,7 @@ namespace Database\Seeders;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 
-class CaseTypeSeeder extends Seeder
+class PetitionTypeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -13,8 +13,8 @@ class CaseTypeSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('case_types')->truncate();
-        DB::table('case_types')->insert([
+        DB::table('petition_types')->truncate();
+        DB::table('petition_types')->insert([
 
             'id' => 1,             
             'title' => 'Criminal Case',             
@@ -22,7 +22,7 @@ class CaseTypeSeeder extends Seeder
              
         ]);
 
-        DB::table('case_types')->insert([
+        DB::table('petition_types')->insert([
 
             'id' => 2,             
             'title' => 'Civil Case',             
@@ -30,14 +30,12 @@ class CaseTypeSeeder extends Seeder
              
         ]);
 
-        DB::table('case_types')->insert([
+        DB::table('petition_types')->insert([
 
             'id' => 3,             
             'title' => 'Family Cases',             
             'display_order' => '3',           
              
         ]);
-
-       
     }
 }
