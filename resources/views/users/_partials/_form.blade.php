@@ -12,14 +12,14 @@
         <div class="col-md-5">
             <div class="form-group">
                 <label for="first_name">First Name <span style="color: red">*</span></label>
-                <input autofocus="" type="text" value="{{ isset($record) ? $record->first_name : old('first_name') }}" class="form-control" name="first_name" id="first_name" placeholder="" >
+                <input autofocus="" type="text" value="{{ isset($record) ? $record->first_name : old('first_name') }}" class="form-control" name="first_name" id="first_name" placeholder="" autocomplete="off">
             </div>
         </div>
 
         <div class="col-md-5">
             <div class="form-group">
                 <label for="last_name">Last Name <span style="color: red">*</span></label>
-                <input  type="text" value="{{ isset($record) ? $record->last_name : old('last_name') }}" class="form-control" name="last_name" id="last_name" placeholder="" >
+                <input  type="text" value="{{ isset($record) ? $record->last_name : old('last_name') }}" class="form-control" name="last_name" id="last_name" placeholder="" autocomplete="off">
             </div>
         </div>
     </div>
@@ -28,20 +28,20 @@
         <div class="col-md-10">
             <div class="form-group">
                 <label for="email">Email <span style="color: red">*</span></label>
-                <input  type="email" value="{{ isset($record) ? $record->email : old('email') }}" class="form-control" name="email" id="email" placeholder="" >
+                <input  type="email" value="{{ isset($record) ? $record->email : old('email') }}" class="form-control" name="email" id="email" placeholder="" autocomplete="off">
             </div>
         </div>
 
         <div class="col-md-10">
             <div class="form-group">
                 <label for="password">Password @if(!isset($record)) <span style="color: red">*</span> @endif</label>
-                <input  type="password" value="" class="form-control" name="password" id="password" placeholder="" >
+                <input  type="password" value="" class="form-control" name="password" id="password" placeholder="" autocomplete="off">
             </div>
         </div>
         <div class="col-md-10">
             <div class="form-group">
                 <label for="confirm_password">Confirm Password @if(!isset($record)) <span style="color: red">*</span> @endif</label>
-                <input  type="password" value="" class="form-control" name="confirm_password" id="confirm_password" placeholder="" >
+                <input  type="password" value="" class="form-control" name="confirm_password" id="confirm_password" placeholder="" autocomplete="off">
             </div>
         </div>
         <div class="col-md-10">

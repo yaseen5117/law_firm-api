@@ -48,8 +48,9 @@ class UsersController extends Controller
         }
             
         $data['records']=$query->orderby('first_name')->paginate(10);
-
+        
         return view($this->directory."index",$data);
+
     }
 
     /**
@@ -171,6 +172,7 @@ class UsersController extends Controller
                 ]);
                 $request->merge(['password' => bcrypt($request->password)]);
                 $record->update($request->except('_token', '_method','rates','profile_image_file','confirm_password'));
+                
             }else{
                 $record->update($request->except('_token', '_method','rates','profile_image_file','password','confirm_password'));
             }
@@ -199,5 +201,19 @@ class UsersController extends Controller
         } catch (\Exception $e) {
             return response()->json('error', $e->getCode());
         }
+    }
+
+    public function chagneUserStatus(Request $request)
+    {
+        $user_id = $request->user_id;
+        $status = $request->status;
+        $record = $this->model::find($user_id);
+        $record->approval_status = $status;
+        $record->save();
+        
+        return response([
+                "message" => "Status updated successfully..",
+                "status" => true
+            ], 200);
     }
 }

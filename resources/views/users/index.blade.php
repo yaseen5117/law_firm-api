@@ -15,9 +15,7 @@
                 <div class="col-md-12 col-lg-12">
                     @include('shared.errors')
                     <div class="card shadow mb-4">
-                        <!-- <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Circle Buttons</h6>
-                        </div> -->
+                      
                         <div class="card-body">
                             
                             <form id="search_form">
@@ -74,6 +72,7 @@
                                                 
                                                 <th>Name</th>
                                                 <th>Email</th>
+                                                <th>Status</th>
                                                 <th class="text-center">Action</th>
                                             </tr>
                                             </thead>
@@ -83,6 +82,13 @@
                                                     
                                                     <td>{{ $record->first_name . ' ' . $record->last_name }}</td>
                                                     <td>{{ $record->email }}</td>
+
+                                                    <td>
+                                                        <label class="switch">
+                                                            <input type="checkbox" data-id="{{$record->id}}" class="toggle-class" {{ $record->approval_status ? 'checked' : '' }}>
+                                                            <span class="slider round"></span>
+                                                        </label>
+                                                    </td>
 
                                                     <td class="text-center">
 
@@ -98,11 +104,12 @@
                                         </table>
                                         <p>Showing {!! $records->firstItem() !!} to {!! $records->lastItem() !!} of {!! $records->total() !!}</p>
                                         {!! $records->appends(request()->except('page'))->links() !!}
+                                        
                                     </div>
                                     
 
                                 </div>
-                            </div> <!-- row -->
+                            </div> 
                         </div>
                     </div>
                 </div>

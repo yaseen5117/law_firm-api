@@ -60,9 +60,7 @@ class PetitionsController extends Controller
         }
             
         $data['records']=$query->orderby('display_order')->paginate(10);
-
-
-
+        
         return view($this->directory."index",$data);
     }
 
