@@ -21,10 +21,10 @@ class AttachmentController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $directory="petition_documents.";
-    private $title_singular="Petition Document";
-    private $title_prural="Petition Documents";
-    private $route_name="petition_documents";
+    private $directory='petition_documents.';
+    private $title_singular='Petition Document';
+    private $title_prural='Petition Documents';
+    private $route_name='petition_documents';
     private $model;
 
 
@@ -58,7 +58,7 @@ class AttachmentController extends Controller
         $data['route_name']=$this->route_name;
         $data['directory']=$this->directory;
         $data['petition_id'] = $request->petition_id;
-        $data['records']=$this->model::paginate(10);
+        //$data['record']=$this->model::find($request->petition_id);
         //$data['rates']=Rate::orderby('display_order')->get();;
         //dd($data['records']);
         return view($this->directory."create",$data);
@@ -131,8 +131,9 @@ class AttachmentController extends Controller
         $data['directory']=$this->directory;
         $data['title_singular']=$this->title_singular;
         $data['title_prural']=$this->title_prural;
-        $data['route_name']=$this->route_name;
-        $data['record']=$this->model::find($id);       
+        $data['route_name']=$this->route_name;        
+        $a = $data['record']=$this->model::find($id); 
+        $data['petition_id'] =$a->attachmentable_id;
         //$data['rates']=Rate::orderby('display_order')->get();;
         return view($this->directory."edit",$data);
 
@@ -163,7 +164,7 @@ class AttachmentController extends Controller
                 DeliveryPointRate::create($rates_data);
             }
         }*/
-        
+        //dd($request->petition_id);
 
         try {
              

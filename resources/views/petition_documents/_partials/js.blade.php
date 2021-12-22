@@ -1,6 +1,7 @@
 <script type="text/javascript">
     var fileUrl = '{{ asset("")."storage" }}';
-    var id = {{request()->petition_id}};  
+    //var id = "{{request()->petition_id}}";  
+    var id = $("#petition_id").val();
      
     $(document).ready(function() {
 
@@ -49,6 +50,7 @@
         //End fetching the stored data from petition_documents table
 
         //uploading files start
+      
         const inputElement1 = document.querySelector('input[id="petition_document_file"]');
         const pond1 = FilePond.create(inputElement1);
         

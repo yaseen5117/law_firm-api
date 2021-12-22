@@ -35,5 +35,5 @@
 @endsection
 
 @section('javascript')
-@include($directory.'_partials.js')
+@include($directory.'_partials.js') 
 @endsection

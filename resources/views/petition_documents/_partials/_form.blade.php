@@ -5,7 +5,12 @@
     @if(isset($record))
     <input type="hidden" name="_method" value="put">
     @endif
-    <input type="hidden" name="petition_id" id="petition_id" value="{{request()->petition_id}}">
+    @php
+    if(request()->petition_id){
+        $petition_id = request()->petition_id;
+    }
+    @endphp
+    <input type="hidden" name="petition_id" id="petition_id" value="{{@$petition_id}}">
 
     <div class="row">
         <div class="col-md-6">
