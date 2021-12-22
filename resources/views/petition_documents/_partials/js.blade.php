@@ -22,7 +22,7 @@
         function fetchPetitionDocuments() {
 
             $.ajax({
-                url: "fetch_petition_documents",
+                url: "/petition/get_documents",
                 type: "GET",
                 data: {'petition_id':id}, 
                 dataType: "json",

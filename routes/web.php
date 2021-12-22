@@ -24,4 +24,4 @@ Route::resource('petitions', 'App\Http\Controllers\PetitionsController');
 Route::resource('users', 'App\Http\Controllers\UsersController');
 Route::resource('petition_documents', 'App\Http\Controllers\AttachmentController');
 Route::post('upload_petition_documents', 'App\Http\Controllers\AttachmentController@uploadPetitionDocuments');
-Route::get('fetch_petition_documents', [App\Http\Controllers\AttachmentController::class, 'fetchPetitionDocuments']);
+Route::get('/petition/get_documents', [App\Http\Controllers\AttachmentController::class, 'fetchPetitionDocuments']);
