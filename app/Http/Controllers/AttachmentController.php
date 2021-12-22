@@ -72,9 +72,12 @@ class AttachmentController extends Controller
     public function store(Request $request)
     {
         try {            
-            
-            $this->validatePetitionDocuments($request);
-          
+            if (!Session::has('file.petition_document_file')) {
+                request()->validate([
+                    'petition_document_file' => 'required',
+                ]);
+            }  
+            $this->validatePetitionDocuments($request);            
              
             //$record=$this->model::query()->create($request->except('_token','rates'));
             /*$rates_data=[];
@@ -113,10 +116,8 @@ class AttachmentController extends Controller
 
     public function validatePetitionDocuments(Request $request){
         $validations = [
-            'title' => 'required|max:190',
-            //'petition_document_file' => 'required', 
+            'title' => 'required|max:190',             
         ];
-
         return request()->validate($validations);
     }
 

@@ -12,7 +12,7 @@ function uploadFile($request,$title, $file_original_name, $comment, $mime_type, 
         moveFile($root . '/' . Session::get("file.$file_original_name"), $root . '/' . $attachmentable_id . '/' . Session::get("file.$file_original_name"));
     }
      
-    Attachment::updateOrCreate(['id' => $request->id],[
+    Attachment::updateOrCreate(['id' => $request->id],[//attachment id
         'title' => $title,
         'file_name' => Session::get("file.$file_original_name"),
         'comment' => $comment,
