@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attachment;
+use App\Models\Petition;
 use App\Models\PetitionDocument;
 use App\Models\Sample;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Session;
-use Storage;
+ 
 
-class PetitionDocumentsController extends Controller
+class AttachmentController extends Controller
 {
     
     
@@ -18,10 +21,10 @@ class PetitionDocumentsController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $directory="petition_documents.";
-    private $title_singular="Petition Document";
-    private $title_prural="Petition Documents";
-    private $route_name="petition_documents";
+    private $directory='petition_documents.';
+    private $title_singular='Petition Document';
+    private $title_prural='Petition Documents';
+    private $route_name='petition_documents';
     private $model;
 
 
@@ -29,7 +32,7 @@ class PetitionDocumentsController extends Controller
     {
         $this->middleware('auth');
 
-        $this->model = new PetitionDocument();
+        $this->model = new Attachment();
     }
 
 
@@ -39,7 +42,7 @@ class PetitionDocumentsController extends Controller
         $data['title_singular']=$this->title_singular;
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
-        $data['records']=$this->model::orderby('display_order')->paginate(10);
+        $data['records']=$this->model::paginate(10);
         return view($this->directory."index",$data);
     }
 
@@ -55,8 +58,9 @@ class PetitionDocumentsController extends Controller
         $data['route_name']=$this->route_name;
         $data['directory']=$this->directory;
         $data['petition_id'] = $request->petition_id;
+        //$data['record']=$this->model::find($request->petition_id);
         //$data['rates']=Rate::orderby('display_order')->get();;
-        
+        //dd($data['records']);
         return view($this->directory."create",$data);
     }
     public function moveFile($from_directory, $to_directory)
@@ -71,12 +75,8 @@ class PetitionDocumentsController extends Controller
             
             $this->validatePetitionDocuments($request);
           
-            if (Session::has('file.petition_document_file')) {
-                $request->merge(['file_name' => Session::get('file.petition_document_file')]);
-                $this->moveFile('petitions/' . Session::get('file.petition_document_file'), 'petitions/' . request()->petition_id . '/' . Session::get('file.petition_document_file'));
-            }  
-            
-            $record=$this->model::query()->create($request->except('_token','rates','petition_document_file'));
+             
+            //$record=$this->model::query()->create($request->except('_token','rates'));
             /*$rates_data=[];
             if (count($request->rates)>0) {
                 DeliveryPointRate::where('delivery_point_id',$record->id)->delete();
@@ -88,6 +88,16 @@ class PetitionDocumentsController extends Controller
                     DeliveryPointRate::create($rates_data);
                 }
             }*/
+            $title = $request->title;
+            $file_original_name = 'petition_document_file';
+            $mime_type = "";
+            $attachmentable_id = $request->petition_id;
+            $attachmentable_type = "App\Models\Petition";
+            $root = "petitions";            
+            $comment = $request->comment;                         
+             
+            uploadFile($request,$title,$file_original_name,$comment,$mime_type,$attachmentable_id,$attachmentable_type,$root);
+
 
             $request->session()->flash('success', 'Created successfully!');
             
@@ -104,7 +114,7 @@ class PetitionDocumentsController extends Controller
     public function validatePetitionDocuments(Request $request){
         $validations = [
             'title' => 'required|max:190',
-            'petition_document_file' => 'required', 
+            //'petition_document_file' => 'required', 
         ];
 
         return request()->validate($validations);
@@ -121,8 +131,9 @@ class PetitionDocumentsController extends Controller
         $data['directory']=$this->directory;
         $data['title_singular']=$this->title_singular;
         $data['title_prural']=$this->title_prural;
-        $data['route_name']=$this->route_name;
-        $data['record']=$this->model::find($id);       
+        $data['route_name']=$this->route_name;        
+        $a = $data['record']=$this->model::find($id); 
+        $data['petition_id'] =$a->attachmentable_id;
         //$data['rates']=Rate::orderby('display_order')->get();;
         return view($this->directory."edit",$data);
 
@@ -141,7 +152,7 @@ class PetitionDocumentsController extends Controller
         //dd($request->all());
 
         $this->validatePetitionDocuments($request);
-        $record = $this->model::query()->findOrFail($id);
+        $record = $this->model::query()->findOrFail($id);         
         /*$rates_data=[];
         if (count($request->rates)>0) {
             DeliveryPointRate::where('delivery_point_id',$record->id)->delete();
@@ -153,17 +164,23 @@ class PetitionDocumentsController extends Controller
                 DeliveryPointRate::create($rates_data);
             }
         }*/
-
-        if (Session::has('file.petition_document_file')) {
-            $request->merge(['file_name' => Session::get('file.petition_document_file')]);
-            $this->moveFile('petitions/' . Session::get('file.petition_document_file'), 'petitions/' . request()->petition_id . '/' . Session::get('file.petition_document_file'));
-        }  
-        $request->merge([
-            'petition_id' => $record->petition_id,
-        ]);
+        //dd($request->petition_id);
 
         try {
-            $record->update($request->except('_token', '_method','rates','petition_document_file'));
+             
+            $title = $request->title;
+            $file_original_name = 'petition_document_file';
+            $mime_type = "";
+            $attachmentable_id = $request->petition_id;
+            $attachmentable_type = "App\Models\Petition";
+            $root = "petitions";            
+            $comment = $request->comment;
+            $request->merge([
+                'id' => $id
+            ]);                      
+             
+            uploadFile($request,$title,$file_original_name,$comment,$mime_type,$attachmentable_id,$attachmentable_type,$root);
+
             $request->session()->flash('success', 'Updated successfully!');
             return redirect(route($this->directory.".create"));
         } catch (\Exception $e) {
@@ -190,18 +207,20 @@ class PetitionDocumentsController extends Controller
     
     public function uploadPetitionDocuments(Request $request)
     {    
-        try {
-            if ($request->hasFile('petition_document_file')) {            
-                $fileNameToStore = storeFile($request->file('petition_document_file'), $request->petition_id, 'petitions');
-                Session::put('file.petition_document_file', $fileNameToStore);
-            }
-        } catch (\Exception $e) {
+        try{
+            $file_input_id = "petition_document_file";
+            $root_directory = "petitions";
+            $id = $request->petition_id;
+            upload($request,$root_directory,$file_input_id,$id);
+        }
+        catch(\Exception $e) {
             return response()->json('error', $e->getCode());
-        }            
+        }               
     }
     public function fetchPetitionDocuments(Request $request)
-    {        
-        $petition_documents = PetitionDocument::where('petition_id', $request->petition_id)->get();
+    { 
+        $petition = Petition::find($request->petition_id);                     
+        $petition_documents = $petition->attachments;
         return response()->json([
             'petition_documents' => $petition_documents,
         ]);

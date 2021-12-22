@@ -1,6 +1,7 @@
 <script type="text/javascript">
     var fileUrl = '{{ asset("")."storage" }}';
-    var id = {{request()->petition_id}};  
+    //var id = "{{request()->petition_id}}";  
+    var id = $("#petition_id").val();
      
     $(document).ready(function() {
 
@@ -32,9 +33,9 @@
                         $('tbody').append('<tr>' +
                             '<td>' + item.title + '</td>' +
                             '<td>' +
-                            '<a href="{{asset("/storage/petitions/")}}/'+item.petition_id+'/'+item.file_name+'" target="_blank">Open File</a>' +
+                            '<a href="{{asset("/storage/petitions/")}}/'+item.attachmentable_id+'/'+item.file_name+'" target="_blank">Open File</a>' +
                             '</td>' +
-                            '<td>' + item.comments + '</td>' +
+                            '<td>' + item.comment + '</td>' +
                             '<td>' +
                             '<a  href="{{url("petition_documents")}}/'+item.id+'/edit" class="editBtn btn btn-sm btn-light" id=""  data-toggle="tooltip" data-placement="top" title="edit">' +
                             '<i class="fa fa-edit"></i>' +
@@ -49,6 +50,7 @@
         //End fetching the stored data from petition_documents table
 
         //uploading files start
+      
         const inputElement1 = document.querySelector('input[id="petition_document_file"]');
         const pond1 = FilePond.create(inputElement1);
         

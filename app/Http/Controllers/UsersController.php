@@ -72,8 +72,7 @@ class UsersController extends Controller
     public function store(Request $request)
     {
         try {
-            $fileName = "";
-
+             
             $request->validate([
                 'first_name' => 'required|max:255',
                 'last_name' => 'required|max:255',

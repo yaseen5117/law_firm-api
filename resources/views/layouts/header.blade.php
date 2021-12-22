@@ -137,7 +137,7 @@
         <!-- Nav Item - User Information -->
         <li class="nav-item dropdown no-arrow">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{Auth::user()->fullName()}}</span>
                 @if(Auth::user()->profile_image )
                 <img class="img-profile rounded-circle" src="{{asset('').'storage/users/'.Auth::user()->id.'/'.Auth::user()->profile_image}}" alt="">
                 @else

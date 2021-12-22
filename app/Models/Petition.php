@@ -43,4 +43,8 @@ class Petition extends Model
     {
         return $this->hasMany('App\Models\PetitionLawyer','petition_id','id');
     }
+    public function attachments()
+    {
+        return $this->morphMany(Attachment::class, 'attachmentable');
+    }
 }
