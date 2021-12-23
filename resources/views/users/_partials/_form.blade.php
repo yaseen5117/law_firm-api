@@ -34,6 +34,20 @@
 
         <div class="col-md-10">
             <div class="form-group">
+                    <label for="role">Role <span style="color: red">*</span></label>
+                    <select class="form-control"  id="role" name="role">
+                            <option value="">---Select---</option>
+                        @foreach($roles as $role)
+                          @if($role->id != 1)
+                            <option value="{{$role->name}}" @if(@$role_name == $role->name) selected @endif>{{$role->name}}</option>
+                          @endif
+                        @endforeach
+                    </select>    
+            </div>
+        </div>
+
+        <div class="col-md-10">
+            <div class="form-group">
                 <label for="password">Password @if(!isset($record)) <span style="color: red">*</span> @endif</label>
                 <input  type="password" value="" class="form-control" name="password" id="password" placeholder="" autocomplete="off">
             </div>
@@ -47,7 +61,7 @@
         <div class="col-md-10">
             <div class="form-group">
                 <label for="password">Profile Picture</label>                 
-                <input type="file" accept="image/x-png,image/gif,image/jpeg" id="profile_image_file" name="profile_image_file" value="">
+                <input type="file" accept="image/x-png,image/gif,image/jpeg" id="profile_image_file" name="profile_image_file" class="form-control border-0" value="">
                 @if(@$record->profile_image && isset($record->id))
                     <img class="img-profile" width="70" height="70" src="{{asset('').'storage/users/'.$record->id.'/'.$record->profile_image}}" alt="">
                 @endif                 

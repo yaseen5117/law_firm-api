@@ -72,6 +72,7 @@
                                                 
                                                 <th>Name</th>
                                                 <th>Email</th>
+                                                <th>Role</th>
                                                 <th>Status</th>
                                                 <th class="text-center">Action</th>
                                             </tr>
@@ -82,6 +83,7 @@
                                                     
                                                     <td>{{ $record->first_name . ' ' . $record->last_name }}</td>
                                                     <td>{{ $record->email }}</td>
+                                                    <td>{{ getRole($record->id) }}</td>
 
                                                     <td>
                                                         <label class="switch">

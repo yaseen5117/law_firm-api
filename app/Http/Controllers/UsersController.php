@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Role;
+use App\Models\ModelHasRole;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
@@ -65,7 +67,7 @@ class UsersController extends Controller
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
         $data['directory']=$this->directory;
-        //$data['rates']=Rate::orderby('display_order')->get();;
+        $data['roles']=Role::orderby('name')->get();
         
         return view($this->directory."create",$data);
     }
@@ -79,6 +81,7 @@ class UsersController extends Controller
                 'last_name' => 'required|max:255',
                 'email' => 'required|email|max:255',
                 'email' => 'unique:users,email',
+                'role' => 'required',
                 'password' => 'required|min:6|max:50',
                 'confirm_password' => 'required',
                 'password' => 'required_with:confirm_password|same:confirm_password',
@@ -92,7 +95,7 @@ class UsersController extends Controller
                 'profile_image' => $fileName
             ]);          
 
-            $record=$this->model::query()->create($request->except('_token','rates','profile_image_file','confirm_password'));
+            $record=$this->model::query()->create($request->except('_token','rates','role','profile_image_file','confirm_password'));
             /*$rates_data=[];
             if (count($request->rates)>0) {
                 DeliveryPointRate::where('delivery_point_id',$record->id)->delete();
@@ -105,6 +108,7 @@ class UsersController extends Controller
                 }
             }*/
             $request->file('profile_image_file')->storeAs('users/' . $record->id . '/', $fileName);
+            $record->assignRole($request->role);
 
             $request->session()->flash('success', 'Created successfully!');
             return response([
@@ -133,7 +137,10 @@ class UsersController extends Controller
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
         $data['record']=$this->model::find($id);
-        //$data['rates']=Rate::orderby('display_order')->get();;
+        $data['roles']=Role::orderby('name')->get();
+        $roleName=ModelHasRole::join('roles','model_has_roles.role_id','=','roles.id')->select('roles.name as role_name')->where('model_has_roles.model_id','=',$id)->orderby('roles.name')->first();
+        $data['role_name'] = $roleName->role_name;
+
         return view($this->directory."edit",$data);
 
 
@@ -148,7 +155,12 @@ class UsersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //dd($request->all());           
+        $request->validate([
+                'first_name' => 'required|max:255',
+                'last_name' => 'required|max:255',
+                'email' => 'required|email|max:255',
+                'role' => 'required',
+            ]);           
         
         $record = $this->model::query()->findOrFail($id);
         /*$rates_data=[];
@@ -171,11 +183,17 @@ class UsersController extends Controller
                     'password' => 'required_with:confirm_password|same:confirm_password',
                 ]);
                 $request->merge(['password' => bcrypt($request->password)]);
-                $record->update($request->except('_token', '_method','rates','profile_image_file','confirm_password'));
+                $record->update($request->except('_token', '_method','rates','role','profile_image_file','confirm_password'));
                 
             }else{
-                $record->update($request->except('_token', '_method','rates','profile_image_file','password','confirm_password'));
+                $record->update($request->except('_token', '_method','rates','role','profile_image_file','password','confirm_password'));
             }
+            if($request->role)
+            {
+              ModelHasRole::where('model_id','=',$id)->delete();
+              $record->assignRole($request->role);
+            }
+
             $request->session()->flash('success', 'Updated successfully!');
             return response([
                 "redirect_url" => url('users')
