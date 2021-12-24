@@ -3,50 +3,39 @@
 //uploading files
 
 use App\Models\Attachment;
+use SebastianBergmann\Environment\Console;
 
-function uploadFile($request,$title, $file_original_name, $comment, $mime_type, $attachmentable_id, $attachmentable_type, $root)
+function uploadFile($request)
 {
-
-    if (Session::has("file.$file_original_name")) {
-        //$request->merge(['file_name' => Session::get('file.petition_document_file')]);
-        moveFile($root . '/' . Session::get("file.$file_original_name"), $root . '/' . $attachmentable_id . '/' . Session::get("file.$file_original_name"));
+    if ($request->file_name) {
+        if (Storage::exists($request->root_folder . '/' . $request->file_name)) {
+            Storage::move($request->root_folder . '/' . $request->file_name, $request->root_folder . '/' . $request->attachmentable_id . '/' . $request->file_name);
+        }
+        //moveFile($request->root_folder . '/' . $request->file_name, $request->root_folder . '/' . $request->attachmentable_id . '/' . $request->file_name);
     }
-     
-    Attachment::updateOrCreate(['id' => $request->id],[//attachment id
-        'title' => $title,
-        'file_name' => Session::get("file.$file_original_name"),
-        'comment' => $comment,
-        'mime_type' => $mime_type,
-        'attachmentable_id' => $attachmentable_id,
-        'attachmentable_type' => $attachmentable_type,
+    $attachment = Attachment::updateOrCreate(['id' => $request->attachment_id], [ //attachment id
+        'title' => $request->title,
+        'file_name' => $request->file_name,
+        'comment' => $request->comment,
+        'mime_type' => $request->mime_type,
+        'attachmentable_id' => $request->attachmentable_id,
+        'attachmentable_type' => $request->attachmentable_type,
     ]);
+     
+    return response("Success", 200);
     //$request->file($file_original_name)->storeAs($root .'/' . $attachmentable_id . '/', $fileName);
 
 }
 
-function storeFile($orignalFile, $id, $folder)
+function upload($request)
 {
     try {
-        $fileName = md5(microtime()) . '.' . $orignalFile->getClientOriginalExtension();
-        $orignalFile->storeAs($folder . '/' . $id . '/', $fileName);
-        return $fileName;
-    } catch (\Throwable $th) {
-        return null;
-    }
-}
-function moveFile($from_directory, $to_directory)
-{
-    if (Storage::exists($from_directory)) {
-        Storage::move($from_directory, $to_directory);
-    }
-}
-
-function upload($request,$root_directory,$file_input_id,$id)
-{
-    try {
-        if ($request->hasFile($file_input_id)) {
-            $fileNameToStore = storeFile($request->file($file_input_id), $id, $root_directory);
-            Session::put("file.$file_input_id", $fileNameToStore);
+        if ($request->hasFile($request->file_input_id)) {
+            $orignalFile = $request->file($request->file_input_id);
+            $fileName = md5(microtime()) . '.' . $orignalFile->getClientOriginalExtension();
+            $orignalFile->storeAs($request->root_directory . '/' . $request->id . '/', $fileName);
+             
+            return $fileName;
         }
     } catch (\Exception $e) {
         return response()->json('error', $e->getCode());

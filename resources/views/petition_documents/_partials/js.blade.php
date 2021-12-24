@@ -4,7 +4,7 @@
     var id = $("#petition_id").val();
      
     $(document).ready(function() {
-
+        $('.btn').attr('disabled', true);
         $(document).on('change', '#is_free', function(event) {
             if ($(this).is(':checked')) {
                 $('#rates').hide();
@@ -57,11 +57,21 @@
 
         FilePond.setOptions({
             server: {
-                url: "{{url('upload_petition_documents')}}",
+                url: "{{url('petition/upload_documents')}}",
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token()}}',
-                }
-            }
+                },
+                
+                process: {
+                    onload:function(response){
+                        document.getElementById("file_name").value = response;
+                        $('.btn').attr('disabled', false);
+                        console.log("response",response)
+
+                    },
+                },
+                 
+            }                 
         });
         //uploading files End
 

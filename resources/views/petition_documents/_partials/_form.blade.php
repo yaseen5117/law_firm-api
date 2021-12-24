@@ -21,9 +21,11 @@
                 </div>
             
              
-                <div class="form-group">
+                <div class="form-group file">
                     <label for="file_name">Document <span style="color: red">*</span></label>
                     <input type="file" value="{{ isset($record) ? $record->petition_document_file : old('petition_document_file') }}" class=" " name="petition_document_file" id="petition_document_file">
+                    <input type="hidden" name="file_name" id="file_name" value="">
+
                 </div>
              
                 <div class="form-group">
