@@ -1,7 +1,28 @@
 <script type="text/javascript">
 	$(document).ready(function() {
-		
-		 $('#search_form').on('submit', function (e) {
+
+	    $('.toggle-class').change(function() {
+	        
+	        var status = $(this).prop('checked') == true ? 1 : 0; 
+	        var user_id = $(this).data('id'); 
+            var data = 'status='+ status +'&user_id='+user_id;
+
+		    $.ajax({
+                        url : "{{url('change_status')}}",
+                        type: "GET",
+                        data: data,                     
+                        contentType: false,
+                        processData: false
+                    })
+                    .done(function(data) {            
+                              
+                        
+
+                    });
+
+		       });
+    
+		$('#search_form').on('submit', function (e) {
 		       
 		       var name = $("#name").val();
 		       var email = $("#email").val();

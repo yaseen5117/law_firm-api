@@ -4,6 +4,8 @@
 
 use App\Models\Attachment;
 use SebastianBergmann\Environment\Console;
+use App\Models\Role;
+use App\Models\ModelHasRole;
 
 function uploadFile($request)
 {
@@ -40,4 +42,18 @@ function upload($request)
     } catch (\Exception $e) {
         return response()->json('error', $e->getCode());
     }
+}
+
+function getRole($id)
+{
+    $roleName=ModelHasRole::join('roles','model_has_roles.role_id','=','roles.id')->select('roles.name as role_name')->where('model_has_roles.model_id','=',$id)->orderby('roles.name')->first();
+    
+    $role = "";   
+    
+    if(isset($roleName->role_name))
+    {
+        $role = $roleName->role_name;
+    }
+
+    return $role;
 }

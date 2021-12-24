@@ -53,7 +53,9 @@
                         <select class="form-control-for-auth form-control-user @error('role') is-invalid @enderror"  id="role" name="role" value="{{ old('role') }}">
                                 <option value="">Select Role</option>
                             @foreach($roles as $role)
+                              @if($role->id != 1)
                                 <option value="{{$role->name}}">{{$role->name}}</option>
+                              @endif
                             @endforeach
                         </select>
 
@@ -81,16 +83,16 @@
                         </div>
                     </div>
                     <div class="form-group">
-
+                      
                         <label for="password">Profile Picture</label>                 
-                        <input type="file" class=" @error('profile_image_file') is-invalid @enderror" accept="image/x-png,image/gif,image/jpeg" id="profile_image_file" name="profile_image_file" value="{{ old('profile_image_file') }}" autocomplete="profile_image_file">
+                        <input type="file" class="form-control border-0 @error('profile_image_file') is-invalid @enderror" accept="image/x-png,image/gif,image/jpeg" id="profile_image_file" name="profile_image_file" value="{{ old('profile_image_file') }}" autocomplete="profile_image_file">
 
                         @error('profile_image_file')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
                         @enderror 
-
+                      
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-user btn-block">

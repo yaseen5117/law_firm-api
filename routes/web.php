@@ -22,6 +22,7 @@ Auth::routes();
 Route::get('dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::resource('petitions', 'App\Http\Controllers\PetitionsController');
 Route::resource('users', 'App\Http\Controllers\UsersController');
+Route::get('change_status', 'App\Http\Controllers\UsersController@chagneUserStatus');
 Route::resource('petition_documents', 'App\Http\Controllers\AttachmentController');
 Route::post('petition/upload_documents', 'App\Http\Controllers\AttachmentController@uploadDocuments');
 Route::get('petition/get_documents', [App\Http\Controllers\AttachmentController::class, 'getDocuments']);

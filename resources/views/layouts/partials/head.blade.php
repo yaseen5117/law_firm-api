@@ -23,8 +23,7 @@
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/sb-admin-my.css') }}" rel="stylesheet" />
 
-
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> -->
+     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> -->
     
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
     <!-- <link id="bs-css" href="https://netdna.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet"> -->
