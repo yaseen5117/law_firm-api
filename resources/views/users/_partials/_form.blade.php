@@ -38,9 +38,7 @@
                     <select class="form-control"  id="role" name="role">
                             <option value="">---Select---</option>
                         @foreach($roles as $role)
-                          @if($role->id != 1)
-                            <option value="{{$role->name}}" @if(@$role_name == $role->name) selected @endif>{{$role->name}}</option>
-                          @endif
+                            <option value="{{$role->name}}" @if(@$role_name == $role->name) selected @endif>{{$role->name}}</option> 
                         @endforeach
                     </select>    
             </div>
