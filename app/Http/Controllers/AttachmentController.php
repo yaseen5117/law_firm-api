@@ -212,16 +212,15 @@ class AttachmentController extends Controller
                 'root_directory' => 'petitions',
                 'id' => $request->petition_id,
             ]);
-            $file_name = upload($request);
-            $path = public_path('storage/thumb'.$file_name);
-            $img = Image::make($request->petition_document_file);
-
-            $img->resize(700, null, function ($constraint) {
+            $file_name = upload($request);           
+            $path = public_path('storage/'.$file_name);
+            $img = Image::make('storage/petitions/'.$file_name);
+           
+            $img->resize(300, null, function ($constraint) {
                 $constraint->aspectRatio();
-            });
-            $img->save($path,90);
-             
-             
+            });                  
+            $img->save($path,60);
+
             return response($file_name);
         } catch (\Exception $e) {
             return response()->json('error', $e->getCode());
