@@ -4,7 +4,7 @@
     @parent
 @stop
 @section('content')
-
+@include('users._partials.css')
             <h1 class="h3 mb-4 text-gray-800">{{$title_prural}}</h1>
             <p class="m-t-10">
                 <a href="{{ route($route_name.'.create') }}" class="btn btn-success">Add {{$title_singular}}</a>
@@ -25,25 +25,31 @@
                                         <div class=" col-lg-4">
                                             <div class="form-group">
                                                  
-                                                <label class="font-weight-bold"> Name:</label>
-                                                <input type='text' class="form-control" autocomplete="off" id="name" name="name" @if(isset(request()->name)) value="{{ request()->name }}" @endif  />  
+                                                <label class="font-weight-bold"> Name</label>
+                                                <input type='text' class="form-control" autocomplete="off" id="name" name="name" value="{{ request()->name }}"/>  
 
                                             </div> 
                                         </div>
                                         
                                         <div class=" col-lg-4">
                                             <div class="form-group">
-                                                <label class="font-weight-bold">Email:</label>
-                                                <input type='text' class="form-control" autocomplete="off" id="email" name="email" @if(isset(request()->email)) value="{{ request()->email }}" @endif  />
+                                                <label class="font-weight-bold">Email</label>
+                                                <input type='text' class="form-control" autocomplete="off" id="email" name="email" value="{{ request()->email }}"/>
                                                     
                                             </div>
                                         </div>
                                         
                                         <div class=" col-lg-4">
                                             <div class="form-group">
-                                                <label class="font-weight-bold">Phone No:</label>
-                                                <input type='text' class="form-control" autocomplete="off" id="phone" name="phone" @if(isset(request()->phone)) value="{{ request()->phone }}" @endif  />
-                                                    
+                                                <label class="font-weight-bold">Role</label>
+                                                <select id="role" name="role" class="form-control">
+                                                    <option value="" selected>--All--</option>
+                                                    @foreach ($roles as $role)
+                                                    <option value="{{$role->id}}" style="padding: 200px 0px 20px 0px;" @if($role->id == @request()->role) selected="" @endif>
+                                                        {{$role->name}}
+                                                    </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                         </div>
                                         

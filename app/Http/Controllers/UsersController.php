@@ -36,17 +36,29 @@ class UsersController extends Controller
         $data['title_singular']=$this->title_singular;
         $data['title_prural']=$this->title_prural;
         $data['route_name']=$this->route_name;
-        
-        $query = $this->model::where('first_name','Like', '%'.$request->name.'%')->orWhere('last_name','Like', '%'.$request->name.'%');
-
+        $query = $this->model::query();
+        $data['roles'] = Role::orderby('name')->get();        
+        if($request->name){
+            //$query->where('first_name','Like', '%'.$request->name.'%')->orWhere('last_name','Like', '%'.$request->name.'%');
+            $name = $request->name;
+            $query->where(function ($q) use ($name) {
+                $q->where('first_name', 'like', "%$name%")                
+                ->orWhereRaw("concat(first_name, ' ', last_name) like '%$name%' ")
+               ->orWhere('last_name', 'like', "$name");
+               
+               
+                // $q->where(DB::raw("CONCAT(TRIM(`first_name`),' ',TRIM(`middle_name`),' ',TRIM(`last_name`))"), 'LIKE', "%" . trim($name) . "%")->orWhere(DB::raw("TRIM(`poc_name`)"), 'LIKE', "%" . trim($name) . "%");
+            });
+        }
+       
         if(isset($request->email))
         {
-            $query = $query->where('email','Like', '%'.$request->email.'%');
+            $query->where('email','Like', '%'.$request->email.'%');
         }
 
         if(isset($request->phone))
         {
-             $query = $query->where('phone','Like', '%'.$request->phone.'%');           
+            $query->where('phone','Like', '%'.$request->phone.'%');           
         }
             
         $data['records']=$query->orderby('first_name')->paginate(10);

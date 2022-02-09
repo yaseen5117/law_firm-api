@@ -67,7 +67,7 @@
 
         <div class="col-md-5">
             <div class="form-group"><label for="title">Phone<span style="color: red">*</span></label>
-                <input type="text" value="" class="form-control" name="phone"  placeholder="" data-inputmask="'mask': '9999-9999999'" maxlength = "12" >
+                <input type="text" value="" class="form-control" name="phone" id="phone" placeholder="" maxlength = "12" >
             </div>
         </div>
 

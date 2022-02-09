@@ -31,7 +31,7 @@ class PetitionsController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth');
+        //$this->middleware('auth');
         $this->model = new Petition;
     }
 
@@ -46,22 +46,32 @@ class PetitionsController extends Controller
         $data['route_name']=$this->route_name;
         $data['courts']=Court::orderby('display_order')->get();
         $data['clients']=User::role('client')->orderby('first_name')->get(); 
-         
-        $query = $this->model::where('name','Like', '%'.$request->title.'%');
+        $query = $this->model::query();
+        if($request->title){             
+            $query->where('name','Like', '%'.$request->title.'%');
+        }    
 
-        if(isset($request->client_id))
+        if($request->client_id)
         {
-            $query  = $query->where('client_id','=',$request->client_id);
+            $query->where('client_id','=',$request->client_id);
         }
 
-        if(isset($request->court_id))
+        if($request->court_id)
         {
             $query->where('court_id','=',$request->court_id);           
         }
             
-        $data['records']=$query->orderby('display_order')->paginate(10);
+        $data['records'] = $query->paginate(10);
         
-        return view($this->directory."index",$data);
+        return response()->json(
+            [
+                'case_files' => $data,
+                'message' => 'CaseFiles',
+                'code' => 200
+            ]
+        );
+
+        //return view($this->directory."index",$data);
     }
 
     /**
