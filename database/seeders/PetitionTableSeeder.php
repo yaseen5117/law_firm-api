@@ -17,11 +17,12 @@ class PetitionTableSeeder extends Seeder
         DB::table('petitions')->truncate();
         DB::table('petitions')->insert([
 
-            'client_id' => 5,  
+            'client_id' => 5,   //petitoonter
+            'opponent_id' => 6,  
             'court_id' => 1,       
             'petition_type_id' => 1,    
             'case_no' => 'AS53434',
-            'name' => 'Title of the Case',   
+            'title' => 'WRIT PETITION UNDER ARTICLE 199 OF THE CONSTITUTION OF THE ISLAMIC REPUBLIC OF PAKISTAN, 1973',   
             'writ_number' => '1812 /2021',
             'judgement' => '',
             'order_sheet' => '',
@@ -29,7 +30,7 @@ class PetitionTableSeeder extends Seeder
             'display_order' => '1',           
              
         ]); 
-        DB::table('petitions')->insert([
+        /*DB::table('petitions')->insert([
             
             'client_id' => 2,  
             'court_id' => 2,       
@@ -70,6 +71,6 @@ class PetitionTableSeeder extends Seeder
             'status' => '',
             'display_order' => '4',           
              
-        ]);
+        ]);*/
     }
 }

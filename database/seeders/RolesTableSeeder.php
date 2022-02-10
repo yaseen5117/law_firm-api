@@ -81,9 +81,23 @@ class RolesTableSeeder extends Seeder
         $StaffUser->assignRole($staff);
 
         $ClientUser = User::create([
+            'id' => 5,
             'first_name' => 'Kamran',
             'last_name' => 'Khan',
+            'company_name' => 'KAMRAN KHAN AND OTHERS',
             'email' => 'kamran@qc.com',
+            'password' => bcrypt('test1234'),           
+        ]);
+
+        $ClientUser->assignRole($client);
+
+
+        $ClientUser = User::create([
+            'id' => 6,
+            'first_name' => 'CDA',
+            'last_name' => 'Others',
+            'company_name' => 'CDA AND OTHERS',
+            'email' => 'cda@qc.com',
             'password' => bcrypt('test1234'),           
         ]);
 

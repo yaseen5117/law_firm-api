@@ -15,11 +15,13 @@ class CreatePetitionsTable extends Migration
     {
         Schema::create('petitions', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('petitioner_id');
+            $table->unsignedBigInteger('opponent_id');
             $table->unsignedBigInteger('client_id');
             $table->unsignedBigInteger('court_id');
             $table->unsignedBigInteger('petition_type_id');
             $table->string('case_no')->nullable();;
-            $table->string('name')->nullable();;
+            $table->string('title')->nullable();;
             $table->string('writ_number')->nullable();
             $table->text('judgement')->nullable();
             $table->longText('order_sheet')->nullable(); 

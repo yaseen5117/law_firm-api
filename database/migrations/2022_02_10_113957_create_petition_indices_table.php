@@ -18,7 +18,8 @@ class CreatePetitionIndicesTable extends Migration
             $table->unsignedInteger('petition_id');
             $table->string('document_description',500);
             $table->date('date')->nullable();
-            $table->date('page_info')->nullable();
+            $table->string('page_info')->nullable();
+            $table->string('annexure')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
