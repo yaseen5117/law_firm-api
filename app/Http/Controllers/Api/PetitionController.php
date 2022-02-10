@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Company;
+use App\Models\Petition;
+
 use Illuminate\Http\Request;
 
-class CompanyController extends Controller
+class PetitionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,11 +16,20 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $companies = Company::all();
-        $response = [
-            'companies' => $companies,
-        ];
-        return response($response, 201);
+        try {
+            $petitions = Petition::all();
+            return response()->json(
+                [
+                    'petitions' => $petitions,
+                    'message' => 'Petitions',
+                    'code' => 200
+                ]
+            );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -40,38 +50,27 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
-        $fields = $request->validate([
-            'name' => 'required|string',
-        ]);
-        $company =  Company::create($request->all());
-        $response = [
-            'company' => $company,
-        ];
-        return response($response, 201);
+        //
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Company  $company
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $company = Company::find($id);
-        $response = [
-            'company' => $company,
-        ];
-        return response($response, 201);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Company  $company
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Company $company)
+    public function edit($id)
     {
         //
     }
@@ -80,26 +79,21 @@ class CompanyController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Company  $company
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
-        $company = Company::find($id);
-        $company->update($request->all());
-        $response = [
-            'company' => $company,
-        ];
-        return response($response, 201);
+        //
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Company  $company
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Company $company)
+    public function destroy($id)
     {
         //
     }

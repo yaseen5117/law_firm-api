@@ -15,6 +15,7 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         DB::table('users')->truncate();
+        DB::table('password_resets')->truncate();
         DB::table('users')->insert([
 
             'first_name' => 'QC',
@@ -22,7 +23,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'admin@qc.com',     
             'profile_image' => '',              
             'password' => bcrypt('test1234'),
-            'approval_status' => 1,
-        ]);        
+             
+        ]);               
     }
 }

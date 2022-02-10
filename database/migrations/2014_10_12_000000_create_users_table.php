@@ -26,11 +26,8 @@ class CreateUsersTable extends Migration
             $table->string('state')->nullable();
             $table->string('zip')->nullable();
             $table->string('phone')->nullable();
-            $table->unsignedInteger('display_order')->nullable();
-            $table->unsignedInteger('company_id')->nullable();
-            $table->boolean('is_demo')->default(0);
-            $table->boolean('active')->default(1);
-            $table->boolean('is_archived')->default(0);
+            $table->string('profile_image')->nullable();
+            $table->unsignedInteger('display_order')->nullable();             
             $table->rememberToken();
             $table->timestamps();
         });

@@ -17,9 +17,10 @@ class PetitionTableSeeder extends Seeder
         DB::table('petitions')->truncate();
         DB::table('petitions')->insert([
 
-            'client_id' => 1,  
+            'client_id' => 5,  
             'court_id' => 1,       
             'petition_type_id' => 1,    
+            'case_no' => 'AS53434',
             'name' => 'Title of the Case',   
             'writ_number' => '1812 /2021',
             'judgement' => '',
@@ -30,9 +31,10 @@ class PetitionTableSeeder extends Seeder
         ]); 
         DB::table('petitions')->insert([
             
-            'client_id' => 1,  
-            'court_id' => 1,       
-            'petition_type_id' => 1,    
+            'client_id' => 2,  
+            'court_id' => 2,       
+            'petition_type_id' => 2,    
+            'case_no' => 'AS53434',
             'name' => 'Title of the Case',   
             'writ_number' => '1812 /2021',
             'judgement' => '',
@@ -43,9 +45,10 @@ class PetitionTableSeeder extends Seeder
         ]); 
         DB::table('petitions')->insert([
             
-            'client_id' => 1,  
+            'client_id' => 3,  
             'court_id' => 1,       
             'petition_type_id' => 1,    
+            'case_no' => 'AS53434',
             'name' => 'Title of the Case',   
             'writ_number' => '1812 /2021',
             'judgement' => '',
@@ -59,6 +62,7 @@ class PetitionTableSeeder extends Seeder
             'client_id' => 1,  
             'court_id' => 1,       
             'petition_type_id' => 1,    
+            'case_no' => 'AS53434',
             'name' => 'Title of the Case',   
             'writ_number' => '1812 /2021',
             'judgement' => '',

@@ -48,8 +48,7 @@ class RolesTableSeeder extends Seeder
 
         $client = Role::create(['name' => 'client']);
         $client->givePermissionTo(Permission::all());
-    
-        
+       
         $user = User::find(1);
         $user->assignRole($roleAdmin);
 
@@ -82,9 +81,9 @@ class RolesTableSeeder extends Seeder
         $StaffUser->assignRole($staff);
 
         $ClientUser = User::create([
-            'first_name' => 'Client',
-            'last_name' => '1',
-            'email' => 'client@qc.com',
+            'first_name' => 'Kamran',
+            'last_name' => 'Khan',
+            'email' => 'kamran@qc.com',
             'password' => bcrypt('test1234'),           
         ]);
 
