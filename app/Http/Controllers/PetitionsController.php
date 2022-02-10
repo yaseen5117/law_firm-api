@@ -50,7 +50,6 @@ class PetitionsController extends Controller
         if($request->title){             
             $query->where('name','Like', '%'.$request->title.'%');
         }    
-
         if($request->client_id)
         {
             $query->where('client_id','=',$request->client_id);
@@ -70,6 +69,9 @@ class PetitionsController extends Controller
                 'code' => 200
             ]
         );
+
+
+        
 
         //return view($this->directory."index",$data);
     }
