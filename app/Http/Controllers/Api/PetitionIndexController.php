@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\PetitionIndex;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class PetitionIndexController extends Controller
 {
@@ -14,7 +15,14 @@ class PetitionIndexController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            return $petition_index= PetitionIndex::orderby('created_at','desc')->get();
+            return response($petition_index,200);
+        } catch (\Exception $e) {
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
+        }
     }
 
     /**

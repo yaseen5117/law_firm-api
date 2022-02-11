@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
     Route::post('register', 'AuthController@register');
     Route::post('login', 'AuthController@login');
     Route::resource('petitions', 'Api\PetitionController');
+    Route::resource('petitions_index', 'Api\PetitionIndexController');
     
     Route::middleware('auth:api')->get('/user', function (Request $request) {
         return $request->user();

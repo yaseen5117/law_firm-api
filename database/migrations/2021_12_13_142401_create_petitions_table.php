@@ -27,6 +27,7 @@ class CreatePetitionsTable extends Migration
             $table->longText('order_sheet')->nullable(); 
             $table->string('status')->nullable();   
             $table->integer("display_order")->nullable();                    
+            $table->date("institution_date")->nullable();                    
             $table->timestamps();
             $table->softDeletes();
         });
