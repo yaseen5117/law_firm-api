@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Petition;
-
+use App\Models\PetitionIndex;
 use Illuminate\Http\Request;
 
 class PetitionController extends Controller
@@ -60,8 +60,21 @@ class PetitionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {
-        //
+    {        
+        try {
+            $petition_details = PetitionIndex::where('petition_id',$id)->get();
+            return response()->json(
+                [
+                    'petition_details' => $petition_details,
+                    'message' => 'petition_details',
+                    'code' => 200
+                ]
+            );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

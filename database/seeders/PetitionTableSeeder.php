@@ -17,7 +17,7 @@ class PetitionTableSeeder extends Seeder
         DB::table('petitions')->truncate();
         DB::table('petitions')->insert([
 
-            'client_id' => 5,   //petitoonter
+            'client_id' => 5,   //petitioner
             'opponent_id' => 6,  
             'court_id' => 1,       
             'petition_type_id' => 1,    
