@@ -26,6 +26,7 @@ class PetitionTableSeeder extends Seeder
             'writ_number' => '1812 /2021',
             'judgement' => '',
             'order_sheet' => '',
+            'institution_date' => now(),
             'status' => '',
             'display_order' => '1',           
              

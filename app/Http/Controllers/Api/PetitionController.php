@@ -17,7 +17,7 @@ class PetitionController extends Controller
     public function index()
     {
         try {
-            $petitions = Petition::all();
+            $petitions = Petition::with('client','court')->get();
             return response()->json(
                 [
                     'petitions' => $petitions,
@@ -62,9 +62,12 @@ class PetitionController extends Controller
     public function show($id)
     {        
         try {
+
+            $petition = Petition::with('client','court')->where('id',$id)->first();
             $petition_details = PetitionIndex::where('petition_id',$id)->get();
             return response()->json(
                 [
+                    'petition' => $petition,
                     'petition_details' => $petition_details,
                     'message' => 'petition_details',
                     'code' => 200
