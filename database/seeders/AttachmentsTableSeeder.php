@@ -67,20 +67,7 @@ class AttachmentsTableSeeder extends Seeder
             'display_order' => '4',     
             'created_at' => now(), 
              
-        ]); 
-        DB::table('attachments')->insert([
-
-            'id' => 5,
-            'title' => 'Annexure',    
-            'file_name' => null,  
-            'comment' => null,  
-            'mime_type' => null,     
-            'attachmentable_id' => '1',    
-            'attachmentable_type' => 'App\Models\PetitionIndex',  
-            'display_order' => '5',     
-            'created_at' => now(), 
-             
-        ]);          
+        ]);              
         DB::table('attachments')->insert([
 
             'id' => 6,
@@ -730,34 +717,7 @@ class AttachmentsTableSeeder extends Seeder
             'display_order' => '55',     
             'created_at' => now(), 
              
-        ]); 
-        DB::table('attachments')->insert([
-
-            'id' => 56,
-            'title' => 'Annexure',    
-            'file_name' => '',  
-            'comment' => null,  
-            'mime_type' => null,     
-            'attachmentable_id' => '11',    
-            'attachmentable_type' => 'App\Models\PetitionIndex',  
-            'display_order' => '56',     
-            'created_at' => now(), 
-             
-        ]); 
-        DB::table('attachments')->insert([
-
-            'id' => 57,
-            'title' => 'Annexure',    
-            'file_name' => '',  
-            'comment' => null,  
-            'mime_type' => null,     
-            'attachmentable_id' => '11',    
-            'attachmentable_type' => 'App\Models\PetitionIndex',  
-            'display_order' => '57',     
-            'created_at' => now(), 
-             
-        ]); 
-        
+        ]);     
         
 
     }
