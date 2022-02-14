@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\PetitionIndex;
+use App\Models\Petition;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -16,7 +17,7 @@ class PetitionIndexController extends Controller
     public function index()
     {
         try {
-            return $petition_index= PetitionIndex::orderby('created_at','desc')->get();
+            $petition_index= PetitionIndex::orderby('created_at','desc')->get();
             return response($petition_index,200);
         } catch (\Exception $e) {
             return response([
@@ -52,9 +53,26 @@ class PetitionIndexController extends Controller
      * @param  \App\Models\PetitionIndex  $petitionIndex
      * @return \Illuminate\Http\Response
      */
-    public function show(PetitionIndex $petitionIndex)
+    public function show($petitionIndex)
     {
-        //
+        try {
+            $petitionIndex = PetitionIndex::with('petition')->whereId($petitionIndex)->first();
+            $petition = Petition::withRelations()->whereId($petitionIndex->petition_id)->first();
+
+            return response()->json(
+                [
+                    'petition' => $petition,
+                    'petition_index' => $petitionIndex,
+                    'message' => 'Success',
+                    'code' => 200
+                ]
+            );
+            return response($petitionIndex,200);
+        } catch (\Exception $e) {
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
+        }
     }
 
     /**
