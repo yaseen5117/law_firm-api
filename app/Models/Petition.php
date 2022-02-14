@@ -47,4 +47,9 @@ class Petition extends Model
     {
         return $this->morphMany(Attachment::class, 'attachmentable');
     }
+
+    public function scopeWithRelations($query)
+    {
+        return $query->with('client','court');
+    }
 }

@@ -8,10 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class PetitionIndex extends Model
 {
     use HasFactory;
-    protected $guarded=[];   
+
+    protected $guarded=[];     
+
+    public function petition()
+    {
+        return $this->belongsTo('App\Models\Petition');
+
+    }
     
     public function attachments()
     {
         return $this->morphMany(Attachment::class, 'attachmentable');
+
     }
 }

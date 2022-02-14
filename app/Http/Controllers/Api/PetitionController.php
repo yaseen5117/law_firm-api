@@ -17,7 +17,7 @@ class PetitionController extends Controller
     public function index()
     {
         try {
-            $petitions = Petition::with('client','court')->get();
+            $petitions = Petition::withRelations()->get();
             return response()->json(
                 [
                     'petitions' => $petitions,
