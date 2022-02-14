@@ -15,7 +15,7 @@ class PetitionIndex extends Model
     {
         return $this->belongsTo('App\Models\Petition');
 
-    protected $guarded=[];   
+    }
     
     public function attachments()
     {
