@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             $this->call([RolesTableSeeder::class]);            
             $this->call([StatusesTableSeeder::class]);
             $this->call([PetitionIndexTableSeeder::class]);
+            $this->call([AttachmentsTableSeeder::class]);
 
 
 
