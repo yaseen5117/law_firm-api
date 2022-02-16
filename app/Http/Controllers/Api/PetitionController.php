@@ -50,7 +50,19 @@ class PetitionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            Petition::create($request->all());
+            return response()->json(
+                [
+                    'message' => 'Petitions',
+                    'code' => 200
+                ]
+            );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

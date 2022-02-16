@@ -44,7 +44,19 @@ class PetitionIndexController extends Controller
      */
     public function store(Request $request)
     {
-        //
+         try {
+            PetitionIndex::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+            return response()->json(
+                [
+                    'message' => 'Petitions',
+                    'code' => 200
+                ]
+            );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
