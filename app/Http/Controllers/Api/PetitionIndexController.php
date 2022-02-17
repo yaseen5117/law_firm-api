@@ -121,12 +121,13 @@ class PetitionIndexController extends Controller
      * @param  \App\Models\PetitionIndex  $petitionIndex
      * @return \Illuminate\Http\Response
      */
-    public function destroy(PetitionIndex $petitionIndexId)
+    public function destroy($petitionIndexId)
     {
-        try {
-            $petition_index= PetitionIndex::find($petitionIndexId);             
+        try {             
+            $petition_index = PetitionIndex::find($petitionIndexId); 
+                    
             if($petition_index){
-                $petitionIndexId->delete();
+                $petition_index->delete();
                 return response($petition_index,200);
             }else{
                 return response('Data Not Found',404);

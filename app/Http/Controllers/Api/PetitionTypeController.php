@@ -16,7 +16,7 @@ class PetitionTypeController extends Controller
     public function index()
     {
         try{
-            $petition_types = PetitionType::all();
+            $petition_types = PetitionType::orderBy("title")->get();
             return response()->json(
                 [
                     'petition_types' => $petition_types,
