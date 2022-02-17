@@ -116,8 +116,21 @@ class PetitionIndexController extends Controller
      * @param  \App\Models\PetitionIndex  $petitionIndex
      * @return \Illuminate\Http\Response
      */
-    public function destroy(PetitionIndex $petitionIndex)
+    public function destroy(PetitionIndex $petitionIndexId)
     {
-        //
+        try {
+            $petition_index= PetitionIndex::find($petitionIndexId);             
+            if($petition_index){
+                $petitionIndexId->delete();
+                return response($petition_index,200);
+            }else{
+                return response('Data Not Found',404);
+            }
+            
+        } catch (\Exception $e) {
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
+        }
     }
 }

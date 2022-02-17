@@ -18,6 +18,11 @@ use Illuminate\Support\Facades\Route;
     Route::post('register', 'AuthController@register');
     Route::post('login', 'AuthController@login');
     Route::resource('petitions', 'Api\PetitionController');
+    Route::resource('users', 'Api\UserController');
+    Route::get('clients', 'Api\UserController@getClient');
+    
+    Route::resource('petition_types', 'Api\PetitionTypeController');
+    Route::resource('courts', 'Api\CourtController');
     
     //Route::resource('petition_indexes', 'Api\PetitionIndexController');
     //Route::resource('petitions', 'Api\PetitionController');

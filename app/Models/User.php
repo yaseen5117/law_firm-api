@@ -60,10 +60,10 @@ class User extends Authenticatable
         return $this->morphMany(Serverable::class,'serverable');
         //return $this->hasMany(Serverable::class,"user_id");
     }
-    public function role()
-    {
-        return $this->belongsTo(Role::class);
-    }
+    // public function role()
+    // {
+    //     return $this->belongsTo(Role::class);
+    // }
     public function contacts()
     {
         return $this->hasMany(Contact::class,"user_id");
