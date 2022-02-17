@@ -16,7 +16,7 @@ class CourtController extends Controller
     public function index()
     {
         try {
-            $courts = Court::all();
+            $courts = Court::orderBy("title")->get();
             return response()->json(
                 [
                     'courts' => $courts,
