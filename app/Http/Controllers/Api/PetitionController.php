@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Petition;
+use App\Models\User;
 use App\Models\PetitionIndex;
 use Illuminate\Http\Request;
 
@@ -51,7 +52,18 @@ class PetitionController extends Controller
     public function store(Request $request)
     {
         try {
-            Petition::create($request->all());
+
+            if ($request->new_petitioner) {
+                $userData = $request->petitioner; 
+                $userData['password'] = bcrypt('test1234');
+                $user = User::create($userData);
+                $user->assignRole('client');
+                $request->merge([
+                    'petitioner_id'=>$user->id
+                ]);
+            }
+            
+            Petition::create($request->except('new_petitioner','petitioner'));
             return response()->json(
                 [
                     'message' => 'Petitions',
