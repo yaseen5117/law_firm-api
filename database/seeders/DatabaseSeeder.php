@@ -32,6 +32,8 @@ class DatabaseSeeder extends Seeder
             $this->call([PetitionIndexTableSeeder::class]);
             $this->call([AttachmentsTableSeeder::class]);
 
+            $this->call([PetitionPetitionersTableSeeder::class]);
+            $this->call([PetitionOpponentsTableSeeder::class]);
 
 
                  
