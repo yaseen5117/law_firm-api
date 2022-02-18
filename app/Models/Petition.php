@@ -12,6 +12,7 @@ class Petition extends Model
 	use SoftDeletes;
 
     protected $guarded=[];
+    protected $appends=['petitioner_names'];
     protected $dates = ['deleted_at'];
 
     public function court()
@@ -24,9 +25,10 @@ class Petition extends Model
         return $this->belongsTo('App\Models\PetitionStatus','status','id');
     }
 
-    public function client()
+    public function petitioners()
     {
-        return $this->belongsTo('App\Models\User','petitioner_id','id');
+        //return $this->belongsTo('App\Models\User','petitioner_id','id');
+        return $this->hasMany('App\Models\PetitionPetitioner');
     }
 
     public function petition_type()
@@ -50,6 +52,18 @@ class Petition extends Model
 
     public function scopeWithRelations($query)
     {
-        return $query->with('client','court');
+        return $query->with('petitioners.user','court');
+    }
+
+    public function getPetitionerNamesAttribute()
+    {
+        $str="";
+        foreach ($this->petitioners as $petitioner) {
+            $str .= @$petitioner->user->name.", ";
+        }
+
+        return rtrim($str,", ");
+
+
     }
 }

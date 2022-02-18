@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Petition;
 use App\Models\User;
+use App\Models\PetitionPetitioner;
 use App\Models\PetitionIndex;
 use Illuminate\Http\Request;
 
@@ -53,17 +54,24 @@ class PetitionController extends Controller
     {
         try {
 
-            if ($request->new_petitioner) {
-                $userData = $request->petitioner; 
-                $userData['password'] = bcrypt('test1234');
-                $user = User::create($userData);
-                $user->assignRole('client');
-                $request->merge([
-                    'petitioner_id'=>$user->id
-                ]);
-            }
             
-            Petition::create($request->except('new_petitioner','petitioner'));
+            
+            $petition = Petition::create($request->except('new_petitioner','petitioner','opponent'));
+            if (is_array($request->petitioner) && count($request->petitioner)>0) {
+                foreach ($request->petitioner as $petitioner) {
+                    $userData = $petitioner; 
+                    $userData['password'] = bcrypt('test1234');
+                    $userData['email'] = time()."@mailinator.com";
+                    $user = User::create($userData);
+                    $user->assignRole('client');
+
+                    PetitionPetitioner::create([
+                        'petition_id'=>$petition->id,
+                        'petitioner_id'=>$user->id,
+                    ]);
+                    
+                }
+            }
             return response()->json(
                 [
                     'message' => 'Petitions',
@@ -87,7 +95,7 @@ class PetitionController extends Controller
     {        
         try {
 
-            $petition = Petition::with('client','court')->where('id',$id)->first();
+            $petition = Petition::withRelations()->where('id',$id)->first();
             $petition_details = PetitionIndex::where('petition_id',$id)->get();
             return response()->json(
                 [
