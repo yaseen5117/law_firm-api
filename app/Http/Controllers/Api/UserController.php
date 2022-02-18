@@ -16,7 +16,7 @@ class UserController extends Controller
     public function index()
     {
         try{
-            $users = User::orderBy("first_name")->get();
+            $users = User::orderBy("name")->get();
             return response()->json(
                 [
                     'users' => $users,
@@ -99,7 +99,7 @@ class UserController extends Controller
     //getting petitioners and Opponent
     public function getClient(){
         try{
-            $clients = User::role('client')->orderBy("first_name")->get();
+            $clients = User::role('client')->orderBy("name")->get();
             return response()->json(
                 [
                     'clients' => $clients,

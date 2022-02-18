@@ -18,8 +18,7 @@ class UsersTableSeeder extends Seeder
         DB::table('password_resets')->truncate();
         DB::table('users')->insert([
 
-            'first_name' => 'QC',
-            'last_name' => 'Admin',
+            'name' => 'QC Admin',             
             'email' => 'admin@qc.com',     
             'profile_image' => '',              
             'password' => bcrypt('test1234'),

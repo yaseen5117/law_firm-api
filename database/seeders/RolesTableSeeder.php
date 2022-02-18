@@ -53,8 +53,7 @@ class RolesTableSeeder extends Seeder
         $user->assignRole($roleAdmin);
 
         $JudgeUser = User::create([
-            'first_name' => 'Judge',
-            'last_name' => '1',
+            'name' => 'Judge 1',            
             'email' => 'judge@qc.com',
             'password' => bcrypt('test1234'),
          
@@ -63,8 +62,7 @@ class RolesTableSeeder extends Seeder
         $JudgeUser->assignRole($judge);
 
         $LawyerUser = User::create([
-            'first_name' => 'Lawyer',
-            'last_name' => '1',
+            'name' => 'Lawyer 1',             
             'email' => 'lawyer@qc.com',
             'password' => bcrypt('test1234'),            
         ]);
@@ -72,8 +70,7 @@ class RolesTableSeeder extends Seeder
         $LawyerUser->assignRole($lawyer);
 
         $StaffUser = User::create([
-            'first_name' => 'Staff',
-            'last_name' => '1',
+            'name' => 'Staff 1',                
             'email' => 'staff@qc.com',
             'password' => bcrypt('test1234'),            
         ]);
@@ -82,8 +79,7 @@ class RolesTableSeeder extends Seeder
 
         $ClientUser = User::create([
             'id' => 5,
-            'first_name' => 'Kamran',
-            'last_name' => 'Khan',
+            'name' => 'Kamran Khan',              
             'company_name' => 'KAMRAN KHAN AND OTHERS',
             'email' => 'kamran@qc.com',
             'password' => bcrypt('test1234'),           
@@ -94,8 +90,7 @@ class RolesTableSeeder extends Seeder
 
         $ClientUser = User::create([
             'id' => 6,
-            'first_name' => 'CDA',
-            'last_name' => 'Others',
+            'name' => 'CDA Others',  
             'company_name' => 'CDA AND OTHERS',
             'email' => 'cda@qc.com',
             'password' => bcrypt('test1234'),           
