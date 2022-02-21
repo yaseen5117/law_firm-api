@@ -7,6 +7,7 @@ use App\Models\Petition;
 use App\Models\User;
 use App\Models\PetitionPetitioner;
 use App\Models\PetitionIndex;
+use App\Models\PetitionOpponent;
 use Illuminate\Http\Request;
 
 class PetitionController extends Controller
@@ -68,8 +69,21 @@ class PetitionController extends Controller
                     PetitionPetitioner::create([
                         'petition_id'=>$petition->id,
                         'petitioner_id'=>$user->id,
-                    ]);
-                    
+                    ]);                    
+                }
+            }
+            if (is_array($request->opponent) && count($request->opponent)>0) {
+                foreach ($request->opponent as $opponent) {
+                    $userData = $opponent; 
+                    $userData['password'] = bcrypt('test1234');
+                    $userData['email'] = time()."1@mailinator.com";
+                    $user = User::create($userData);
+                    $user->assignRole('client');
+
+                    PetitionOpponent::create([
+                        'petition_id'=>$petition->id,
+                        'opponent_id'=>$user->id,
+                    ]);                    
                 }
             }
             return response()->json(
