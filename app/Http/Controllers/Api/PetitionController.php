@@ -9,6 +9,7 @@ use App\Models\PetitionPetitioner;
 use App\Models\PetitionIndex;
 use App\Models\PetitionOpponent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PetitionController extends Controller
 {
@@ -53,16 +54,15 @@ class PetitionController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-
-            
+        try {           
             
             $petition = Petition::create($request->except('new_petitioner','petitioner','opponent'));
             if (is_array($request->petitioner) && count($request->petitioner)>0) {
                 foreach ($request->petitioner as $petitioner) {
+                    $randomString = Str::random(30);
                     $userData = $petitioner; 
                     $userData['password'] = bcrypt('test1234');
-                    $userData['email'] = time()."@mailinator.com";
+                    $userData['email'] = $randomString."@mailinator.com";
                     $user = User::create($userData);
                     $user->assignRole('client');
 
@@ -74,9 +74,10 @@ class PetitionController extends Controller
             }
             if (is_array($request->opponent) && count($request->opponent)>0) {
                 foreach ($request->opponent as $opponent) {
+                    $randomString = Str::random(30);
                     $userData = $opponent; 
                     $userData['password'] = bcrypt('test1234');
-                    $userData['email'] = time()."1@mailinator.com";
+                    $userData['email'] = $randomString."@mailinator.com";
                     $user = User::create($userData);
                     $user->assignRole('client');
 
