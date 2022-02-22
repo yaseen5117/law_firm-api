@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Route;
     Route::resource('petitions', 'Api\PetitionController');
     Route::resource('users', 'Api\UserController');
     Route::get('clients', 'Api\UserController@getClient');
+
+    Route::post('uploads', 'Api\PetitionController@upload');
     
     Route::resource('petition_types', 'Api\PetitionTypeController');
     Route::resource('courts', 'Api\CourtController');
