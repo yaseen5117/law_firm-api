@@ -56,7 +56,7 @@ class PetitionController extends Controller
 
             
             
-            $petition = Petition::create($request->except('new_petitioner','petitioner','opponent'));
+            $petition = Petition::updateOrCreate(['id'=>$request->id],$request->except('new_petitioner','petitioner','opponent','petitioner_names','petitioners','court'));
             if (is_array($request->petitioner) && count($request->petitioner)>0) {
                 foreach ($request->petitioner as $petitioner) {
                     $userData = $petitioner; 
