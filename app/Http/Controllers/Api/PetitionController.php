@@ -7,7 +7,9 @@ use App\Models\Petition;
 use App\Models\User;
 use App\Models\PetitionPetitioner;
 use App\Models\PetitionIndex;
+use App\Models\PetitionOpponent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PetitionController extends Controller
 {
@@ -52,24 +54,37 @@ class PetitionController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-
-            
+        try {           
             
             $petition = Petition::updateOrCreate(['id'=>$request->id],$request->except('new_petitioner','petitioner','opponent','petitioner_names','petitioners','court'));
             if (is_array($request->petitioner) && count($request->petitioner)>0) {
                 foreach ($request->petitioner as $petitioner) {
+                    $randomString = Str::random(30);
                     $userData = $petitioner; 
                     $userData['password'] = bcrypt('test1234');
-                    $userData['email'] = time()."@mailinator.com";
+                    $userData['email'] = $randomString."@mailinator.com";
                     $user = User::create($userData);
                     $user->assignRole('client');
 
                     PetitionPetitioner::create([
                         'petition_id'=>$petition->id,
                         'petitioner_id'=>$user->id,
-                    ]);
-                    
+                    ]);                    
+                }
+            }
+            if (is_array($request->opponent) && count($request->opponent)>0) {
+                foreach ($request->opponent as $opponent) {
+                    $randomString = Str::random(30);
+                    $userData = $opponent; 
+                    $userData['password'] = bcrypt('test1234');
+                    $userData['email'] = $randomString."@mailinator.com";
+                    $user = User::create($userData);
+                    $user->assignRole('client');
+
+                    PetitionOpponent::create([
+                        'petition_id'=>$petition->id,
+                        'opponent_id'=>$user->id,
+                    ]);                    
                 }
             }
             return response()->json(
