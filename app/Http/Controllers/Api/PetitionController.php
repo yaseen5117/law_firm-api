@@ -56,23 +56,67 @@ class PetitionController extends Controller
     {
         try {           
             
-            $petition = Petition::updateOrCreate(['id'=>$request->id],$request->except('new_petitioner','petitioner','opponent','petitioner_names','petitioners','court'));
-            if (is_array($request->petitioner) && count($request->petitioner)>0) {
-                foreach ($request->petitioner as $petitioner) {
-                    $randomString = Str::random(30);
-                    $userData = $petitioner; 
-                    $userData['password'] = bcrypt('test1234');
-                    $userData['email'] = $randomString."@mailinator.com";
-                    $user = User::create($userData);
-                    $user->assignRole('client');
+            
+            //return response($request->opponents,422);
+            $petition = Petition::updateOrCreate(['id'=>$request->id],$request->except('new_petitioner','petitioners','opponents','petitioner_names','opponent_names','petitioners','court'));
 
-                    PetitionPetitioner::create([
-                        'petition_id'=>$petition->id,
-                        'petitioner_id'=>$user->id,
-                    ]);                    
+
+            if (is_array($request->petitioners) && count($request->petitioners)>0) {
+                foreach ($request->petitioners as $petitioner) {
+
+                    if (isset($petitioner['user']) && !empty(@$petitioner['user']['name'])) {
+                        $randomString = Str::random(30);
+                        $userData['name'] = $petitioner['user']['name']; 
+                        $userData['password'] = bcrypt('test1234');
+                        $userData['email'] = $randomString."@mailinator.com";
+
+                        if (isset($petitioner['user']['id'])) {
+                            
+                            $user = User::where('id',$petitioner['user']['id'])->update($userData);
+                        }else{
+                            $user = User::create($userData);
+                            $user->assignRole('client');
+                            PetitionPetitioner::create([
+                                'petition_id'=>$petition->id,
+                                'petitioner_id'=>$user->id,
+                            ]);
+                        }
+                        
+                    }
+                                        
                 }
             }
-            if (is_array($request->opponent) && count($request->opponent)>0) {
+
+
+            if (is_array($request->opponents) && count($request->opponents)>0) {
+                foreach ($request->opponents as $opponent) {
+
+                    if (isset($opponent['user']) && !empty(@$opponent['user']['name'])) {
+                        $randomString = Str::random(30);
+                        $oppData['name'] = $opponent['user']['name']; 
+                        $oppData['password'] = bcrypt('test1234');
+                        $oppData['email'] = $randomString."@mailinator.com";
+
+                        if (isset($opponent['user']['id'])) {
+                            
+                            $user = User::where('id',$opponent['user']['id'])->update($oppData);
+                        }else{
+                            $user = User::create($oppData);
+                            $user->assignRole('client');
+                            PetitionOpponent::create([
+                                'petition_id'=>$petition->id,
+                                'opponent_id'=>$user->id,
+                            ]);
+                        }
+                        
+                    }
+                                        
+                }
+            }
+
+
+
+            /*if (is_array($request->opponent) && count($request->opponent)>0) {
                 foreach ($request->opponent as $opponent) {
                     $randomString = Str::random(30);
                     $userData = $opponent; 
@@ -86,14 +130,14 @@ class PetitionController extends Controller
                         'opponent_id'=>$user->id,
                     ]);                    
                 }
-            }
+            }*/
             return response()->json(
                 [
                     'message' => 'Petitions',
                     'code' => 200
                 ]
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response([
                 "error" => $e->getMessage()
             ], 500);
