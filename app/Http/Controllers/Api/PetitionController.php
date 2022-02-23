@@ -207,7 +207,7 @@ class PetitionController extends Controller
     }
     public function upload(Request $request){
         $request->validate([
-            'file' => 'required|mimes:jpg,jpeg,png,|max:2048' //csv,txt,xlx,xls,pdf
+            'file' => 'required|mimes:jpg,jpeg,png' //csv,txt,xlx,xls,pdf
          ]);
          
          $fileUpload = new Attachment();
