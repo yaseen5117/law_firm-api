@@ -204,28 +204,5 @@ class PetitionController extends Controller
     public function destroy($id)
     {
         //
-    }
-    public function upload(Request $request){
-        $request->validate([
-            'file' => 'required|mimes:jpg,jpeg,png' //csv,txt,xlx,xls,pdf
-         ]);
-         
-         $fileUpload = new Attachment();
-         if($request->file()) {
-            $name = time().'_'.$request->file->getClientOriginalName();
-            $file_path = $request->file('file')->storeAs('attachments/'.$request->attachmentable_id, $name, 'public');
- 
-            $fileUpload->file_name = time().'_'.$request->file->getClientOriginalName();
-            //$fileUpload->path = '/storage/' . $file_path;
-            $fileUpload->attachmentable_type = 'App\Models\PetitionIndex';
-            $fileUpload->attachmentable_id = $request->attachmentable_id;
-            $fileUpload->mime_type = $request->file->getClientMimeType();
-            $fileUpload->save();
-
-            return response()->json([
-                'success'=>'File uploaded successfully.',
-                'file_data' => $fileUpload,
-            ]);
-        }
-    }
+    }     
 }
