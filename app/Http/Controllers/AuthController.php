@@ -27,6 +27,7 @@ class AuthController extends Controller
     }
 
     public function login(Request $request) {
+         
         $fields = $request->validate([
             'email' => 'required|string',
             'password' => 'required|string'
@@ -37,7 +38,7 @@ class AuthController extends Controller
         if(!$user)
         {
             return response([
-                'message' => 'Register Your Account'
+                'message' => 'Email or Password is Not Correct'
             ], 401);
         }
         // Check password
@@ -54,7 +55,7 @@ class AuthController extends Controller
             'token' => $token
         ];
 
-        return response($response, 201);
+        return response($response, 200);
     }
 
    
