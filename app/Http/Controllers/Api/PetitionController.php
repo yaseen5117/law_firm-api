@@ -222,7 +222,10 @@ class PetitionController extends Controller
             $fileUpload->mime_type = $request->file->getClientMimeType();
             $fileUpload->save();
 
-            return response()->json(['success'=>'File uploaded successfully.']);
+            return response()->json([
+                'success'=>'File uploaded successfully.',
+                'file_data' => $fileUpload,
+            ]);
         }
     }
 }
