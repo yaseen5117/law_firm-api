@@ -35,27 +35,36 @@ class AttachmentController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {         
+    {
         try {
-            $fileUpload = new Attachment();
-            if ($request->file()) {
-                $name = time() . '_' . $request->file->getClientOriginalName();
-                $file_path = $request->file('file')->storeAs('attachments/' . $request->attachmentable_id, $name, 'public');
+            $files = $request->file('files');
+            if ($files) {
+                foreach ($files as $key => $file) {
 
-                $fileUpload->file_name = time() . '_' . $request->file->getClientOriginalName();
-                $fileUpload->title = $fileUpload->file_name;
-                //$fileUpload->path = '/storage/' . $file_path;
-                $fileUpload->attachmentable_type = 'App\Models\PetitionIndex';
-                $fileUpload->attachmentable_id = $request->attachmentable_id;
-                $fileUpload->mime_type = $request->file->getClientMimeType();
-                $fileUpload->save();
+                    $name = time() . '_' . $file->getClientOriginalName();
+                    $file_path = $file->storeAs('attachments/' . $request->attachmentable_id, $name, 'public');
+                    $file_name = time() . '_' . $file->getClientOriginalName();
+                    $title = $file_name;
+                    $attachmentable_type = 'App\Models\PetitionIndex';
+                    $attachmentable_id = $request->attachmentable_id;
+                    $mime_type = $file->getClientMimeType();
+                    Attachment::create([
+                        'file_name' => $file_name,
+                        'title' => $title,
+                        'attachmentable_type' => $attachmentable_type,
+                        'attachmentable_id' => $attachmentable_id,
+                        'mime_type' => $mime_type,
+                    ]);
+                }
 
                 return response()->json([
-                    'success' => 'File uploaded successfully.',
-                    'file_data' => $fileUpload,
+                    'success' => 'Files uploaded successfully.',
                     'code' => 200,
                 ]);
             }
+            return response([
+                "error" => "No files available"
+            ], 404);
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
@@ -130,8 +139,8 @@ class AttachmentController extends Controller
                 $attachment->delete();
                 return response(
                     [
-                        'message' => 'Record Deleted successfully',    
-                        'code' => 200                    
+                        'message' => 'Record Deleted successfully',
+                        'code' => 200
                     ]
                 );
             }
