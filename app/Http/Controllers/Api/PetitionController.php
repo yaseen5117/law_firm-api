@@ -19,10 +19,19 @@ class PetitionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $petitions = Petition::withRelations()->get();
+            $query = Petition::withRelations();
+            if (!empty($request->case_no)) {
+                $query->where('case_no','like','%'.$request->case_no.'%');
+            }
+
+            if (!empty($request->institution_date)) {
+                $query->where('institution_date',$request->institution_date);
+            }
+            $petitions = $query->get();
+
             return response()->json(
                 [
                     'petitions' => $petitions,
