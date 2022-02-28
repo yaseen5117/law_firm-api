@@ -30,6 +30,10 @@ class PetitionController extends Controller
             if (!empty($request->institution_date)) {
                 $query->where('institution_date',$request->institution_date);
             }
+
+            if (!empty($request->court_id)) {
+                $query->where('court_id',$request->court_id);
+            }
             $petitions = $query->get();
 
             return response()->json(
