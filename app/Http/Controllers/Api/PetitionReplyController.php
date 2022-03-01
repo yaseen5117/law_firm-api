@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\PetitionIndex;
-use App\Models\Petition;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\PetitionReply;
+use Illuminate\Http\Request;
 
-class PetitionIndexController extends Controller
+class PetitionReplyController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,14 +15,7 @@ class PetitionIndexController extends Controller
      */
     public function index()
     {
-        try {
-            $petition_index= PetitionIndex::orderby('created_at','desc')->get();
-            return response($petition_index,200);
-        } catch (\Exception $e) {
-            return response([
-                "error"=>$e->getMessage()
-            ],500);
-        }
+        return response('message', 200);
     }
 
     /**
@@ -44,12 +36,13 @@ class PetitionIndexController extends Controller
      */
     public function store(Request $request)
     {
-         try {  
-            PetitionIndex::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+        return response('success up', 200);
+        try {             
+            PetitionReply::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
 
             return response()->json(
                 [
-                    'message' => 'Petitions',
+                    'message' => 'Petition Reply',
                     'code' => 200
                 ]
             );
@@ -63,24 +56,14 @@ class PetitionIndexController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\PetitionIndex  $petitionIndex
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($petitionIndex)
-    {
+    public function show($id)
+    {         
         try {
-            $petitionIndex = PetitionIndex::with('petition','attachments')->whereId($petitionIndex)->first();
-            $petition = Petition::withRelations()->whereId($petitionIndex->petition_id)->first();
-
-            return response()->json(
-                [
-                    'petition' => $petition,
-                    'petition_index' => $petitionIndex,
-                    'message' => 'Success',
-                    'code' => 200
-                ]
-            );
-            return response($petitionIndex,200);
+            $petition_replies= PetitionReply::where('petition_id', $id)->orderby('created_at','desc')->get();
+            return response($petition_replies,200);
         } catch (\Exception $e) {
             return response([
                 "error"=>$e->getMessage()
@@ -91,10 +74,10 @@ class PetitionIndexController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\PetitionIndex  $petitionIndex
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(PetitionIndex $petitionIndex)
+    public function edit($id)
     {
         //
     }
@@ -103,10 +86,10 @@ class PetitionIndexController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\PetitionIndex  $petitionIndex
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, PetitionIndex $petitionIndex)
+    public function update(Request $request, $id)
     {
         //
     }
@@ -114,17 +97,17 @@ class PetitionIndexController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\PetitionIndex  $petitionIndex
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($petitionIndexId)
+    public function destroy($petitionReplyid)
     {
         try {             
-            $petition_index = PetitionIndex::find($petitionIndexId); 
+            $petition_reply = PetitionReply::find($petitionReplyid); 
                     
-            if($petition_index){
-                $petition_index->delete();
-                return response($petition_index,200);
+            if($petition_reply){
+                $petition_reply->delete();
+                return response($petition_reply,200);
             }else{
                 return response('Data Not Found',404);
             }

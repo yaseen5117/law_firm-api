@@ -151,7 +151,7 @@ class PetitionController extends Controller
                     'code' => 200
                 ]
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
             ], 500);
