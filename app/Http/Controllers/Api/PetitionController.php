@@ -35,6 +35,7 @@ class PetitionController extends Controller
             if (!empty($request->court_id)) {
                 $query->where('court_id',$request->court_id);
             }
+            //$query->orderBy('display_order');
             $petitions = $query->get();
 
             return response()->json(

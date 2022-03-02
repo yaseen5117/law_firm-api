@@ -52,7 +52,7 @@ class Petition extends Model
     }
     public function attachments()
     {
-        return $this->morphMany(Attachment::class, 'attachmentable');
+        return $this->morphMany(Attachment::class, 'attachmentable')->orderBy('display_order');
     }
 
     public function scopeWithRelations($query)
