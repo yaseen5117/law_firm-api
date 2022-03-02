@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Petition;
 use App\Models\PetitionReply;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,7 @@ class PetitionReplyController extends Controller
      */
     public function index()
     {
-        return response('message', 200);
+        //
     }
 
     /**
@@ -35,8 +36,7 @@ class PetitionReplyController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        //return response('success up', 200);
+    {         
         try {             
             PetitionReply::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
 
@@ -59,11 +59,33 @@ class PetitionReplyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    // public function show($id)
+    // {         
+    //     try {
+    //         $petition_replies= PetitionReply::where('petition_id', $id)->orderby('created_at','desc')->get();
+    //         return response($petition_replies,200);
+    //     } catch (\Exception $e) {
+    //         return response([
+    //             "error"=>$e->getMessage()
+    //         ],500);
+    //     }
+    // }
+    public function show($petitionReplyId)
     {         
         try {
-            $petition_replies= PetitionReply::where('petition_id', $id)->orderby('created_at','desc')->get();
-            return response($petition_replies,200);
+            $petitionReply = PetitionReply::with('petition','attachments')->whereId($petitionReplyId)->first();
+            
+            $petition = Petition::withRelations()->whereId($petitionReply->petition_id)->first();
+           
+            return response()->json(
+                [
+                    'petition' => $petition,
+                    'petition_reply' => $petitionReply,
+                    'message' => 'Success',
+                    'code' => 200
+                ]
+            );
+            return response($petitionReply,200);
         } catch (\Exception $e) {
             return response([
                 "error"=>$e->getMessage()

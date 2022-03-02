@@ -15,7 +15,7 @@ class PetitionIndexController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
+    {         
         try {
             $petition_index= PetitionIndex::orderby('created_at','desc')->get();
             return response($petition_index,200);

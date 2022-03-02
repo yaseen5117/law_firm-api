@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\PetitionPetitioner;
 use App\Models\PetitionIndex;
 use App\Models\PetitionOpponent;
+use App\Models\PetitionReply;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -170,10 +171,12 @@ class PetitionController extends Controller
 
             $petition = Petition::withRelations()->where('id',$id)->first();
             $petition_details = PetitionIndex::where('petition_id',$id)->get();
+            $petition_reply_details = PetitionReply::where('petition_id',$id)->get();
             return response()->json(
                 [
                     'petition' => $petition,
                     'petition_details' => $petition_details,
+                    'petition_reply_details' => $petition_reply_details,
                     'message' => 'petition_details',
                     'code' => 200
                 ]

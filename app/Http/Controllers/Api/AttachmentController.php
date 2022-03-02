@@ -45,7 +45,7 @@ class AttachmentController extends Controller
                     $file_path = $file->storeAs('attachments/' . $request->attachmentable_id, $name, 'public');
                     $file_name = time() . '_' . $file->getClientOriginalName();
                     $title = $file_name;
-                    $attachmentable_type = 'App\Models\PetitionIndex';
+                    $attachmentable_type = $request->attachmentable_type;
                     $attachmentable_id = $request->attachmentable_id;
                     $mime_type = $file->getClientMimeType();
                     Attachment::create([
