@@ -36,7 +36,7 @@ class PetitionReplyController extends Controller
      */
     public function store(Request $request)
     {
-        return response('success up', 200);
+        //return response('success up', 200);
         try {             
             PetitionReply::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
 
