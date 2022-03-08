@@ -38,9 +38,16 @@ class PetitionController extends Controller
             //$query->orderBy('display_order');
             $petitions = $query->get();
 
+            foreach($petitions as $petition){
+                $events[] = [
+                    'title' => $petition->title,
+                    'start' => $petition->institution_date,                     
+                ];
+            }            
             return response()->json(
                 [
                     'petitions' => $petitions,
+                    'events' => $events,
                     'message' => 'Petitions',
                     'code' => 200
                 ]
