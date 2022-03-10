@@ -13,10 +13,20 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index(Request $request)
+    {         
         try{
-            $users = User::orderBy("name")->get();
+            $query = User::with('roles');
+            if (!empty($request->name)) {
+                $query->where('name','like','%'.$request->name.'%');
+            }
+
+            if (!empty($request->email)) {
+                $query->where('email','like','%'.$request->email.'%');
+            }
+            $users = $query->orderBy("name")->get();
+
+            //$users = User::orderBy("name")->with('roles')->get();
             return response()->json(
                 [
                     'users' => $users,
@@ -48,8 +58,25 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        //
+    {              
+        try{
+            $user = User::updateOrCreate(['id'=>$request->id],
+            [
+                'name' => $request->name,
+                'email' => $request->email
+            ]
+        );
+            return response(
+                [
+                    'user' => $user, 
+                    'status' => 200
+                ]
+        );
+        }catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }        
     }
 
     /**
@@ -83,7 +110,7 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        //return response(['message' => 'success update', 'status' => 200]);
     }
 
     /**
@@ -92,9 +119,23 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($userId)
     {
-        //
+        try {             
+            $user = User::find($userId); 
+                    
+            if($user){
+                $user->delete();
+                return response($user,200);
+            }else{
+                return response('User Not Found',404);
+            }
+            
+        } catch (\Exception $e) {
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
+        }
     }
     //getting petitioners and Opponent
     public function getClient(){

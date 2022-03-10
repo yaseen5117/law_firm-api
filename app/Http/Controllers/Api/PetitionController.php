@@ -40,7 +40,7 @@ class PetitionController extends Controller
 
             foreach($petitions as $petition){
                 $events[] = [
-                    'title' => $petition->title,
+                    'title' => 'Case #: '.$petition->case_no,
                     'start' => $petition->institution_date,                     
                 ];
             }            
