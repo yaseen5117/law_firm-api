@@ -147,10 +147,13 @@ class PetitionReplyController extends Controller
         
         try {
             $petition_reply_detail = PetitionReply::with('petition_reply_parent.petition','attachments')->where('id',$petitionReplyId)->first();
+            $petition_id = $petition_reply_detail->petition_reply_parent->petition->id;
+            $petition = Petition::withRelations()->where('id',$petition_id)->first();
             
             return response()->json(
                 [                    
                     'petition_reply' => $petition_reply_detail,
+                    'petition' => $petition,
                     'message' => 'Success',
                     'code' => 200
                 ]
