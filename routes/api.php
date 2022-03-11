@@ -27,7 +27,12 @@ use Illuminate\Support\Facades\Route;
     Route::resource('courts', 'Api\CourtController');
     
     Route::resource('petition_replies', 'Api\PetitionReplyController');
+
     Route::resource('petition_order_sheets', 'Api\PetitionOrderSheetController');
+
+    Route::post('petition_reply_details/{id}', 'Api\PetitionReplyController@replyDetail');
+    Route::resource('petition_reply_parents', 'Api\PetitionReplyParentController');
+
     //Route::resource('petition_indexes', 'Api\PetitionIndexController');
     //Route::resource('petitions', 'Api\PetitionController');
     

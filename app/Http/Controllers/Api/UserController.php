@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 
+use function GuzzleHttp\Promise\all;
+
 class UserController extends Controller
 {
     /**
@@ -58,14 +60,28 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {              
+    {          
+        //return response($request->all(), 422);    
         try{
-            $user = User::updateOrCreate(['id'=>$request->id],
-            [
-                'name' => $request->name,
-                'email' => $request->email
-            ]
-        );
+            $file = $request->file('file');     
+                  
+            if($file){
+                $name = time() . '_' . $file->getClientOriginalName();                
+                $file_name = time() . '_' . $file->getClientOriginalName();
+                $request->merge([                    
+                    'profile_image' => $file_name
+                ]);             
+            }
+            $request->merge([
+                'password' => bcrypt($request->password),                 
+            ]);   
+             
+            $user = User::updateOrCreate(['id'=>$request->id],$request->except('file','created_at_formated_date','roles','editMode'));             
+            
+            if($file){
+                $file_path = $file->storeAs('users/' . $user->id, $name, 'public');
+            }
+
             return response(
                 [
                     'user' => $user, 
@@ -76,7 +92,11 @@ class UserController extends Controller
             return response([
                 "error" => $e->getMessage()
             ], 500);
-        }        
+        } 
+        // [
+        //     'name' => $request->name,
+        //     'email' => $request->email
+        // ]       
     }
 
     /**

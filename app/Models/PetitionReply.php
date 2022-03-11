@@ -10,9 +10,9 @@ class PetitionReply extends Model
     use HasFactory;
     protected $guarded=[];
     
-    public function petition()
+    public function petition_reply_parent()
     {
-        return $this->belongsTo('App\Models\Petition');
+        return $this->belongsTo('App\Models\PetitionReplyParent');
 
     }
     
