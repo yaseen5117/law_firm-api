@@ -77,4 +77,8 @@ class Petition extends Model
         }
         return rtrim($str,", ");
     }
+    public function petition_replies_parents()
+    {
+        return $this->hasMany('App\Models\PetitionReplyParent','petition_id');
+    }
 }

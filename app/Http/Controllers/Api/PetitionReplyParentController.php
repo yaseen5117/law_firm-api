@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Petition;
-use App\Models\PetitionReply;
 use App\Models\PetitionReplyParent;
 use Illuminate\Http\Request;
 
-class PetitionReplyController extends Controller
+class PetitionReplyParentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -37,13 +35,13 @@ class PetitionReplyController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {         
+    {
         try {             
-            PetitionReply::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+            PetitionReplyParent::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
 
             return response()->json(
                 [
-                    'message' => 'Petition Reply',
+                    'message' => 'Petition Reply Parent',
                     'code' => 200
                 ]
             );
@@ -60,39 +58,24 @@ class PetitionReplyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    // public function show($id)
-    // {         
-    //     try {
-    //         $petition_replies= PetitionReply::where('petition_id', $id)->orderby('created_at','desc')->get();
-    //         return response($petition_replies,200);
-    //     } catch (\Exception $e) {
-    //         return response([
-    //             "error"=>$e->getMessage()
-    //         ],500);
-    //     }
-    // }
-    public function show($petitionReplyId)
-    {    
+    public function show($id)
+    {         
         try {
-            $petition_replies = PetitionReply::where('petition_reply_parent_id',$petitionReplyId)->get();
-            //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();
-             
+            
+            $petition_reply_parents = PetitionReplyParent::where('petition_id',$id)->get();
+            
             return response()->json(
-                [                    
-                    'petition_replies' => $petition_replies,
-                    'message' => 'Success',
+                [                     
+                    'petition_reply_parents' => $petition_reply_parents,
+                    'message' => 'petition_reply_parents',
                     'code' => 200
                 ]
             );
-            return response($petition_replies,200);
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
-
-
-
     }
 
     /**
@@ -124,38 +107,18 @@ class PetitionReplyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($petitionReplyid)
+    public function destroy($parentId)
     {
         try {             
-            $petition_reply = PetitionReply::find($petitionReplyid); 
+            $petition_reply_parent = PetitionReplyParent::find($parentId); 
                     
-            if($petition_reply){
-                $petition_reply->delete();
-                return response($petition_reply,200);
+            if($petition_reply_parent){
+                $petition_reply_parent->delete();
+                return response($petition_reply_parent,200);
             }else{
                 return response('Data Not Found',404);
             }
             
-        } catch (\Exception $e) {
-            return response([
-                "error"=>$e->getMessage()
-            ],500);
-        }
-    }
-    public function replyDetail($petitionReplyId){
-        
-        
-        try {
-            $petition_reply_detail = PetitionReply::with('petition_reply_parent.petition','attachments')->where('id',$petitionReplyId)->first();
-            
-            return response()->json(
-                [                    
-                    'petition_reply' => $petition_reply_detail,
-                    'message' => 'Success',
-                    'code' => 200
-                ]
-            );
-            return response($petition_reply_detail,200);
         } catch (\Exception $e) {
             return response([
                 "error"=>$e->getMessage()
