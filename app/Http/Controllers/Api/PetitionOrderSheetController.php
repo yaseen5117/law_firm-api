@@ -15,9 +15,25 @@ class PetitionOrderSheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        
+        try {
+            $petitionOrderSheets = PetitonOrderSheet::with('petition','attachments')->where('petition_id',$request->petition_id)->get();
+            
+
+            return response()->json(
+                [
+                    'records' => $petitionOrderSheets,
+                    'message' => 'Successs',
+                    'code' => 200
+                ]
+            );
+            return response($petitionIndex,200);
+        } catch (\Exception $e) {
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
+        }
     }
 
     /**
@@ -62,7 +78,24 @@ class PetitionOrderSheetController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            
+            $petitionOrderSheet = PetitonOrderSheet::with('petition','attachments')->whereId($id)->first();
+            
+
+            return response()->json(
+                [
+                    'record' => $petitionOrderSheet,
+                    'message' => 'Successs',
+                    'code' => 200
+                ]
+            );
+            return response($petitionIndex,200);
+        } catch (\Exception $e) {
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
+        }
     }
 
     /**
