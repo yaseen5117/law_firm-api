@@ -98,6 +98,36 @@ class PetitionOrderSheetController extends Controller
         }
     }
 
+    public function showOrderSheetByPetition(Request $request)
+    {
+        try {
+            
+            $this->validate($request,[
+                'petition_id'=>'required'
+            ]);
+
+             $query = PetitonOrderSheet::with('petition','attachments')->wherePetitionId($request->petition_id);
+            
+            if ($request->id>0) {
+                $query->whereId($request->id);            
+            }
+            $petitionOrderSheet = $query->first();
+            
+            return response()->json(
+                [
+                    'record' => $petitionOrderSheet,
+                    'message' => 'showOrderSheetByPetition Successs',
+                    'code' => 200
+                ]
+            );
+            return response($petitionIndex,200);
+        } catch (\Exception $e) {
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
+        }
+    }
+
     /**
      * Show the form for editing the specified resource.
      *

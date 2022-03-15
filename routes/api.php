@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Route;
     Route::resource('petition_replies', 'Api\PetitionReplyController');
 
     Route::resource('petition_order_sheets', 'Api\PetitionOrderSheetController');
+    Route::POST('petition_order_sheets/by_petition', 'Api\PetitionOrderSheetController@showOrderSheetByPetition');
 
     Route::post('petition_reply_details/{id}', 'Api\PetitionReplyController@replyDetail');
     Route::resource('petition_reply_parents', 'Api\PetitionReplyParentController');
