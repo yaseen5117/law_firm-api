@@ -75,12 +75,15 @@ class PetitionReplyController extends Controller
     {    
         try {
             $petition_replies = PetitionReply::where('petition_reply_parent_id',$petitionReplyId)->get();
+            $petition_parent = PetitionReplyParent::find($petitionReplyId);
+            $petition = Petition::find($petition_parent->petition_id);
             //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();
              
             return response()->json(
                 [                    
                     'petition_replies' => $petition_replies,
                     'index_data' => $petition_replies,
+                    'petition' => $petition,
                     'message' => 'Success',
                     'page_title' => "Petition Reply",
                     'code' => 200

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\OralArgument;
-
+use App\Models\Petition;
 
 class OralArgumentsController extends Controller
 {
@@ -63,11 +63,12 @@ class OralArgumentsController extends Controller
     {
         try {
 
-            $oralArguments = OralArgument::where('petition_id',$id)->get();
+            $oralArguments = OralArgument::where('petition_id',$id)->get();            
             //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();
              
             return response()->json(
-                [                    
+                [           
+                    'index_annexure_data' => $oralArguments,              
                     'oral_arguments' => $oralArguments,
                     'index_data' => $oralArguments,
                     'message' => 'Success',
@@ -123,6 +124,32 @@ class OralArgumentsController extends Controller
             }else{
                 return response('Data Not Found',404);
             }
+            
+        } catch (\Exception $e) {
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
+        }
+    }
+    public function detail($id)
+    {
+        try {
+
+            $oralArguments = OralArgument::with('petition','attachments')->whereId($id)->first();
+            //$petition = Petition::withRelations()->whereId($oralArguments->petition_id)->first();
+    
+            //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();
+             
+            return response()->json(
+                [                   
+                    'index_detail_data' => $oralArguments,
+                    'model_type' => "App\Models\OralArgument",
+                    'petition' => $oralArguments->petition,                    
+                    'message' => 'Success',
+                    'page_title' => "Oral Arguments Detail",
+                    'code' => 200
+                ]
+            );
             
         } catch (\Exception $e) {
             return response([

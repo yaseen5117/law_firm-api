@@ -9,4 +9,16 @@ class OralArgument extends Model
 {
     use HasFactory;
     protected $guarded = [];
+
+    public function petition()
+    {
+        return $this->belongsTo('App\Models\Petition');
+
+    }
+    
+    public function attachments()
+    {
+        return $this->morphMany(Attachment::class, 'attachmentable')->orderBy('display_order');
+
+    }
 }

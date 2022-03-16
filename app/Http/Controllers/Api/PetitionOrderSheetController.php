@@ -89,8 +89,7 @@ class PetitionOrderSheetController extends Controller
                     'message' => 'Successs',
                     'code' => 200
                 ]
-            );
-            return response($petitionIndex,200);
+            );            
         } catch (\Exception $e) {
             return response([
                 "error"=>$e->getMessage()
@@ -119,8 +118,7 @@ class PetitionOrderSheetController extends Controller
                     'message' => 'showOrderSheetByPetition Successs',
                     'code' => 200
                 ]
-            );
-            return response($petitionIndex,200);
+            );            
         } catch (\Exception $e) {
             return response([
                 "error"=>$e->getMessage()

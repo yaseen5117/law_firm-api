@@ -34,6 +34,7 @@ use Illuminate\Support\Facades\Route;
     Route::post('petition_reply_details/{id}', 'Api\PetitionReplyController@replyDetail');
     Route::resource('petition_reply_parents', 'Api\PetitionReplyParentController');
     Route::resource('oral_arguments', 'Api\OralArgumentsController');
+    Route::post('module_index_details/{id}', 'Api\OralArgumentsController@detail');
 
     //Route::resource('petition_indexes', 'Api\PetitionIndexController');
     //Route::resource('petitions', 'Api\PetitionController');
