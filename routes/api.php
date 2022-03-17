@@ -35,6 +35,11 @@ use Illuminate\Support\Facades\Route;
     Route::POST('petition_talbana/by_petition', 'Api\PetitionTalbanaController@showTalbanaByPetition');
     //END route for Talbana forms
 
+  //START route for Petition Naqal Form
+  Route::resource('petition_naqal_forms', 'Api\NaqalFormController');
+  Route::POST('petition_naqal_forms/by_petition', 'Api\NaqalFormController@showNaqalFormByPetition');
+  //END route for Petition Naqal Form
+
     Route::post('petition_reply_details/{id}', 'Api\PetitionReplyController@replyDetail');
     Route::resource('petition_reply_parents', 'Api\PetitionReplyParentController');
     
