@@ -30,6 +30,10 @@ use Illuminate\Support\Facades\Route;
 
     Route::resource('petition_order_sheets', 'Api\PetitionOrderSheetController');
     Route::POST('petition_order_sheets/by_petition', 'Api\PetitionOrderSheetController@showOrderSheetByPetition');
+    //START route for Talbana forms
+    Route::resource('petition_talbana', 'Api\PetitionTalbanaController');
+    Route::POST('petition_talbana/by_petition', 'Api\PetitionTalbanaController@showTalbanaByPetition');
+    //END route for Talbana forms
 
     Route::post('petition_reply_details/{id}', 'Api\PetitionReplyController@replyDetail');
     Route::resource('petition_reply_parents', 'Api\PetitionReplyParentController');
