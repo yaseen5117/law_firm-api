@@ -19,16 +19,14 @@ class PetitionOrderSheetController extends Controller
     {
         try {
             $petitionOrderSheets = PetitonOrderSheet::with('petition','attachments')->where('petition_id',$request->petition_id)->get();
-            
-
+             
             return response()->json(
                 [
                     'records' => $petitionOrderSheets,
                     'message' => 'Successs',
                     'code' => 200
                 ]
-            );
-            return response($petitionIndex,200);
+            );            
         } catch (\Exception $e) {
             return response([
                 "error"=>$e->getMessage()

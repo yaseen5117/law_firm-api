@@ -33,8 +33,21 @@ use Illuminate\Support\Facades\Route;
 
     Route::post('petition_reply_details/{id}', 'Api\PetitionReplyController@replyDetail');
     Route::resource('petition_reply_parents', 'Api\PetitionReplyParentController');
+    
+    //START route for standard page Oral Arguments
     Route::resource('oral_arguments', 'Api\OralArgumentsController');
-    Route::post('module_index_details/{id}', 'Api\OralArgumentsController@detail');
+    Route::post('module_index_details_oral_arguments/{id}', 'Api\OralArgumentsController@oralArgumentDetail');
+    //END route for standard page Oral Arguments
+
+    //START route for standard page Case Law
+    Route::resource('case_laws', 'Api\CaseLawController');
+    Route::post('module_index_details_case_laws/{id}', 'Api\CaseLawController@caseLawDetail');
+    //END route for standard page Case Law
+
+    //START route for standard page Extra Document
+    Route::resource('extra_documents', 'Api\ExtraDocumentController');
+    Route::post('module_index_details_extra_documents/{id}', 'Api\ExtraDocumentController@extraDocsDetail');
+    //END route for standard page Extra Document
 
     //Route::resource('petition_indexes', 'Api\PetitionIndexController');
     //Route::resource('petitions', 'Api\PetitionController');
