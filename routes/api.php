@@ -49,6 +49,11 @@ use Illuminate\Support\Facades\Route;
     Route::post('module_index_details_extra_documents/{id}', 'Api\ExtraDocumentController@extraDocsDetail');
     //END route for standard page Extra Document
 
+    //START route for standard page Judgement
+    Route::resource('judgements', 'Api\JudgementController');
+    Route::post('module_index_details_judgements/{id}', 'Api\JudgementController@judgementDetail');
+    //END route for standard page Judgement
+
     //Route::resource('petition_indexes', 'Api\PetitionIndexController');
     //Route::resource('petitions', 'Api\PetitionController');
     
