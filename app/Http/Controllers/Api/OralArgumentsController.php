@@ -71,6 +71,9 @@ class OralArgumentsController extends Controller
                     'index_annexure_data' => $oralArguments,              
                     'oral_arguments' => $oralArguments,
                     'index_data' => $oralArguments,
+                    'compactInlineView' => true,
+                    'ShowOnOralArgument' => true,
+                    'model_type' => "App\Models\OralArgument",     
                     'message' => 'Success',
                     'page_title' => "Oral Arguments",
                     'code' => 200
@@ -143,7 +146,7 @@ class OralArgumentsController extends Controller
             return response()->json(
                 [                   
                     'index_detail_data' => $oralArguments,
-                    'model_type' => "App\Models\OralArgument",
+                    'model_type' => "App\Models\OralArgument",                    
                     'petition' => $oralArguments->petition,                    
                     'message' => 'Success',
                     'page_title' => "Oral Arguments Detail",
