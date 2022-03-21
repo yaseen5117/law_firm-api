@@ -43,7 +43,7 @@ class LoginController extends Controller
     protected function credentials(Request $request)
     {
 
-        return array_merge($request->only($this->username(), 'password'), ['approval_status' => 1]);
+        return array_merge($request->only($this->username(), 'password'), ['is_approved' => 1]);
         // 'Your account is currently disable. Please wait for admin approval.'
         
     }
@@ -63,7 +63,7 @@ class LoginController extends Controller
 
         // Check if user was successfully loaded, that the password matches
         // and active is not 1. If so, override the default error message.
-        if ($user && \Hash::check($request->password, $user->password) && $user->approval_status != 1) {
+        if ($user && \Hash::check($request->password, $user->password) && $user->is_approved != 1) {
             $errors = [$this->username() => trans('Your account is currently disable. Please wait for admin approval.')];
         }
 

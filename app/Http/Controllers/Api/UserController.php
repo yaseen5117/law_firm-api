@@ -72,9 +72,9 @@ class UserController extends Controller
                     'profile_image' => $file_name
                 ]);             
             }
-            $request->merge([
-                'password' => bcrypt($request->password),                 
-            ]);   
+            // $request->merge([
+            //     'password' => bcrypt($request->password),                 
+            // ]);   
              
             $user = User::updateOrCreate(['id'=>$request->id],$request->except('file','created_at_formated_date','roles','editMode','confirm_password'));             
             
