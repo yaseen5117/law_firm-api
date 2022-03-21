@@ -76,7 +76,7 @@ class UserController extends Controller
                 'password' => bcrypt($request->password),                 
             ]);   
              
-            $user = User::updateOrCreate(['id'=>$request->id],$request->except('file','created_at_formated_date','roles','editMode'));             
+            $user = User::updateOrCreate(['id'=>$request->id],$request->except('file','created_at_formated_date','roles','editMode','confirm_password'));             
             
             if($file){
                 $file_path = $file->storeAs('users/' . $user->id, $name, 'public');

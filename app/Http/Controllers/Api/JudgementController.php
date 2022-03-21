@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Judgement;
 use Illuminate\Http\Request;
-use App\Models\OralArgument;
-use App\Models\Petition;
 
-class OralArgumentsController extends Controller
+class JudgementController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +15,7 @@ class OralArgumentsController extends Controller
      */
     public function index()
     {
-        
+        //
     }
 
     /**
@@ -36,13 +35,13 @@ class OralArgumentsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {         
+    {
         try {             
-            OralArgument::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+            Judgement::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
 
             return response()->json(
                 [
-                    'message' => 'OralArgument',
+                    'message' => 'Judgement Saved Successfully',
                     'code' => 200
                 ]
             );
@@ -63,19 +62,15 @@ class OralArgumentsController extends Controller
     {
         try {
 
-            $oralArguments = OralArgument::where('petition_id',$id)->get();            
-            //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();
+            $judgements = Judgement::where('petition_id',$id)->get();            
              
             return response()->json(
                 [           
-                    'index_annexure_data' => $oralArguments,              
-                    'oral_arguments' => $oralArguments,
-                    'index_data' => $oralArguments,
-                    'compactInlineView' => true,
-                    'ShowOnOralArgument' => true,
-                    'model_type' => "App\Models\OralArgument",     
+                    'index_annexure_data' => $judgements,              
+                    'judgements' => $judgements,
+                    'index_data' => $judgements,
                     'message' => 'Success',
-                    'page_title' => "Oral Arguments",
+                    'page_title' => "Judgements",
                     'code' => 200
                 ]
             );
@@ -119,7 +114,7 @@ class OralArgumentsController extends Controller
     public function destroy($id)
     {
         try {             
-            $record = OralArgument::find($id); 
+            $record = Judgement::find($id); 
                     
             if($record){
                 $record->delete();
@@ -134,22 +129,19 @@ class OralArgumentsController extends Controller
             ],500);
         }
     }
-    public function oralArgumentDetail($id)
+    public function judgementDetail($id)
     {
         try {
 
-            $oralArguments = OralArgument::with('petition','attachments')->whereId($id)->first();
-            //$petition = Petition::withRelations()->whereId($oralArguments->petition_id)->first();
-    
-            //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();
+            $judgement = Judgement::with('petition','attachments')->whereId($id)->first();
              
             return response()->json(
                 [                   
-                    'index_detail_data' => $oralArguments,
-                    'model_type' => "App\Models\OralArgument",                    
-                    'petition' => $oralArguments->petition,                    
+                    'index_detail_data' => $judgement,
+                    'model_type' => "App\Models\Judgement",
+                    'petition' => $judgement->petition,                    
                     'message' => 'Success',
-                    'page_title' => "Oral Arguments Detail",
+                    'page_title' => "Judgement Detail",
                     'code' => 200
                 ]
             );

@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\PetitionTalbana;
 use Illuminate\Http\Request;
-use App\Models\Petition;
-use App\Models\PetitonOrderSheet;
 
-
-class PetitionOrderSheetController extends Controller
+class PetitionTalbanaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,11 +16,11 @@ class PetitionOrderSheetController extends Controller
     public function index(Request $request)
     {
         try {
-            $petitionOrderSheets = PetitonOrderSheet::with('petition','attachments')->where('petition_id',$request->petition_id)->get();
+            $petitionTalbana = PetitionTalbana::with('petition','attachments')->where('petition_id',$request->petition_id)->get();
              
             return response()->json(
                 [
-                    'records' => $petitionOrderSheets,
+                    'records' => $petitionTalbana,
                     'message' => 'Successs',
                     'code' => 200
                 ]
@@ -53,7 +51,7 @@ class PetitionOrderSheetController extends Controller
     public function store(Request $request)
     {
         try {             
-            PetitonOrderSheet::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+            PetitionTalbana::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
 
             return response()->json(
                 [
@@ -78,12 +76,12 @@ class PetitionOrderSheetController extends Controller
     {
         try {
             
-            $petitionOrderSheet = PetitonOrderSheet::with('petition','attachments')->whereId($id)->first();
+            $petitionTalbana = PetitionTalbana::with('petition','attachments')->whereId($id)->first();
             
 
             return response()->json(
                 [
-                    'record' => $petitionOrderSheet,
+                    'record' => $petitionTalbana,
                     'message' => 'Successs',
                     'code' => 200
                 ]
@@ -95,7 +93,7 @@ class PetitionOrderSheetController extends Controller
         }
     }
 
-    public function showOrderSheetByPetition(Request $request)
+    public function showTalbanaByPetition(Request $request)
     {
         try {
             
@@ -103,17 +101,17 @@ class PetitionOrderSheetController extends Controller
                 'petition_id'=>'required'
             ]);
 
-             $query = PetitonOrderSheet::with('petition','attachments')->wherePetitionId($request->petition_id);
+             $query = PetitionTalbana::with('petition','attachments')->wherePetitionId($request->petition_id);
             
             if ($request->id>0) {
                 $query->whereId($request->id);            
             }
-            $petitionOrderSheet = $query->first();
+            $petitionTalbana = $query->first();
             
             return response()->json(
                 [
-                    'record' => $petitionOrderSheet,
-                    'message' => 'showOrderSheetByPetition Successs',
+                    'record' => $petitionTalbana,
+                    'message' => 'showTalbanaByPetition Successs',
                     'code' => 200
                 ]
             );            

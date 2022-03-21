@@ -30,11 +30,38 @@ use Illuminate\Support\Facades\Route;
 
     Route::resource('petition_order_sheets', 'Api\PetitionOrderSheetController');
     Route::POST('petition_order_sheets/by_petition', 'Api\PetitionOrderSheetController@showOrderSheetByPetition');
+    //START route for Talbana forms
+    Route::resource('petition_talbana', 'Api\PetitionTalbanaController');
+    Route::POST('petition_talbana/by_petition', 'Api\PetitionTalbanaController@showTalbanaByPetition');
+    //END route for Talbana forms
+
+  //START route for Petition Naqal Form
+  Route::resource('petition_naqal_forms', 'Api\NaqalFormController');
+  Route::POST('petition_naqal_forms/by_petition', 'Api\NaqalFormController@showNaqalFormByPetition');
+  //END route for Petition Naqal Form
 
     Route::post('petition_reply_details/{id}', 'Api\PetitionReplyController@replyDetail');
     Route::resource('petition_reply_parents', 'Api\PetitionReplyParentController');
+    
+    //START route for standard page Oral Arguments
     Route::resource('oral_arguments', 'Api\OralArgumentsController');
-    Route::post('module_index_details/{id}', 'Api\OralArgumentsController@detail');
+    Route::post('module_index_details_oral_arguments/{id}', 'Api\OralArgumentsController@oralArgumentDetail');
+    //END route for standard page Oral Arguments
+
+    //START route for standard page Case Law
+    Route::resource('case_laws', 'Api\CaseLawController');
+    Route::post('module_index_details_case_laws/{id}', 'Api\CaseLawController@caseLawDetail');
+    //END route for standard page Case Law
+
+    //START route for standard page Extra Document
+    Route::resource('extra_documents', 'Api\ExtraDocumentController');
+    Route::post('module_index_details_extra_documents/{id}', 'Api\ExtraDocumentController@extraDocsDetail');
+    //END route for standard page Extra Document
+
+    //START route for standard page Judgement
+    Route::resource('judgements', 'Api\JudgementController');
+    Route::post('module_index_details_judgements/{id}', 'Api\JudgementController@judgementDetail');
+    //END route for standard page Judgement
 
     //Route::resource('petition_indexes', 'Api\PetitionIndexController');
     //Route::resource('petitions', 'Api\PetitionController');

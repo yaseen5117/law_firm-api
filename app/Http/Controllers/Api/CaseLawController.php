@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\CaseLaw;
 use Illuminate\Http\Request;
-use App\Models\OralArgument;
-use App\Models\Petition;
 
-class OralArgumentsController extends Controller
+class CaseLawController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +15,7 @@ class OralArgumentsController extends Controller
      */
     public function index()
     {
-        
+        //
     }
 
     /**
@@ -36,13 +35,13 @@ class OralArgumentsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {         
+    {
         try {             
-            OralArgument::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+            CaseLaw::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
 
             return response()->json(
                 [
-                    'message' => 'OralArgument',
+                    'message' => 'Case Law Saved Successfully',
                     'code' => 200
                 ]
             );
@@ -63,19 +62,16 @@ class OralArgumentsController extends Controller
     {
         try {
 
-            $oralArguments = OralArgument::where('petition_id',$id)->get();            
+            $caseLaws = CaseLaw::where('petition_id',$id)->get();            
             //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();
              
             return response()->json(
                 [           
-                    'index_annexure_data' => $oralArguments,              
-                    'oral_arguments' => $oralArguments,
-                    'index_data' => $oralArguments,
-                    'compactInlineView' => true,
-                    'ShowOnOralArgument' => true,
-                    'model_type' => "App\Models\OralArgument",     
+                    'index_annexure_data' => $caseLaws,              
+                    'case_laws' => $caseLaws,
+                    'index_data' => $caseLaws,
                     'message' => 'Success',
-                    'page_title' => "Oral Arguments",
+                    'page_title' => "Case Laws",
                     'code' => 200
                 ]
             );
@@ -119,7 +115,7 @@ class OralArgumentsController extends Controller
     public function destroy($id)
     {
         try {             
-            $record = OralArgument::find($id); 
+            $record = CaseLaw::find($id); 
                     
             if($record){
                 $record->delete();
@@ -134,22 +130,19 @@ class OralArgumentsController extends Controller
             ],500);
         }
     }
-    public function oralArgumentDetail($id)
+    public function caseLawDetail($id)
     {
         try {
 
-            $oralArguments = OralArgument::with('petition','attachments')->whereId($id)->first();
-            //$petition = Petition::withRelations()->whereId($oralArguments->petition_id)->first();
-    
-            //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();
+            $caseLaw = CaseLaw::with('petition','attachments')->whereId($id)->first();
              
             return response()->json(
                 [                   
-                    'index_detail_data' => $oralArguments,
-                    'model_type' => "App\Models\OralArgument",                    
-                    'petition' => $oralArguments->petition,                    
+                    'index_detail_data' => $caseLaw,
+                    'model_type' => "App\Models\CaseLaw",
+                    'petition' => $caseLaw->petition,                    
                     'message' => 'Success',
-                    'page_title' => "Oral Arguments Detail",
+                    'page_title' => "Case Law Detail",
                     'code' => 200
                 ]
             );
