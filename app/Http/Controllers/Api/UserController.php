@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -19,6 +20,7 @@ class UserController extends Controller
     {         
         try{
             $query = User::with('roles');
+            $roles = Role::get();
             if (!empty($request->name)) {
                 $query->where('name','like','%'.$request->name.'%');
             }
@@ -26,12 +28,18 @@ class UserController extends Controller
             if (!empty($request->email)) {
                 $query->where('email','like','%'.$request->email.'%');
             }
+            if (!empty($request->role_id)) {                
+                $role = Role::find($request->role_id);                                 
+                $query->role($role->name);
+            }
+
             $users = $query->orderBy("name")->get();
 
             //$users = User::orderBy("name")->with('roles')->get();
             return response()->json(
                 [
                     'users' => $users,
+                    'roles' => $roles,
                     'message' => 'All Users',
                     'code' => 200
                 ]
@@ -173,5 +181,50 @@ class UserController extends Controller
                 "error" => $e->getMessage()
             ], 500);
         }
+    }
+
+
+    public function getLoggedInUser(Request $request)
+    {
+        $requeset_user = $request->user();
+        return User::with('roles')->whereId($requeset_user->id)->first();
+    }
+    public function signUp(Request $request)
+    {         
+        try{
+            $file = $request->file('file');     
+                  
+            if($file){
+                $name = time() . '_' . $file->getClientOriginalName();                
+                $file_name = time() . '_' . $file->getClientOriginalName();
+                $request->merge([                    
+                    'profile_image' => $file_name
+                ]);             
+            }
+            //initially set is_approved bit to false.
+            $request->merge([
+                'is_approved' => 0
+            ]);
+            // $request->merge([
+            //     'password' => bcrypt($request->password),                 
+            // ]);   
+             
+            $user = User::updateOrCreate(['id'=>$request->id],$request->except('file','created_at_formated_date','roles','editMode','confirm_password'));             
+            $user->assignRole('client');
+            if($file){
+                $file_path = $file->storeAs('users/' . $user->id, $name, 'public');
+            }
+
+            return response(
+                [
+                    'user' => $user, 
+                    'status' => 200
+                ]
+        );
+        }catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        } 
     }
 }
