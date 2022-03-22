@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -19,6 +20,7 @@ class UserController extends Controller
     {         
         try{
             $query = User::with('roles');
+            $roles = Role::get();
             if (!empty($request->name)) {
                 $query->where('name','like','%'.$request->name.'%');
             }
@@ -26,12 +28,18 @@ class UserController extends Controller
             if (!empty($request->email)) {
                 $query->where('email','like','%'.$request->email.'%');
             }
+            if (!empty($request->role_id)) {                
+                $role = Role::find($request->role_id);                                 
+                $query->role($role->name);
+            }
+
             $users = $query->orderBy("name")->get();
 
             //$users = User::orderBy("name")->with('roles')->get();
             return response()->json(
                 [
                     'users' => $users,
+                    'roles' => $roles,
                     'message' => 'All Users',
                     'code' => 200
                 ]
