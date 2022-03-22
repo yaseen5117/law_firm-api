@@ -115,7 +115,24 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        try {             
+            $user = User::with('roles')->find($id);                     
+            if($user){  
+                return response()->json(
+                    [
+                        'user' => $user,                                           
+                        'message' => 'user',
+                        'code' => 200
+                    ]
+                );                
+            }else{
+                return response('User Not Found',404);
+            }            
+        } catch (\Exception $e) {
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
+        }
     }
 
     /**
@@ -226,5 +243,16 @@ class UserController extends Controller
                 "error" => $e->getMessage()
             ], 500);
         } 
+    }
+    public function getRoles()
+    {
+        $roles = Role::get();
+        return response()->json(
+            [
+                'roles' => $roles,                                           
+                'message' => 'roles',
+                'code' => 200
+            ]
+        );    
     }
 }
