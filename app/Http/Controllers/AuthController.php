@@ -47,6 +47,12 @@ class AuthController extends Controller
                 'message' => 'Wrong Password'
             ], 401);
         }
+        // Check User Approval
+        if($user->is_approved != 1) {
+            return response([
+                'message' => 'Your account is currently not approved. Please wait for admin approval.'
+            ], 401);
+        }
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 

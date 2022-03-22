@@ -189,4 +189,42 @@ class UserController extends Controller
         $requeset_user = $request->user();
         return User::with('roles')->whereId($requeset_user->id)->first();
     }
+    public function signUp(Request $request)
+    {         
+        try{
+            $file = $request->file('file');     
+                  
+            if($file){
+                $name = time() . '_' . $file->getClientOriginalName();                
+                $file_name = time() . '_' . $file->getClientOriginalName();
+                $request->merge([                    
+                    'profile_image' => $file_name
+                ]);             
+            }
+            //initially set is_approved bit to false.
+            $request->merge([
+                'is_approved' => 0
+            ]);
+            // $request->merge([
+            //     'password' => bcrypt($request->password),                 
+            // ]);   
+             
+            $user = User::updateOrCreate(['id'=>$request->id],$request->except('file','created_at_formated_date','roles','editMode','confirm_password'));             
+            $user->assignRole('client');
+            if($file){
+                $file_path = $file->storeAs('users/' . $user->id, $name, 'public');
+            }
+
+            return response(
+                [
+                    'user' => $user, 
+                    'status' => 200
+                ]
+        );
+        }catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        } 
+    }
 }

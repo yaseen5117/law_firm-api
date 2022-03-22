@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
     Route::post('login', 'AuthController@login');
     Route::resource('petitions', 'Api\PetitionController');
     Route::resource('users', 'Api\UserController');
+    Route::post('signup', 'Api\UserController@signUp');
     Route::get('clients', 'Api\UserController@getClient');
 
     Route::resource('attachments', 'Api\AttachmentController');
