@@ -174,4 +174,11 @@ class UserController extends Controller
             ], 500);
         }
     }
+
+
+    public function getLoggedInUser(Request $request)
+    {
+        $requeset_user = $request->user();
+        return User::with('roles')->whereId($requeset_user->id)->first();
+    }
 }

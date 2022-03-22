@@ -67,9 +67,7 @@ use Illuminate\Support\Facades\Route;
     //Route::resource('petitions', 'Api\PetitionController');
     
     Route::resource('petitions_index', 'Api\PetitionIndexController');
-    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-        return $request->user();
-    });
+    Route::middleware('auth:sanctum')->get('/user', 'Api\UserController@getLoggedInUser');
     Route::group(['middleware' => 'auth:sanctum','namespace' => 'Api'], function () { 
   
         
