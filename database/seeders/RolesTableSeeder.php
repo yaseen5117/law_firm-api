@@ -19,10 +19,10 @@ class RolesTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('roles')->truncate();
-        DB::table('permissions')->truncate();        
-        DB::table('model_has_roles')->truncate();
         DB::table('role_has_permissions')->truncate();
+        DB::table('model_has_roles')->truncate();
+        DB::table('permissions')->truncate();        
+        DB::table('roles')->truncate();
          // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
