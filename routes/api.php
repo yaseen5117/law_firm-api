@@ -66,6 +66,11 @@ use Illuminate\Support\Facades\Route;
     Route::post('module_index_details_judgements/{id}', 'Api\JudgementController@judgementDetail');
     //END route for standard page Judgement
 
+    //START route for Synopses forms
+    Route::resource('petition_synopsis', 'Api\PetitionSynopsisController');
+    Route::POST('petition_synopsis/by_petition', 'Api\PetitionSynopsisController@showSynopsisByPetition');
+    //END route for Synopses forms
+
     //Route::resource('petition_indexes', 'Api\PetitionIndexController');
     //Route::resource('petitions', 'Api\PetitionController');
     
