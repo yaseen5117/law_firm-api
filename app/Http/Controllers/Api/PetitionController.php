@@ -32,13 +32,16 @@ class PetitionController extends Controller
             if (!empty($request->institution_date)) {
                 $query->where('institution_date',$request->institution_date);
             }
+            if (!empty($request->year)) {
+                $query->where('year','like','%'.$request->year.'%');
+            }
 
             if (!empty($request->court_id)) {
                 $query->where('court_id',$request->court_id);
             }
             //$query->orderBy('display_order');
             $petitions = $query->get();
-
+            $events = [];
             foreach($petitions as $petition){
                 $events[] = [
                     'title' => 'Case #: '.$petition->case_no,
