@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
     // Public routes
     Route::post('register', 'AuthController@register');
     Route::post('login', 'AuthController@login');
+    Route::post('roles', 'Api\UserController@getRoles');
     Route::resource('petitions', 'Api\PetitionController');
     Route::resource('users', 'Api\UserController')->middleware('role:admin');
     Route::post('signup', 'Api\UserController@signUp');
