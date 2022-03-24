@@ -20,7 +20,7 @@ class UserController extends Controller
     {         
         try{
             $query = User::with('roles');
-            $roles = Role::get();
+            $roles = Role::all();
             if (!empty($request->name)) {
                 $query->where('name','like','%'.$request->name.'%');
             }
