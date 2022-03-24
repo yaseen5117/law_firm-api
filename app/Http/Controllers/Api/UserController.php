@@ -82,7 +82,19 @@ class UserController extends Controller
             // $request->merge([
             //     'password' => bcrypt($request->password),                 
             // ]);   
-             
+            
+
+            if ($request->is_approved) {
+                $requset->merge([
+                    'approved_at'=>now(),
+                    'approved_by'=>$request->user()->id,
+                ]);
+            }else{
+                $requset->merge([
+                    'approved_at'=>null,
+                    'approved_by'=>null,
+                ]);
+            }
             $user = User::updateOrCreate(['id'=>$request->id],$request->except('file','created_at_formated_date','roles','editMode','confirm_password','role_id'));             
             if($request->role_id){
                 $role = Role::find($request->role_id);
