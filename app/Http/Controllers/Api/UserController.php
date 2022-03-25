@@ -69,17 +69,30 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {                    
+    {  
         try{
-            $validator = Validator::make($request->all(), [                
-                'email' => 'required|email|unique:users',                 
-            ]);
-            if ($validator->fails()) {
-                return response()->json(
-                    [
-                        'error' => $validator->errors()
-                ], 401);
-            }        
+            if($request->id){
+                $validator = Validator::make($request->all(), [                
+                    'email' => 'required|email|unique:users,email,'.$request->id,                                            
+                ]);
+                if ($validator->fails()) {
+                    return response()->json(
+                        [
+                            'error' => $validator->errors()
+                    ], 401);
+                } 
+            }else{
+                $validator = Validator::make($request->all(), [                
+                    'password' => 'required', 
+                    'email' => 'required|email|unique:users,email,'.$request->id,                              
+                ]);
+                if ($validator->fails()) {
+                    return response()->json(
+                        [
+                            'error' => $validator->errors()
+                    ], 401);
+                } 
+            }                   
 
             $file = $request->file('file');     
                   
