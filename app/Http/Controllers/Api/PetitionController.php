@@ -39,8 +39,14 @@ class PetitionController extends Controller
             if (!empty($request->court_id)) {
                 $query->where('court_id',$request->court_id);
             }
+            if (!empty($request->petitioner_id)) {
+                $users_ids = User::where('name','like','%'.$request->petitioner_id.'%')->get()->pluck('id');
+                $petitions_ids = PetitionPetitioner::whereIn('petitioner_id',$users_ids)->get()->pluck('petition_id');
+                $query->whereIn('id',$petitions_ids);
+            }
+            
             //$query->orderBy('display_order');
-            $petitions = $query->get();
+            $petitions = $query->get();             
             $events = [];
             foreach($petitions as $petition){
                 $events[] = [

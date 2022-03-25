@@ -20,7 +20,7 @@ class UserController extends Controller
     {         
         try{
             $query = User::with('roles');
-            $roles = Role::get();
+            $roles = Role::orderBy("name")->get();
             if (!empty($request->name)) {
                 $query->where('name','like','%'.$request->name.'%');
             }
@@ -85,12 +85,12 @@ class UserController extends Controller
             
 
             if ($request->is_approved) {
-                $requset->merge([
+                $request->merge([
                     'approved_at'=>now(),
                     'approved_by'=>$request->user()->id,
                 ]);
             }else{
-                $requset->merge([
+                $request->merge([
                     'approved_at'=>null,
                     'approved_by'=>null,
                 ]);
@@ -260,7 +260,7 @@ class UserController extends Controller
     }
     public function getRoles()
     {
-        $roles = Role::get();
+        $roles = Role::orderBy("name")->get();
         return response()->json(
             [
                 'roles' => $roles,                                           
