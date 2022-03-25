@@ -40,7 +40,7 @@ class User extends Authenticatable
     ];
 
     protected $appends = [
-        'created_at_formated_date'
+        'created_at_formated_date','is_admin'
     ];
 
     public function getCreatedAtFormatedDateAttribute()
@@ -75,6 +75,11 @@ class User extends Authenticatable
     public function notes()
     {
         return $this->hasMany(Note::class,"user_id");
+    }
+
+    public function getIsAdminAttribute()
+    {
+        return $this->hasRole(['admin']);
     }
 
 }
