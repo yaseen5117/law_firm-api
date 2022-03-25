@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 use function GuzzleHttp\Promise\all;
 
@@ -70,6 +71,16 @@ class UserController extends Controller
     public function store(Request $request)
     {                    
         try{
+            $validator = Validator::make($request->all(), [                
+                'email' => 'required|email|unique:users',                 
+            ]);
+            if ($validator->fails()) {
+                return response()->json(
+                    [
+                        'error' => $validator->errors()
+                ], 401);
+            }        
+
             $file = $request->file('file');     
                   
             if($file){
@@ -134,7 +145,7 @@ class UserController extends Controller
             if($user){  
                 return response()->json(
                     [
-                        'user' => $user,                                           
+                        'user' => $user,                                                                 
                         'message' => 'user',
                         'code' => 200
                     ]
@@ -222,7 +233,17 @@ class UserController extends Controller
     }
     public function signUp(Request $request)
     {         
-        try{
+        try{   
+            $validator = Validator::make($request->all(), [                
+                'email' => 'required|email|unique:users',                 
+            ]);
+            if ($validator->fails()) {
+                return response()->json(
+                    [
+                        'error' => $validator->errors()
+                ], 401);
+            }            
+             
             $file = $request->file('file');     
                   
             if($file){

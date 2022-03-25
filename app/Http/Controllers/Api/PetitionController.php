@@ -12,6 +12,7 @@ use App\Models\PetitionOpponent;
 use App\Models\PetitionReply;
 use App\Models\PetitionReplyParent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class PetitionController extends Controller
@@ -40,13 +41,15 @@ class PetitionController extends Controller
                 $query->where('court_id',$request->court_id);
             }
             if (!empty($request->petitioner_id)) {
-                $users_ids = User::where('name','like','%'.$request->petitioner_id.'%')->get()->pluck('id');
-                $petitions_ids = PetitionPetitioner::whereIn('petitioner_id',$users_ids)->get()->pluck('petition_id');
-                $query->whereIn('id',$petitions_ids);
+                $query                
+                ->join('petition_petitioners', 'petitions.id', '=', 'petition_petitioners.petition_id')
+                ->join('users', 'users.id', '=', 'petition_petitioners.petitioner_id')
+                ->where('name','like','%'.$request->petitioner_id.'%');       
+                 
             }
             
             //$query->orderBy('display_order');
-            $petitions = $query->get();             
+            $petitions = $query->groupBy('petitions.id')->get();             
             $events = [];
             foreach($petitions as $petition){
                 $events[] = [
