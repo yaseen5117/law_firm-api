@@ -21,6 +21,7 @@ class UsersTableSeeder extends Seeder
             'name' => 'QC Admin',             
             'email' => 'admin@qc.com',     
             'profile_image' => '',              
+            'is_approved' => 1,              
             'password' => bcrypt('test1234'),
              
         ]);               

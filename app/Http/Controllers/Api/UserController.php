@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 use function GuzzleHttp\Promise\all;
 
@@ -20,7 +21,8 @@ class UserController extends Controller
     {         
         try{
             $query = User::with('roles');
-            $roles = Role::all();
+
+            $roles = Role::orderBy("name")->get();
             if (!empty($request->name)) {
                 $query->where('name','like','%'.$request->name.'%');
             }
@@ -68,8 +70,31 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {                    
+    {  
         try{
+            if($request->id){
+                $validator = Validator::make($request->all(), [                
+                    'email' => 'required|email|unique:users,email,'.$request->id,                                            
+                ]);
+                if ($validator->fails()) {
+                    return response()->json(
+                        [
+                            'error' => $validator->errors()
+                    ], 401);
+                } 
+            }else{
+                $validator = Validator::make($request->all(), [                
+                    'password' => 'required', 
+                    'email' => 'required|email|unique:users,email,'.$request->id,                              
+                ]);
+                if ($validator->fails()) {
+                    return response()->json(
+                        [
+                            'error' => $validator->errors()
+                    ], 401);
+                } 
+            }                   
+
             $file = $request->file('file');     
                   
             if($file){
@@ -82,7 +107,19 @@ class UserController extends Controller
             // $request->merge([
             //     'password' => bcrypt($request->password),                 
             // ]);   
-             
+            
+
+            if ($request->is_approved) {
+                $request->merge([
+                    'approved_at'=>now(),
+                    'approved_by'=>$request->user()->id,
+                ]);
+            }else{
+                $request->merge([
+                    'approved_at'=>null,
+                    'approved_by'=>null,
+                ]);
+            }
             $user = User::updateOrCreate(['id'=>$request->id],$request->except('file','created_at_formated_date','roles','editMode','confirm_password','role_id'));             
             if($request->role_id){
                 $role = Role::find($request->role_id);
@@ -122,7 +159,7 @@ class UserController extends Controller
             if($user){  
                 return response()->json(
                     [
-                        'user' => $user,                                           
+                        'user' => $user,                                                                 
                         'message' => 'user',
                         'code' => 200
                     ]
@@ -210,7 +247,17 @@ class UserController extends Controller
     }
     public function signUp(Request $request)
     {         
-        try{
+        try{   
+            $validator = Validator::make($request->all(), [                
+                'email' => 'required|email|unique:users',                 
+            ]);
+            if ($validator->fails()) {
+                return response()->json(
+                    [
+                        'error' => $validator->errors()
+                ], 401);
+            }            
+             
             $file = $request->file('file');     
                   
             if($file){
@@ -248,7 +295,7 @@ class UserController extends Controller
     }
     public function getRoles()
     {
-        $roles = Role::get();
+        $roles = Role::orderBy("name")->get();
         return response()->json(
             [
                 'roles' => $roles,                                           
