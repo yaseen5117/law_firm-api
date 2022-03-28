@@ -13,14 +13,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
+    
+    Route::group(['middleware' => 'auth:sanctum','namespace' => 'Api'], function () { 
+  
+        Route::resource('petitions', 'PetitionController');
+        Route::resource('users', 'UserController')->middleware("role:admin");
+        
+        
+    });
  
     // Public routes
     Route::post('register', 'AuthController@register');
     Route::post('login', 'AuthController@login');
     Route::post('roles', 'Api\UserController@getRoles');
-    Route::resource('petitions', 'Api\PetitionController');
-    Route::resource('users', 'Api\UserController');
     Route::post('signup', 'Api\UserController@signUp');
     Route::get('clients', 'Api\UserController@getClient');
 

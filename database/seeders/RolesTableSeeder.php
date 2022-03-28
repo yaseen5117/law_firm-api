@@ -82,7 +82,7 @@ class RolesTableSeeder extends Seeder
             'name' => 'Kamran Khan',              
             'company_name' => 'KAMRAN KHAN AND OTHERS',
             'email' => 'kamran@qc.com',
-            'password' => bcrypt('test1234'),           
+            'password' => 'test1234',           
         ]);
 
         $ClientUser->assignRole($client);

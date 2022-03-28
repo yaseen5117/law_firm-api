@@ -25,7 +25,11 @@ class PetitionController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Petition::withRelations();
+            $query = Petition::select("petitions.*")->withRelations();
+            $query                
+                ->leftjoin('petition_petitioners', 'petitions.id', '=', 'petition_petitioners.petition_id')
+                ->leftjoin('users', 'users.id', '=', 'petition_petitioners.petitioner_id');
+
             if (!empty($request->case_no)) {
                 $query->where('case_no','like','%'.$request->case_no.'%');
             }
@@ -41,11 +45,13 @@ class PetitionController extends Controller
                 $query->where('court_id',$request->court_id);
             }
             if (!empty($request->petitioner_id)) {
-                $query                
-                ->join('petition_petitioners', 'petitions.id', '=', 'petition_petitioners.petition_id')
-                ->join('users', 'users.id', '=', 'petition_petitioners.petitioner_id')
-                ->where('name','like','%'.$request->petitioner_id.'%');       
+                
+                $query->where('name','like','%'.$request->petitioner_id.'%');       
                  
+            }   
+
+            if ($request->user()->hasRole('client')) {
+                $query->where('petitioner_id',$request->user()->id);       
             }
             
             //$query->orderBy('display_order');
