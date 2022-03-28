@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 use function GuzzleHttp\Promise\all;
@@ -72,69 +73,78 @@ class UserController extends Controller
     public function store(Request $request)
     {  
         try{
-            if($request->id){
-                $validator = Validator::make($request->all(), [                
-                    'email' => 'required|email|unique:users,email,'.$request->id,                                            
-                ]);
-                if ($validator->fails()) {
-                    return response()->json(
-                        [
-                            'error' => $validator->errors()
-                    ], 401);
-                } 
-            }else{
-                $validator = Validator::make($request->all(), [                
-                    'password' => 'required', 
-                    'email' => 'required|email|unique:users,email,'.$request->id,                              
-                ]);
-                if ($validator->fails()) {
-                    return response()->json(
-                        [
-                            'error' => $validator->errors()
-                    ], 401);
-                } 
-            }                   
-
-            $file = $request->file('file');     
-                  
-            if($file){
-                $name = time() . '_' . $file->getClientOriginalName();                
-                $file_name = time() . '_' . $file->getClientOriginalName();
-                $request->merge([                    
-                    'profile_image' => $file_name
-                ]);             
-            }
-            // $request->merge([
-            //     'password' => bcrypt($request->password),                 
-            // ]);   
-            
-
-            if ($request->is_approved) {
-                $request->merge([
-                    'approved_at'=>now(),
-                    'approved_by'=>$request->user()->id,
-                ]);
-            }else{
-                $request->merge([
-                    'approved_at'=>null,
-                    'approved_by'=>null,
-                ]);
-            }
-            $user = User::updateOrCreate(['id'=>$request->id],$request->except('file','created_at_formated_date','roles','editMode','confirm_password','role_id'));             
-            if($request->role_id){
-                $role = Role::find($request->role_id);
-                $user->assignRole($role->name);
-            }            
-            if($file){
-                $file_path = $file->storeAs('users/' . $user->id, $name, 'public');
-            }
-
-            return response(
-                [
-                    'user' => $user, 
-                    'status' => 200
-                ]
-        );
+            if($request->id == $request->user()->id || $request->user()->hasRole('admin')){
+                if($request->id){
+                    $validator = Validator::make($request->all(), [                
+                        'email' => 'required|email|unique:users,email,'.$request->id,                                            
+                    ]);
+                    if ($validator->fails()) {
+                        return response()->json(
+                            [
+                                'error' => $validator->errors()
+                        ], 401);
+                    } 
+                }else{
+                    $validator = Validator::make($request->all(), [                
+                        'password' => 'required', 
+                        'email' => 'required|email|unique:users,email,'.$request->id,                              
+                    ]);
+                    if ($validator->fails()) {
+                        return response()->json(
+                            [
+                                'error' => $validator->errors()
+                        ], 401);
+                    } 
+                }                   
+    
+                $file = $request->file('file');     
+                      
+                if($file){
+                    $name = time() . '_' . $file->getClientOriginalName();                
+                    $file_name = time() . '_' . $file->getClientOriginalName();
+                    $request->merge([                    
+                        'profile_image' => $file_name
+                    ]);             
+                }
+                // $request->merge([
+                //     'password' => bcrypt($request->password),                 
+                // ]);   
+                
+    
+                if ($request->is_approved) {
+                    $request->merge([
+                        'approved_at'=>now(),
+                        'approved_by'=>$request->user()->id,
+                    ]);
+                }else{
+                    $request->merge([
+                        'approved_at'=>null,
+                        'approved_by'=>null,
+                    ]);
+                }
+                $user = User::updateOrCreate(['id'=>$request->id],$request->except('file','created_at_formated_date','roles','editMode','confirm_password','role_id'));             
+                if($request->role_id){
+                    $role = Role::find($request->role_id);
+                    $user->assignRole($role->name);
+                }            
+                if($file){
+                    $file_path = $file->storeAs('users/' . $user->id, $name, 'public');
+                }
+    
+                return response(
+                    [
+                        'user' => $user, 
+                        'status' => 200
+                    ]
+                );
+            } else{
+                return response(
+                    [
+                        'message' => "Unauthenticated User", 
+                        'status' => 403
+                    ]
+                );
+            }        
         }catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
