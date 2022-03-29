@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
     Route::group(['middleware' => 'auth:sanctum','namespace' => 'Api'], function () { 
   
         Route::resource('petitions', 'PetitionController');
-        Route::resource('users', 'UserController')->middleware("role:admin");
+        Route::resource('users', 'UserController');
         
         
     });

@@ -44,9 +44,9 @@ class PetitionController extends Controller
             if (!empty($request->court_id)) {
                 $query->where('court_id',$request->court_id);
             }
-            if (!empty($request->petitioner_id)) {
+            if (!empty($request->petitioner_name)) {
                 
-                $query->where('name','like','%'.$request->petitioner_id.'%');       
+                $query->where('name','like','%'.$request->petitioner_name.'%');       
                  
             }   
 

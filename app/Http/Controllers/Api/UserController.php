@@ -13,6 +13,11 @@ use function GuzzleHttp\Promise\all;
 
 class UserController extends Controller
 {
+
+    public function __construct()
+    {    
+        $this->middleware("role:admin", ['except' => ['store', 'show','index','getClient','getLoggedInUser','getRoles']]);      
+    }
     /**
      * Display a listing of the resource.
      *
@@ -164,7 +169,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        try {             
+        try {                      
             $user = User::with('roles')->find($id);                     
             if($user){  
                 return response()->json(
@@ -248,8 +253,7 @@ class UserController extends Controller
             ], 500);
         }
     }
-
-
+    
     public function getLoggedInUser(Request $request)
     {
         $requeset_user = $request->user();
