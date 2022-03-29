@@ -16,7 +16,7 @@ class UserController extends Controller
 
     public function __construct()
     {    
-        $this->middleware("role:admin", ['except' => ['store', 'show','index','getClient','getLoggedInUser','getRoles']]);      
+        $this->middleware("role:admin", ['except' => ['store', 'show','index','getClient','getLoggedInUser','getRoles','signUp']]);      
     }
     /**
      * Display a listing of the resource.
