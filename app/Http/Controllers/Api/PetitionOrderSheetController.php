@@ -53,10 +53,11 @@ class PetitionOrderSheetController extends Controller
     public function store(Request $request)
     {
         try {     
-            $request->merge([
-                'order_sheet_date' => \Carbon\Carbon::parse($request->order_sheet_date)->format('Y/m/d'),    
-            ]);
-            
+            if($request->order_sheet_date){ 
+                $request->merge([
+                    'order_sheet_date' => \Carbon\Carbon::parse($request->order_sheet_date)->format('Y/m/d'),    
+                ]);
+            }
             PetitonOrderSheet::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
 
             return response()->json(

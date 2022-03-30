@@ -98,11 +98,11 @@ class PetitionController extends Controller
     public function store(Request $request)
     {
         try {    
-           
-            $request->merge([
-                'institution_date' => \Carbon\Carbon::parse($request->institution_date)->format('Y/m/d'),    
-            ]);            
-
+            if($request->institution_date){  
+                $request->merge([
+                    'institution_date' => \Carbon\Carbon::parse($request->institution_date)->format('Y/m/d'),    
+                ]);            
+            }
             $petition = Petition::updateOrCreate(['id'=>$request->id],$request->except('new_petitioner','petitioners','opponents','petitioner_names','opponent_names','petitioners','court'));
 
 

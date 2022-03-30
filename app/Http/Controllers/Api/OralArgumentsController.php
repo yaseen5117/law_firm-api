@@ -37,11 +37,12 @@ class OralArgumentsController extends Controller
      */
     public function store(Request $request)
     {         
-        try {    
-            $request->merge([
-                'date' => \Carbon\Carbon::parse($request->date)->format('Y/m/d'),    
-            ]);
-            
+        try {  
+            if($request->date){  
+                $request->merge([
+                    'date' => \Carbon\Carbon::parse($request->date)->format('Y/m/d'),    
+                ]);
+            }
             OralArgument::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
 
             return response()->json(
