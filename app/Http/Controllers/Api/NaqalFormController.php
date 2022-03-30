@@ -50,7 +50,11 @@ class NaqalFormController extends Controller
      */
     public function store(Request $request)
     {
-        try {             
+        try {  
+            $request->merge([
+                'naqal_form_date' => \Carbon\Carbon::parse($request->naqal_form_date)->format('Y/m/d'),    
+            ]);
+            
             PetitionNaqalForm::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
 
             return response()->json(

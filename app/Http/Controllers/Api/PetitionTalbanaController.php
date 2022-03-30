@@ -50,7 +50,11 @@ class PetitionTalbanaController extends Controller
      */
     public function store(Request $request)
     {
-        try {             
+        try {         
+            $request->merge([
+                'talbana_date' => \Carbon\Carbon::parse($request->talbana_date)->format('Y/m/d'),    
+            ]);
+            
             PetitionTalbana::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
 
             return response()->json(

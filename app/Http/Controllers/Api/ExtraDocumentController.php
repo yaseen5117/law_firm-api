@@ -37,6 +37,10 @@ class ExtraDocumentController extends Controller
     public function store(Request $request)
     {
         try {             
+            $request->merge([
+                'date' => \Carbon\Carbon::parse($request->date)->format('Y/m/d'),    
+            ]);
+
             ExtraDocument::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
 
             return response()->json(

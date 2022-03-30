@@ -50,7 +50,11 @@ class PetitionSynopsisController extends Controller
      */
     public function store(Request $request)
     {
-        try {             
+        try {         
+            $request->merge([
+                'synopsis_date' => \Carbon\Carbon::parse($request->synopsis_date)->format('Y/m/d'),    
+            ]);
+            
             PetitionSynopsis::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
 
             return response()->json(
