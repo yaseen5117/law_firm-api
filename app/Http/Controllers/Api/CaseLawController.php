@@ -38,7 +38,7 @@ class CaseLawController extends Controller
     {
         try {       
             $request->merge([
-                'date' => \Carbon\Carbon::parse($request->date)->format('Y/m/d'),    
+                'date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->date)->format('Y/m/d'),     
             ]);
             
             CaseLaw::updateOrCreate(['id'=>$request->id],$request->except('editMode'));

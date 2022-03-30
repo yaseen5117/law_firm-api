@@ -53,7 +53,7 @@ class PetitionSynopsisController extends Controller
         try {       
             if($request->synopsis_date){    
                 $request->merge([
-                    'synopsis_date' => \Carbon\Carbon::parse($request->synopsis_date)->format('Y/m/d'),    
+                    'synopsis_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->synopsis_date)->format('Y/m/d'), 
                 ]);
             }
             PetitionSynopsis::updateOrCreate(['id'=>$request->id],$request->except('editMode'));

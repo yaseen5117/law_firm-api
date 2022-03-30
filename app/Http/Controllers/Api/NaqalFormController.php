@@ -53,7 +53,7 @@ class NaqalFormController extends Controller
         try { 
             if($request->naqal_form_date){ 
                 $request->merge([
-                    'naqal_form_date' => \Carbon\Carbon::parse($request->naqal_form_date)->format('Y/m/d'),    
+                    'naqal_form_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->naqal_form_date)->format('Y/m/d'),   
                 ]);
             }
             PetitionNaqalForm::updateOrCreate(['id'=>$request->id],$request->except('editMode'));

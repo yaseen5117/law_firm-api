@@ -100,7 +100,7 @@ class PetitionController extends Controller
         try {    
             if($request->institution_date){  
                 $request->merge([
-                    'institution_date' => \Carbon\Carbon::parse($request->institution_date)->format('Y/m/d'),    
+                    'institution_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->institution_date)->format('Y/m/d'),
                 ]);            
             }
             $petition = Petition::updateOrCreate(['id'=>$request->id],$request->except('new_petitioner','petitioners','opponents','petitioner_names','opponent_names','petitioners','court'));

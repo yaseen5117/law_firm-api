@@ -40,7 +40,7 @@ class OralArgumentsController extends Controller
         try {  
             if($request->date){  
                 $request->merge([
-                    'date' => \Carbon\Carbon::parse($request->date)->format('Y/m/d'),    
+                    'date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->date)->format('Y/m/d'),   
                 ]);
             }
             OralArgument::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
