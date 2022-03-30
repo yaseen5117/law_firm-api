@@ -86,7 +86,8 @@ class UserController extends Controller
                     if ($validator->fails()) {
                         return response()->json(
                             [
-                                'error' => $validator->errors()
+                                'validation_error' => $validator->errors(),
+                                'error' => "Validation error..!"
                         ], 401);
                     } 
                 }else{
@@ -97,7 +98,8 @@ class UserController extends Controller
                     if ($validator->fails()) {
                         return response()->json(
                             [
-                                'error' => $validator->errors()
+                                'validation_error' => $validator->errors(),
+                                'error' => "Validation error..!"
                         ], 401);
                     } 
                 }                   
@@ -269,7 +271,8 @@ class UserController extends Controller
             if ($validator->fails()) {
                 return response()->json(
                     [
-                        'error' => $validator->errors()
+                        'validation_error' => $validator->errors(),
+                        'error' => "The email has already been taken."
                 ], 401);
             }            
              
