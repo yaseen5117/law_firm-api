@@ -76,6 +76,10 @@ use Illuminate\Support\Facades\Route;
     Route::POST('petition_synopsis/by_petition', 'Api\PetitionSynopsisController@showSynopsisByPetition');
     //END route for Synopses forms
 
+    //START route for Synopses forms
+    Route::resource('general_case_laws', 'Api\GeneralCaseLawController');
+    //END route for Synopses forms
+
     //Route::resource('petition_indexes', 'Api\PetitionIndexController');
     //Route::resource('petitions', 'Api\PetitionController');
     
