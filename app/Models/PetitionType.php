@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class PetitionType extends Model
 {
     use HasFactory;
+    protected $guarded = [];
 
     protected $table = "petition_types";
 }

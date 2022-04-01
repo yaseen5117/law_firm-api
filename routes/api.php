@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
   
         Route::resource('petitions', 'PetitionController');
         Route::resource('users', 'UserController');
+             
         Route::resource('petition_hearing', 'PetitionHearingController');
         
         
@@ -29,6 +30,7 @@ use Illuminate\Support\Facades\Route;
     Route::post('roles', 'Api\UserController@getRoles');
     Route::post('signup', 'Api\UserController@signUp');
     Route::get('clients', 'Api\UserController@getClient');
+    Route::get('lawyers', 'Api\UserController@getLawyer');   
 
     Route::resource('attachments', 'Api\AttachmentController');
     

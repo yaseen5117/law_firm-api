@@ -10,6 +10,9 @@ class PetitonOrderSheet extends Model
     use HasFactory;
 
     protected $guarded = [];
+    protected $casts = [
+        'order_sheet_date'  => 'date:d/m/Y',        
+    ];
 
     public function petition()
     {

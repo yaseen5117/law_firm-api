@@ -16,7 +16,7 @@ class UserController extends Controller
 
     public function __construct()
     {    
-        $this->middleware("role:admin", ['except' => ['store', 'show','index','getClient','getLoggedInUser','getRoles','signUp']]);      
+        $this->middleware("role:admin", ['except' => ['store', 'show','index','getClient','getLoggedInUser','getRoles','signUp','getLawyer']]);      
     }
     /**
      * Display a listing of the resource.
@@ -247,6 +247,30 @@ class UserController extends Controller
                 [
                     'clients' => $clients,
                     'message' => 'All Clients',
+                    'code' => 200
+                ]
+            );
+        }catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function getLawyer()
+    {
+        try{
+            $lawyers = User::role('lawyer')->orderBy("name")->get();
+            $lawyerUsers = [];
+            foreach($lawyers as $lawyer){
+                $lawyerUsers[] = [
+                    'label' => $lawyer->name,
+                    'value' =>  $lawyer->id,             
+                ];
+            } 
+            return response()->json(
+                [
+                    'lawyers' => $lawyerUsers,
+                    'message' => 'All lawyers',
                     'code' => 200
                 ]
             );

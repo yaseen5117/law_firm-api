@@ -9,6 +9,9 @@ class OralArgument extends Model
 {
     use HasFactory;
     protected $guarded = [];
+    protected $casts = [
+        'date'  => 'date:d/m/Y',        
+    ];
 
     public function petition()
     {

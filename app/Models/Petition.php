@@ -14,10 +14,16 @@ class Petition extends Model
     protected $guarded=[];
     protected $appends=['petitioner_names','opponent_names'];
     protected $dates = ['deleted_at'];
-
+    protected $casts = [
+        'institution_date'  => 'date:d/m/Y',        
+    ];
     public function court()
     {
         return $this->belongsTo('App\Models\Court','court_id','id');
+    }
+    public function lawyers()
+    {
+        return $this->hasMany('App\Models\PetitionLawyer');
     }
 
     public function case_status()
@@ -57,7 +63,7 @@ class Petition extends Model
 
     public function scopeWithRelations($query)
     {
-        return $query->with('petitioners.user','opponents.user','court');
+        return $query->with('petitioners.user','opponents.user','court','lawyers');
     }
 
     public function getPetitionerNamesAttribute()
@@ -67,7 +73,7 @@ class Petition extends Model
             $str .= @$petitioner->user->name.", ";
         }
         return rtrim($str,", ");
-    }
+    }    
 
     public function getOpponentNamesAttribute()
     {
@@ -77,6 +83,15 @@ class Petition extends Model
         }
         return rtrim($str,", ");
     }
+    // public function getLawyerNamesAttribute()
+    // {
+    //     $str="";
+    //     foreach ($this->lawyers as $lawyer) {
+    //         $str .= @$lawyer->user->name.", ";
+    //     }
+    //     return rtrim($str,", ");
+    // }
+
     public function petition_replies_parents()
     {
         return $this->hasMany('App\Models\PetitionReplyParent','petition_id');
