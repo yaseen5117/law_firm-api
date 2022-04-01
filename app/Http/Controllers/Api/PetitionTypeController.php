@@ -21,6 +21,7 @@ class PetitionTypeController extends Controller
                 [
                     'petition_types' => $petition_types,
                     'message' => 'Petition Types',
+                    'page_title' => 'Petition Types',
                     'code' => 200
                 ]
             );
@@ -49,7 +50,21 @@ class PetitionTypeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {             
+            
+            PetitionType::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+
+            return response()->json(
+                [
+                    'message' => 'Petition Type Saved Successfully',
+                    'code' => 200
+                ]
+            );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -94,6 +109,20 @@ class PetitionTypeController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {             
+            $record = PetitionType::find($id); 
+                    
+            if($record){
+                $record->delete();
+                return response($record,200);
+            }else{
+                return response('Data Not Found',404);
+            }
+            
+        } catch (\Exception $e) {
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
+        }
     }
 }

@@ -9,6 +9,9 @@ class PetitionNaqalForm extends Model
 {
     use HasFactory;
     protected $guarded = [];
+    protected $casts = [
+        'naqal_form_date'  => 'date:d/m/Y',        
+    ];
 
     public function petition()
     {

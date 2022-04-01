@@ -9,6 +9,9 @@ class PetitionTalbana extends Model
 {
     use HasFactory;
     protected $guarded = [];
+    protected $casts = [
+        'talbana_date'  => 'date:d/m/Y',        
+    ];
 
     public function petition()
     {

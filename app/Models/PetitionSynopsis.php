@@ -9,6 +9,9 @@ class PetitionSynopsis extends Model
 {
     use HasFactory;
     protected $guarded = [];
+    protected $casts = [
+        'synopsis_date'  => 'date:d/m/Y',        
+    ];
 
     public function petition()
     {

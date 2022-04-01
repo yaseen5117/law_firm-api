@@ -8,6 +8,7 @@ use App\Models\Petition;
 use App\Models\User;
 use App\Models\PetitionPetitioner;
 use App\Models\PetitionIndex;
+use App\Models\PetitionLawyer;
 use App\Models\PetitionOpponent;
 use App\Models\PetitionReply;
 use App\Models\PetitionReplyParent;
@@ -96,14 +97,15 @@ class PetitionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {         
+         
         try {    
             if($request->institution_date){  
                 $request->merge([
                     'institution_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->institution_date)->format('Y/m/d'),
                 ]);            
             }
-            $petition = Petition::updateOrCreate(['id'=>$request->id],$request->except('new_petitioner','petitioners','opponents','petitioner_names','opponent_names','petitioners','court'));
+            $petition = Petition::updateOrCreate(['id'=>$request->id],$request->except('new_petitioner','petitioners','opponents','petitioner_names','opponent_names','petitioners','court','lawyer_ids','lawyers','lawyer_ids_array'));
 
 
             if (is_array($request->petitioners) && count($request->petitioners)>0) {
@@ -159,7 +161,16 @@ class PetitionController extends Controller
                 }
             }
 
-
+            //Saving All Layers Of Petition
+            if (is_array($request->lawyer_ids) && count($request->lawyer_ids)>0){
+                PetitionLawyer::where('petition_id', $petition->id)->delete();
+                foreach ($request->lawyer_ids as $lawyer_id) {
+                    PetitionLawyer::create([
+                        'petition_id'=>$petition->id,
+                        'lawyer_id'=>$lawyer_id,
+                    ]);                     
+                }                
+            }
 
             /*if (is_array($request->opponent) && count($request->opponent)>0) {
                 foreach ($request->opponent as $opponent) {
@@ -200,8 +211,10 @@ class PetitionController extends Controller
         try {
             
             $petition = Petition::withRelations()->where('id',$id)->first();
+            $petition->lawyer_ids_array = $petition->lawyers()->pluck('lawyer_id');
             $petition_details = PetitionIndex::where('petition_id',$id)->get();
-              
+             
+             
             return response()->json(
                 [
                     'petition' => $petition,

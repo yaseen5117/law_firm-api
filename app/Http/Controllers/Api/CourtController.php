@@ -21,6 +21,7 @@ class CourtController extends Controller
                 [
                     'courts' => $courts,
                     'message' => 'All Courts',
+                    'page_title' => "Courts",
                     'code' => 200
                 ]
             );
@@ -49,7 +50,21 @@ class CourtController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {             
+            
+            Court::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+
+            return response()->json(
+                [
+                    'message' => 'Court Saved Successfully',
+                    'code' => 200
+                ]
+            );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -94,6 +109,20 @@ class CourtController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {             
+            $record = Court::find($id); 
+                    
+            if($record){
+                $record->delete();
+                return response($record,200);
+            }else{
+                return response('Data Not Found',404);
+            }
+            
+        } catch (\Exception $e) {
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
+        }
     }
 }

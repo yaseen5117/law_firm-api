@@ -10,4 +10,9 @@ class PetitionLawyer extends Model
     use HasFactory;
 
     protected $fillable = ['petition_id','lawyer_id'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class,'lawyer_id');
+    }
 }
