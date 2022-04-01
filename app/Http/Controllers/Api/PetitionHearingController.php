@@ -19,9 +19,13 @@ class PetitionHearingController extends Controller
         $petitionHearings = PetitionHearing::all();
             foreach($petitionHearings as $petitionHearing){
                 $events[] = [
+                    'id' => @$petitionHearing->id,
                     'title' => 'Case #: '.@$petitionHearing->petition->case_no,
                     'start' => $petitionHearing->hearing_date,   
-                    'url' => 'http://localhost:8080/petitions/'.$petitionHearing->petition_id              
+                    'hearing_date' => $petitionHearing->hearing_date,   
+                    'hearing_summary' => $petitionHearing->hearing_summary,   
+                    'petition_id' => $petitionHearing->petition_id,   
+                    
                 ];
             }
         return response([
@@ -49,7 +53,7 @@ class PetitionHearingController extends Controller
     public function store(Request $request)
     {
         //return $request->all();
-        PetitionHearing::create($request->all());
+        PetitionHearing::updateOrCreate(['id'=>$request->id],$request->all());
     }
 
     /**
