@@ -57,3 +57,35 @@ function getRole($id)
 
     return $role;
 }
+
+function to_date($date_in_any_format, $with_time = false) {
+        if ($date_in_any_format=="" || $date_in_any_format=="0000-00-00" || $date_in_any_format=="1969-12-31" || $date_in_any_format=="1970-01-01") {
+                return "";
+        }
+        if(config('site.australia_timezone'))
+        {
+            if ($date_in_any_format) {
+                if ($with_time) {
+                    return date('d/m/Y h:i a', strtotime($date_in_any_format));
+                } else {
+                    return date('d/m/Y', strtotime($date_in_any_format));
+                }
+    
+            } else {
+                return "";
+            }
+        }else{
+            if ($date_in_any_format) {
+                if ($with_time) {
+                    return date('d/m/Y h:i a', strtotime($date_in_any_format));
+                } else {
+                    return date('d/m/Y', strtotime($date_in_any_format));
+                }
+    
+            } else {
+                return "";
+            }
+        }
+
+        
+    }

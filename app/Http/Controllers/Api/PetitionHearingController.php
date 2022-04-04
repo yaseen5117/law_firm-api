@@ -20,7 +20,7 @@ class PetitionHearingController extends Controller
             foreach($petitionHearings as $petitionHearing){
                 $events[] = [
                     'id' => @$petitionHearing->id,
-                    'title' => 'Case #: '.@$petitionHearing->petition->case_no,
+                    'title' => 'Case # '.@$petitionHearing->petition->case_no,
                     'start' => $petitionHearing->hearing_date,   
                     'hearing_date' => $petitionHearing->hearing_date,   
                     'hearing_summary' => $petitionHearing->hearing_summary,   
@@ -53,6 +53,9 @@ class PetitionHearingController extends Controller
     public function store(Request $request)
     {
         //return $request->all();
+        $request->merge([
+            'hearing_date' => date("Y-m-d",strtotime($request->hearing_date)),
+        ]);
         PetitionHearing::updateOrCreate(['id'=>$request->id],$request->all());
     }
 
@@ -98,6 +101,20 @@ class PetitionHearingController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {             
+            $petitionHearing = PetitionHearing::find($id); 
+                    
+            if($petitionHearing){
+                $petitionHearing->delete();
+                return response($petitionHearing,200);
+            }else{
+                return response('Record Not Found',404);
+            }
+            
+        } catch (\Exception $e) {
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
+        }
     }
 }
