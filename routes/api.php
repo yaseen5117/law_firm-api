@@ -31,7 +31,8 @@ use Illuminate\Support\Facades\Route;
     Route::post('signup', 'Api\UserController@signUp');
     Route::get('clients', 'Api\UserController@getClient');
     Route::get('lawyers', 'Api\UserController@getLawyer');   
-
+    //opinions
+    Route::resource('opinions', 'Api\OpinionController');
     Route::resource('attachments', 'Api\AttachmentController');
     
     Route::resource('petition_types', 'Api\PetitionTypeController');
