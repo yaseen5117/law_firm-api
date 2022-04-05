@@ -15,7 +15,7 @@ class OpinionController extends Controller
      */
     public function index()
     {
-        $opinions = Opinion::all();
+        $opinions = Opinion::with('user')->get();
         return response([
             'opinions' => $opinions,
             'message' => 'All Opinions',
@@ -40,8 +40,26 @@ class OpinionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        //
+    {         
+        try { 
+            if($request->issuance_date){ 
+                $request->merge([
+                    'issuance_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->issuance_date)->format('Y/m/d'),   
+                ]);
+            }
+            Opinion::updateOrCreate(['id'=>$request->id],$request->except('editMode','user'));
+
+            return response()->json(
+                [
+                    'message' => 'Saved successfully',
+                    'code' => 200
+                ]
+            );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
