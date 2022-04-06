@@ -50,7 +50,7 @@ class AttachmentController extends Controller
                     $attachmentable_id = $request->attachmentable_id;
                     $mime_type = $file->getClientMimeType();
                     
-                    if ($mime_type=="application/pdf") {
+                    if ($mime_type!="application/pdf") {
                         //WE DONT WANT TO SAVE PDF IN DATABASE. BECAUSE WE ONLY CONVERT PDF TO IMAGES AND THEN SAVE THOSE IMAGES IN DATABASE.
                         Attachment::create([
                             'file_name' => $file_name,
@@ -102,6 +102,7 @@ class AttachmentController extends Controller
                                     'mime_type' => 'jpg',
                                     'attachmentable_id' => $request->attachmentable_id,
                                     'attachmentable_type' => $request->attachmentable_type,
+                                    'display_order' => $page,
                                 ]);    
                             }
 
@@ -109,7 +110,7 @@ class AttachmentController extends Controller
 
 
                             info("conversion done");
-                        }catch(Exception $e) {
+                        }catch(\Exception $e) {
                           info('Message: ' .$e->getMessage());
                         }
                         /****************CONVERTING PDF TO IMAGES**********************/
