@@ -16,3 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+    Route::get('logs', 'LogViewerController@index');
+Route::get('/pdf_to_img', 'TestController@pdf_to_img');
