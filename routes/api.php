@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+    Route::get('test_convert', 'Api\PetitionController@test_convert');
     
     Route::group(['middleware' => 'auth:sanctum','namespace' => 'Api'], function () { 
   

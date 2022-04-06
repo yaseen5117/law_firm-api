@@ -15,6 +15,7 @@ use App\Models\PetitionReplyParent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+new Spatie\PdfToImage\Pdf
 
 class PetitionController extends Controller
 {
@@ -262,5 +263,17 @@ class PetitionController extends Controller
     public function destroy($id)
     {
         //
-    }     
+    }
+
+    public function test_convert()
+         {
+            $file_name = public_path()."\sample-pdf-with-images.pdf";
+            $file_output = public_path()."\pdfoutput";
+            $pdf_file = new $pdf($file_name);
+            $pdf->setOutputFormat('png')
+            ->saveImage($file_output);
+            return "done";
+             
+
+         }     
 }
