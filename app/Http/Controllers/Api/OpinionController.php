@@ -13,14 +13,36 @@ class OpinionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $opinions = Opinion::with('user')->get();
+        try {
+        //$opinions = Opinion::with('user')->get();
+
+        $query = Opinion::with('user');
+        //return $request->client_id;
+        if (!empty($request->client_id)) {
+            $query->where('client_id',$request->client_id);
+        }
+        if (!empty($request->reference_no)) {
+            $query->where('reference_no','like','%'.$request->reference_no.'%');
+        }
+
+        if (!empty($request->subject)) {
+            $query->where('subject','like','%'.$request->subject.'%');            
+        }
+        
+        $opinions = $query->get(); 
         return response([
             'opinions' => $opinions,
             'message' => 'All Opinions',
             'status' => 200
         ]);
+    }
+    catch (\Exception $e) {
+        return response([
+            "error" => $e->getMessage()
+        ], 500);
+    }
     }
 
     /**
