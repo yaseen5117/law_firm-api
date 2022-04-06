@@ -23,6 +23,39 @@ function uploadFile($request)
         'attachmentable_id' => $request->attachmentable_id,
         'attachmentable_type' => $request->attachmentable_type,
     ]);
+
+    /****************CONVERTING PDF TO IMAGES**********************/
+    try{
+        $fileone  = "pdf-images.pdf";
+        $im = new Imagick();
+        //$im->setResolution(300,300);
+        $im->readimage($fileone); 
+        $num_page = $im->getnumberimages();
+        $im->clear(); 
+        $im->destroy(); 
+        
+        for($page = 0; $page<$num_page ; $page++){
+            $im = new Imagick();
+
+            info("converting page: $page");
+
+            $im->readimage($fileone."[$page]"); 
+            $im->setImageFormat('jpeg');    
+            $im->writeImage($page ." - " .time().'.jpg'); 
+            
+            info("converting page: $page DONE");
+            $im->clear(); 
+            $im->destroy();     
+        }
+
+
+
+
+        info("conversion done");
+    }catch(Exception $e) {
+      info('Message: ' .$e->getMessage());
+    }
+    /****************CONVERTING PDF TO IMAGES**********************/
      
     return response("Success", 200);
     //$request->file($file_original_name)->storeAs($root .'/' . $attachmentable_id . '/', $fileName);
