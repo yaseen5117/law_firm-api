@@ -15,7 +15,7 @@ use App\Models\PetitionReplyParent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-new Spatie\PdfToImage\Pdf
+new Spatie\PdfToImage\Pdf;
 
 class PetitionController extends Controller
 {
