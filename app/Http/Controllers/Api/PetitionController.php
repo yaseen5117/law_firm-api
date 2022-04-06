@@ -18,6 +18,7 @@ use Illuminate\Support\Str;
 
 
 class PetitionController extends Controller
+{
     /**
      * Display a listing of the resource.
      *
