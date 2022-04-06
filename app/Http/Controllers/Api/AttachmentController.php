@@ -110,7 +110,7 @@ class AttachmentController extends Controller
 
 
                             info("conversion done");
-                        }catch(Exception $e) {
+                        }catch(\Exception $e) {
                           info('Message: ' .$e->getMessage());
                         }
                         /****************CONVERTING PDF TO IMAGES**********************/
