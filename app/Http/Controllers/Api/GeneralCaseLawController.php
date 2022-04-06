@@ -13,12 +13,20 @@ class GeneralCaseLawController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
+            $query = GeneralCaseLaw::query();
+    
+        if (!empty($request->case_title)) {
+            $query->where('case_title','like','%'.$request->case_title.'%');
+        }
 
-            $generalcaseLaws = GeneralCaseLaw::all();            
-            //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();
+        if (!empty($request->keywords)) {
+            $query->where('keywords','like','%'.$request->keywords.'%');            
+        }
+        
+        $generalcaseLaws = $query->get(); 
              
             return response()->json(
                 [           
