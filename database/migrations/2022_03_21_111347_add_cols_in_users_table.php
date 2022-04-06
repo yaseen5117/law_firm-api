@@ -29,7 +29,9 @@ class AddColsInUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->dropColumn('is_approved');
+            $table->dropColumn('approved_at');
+            $table->dropColumn('approved_by');
         });
     }
 }
