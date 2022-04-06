@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+use Imagick;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attachment;
@@ -40,7 +41,7 @@ class AttachmentController extends Controller
             $files = $request->file('files');
             if ($files) {
                 foreach ($files as $key => $file) {
-
+                    info("AttachmentController store Function: File mime_type: ".$file->getClientMimeType());
                     $name = time() . '_' . $file->getClientOriginalName();
                     $file_path = $file->storeAs('attachments/' . $request->attachmentable_id, $name, 'public');
                     $file_name = time() . '_' . $file->getClientOriginalName();
@@ -48,13 +49,72 @@ class AttachmentController extends Controller
                     $attachmentable_type = $request->attachmentable_type;
                     $attachmentable_id = $request->attachmentable_id;
                     $mime_type = $file->getClientMimeType();
-                    Attachment::create([
-                        'file_name' => $file_name,
-                        'title' => $title,
-                        'attachmentable_type' => $attachmentable_type,
-                        'attachmentable_id' => $attachmentable_id,
-                        'mime_type' => $mime_type,
-                    ]);
+                    
+                    if ($mime_type=="application/pdf") {
+                        //WE DONT WANT TO SAVE PDF IN DATABASE. BECAUSE WE ONLY CONVERT PDF TO IMAGES AND THEN SAVE THOSE IMAGES IN DATABASE.
+                        Attachment::create([
+                            'file_name' => $file_name,
+                            'title' => $title,
+                            'attachmentable_type' => $attachmentable_type,
+                            'attachmentable_id' => $attachmentable_id,
+                            'mime_type' => $mime_type,
+                        ]);
+                    }
+                    
+                    if ($mime_type=="application/pdf") {
+                        info("****************CONVERTING PDF TO IMAGES START**********************");
+                        /****************CONVERTING PDF TO IMAGES**********************/
+                        $attachmentable_id = $request->attachmentable_id;
+                        $pdf_file_name = "$file_name";
+                        $public_path =  public_path();
+                        $file_path = "$public_path/storage/attachments/$attachmentable_id/$pdf_file_name";
+                        $output_path = "$public_path/storage/attachments/$attachmentable_id/";
+
+                        try{
+                            
+                            $im = new Imagick();
+                            //$im->setResolution(300,300);
+                            $im->readimage($file_path); 
+                            $num_page = $im->getnumberimages();
+                            $im->clear(); 
+                            $im->destroy(); 
+                            
+                            for($page = 0; $page<$num_page ; $page++){
+                                $im = new Imagick();
+
+                                info("converting page: $page");
+                                $im->setResolution(300,300);
+                                
+                                $im->readimage($file_path."[$page]"); 
+                                $im->setImageFormat('jpeg');    
+                                $generated_jpg_filename = $page ." - " .$file_name.'.jpg';
+                                $im->setImageCompression(imagick::COMPRESSION_JPEG); 
+                                $im->setImageCompressionQuality(100);
+                                $im->writeImage($output_path."/".$generated_jpg_filename); 
+                                
+                                info("converting page: $page DONE");
+                                $im->clear(); 
+                                $im->destroy(); 
+
+                                $attachment = Attachment::updateOrCreate(['id' => $request->attachment_id], [ //attachment id
+                                    'title' => $generated_jpg_filename,
+                                    'file_name' => $generated_jpg_filename,
+                                    'mime_type' => 'jpg',
+                                    'attachmentable_id' => $request->attachmentable_id,
+                                    'attachmentable_type' => $request->attachmentable_type,
+                                ]);    
+                            }
+
+
+
+
+                            info("conversion done");
+                        }catch(Exception $e) {
+                          info('Message: ' .$e->getMessage());
+                        }
+                        /****************CONVERTING PDF TO IMAGES**********************/
+                        info("****************CONVERTING PDF TO IMAGES END**********************");
+                    }
                 }
 
                 return response()->json([

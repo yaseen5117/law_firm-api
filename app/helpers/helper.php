@@ -6,6 +6,7 @@ use App\Models\Attachment;
 use SebastianBergmann\Environment\Console;
 use App\Models\Role;
 use App\Models\ModelHasRole;
+use Imagick;
 
 function uploadFile($request)
 {
@@ -24,38 +25,62 @@ function uploadFile($request)
         'attachmentable_type' => $request->attachmentable_type,
     ]);
 
-    /****************CONVERTING PDF TO IMAGES**********************/
-    try{
-        $fileone  = "pdf-images.pdf";
-        $im = new Imagick();
-        //$im->setResolution(300,300);
-        $im->readimage($fileone); 
-        $num_page = $im->getnumberimages();
-        $im->clear(); 
-        $im->destroy(); 
-        
-        for($page = 0; $page<$num_page ; $page++){
-            $im = new Imagick();
+    info("Helpers.php uploadFile Function: File mime_type".$request->mime_type);
 
-            info("converting page: $page");
+        if ($request->mime_type=="application/pdf") {
+            info("****************CONVERTING PDF TO IMAGES START**********************");
+            /****************CONVERTING PDF TO IMAGES**********************/
+            $attachmentable_id = $request->attachmentable_id;
+            $pdf_file_name = "$request->file_name";
+            $public_path =  public_path();
+            $file_path = "$public_path/storage/attachments/$attachmentable_id/$pdf_file_name";
+            $output_path = "$public_path/storage/attachments/$attachmentable_id/";
 
-            $im->readimage($fileone."[$page]"); 
-            $im->setImageFormat('jpeg');    
-            $im->writeImage($page ." - " .time().'.jpg'); 
-            
-            info("converting page: $page DONE");
-            $im->clear(); 
-            $im->destroy();     
+            try{
+                
+                $im = new Imagick();
+                //$im->setResolution(300,300);
+                $im->readimage($file_path); 
+                $num_page = $im->getnumberimages();
+                $im->clear(); 
+                $im->destroy(); 
+                
+                for($page = 0; $page<$num_page ; $page++){
+                    $im = new Imagick();
+
+                    info("converting page: $page");
+
+                    $im->readimage($file_path."[$page]"); 
+                    $im->setImageFormat('jpeg');    
+                    $generated_jpg_filename = $page ." - " .$request->file_name.'.jpg';
+                    $im->writeImage($output_path."/".$generated_jpg_filename); 
+                    
+                    info("converting page: $page DONE");
+                    $im->clear(); 
+                    $im->destroy(); 
+
+                    $attachment = Attachment::updateOrCreate(['id' => $request->attachment_id], [ //attachment id
+                        'title' => $generated_jpg_filename,
+                        'file_name' => $generated_jpg_filename,
+                        'comment' => $request->comment,
+                        'mime_type' => 'jpg',
+                        'attachmentable_id' => $request->attachmentable_id,
+                        'attachmentable_type' => $request->attachmentable_type,
+                    ]);    
+                }
+
+
+
+
+                info("conversion done");
+            }catch(Exception $e) {
+              info('Message: ' .$e->getMessage());
+            }
+            /****************CONVERTING PDF TO IMAGES**********************/
+            info("****************CONVERTING PDF TO IMAGES END**********************");
         }
 
-
-
-
-        info("conversion done");
-    }catch(Exception $e) {
-      info('Message: ' .$e->getMessage());
-    }
-    /****************CONVERTING PDF TO IMAGES**********************/
+        
      
     return response("Success", 200);
     //$request->file($file_original_name)->storeAs($root .'/' . $attachmentable_id . '/', $fileName);
