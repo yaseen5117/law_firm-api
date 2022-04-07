@@ -6,6 +6,7 @@ use Imagick;
 use App\Http\Controllers\Controller;
 use App\Models\Attachment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AttachmentController extends Controller
 {
@@ -201,6 +202,33 @@ class AttachmentController extends Controller
                 return response(
                     [
                         'message' => 'Record Deleted successfully',
+                        'code' => 200
+                    ]
+                );
+            }
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function deleteSelected(Request $request)
+    {        
+        try {     
+            //request contains all selected records ids   
+            if ($request) {                 
+                DB::table("attachments")->whereIn('id',$request)->delete();                       
+                return response(
+                    [
+                        'message' => 'Records Deleted successfully',
+                        'code' => 200
+                    ]
+                );
+            }
+            else{
+                return response(
+                    [
+                        'message' => 'No Record Found',
                         'code' => 200
                     ]
                 );

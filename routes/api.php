@@ -35,6 +35,8 @@ use Illuminate\Support\Facades\Route;
     //opinions
     Route::resource('opinions', 'Api\OpinionController');
     Route::resource('attachments', 'Api\AttachmentController');
+
+    Route::post('delete_selected', 'Api\AttachmentController@deleteSelected');
     
     Route::resource('petition_types', 'Api\PetitionTypeController');
     Route::resource('courts', 'Api\CourtController');
