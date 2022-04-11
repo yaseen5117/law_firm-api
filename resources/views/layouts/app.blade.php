@@ -7,8 +7,7 @@
 
 </head>
 
-<body class="bg-gradient-primary">
-
+<body>
     <div class="container">
 
         <!-- Outer Row -->
@@ -16,12 +15,27 @@
 
             <div class="col-xl-10 col-lg-12 col-md-9">
 
-                <div class="card o-hidden border-0 shadow-lg my-5">
-                    <div class="card-body p-0">
-                              
+                <div class="" >
+                      <!-- ======= Header ======= -->
+                    <header id="header" class="fixed-top ">
+                      <div class="container d-flex align-items-center justify-content-between">
+                        <h1 class="logo"><a href="https://elawfirmpk.com/">LFMS</a></h1>
+                        
+                        <nav id="navbar" class="navbar">
+                          <ul>
+                            <li><a class="nav-link" href="https://elawfirmpk.com/">Home</a></li>
+                            <li><a class="nav-link" href="https://elawfirmpk.com/login">Login</a></li>
+                            <li><a class="nav-link" href="https://elawfirmpk.com/sign-up">Sign Up</a></li>          
+                            
+                          </ul>
+                          <i class="bi bi-list mobile-nav-toggle"></i>
+                        </nav><!-- .navbar -->
+
+                      </div>
+                    </header><!-- End Header -->
+                   
                               @yield('content')
-                    
-                    </div>
+                     
                 </div>
 
             </div>

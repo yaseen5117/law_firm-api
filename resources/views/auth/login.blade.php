@@ -2,9 +2,9 @@
 
 @section('content')
         <!-- Nested Row within Card Body -->
-        <div class="row">
-           <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
-            <div class="col-lg-6">
+        <div class="row" style="margin-top: 100px">
+            
+            <div class="offset-lg-3 col-lg-6">
                 <div class="p-5">
                     <div class="text-center">
                         <h1 class="h4 text-gray-900 mb-4">Login</h1>
@@ -13,7 +13,7 @@
                     <form class="user" method="POST" action="{{ route('login') }}">
                         @csrf
                         <div class="form-group">
-                            <input type="email" class="form-control-for-auth form-control-user  @error('email') is-invalid @enderror" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter Email Address..." value="{{ old('email') }}" name="email" id="email" required autocomplete="email" autofocus>
+                            <input type="email" class="form-control form-control-for-auth form-control-user  @error('email') is-invalid @enderror" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter Email Address..." value="{{ old('email') }}" name="email" id="email" required autocomplete="email" autofocus>
 
                              @error('email')
                                     <span class="invalid-feedback" role="alert">
@@ -23,7 +23,7 @@
 
                         </div>
                         <div class="form-group">
-                            <input id="password" type="password" name="password" autocomplete="current-password" class="form-control-for-auth form-control-user @error('password') is-invalid @enderror"placeholder="Password" required>
+                            <input id="password" type="password" name="password" autocomplete="current-password" class="form-control form-control-for-auth form-control-user @error('password') is-invalid @enderror"placeholder="Password" required>
 
                              @error('password')
                                     <span class="invalid-feedback" role="alert">
