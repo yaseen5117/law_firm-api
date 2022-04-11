@@ -19,3 +19,7 @@ Route::get('/', function () {
 
     Route::get('logs', 'LogViewerController@index');
 Route::get('/pdf_to_img', 'TestController@pdf_to_img');
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
