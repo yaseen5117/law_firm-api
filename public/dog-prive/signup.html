@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Dog Prive -Register</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="assets/img/logo.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" /> 
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+   
+  <!-- Vendor CSS Files -->   
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+   
+}
+h3{
+
+    color: #1cbd01;
+}
+h5{
+
+    color: #1cbd01;
+}
+.select2-container--default .select2-selection--single {
+    background-color: #fff;
+    border: 1px solid #d8d4d4;
+    border-radius: 4px;
+}
+.img-thumbnail {
+    padding: .25rem;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: .25rem;
+    max-width: 100%;
+    height: auto;
+}
+
+html {
+    height: 100%
+}
+
+#msform {
+    text-align: center;
+    position: relative;
+    margin-top: 20px
+}
+
+#msform fieldset .form-card {
+    background: white;
+    border: 0 none;
+    border-radius: 0px;
+    padding: 20px 40px 30px 40px;
+     
+}
+
+#msform fieldset {
+    background: white;
+    border: 0 none;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding-bottom: 20px;
+    position: relative
+}
+
+#msform fieldset:not(:first-of-type) {
+    display: none
+}
+
+#msform fieldset .form-card {
+    text-align: left;
+    color: #9E9E9E
+}
+
+#msform .action-button {
+    width: 100px;
+    background: #52C452;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 10px;
+    cursor: pointer;
+    float: right;
+    padding: 1px 5px;
+   margin: 12px 7px;
+}
+
+#msform .action-button:hover,
+#msform .action-button:focus {
+    box-shadow: 0 0 0 2px white, 0 0 0 3px #c813e2
+}
+
+#msform .action-button-previous {
+    width: 100px;
+    background: #3b2762b8;
+    font-weight: bold;
+    color: white;
+    float: left;
+    border: 0 none;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 1px 5px;
+    margin: 10px 5px
+}
+
+#msform .action-button-previous:hover,
+#msform .action-button-previous:focus {
+    box-shadow: 0 0 0 2px white, 0 0 0 3px #1cbd01;
+}
+
+select.list-dt {
+    border: none;
+    outline: 0;
+    border-bottom: 1px solid #ccc;
+    padding: 2px 5px 3px 5px;
+    margin: 2px
+}
+
+select.list-dt:focus {
+    border-bottom: 2px solid skyblue
+}
+
+.card {
+    z-index: 0;
+    border: none;
+    border-radius: 0.5rem;
+    position: relative
+}
+
+.fs-title {
+    font-size: 25px;
+    color: #2C3E50;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-align: left
+}
+
+#progressbar {
+    overflow: hidden;
+    color: lightgray;
+}
+
+#progressbar .active {
+    color: #1cbd01;
+}
+
+#progressbar li {
+    list-style-type: none;
+    font-size: 12px;
+    width: 16%;
+    float: left;
+    position: relative
+}
+
+#progressbar #account:before {
+    font-family: FontAwesome;
+    content: "\f144"
+}
+
+#progressbar #personal:before {
+    font-family: FontAwesome;
+    content: "\f0f7"
+}
+
+
+#progressbar #payment:before {
+    font-family: FontAwesome;
+    content: "\f09d"
+}
+
+#progressbar #paymen:before {
+    font-family: FontAwesome;
+    content: "\f09d"
+}
+#progressbar #deposit:before {
+    font-family: FontAwesome;
+    content: "\f015 "
+}
+
+#progressbar #confirm:before {
+    font-family: FontAwesome;
+    content: "\f00c"
+}
+
+#progressbar li:before {
+    width: 50px;
+    height: 50px;
+    line-height: 45px;
+    display: block;
+    font-size: 18px;
+    color: #ffffff;
+    background: lightgray;
+    border-radius: 50%;
+    margin: 0 auto 10px auto;
+    padding: 2px
+}
+
+
+#progressbar li:after {
+    content: '';
+    width: 104%;
+    height: 2px;
+    background: lightgray;
+    position: absolute;
+    left: 5px;
+    top: 25px;
+    z-index: -1
+}
+
+#progressbar li.active:before,
+#progressbar li.active:after {
+    background: #1cbd01;
+}
+
+.form-control{
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 10px !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered{
+    margin-top: 10px !important;
+}
+</style>
+<style>
+
+
+.ffl-wrapper {
+  position: relative;
+  display: block;
+  padding-top: 0rem;
+  background-color: white;
+}
+
+.ffl-wrapper .ffl-label {
+  transition-property: all;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+  transition-delay: 0s;
+  position: absolute;
+  white-space: nowrap;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  pointer-events: none;
+  top: 1rem;
+  left: 10px;
+}
+.ffl-wrapper.ffl-floated .ffl-label { top: -11px !important; }
+
+
+.ffl-label {
+  color: #909090;
+  line-height: 1.2;
+}
+
+.ffl-floated .ffl-label {
+  color: white;
+  font-size: 18px !important;
+  background-color: #3ABA41;
+  padding: 2px !important;
+}
+.input:focus {
+    outline: none !important;
+    border:1px solid red;
+    box-shadow: 0 0 10px red;
+  }
+</style>
+<script>
+    
+$(document).ready(function(){
+    $("#state").select2();
+	$("#region").select2();
+	$("#city").select2();
+    $("#relation-race").select2();
+    
+var current_fs, next_fs, previous_fs; //fieldsets
+var opacity;
+
+$(".next").click(function(){
+
+current_fs = $(this).parent();
+next_fs = $(this).parent().next();
+
+//Add Class Active
+$("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+
+//show the next fieldset
+next_fs.show();
+//hide the current fieldset with style
+current_fs.animate({opacity: 0}, {
+step: function(now) {
+// for making fielset appear animation
+opacity = 1 - now;
+
+current_fs.css({
+'display': 'none',
+'position': 'relative'
+});
+next_fs.css({'opacity': opacity});
+},
+duration: 600
+});
+});
+
+$(".previous").click(function(){
+
+current_fs = $(this).parent();
+previous_fs = $(this).parent().prev();
+
+//Remove class active
+$("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+
+//show the previous fieldset
+previous_fs.show();
+
+//hide the current fieldset with style
+current_fs.animate({opacity: 0}, {
+step: function(now) {
+// for making fielset appear animation
+opacity = 1 - now;
+
+current_fs.css({
+'display': 'none',
+'position': 'relative'
+});
+previous_fs.css({'opacity': opacity});
+},
+duration: 600
+});
+});
+
+$('.radio-group .radio').click(function(){
+$(this).parent().find('.radio').removeClass('selected');
+$(this).addClass('selected');
+});
+
+$(".submit").click(function(){
+return false;
+})
+
+});
+</script>
+
+<style>
+    .select2-container .select2-selection--single{
+        height: 50px;
+    }
+.class{
+
+    border-color: #1cbd01 !important;
+}
+
+    .class:hover{
+     transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,7,.12), 0 4px 8px rgba(0,0,0,.06);
+}
+    @media only screen and (max-width: 850px) {
+  
+
+  #progressbar li {
+    list-style-type: none;
+    font-size: 11px;
+    width: 14%;
+    float: left;
+    position: relative;
+    right: 5px !important;
+}
+#progressbar li:before {
+    width: 45px;
+    height: 46px;
+    line-height: 45px;
+    display: block;
+    font-size: 18px;
+    color: #ffffff;
+    background: lightgray;
+    border-radius: 50%;
+    margin: 0px auto 11 px auto;
+ padding: 2px;
+}
+h1{
+
+    font-size: 32px !important;
+}
+#msform fieldset .form-card{
+
+    position: relative;
+    right: 27px !important;
+}
+.color{
+	color: black;
+}
+
+
+</style>
+
+</head>
+
+<body>
+    <section class="vh-200" style="background-color:#b2b2ec;">
+        <div class="container py-5 h-100">
+          <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col col-xl-10">
+              <div class="card" style="border-radius: 1rem;">
+                <div class="row g-0">
+                  <div class="col-md-6 col-lg-5">
+                    <img src="assets/img/hero.jpeg" alt="" class="vh-100 img-fluid" style="border-radius: 1rem 0 0 1rem;">
+                    
+                  </div>
+                  <div class="col-md-6 col-lg-7">
+                     
+    
+               
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <form id="msform" action="" method="post">
+                            <!-- progressbar -->
+
+                            <ul id="progressbar">
+                                <li class="active" id="account"><strong>OWNER DETAIL</strong></li>
+                                <li id="personal"><strong>DOG DETAIL</strong></li>
+                                <li id="payment"><strong>PROFILE DETAIL</strong></li>
+                                
+                                <li id="confirm"><strong>FINISH</strong></li>
+                            </ul> <!-- fieldsets -->
+                           
+                            <fieldset>
+
+                                <div class="form-card">
+                                    <h3 class="">OWNER DETAIL</h3>
+                                    
+    
+ 
+                                  <div class="ffl-wrapper">
+
+                                    <label for="Bname" class="ffl-label">NAME</label> 
+                                    <input type="text" name="Bname" class="form-control"  />
+                               </div>
+
+                               
+                                   <div class="ffl-wrapper">
+                                    <label for="ccard" class="ffl-label ">SURNAME</label>  
+                                   <input type="text" name="ccard"  class="form-control" class="form-control" />
+                               </div>
+
+								<div class="ffl-wrapper">
+                                    <label for="DOB" class="ffl-label">BIRTH</label>
+                                    <input type="date" name="DOB" placeholder="DOB"  class="form-control" />
+                                    
+                                </div><br>
+								<h5 class="color">LIVE</h5>
+								<div class="ffl-wrapper" style="margin-top: 20px">
+                                    <select id="state" class="js-example-basic-single js-states form-control" name="state">
+                                                <option value="Country Not Selected">SELECT STATE</option>
+                                                <option value="Afghanistan">Afghanistan</option>
+                                                <option value="Åland Islands">Åland Islands</option>
+												</select>
+                                    </div>
+									
+									 <div class="ffl-wrapper" style="margin-top: 20px">
+                                 
+									<select id="region" class="js-example-basic-single js-states form-control" name="region">
+                                                <option value="Country Not Selected">SELECT REGION</option>
+                                                <option value="Afghanistan">Afghanistan</option>
+                                                <option value="Åland Islands">Åland Islands</option>
+												</select>
+                                    
+                                </div>
+								
+                               <div class="ffl-wrapper" style="margin-top: 20px">
+                                    <select id="city" class="js-example-basic-single js-states form-control" name="city">
+                                                <option value="Country Not Selected">SELECT CITY</option>
+                                                <option value="Afghanistan">Afghanistan</option>
+                                                <option value="Åland Islands">Åland Islands</option>
+												</select>
+                                </div>
+
+                               
+
+                                                             
+                                </div> 
+                                <input type="button" name="next" class="next action-button" value="Next Step" />
+                            </fieldset>
+                            <fieldset>
+                                <div class="form-card">
+                                    <h3 class="">DOG DETAIL</h3> 
+                                     
+                                 <div class="ffl-wrapper">
+                                    <label for="blname" class="ffl-label ">NAME</label> 
+                                    <input type="text" class="form-control" name="blname" placeholder="" /> 
+                                </div><br>
+                                    
+								
+                               <div class="ffl-wrapper">    
+<span class="color mt-2"><b> SEX: </b></span>							   
+                                    <div style="margin-left: 15px" class="form-check form-check-inline ml-4">
+									  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+									  <label class="form-check-label" for="inlineRadio1">MALE</label>
+									</div>
+									<div class="form-check form-check-inline">
+									  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+									  <label class="form-check-label" for="inlineRadio2">FEMALE</label>
+									</div>
+                                </div>
+
+								   
+								<span class="color" style="margin-top: 10px"><b> AGE: </b></span>	<br>						   
+                                                     
+<div class="row">
+                                        <div class="col-md-6">
+                                            <div class="ffl-wrapper">
+                                    <label for="ci" class="ffl-label">MONTH</label>
+                                    <input type="text" name="ci"  class="form-control" />
+                                </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="ffl-wrapper">
+                                    <label for="sta" class="ffl-label">YEARS</label>
+                                    <input type="text" name="sta"  class="form-control" /> 
+                                </div>
+                                </div>
+                                </div>
+                                <div class="ffl-wrapper">
+                                    <label for="cname" class="ffl-label ">RACE</label>
+                                    <input type="text" name="cname" class="form-control" />
+                                </div>
+
+                                <div class="ffl-wrapper">
+                                     
+                                    <select id="relation-rac" class="js-example-basic-single js-states form-control" name="relation-race">
+                                                <option value="Country Not Selected">SELECT SIZE IN RELATION RACE</option>
+                                                <option value="Afghanistan">Afghanistan</option>
+                                                <option value="Åland Islands">Åland Islands</option>
+												</select>
+                                     
+                                </div>
+
+								 
+								<div class="ffl-wrapper" style="margin-top: 25px">    
+<span class="color mt-2"><b> PEDIGREE: </b></span>							   
+                                    <div style="margin-left: 15px" class="form-check form-check-inline ml-4">
+									  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option1">
+									  <label class="form-check-label" for="inlineRadio3">YES</label>
+									</div>
+									<div class="form-check form-check-inline">
+									  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="option2">
+									  <label class="form-check-label" for="inlineRadio4">NO.</label>
+									</div>
+                                </div>
+								 
+								
+								<div class="ffl-wrapper">
+                                    <label for="cname" class="ffl-label ">PARTICULAR DETAIL</label>
+                                    <textarea type="text" rows="4" cols="50" name="cname"  class="form-control"></textarea>
+                                </div>
+
+                                </div> <input type="button" name="previous" class="previous action-button-previous" value="Previous" /> <input type="button" name="next" class="next action-button" value="Next Step" />
+                            </fieldset>
+
+
+                            <fieldset>
+                                <div class="form-card">
+                                    <h3 class="">PROFILE DETAIL</h3>
+                                     
+                                <div class="ffl-wrapper">
+                                    <label for="baddress" class="ffl-label ">EMAIL</label>
+                                    <input type="text" name="baddress" class="form-control" /> 
+
+                                </div>
+
+                                <div class="ffl-wrapper">
+                                    <label for="bcity" class="ffl-label ">PASSWORD</label>    
+                                    <input type="text" name="bcity"  class="form-control" /> 
+                                </div>
+
+                                <div class="ffl-wrapper">
+                                    <label for="bstate" class="ffl-label ">PROFILE PHOTO</label>    
+                                    <input type="text" name="bstate"  class="form-control" />
+                                </div> 
+                                    
+                                <div class="ffl-wrapper">
+                                    <label for="bzip" class="ffl-label ">I WANT TO FIND AN OWNER THAT IS</label>
+                                    <textarea type="text" rows="4" cols="50" name="dop"  class="form-control"></textarea> 
+                                </div>
+                                <div class="ffl-wrapper">
+                                    <label for="bzip" class="ffl-label ">I WANT TO FIND A DOG THAT IS</label>
+                                    <textarea type="text" rows="4" cols="50" name="dop"  class="form-control"></textarea> 
+                                </div>
+								
+								</div> <input type="button" name="previous" class="previous action-button-previous" value="Previous" /> <input type="button" name="next" class="next action-button" value="Next Step" />
+                            </fieldset>
+                            
+
+                           
+
+                            <fieldset>
+
+
+                                 <div class="form-card">
+                                    <h1 class="text-center"> FINISHED</h1>
+                                 
+                           </div>
+                                 
+                            </fieldset>
+                            
+                        </form>
+                    </div>
+                </div>
+            
+ 
+<script type="text/javascript">
+    /*!**************************************************************
+ * Package: floating-form-labels
+ * Version: v1.2.4
+ * Built  : Thu Jul 05 2018 20:51:51 GMT+0200 (CEST)
+ * URL  : https://github.com/Baedda/floating-form-labels
+ ***************************************************************/
+
+!function(t,i){"function"==typeof define&&define.amd?define(["jquery"],i):"object"==typeof exports?i(require("jquery")):i(t.jQuery)}(this,function(e){var l="floatingFormLabels",s={label:".ffl-label",formElements:"input, textarea",floatedClass:"ffl-floated"};function o(t,i){this._name=l,this.el=e(t),this.options=e.extend({},s,i),this.label=this.el.find(this.options.label),this.input=this.el.find(this.options.formElements),this.floated=!1,this._init()}o.prototype={_init:function(){var t=this;this._toggleClass(this._isFloated()),this._hasPlaceholder()?this._toggleClass(!0):(this.input.on({"focus.ffl":function(){t._toggleClass(!0)},"blur.ffl":function(){t._toggleClass(t._isFloated())},"change.ffl":function(){t._toggleClass(!0)}}),this.el.trigger("init.ffl",this))},_hasPlaceholder:function(){return""!==e.trim(this.input.attr("placeholder"))},_isFloated:function(){return""!==this.input.val()&&null!==this.input.val()&&0!==this.input.val().length},_toggleClass:function(t){t?(this.el.addClass(this.options.floatedClass),this.floated=!0):(this.el.removeClass(this.options.floatedClass),this.floated=!1),this.label.trigger("toggle.ffl",this)},destroy:function(){this.input.off(".ffl"),this.el.removeClass(this.options.floatedClass).removeData(l)}},e.fn[l]=function(t){var i,s=Array.prototype.slice.call(arguments,1);return this.each(function(){e.data(this,l)?"string"==typeof t&&(i=e.data(this,l))[t].apply(i,s):e.data(this,l,new o(this,t))})}});
+</script>
+<script>
+$('.ffl-wrapper').floatingFormLabels();
+</script>
+      
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+</body>
+
+</html>

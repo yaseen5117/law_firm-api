@@ -4,31 +4,27 @@
 <head>
 
     @include('layouts.partials.head')
+    @include('layouts.partials.css')
 
 </head>
 
-<body class="bg-gradient-primary">
-
-    <div class="container">
-
-        <!-- Outer Row -->
-        <div class="row justify-content-center">
-
-            <div class="col-xl-10 col-lg-12 col-md-9">
-
-                <div class="card o-hidden border-0 shadow-lg my-5">
-                    <div class="card-body p-0">
-                              
-                              @yield('content')
-                    
+<body>
+    <section class="vh-200" style="background-color:#b2b2ec;">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col col-xl-10">
+                    <div class="card" style="border-radius: 1rem;">
+                        <div class="row g-0">
+                            @yield('content')
+                        </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
-
-    </div>
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
+    </section>
 
     @include('layouts.partials.footer-scripts')
 

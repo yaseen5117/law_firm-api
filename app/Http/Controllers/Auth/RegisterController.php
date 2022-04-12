@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Dog;
+use App\Models\DogType;
+use App\Models\Region;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use App\Models\Role;
@@ -46,8 +49,12 @@ class RegisterController extends Controller
 
     public function showRegistrationForm()
     {
-        $roles = Role::all();
-        return view("auth.register", compact("roles"));
+        //$roles = Role::all();
+        $regions = Region::all();
+        $race_types = DogType::all();
+        $cities = [];
+        $provinces = [];
+        return view("auth.register",compact("regions","cities","provinces","race_types"));//, compact("roles")
     }
 
     /**
@@ -77,18 +84,40 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
 
-        $fileName = md5(microtime()) . '.' . $data['profile_image_file']->getClientOriginalExtension();
+        $fileName = null;
+        if($data['profile_image_file']){
+            $fileName = md5(microtime()) . '.' . $data['profile_image_file']->getClientOriginalExtension();
+        }
         
         $record = User::create([
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
+            'owner_name' => $data['owner_name'],
+            'surname' => $data['surname'],
+            'dob' => $data['dob'],
+            
+            'province_id' => $data['province_id'],
+            'region_id' => $data['region_id'],
+            'city_id' => $data['city_id'],
+            'sex' => $data['sex'],             
+            'age_month' => $data['age_month'],
+
+            'age_year' => $data['age_year'],
+            'race_type_id' => $data['race_type_id'],
+            'relation_race' => $data['relation_race'],
+            'pedigree' => $data['pedigree'],
+            'particular_detail' => $data['particular_detail'],
+
+            'owner_detail' => $data['owner_detail'],
+            'dog_detail' => $data['dog_detail'],
+            'approval_status' => 1,
+           
+            'dog_name' => $data['dog_name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'profile_image' => $fileName,
 
         ]);
 
-        $record->assignRole($data['role']);
+        //$record->assignRole($data['role']);
 
         $data['profile_image_file']->storeAs('users/' . $record->id . '/', $fileName);
         
@@ -96,7 +125,7 @@ class RegisterController extends Controller
     }
     public function register(Request $request)
     {
-        $this->validator($request->all())->validate();
+        //$this->validator($request->all())->validate();
 
         event(new Registered($user = $this->create($request->all())));
 

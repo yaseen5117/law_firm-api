@@ -10,159 +10,41 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>@yield('title') | Law Firm</title>
+    <title>@yield('title') | Dog Prive -Home</title>
 
-    <!-- Custom fonts for this template-->
-    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+  <!-- Favicons -->
+  <link href="{{ asset('dog-prive/assets/img/logo.png') }}" rel="icon">
+  <link href="{{ asset('dog-prive/assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
 
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
 
-    <link href="{{ asset('admin-template/css/sb-admin-2.min.css') }}" rel="stylesheet">
-    <link href="{{url('/')}}/plugins/filepond/css/filepond.css" rel="stylesheet">
-
-    <!-- Links for multi-select dropdown-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css" integrity="sha512-mR/b5Y7FRsKqrYZou7uysnOdCIJib/7r5QeJMFvLNHNhtye3xJp1TdJVPLtetkukFn227nKpXD9OjUc09lx97Q==" crossorigin="anonymous"
-    referrerpolicy="no-referrer" />
+  <!-- Vendor CSS Files -->
+  <link href="{{ asset('dog-prive/assets/vendor/aos/aos.css')}}" rel="stylesheet">
+  <link href="{{ asset('dog-prive/assets/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
+  <link href="{{ asset('dog-prive/assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+  <link href="{{ asset('dog-prive/assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('dog-prive/assets/vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('dog-prive/assets/vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+  
+  <!-- Template Main CSS File -->
+  <link href="{{ asset('dog-prive/assets/css/style.css')}}" rel="stylesheet">
 
     <!-- Custom styles for this template-->
     @yield('css')     
 
     <style>
-      .custom_fieldset{
-        margin: 8px 2px;
-        padding:0px  2px 0px 3px;
-        border: 1px solid #cfcfcf;
-      }
-      .datepicker.datepicker-dropdown.dropdown-menu {
-              z-index: 999999;
-      }
-      input[type='number'] {
-          -moz-appearance:textfield;
-      }
-      
-      input::-webkit-outer-spin-button,
-      input::-webkit-inner-spin-button {
-          /* display: none; <- Crashes Chrome on hover */
-          -webkit-appearance: none;
-          margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
-      }
-
-      form.cmxform label.error, label.error {
-          color: red;
-      }
-      #overlay { 
-        
-        opacity:    0.5; 
-          background: #000; 
-          width:      100%;
-          height:     100%; 
-          z-index:    2000;
-          top:        0; 
-          left:       0; 
-          position:   fixed; 
-        }
-        #img-load {
-            width: 50px;
-            height: 57px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            margin: -28px 0 0 -25px;
-        }
-        .field-required:after{
-              content:" *";
-              color:red;
-        }
-
-        .required:after{
-          content:" *";
-          color:red;
-        }
-        .text-danger{
-          color: red!important;
-        }
-
-        /*<!-- style for active/inactive users in Ro's page -->*/
- 
-        .switch {
-        margin-top: 8px;
-        position: relative;
-        display: inline-block;
-        width: 60px;
-        height: 34px;
-        }
-
-        .switch input { 
-        opacity: 0;
-        width: 0;
-        height: 0;
-        }
-
-        .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #d9534f;;
-        -webkit-transition: .4s;
-        transition: .4s;
-        }
-
-        .slider:before {
-        position: absolute;
-        content: "";
-        height: 26px;
-        width: 26px;
-        left: 4px;
-        bottom: 4px;
-        background-color: white;
-        -webkit-transition: .4s;
-        transition: .4s;
-        }
-
-        input:checked + .slider {
-        background-color: #5cb85c;
-        }
-
-        input:focus + .slider {
-        box-shadow: 0 0 1px #5cb85c;
-        }
-
-        input:checked + .slider:before {
-        -webkit-transform: translateX(26px);
-        -ms-transform: translateX(26px);
-        transform: translateX(26px);
-        }
-
-        /* Rounded sliders */
-        .slider.round {
-        border-radius: 34px;
-        }
-
-        .slider.round:before {
-        border-radius: 50%;
-        }
+          
   </style>               
 
 </head>
 
-<body id="page-top">
-
-    <!-- Page Wrapper -->
-    <div id="wrapper">
-    <div id="overlay">
-     <i id="img-load"  class="fas fa-cog fa-spin fa-4x "></i>
-
-    </div>
-
-    @include('layouts.sidebar')
-
-        <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
+<body>
 
             <!-- Main Content -->
             <div id="content">
@@ -170,10 +52,10 @@
             @include('layouts.header')
 
                 <!-- Begin Page Content -->
-                <div class="container-fluid">
+                 
                 @yield('content')                    
-                </div>
-                <!-- /.container-fluid -->
+                 
+            
 
             </div>
             <!-- End of Main Content -->
@@ -185,12 +67,7 @@
 
     </div>
     <!-- End of Page Wrapper -->
-
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-
+ 
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -215,111 +92,28 @@
         </div>
     </div>
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="{{ asset('admin-template/vendor/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('admin-template/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <!-- Vendor JS Files -->
+    <script src="{{ asset('dog-prive/assets/vendor/purecounter/purecounter.js') }}"></script>
+    <script src="{{ asset('dog-prive/assets/vendor/aos/aos.js') }}"></script>
+    <script src="{{ asset('dog-prive/assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('dog-prive/assets/vendor/glightbox/js/glightbox.min.js') }}"></script>
+    <script src="{{ asset('dog-prive/assets/vendor/isotope-layout/isotope.pkgd.min.js') }}"></script>
+    <script src="{{ asset('dog-prive/assets/vendor/swiper/swiper-bundle.min.js') }}"></script>
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('dog-prive/assets/vendor/php-email-form/validate.js') }}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 
-    <!-- multi-select dropdown scripts -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js" integrity="sha512-FHZVRMUW9FsXobt+ONiix6Z0tIkxvQfxtCSirkKc5Sb4TKHmqq1dZa8DphF0XqKb3ldLu/wgMa8mT6uXiLlRlw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Template Main JS File -->
+    <script src="{{ asset('dog-prive/assets/js/main.js') }}"></script>
 
-    <!-- Core plugin JavaScript-->
-    <script src="{{ asset('admin-template/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="{{ asset('admin-template/js/sb-admin-2.min.js') }}"></script>
-
-    <!-- Page level plugins -->
-    <script src="{{ asset('admin-template/vendor/chart.js/Chart.min.js') }}"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="{{ asset('admin-template/js/demo/chart-area-demo.js') }}"></script>
-    <script src="{{ asset('admin-template/js/demo/chart-pie-demo.js') }}"></script>
-
-    <!-- phone number mask scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/jquery.inputmask.bundle.js"></script>
-
-    <!-- Customer scripts and CSS -->
-    <script type="text/javascript" src="{{asset('jquery_widgets/masked_input.js')}}"></script>
-    <script src="{{url('/')}}/plugins/sweetalert/sweetalert.min.js"></script>
-    <link rel="stylesheet" href="{{url('/')}}/plugins/sweetalert/sweetalert.css">
-    <script src="{{url('/')}}/plugins/moment/moment.js"></script>
-    <script src="{{url('/')}}/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-    <link rel="stylesheet" href="{{url('/')}}/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-
-    <script src="{{url('/')}}/plugins/select2/dist/js/select2.min.js"></script>
-    <link rel="stylesheet" href="{{url('/')}}/plugins/select2/dist/css/select2.min.css">
-    <link rel="stylesheet" type="text/css" href="{{asset('plugins/full_calender.css')}}"/>
-    <script type="text/javascript" src="{{asset('plugins/full_calender.js')}}"></script>
-    <script src="{{url('/')}}/plugins/tiny_mce/tinymce.min.js"></script>
-
-    <script src="{{ asset('plugins/chart.js/new-2.7.2/Chart.bundle.js') }}"></script>
-
-    <script src="{{url('/')}}/js/main.js?v={{time()}}"></script>
-  
-    <script src="{{url('/')}}/plugins/filepond/js/filepond.js"></script>
-    <script src="{{url('/')}}/plugins/filepond/js/filepond.min.js"></script>
-    <script src="{{url('/')}}/plugins/filepond/js/filepond-plugin-image-preview.min.js"></script>
-    <script src="{{url('/')}}/plugins/filepond/js/filepond.jquery.js"></script>
-    <script type="text/javascript">
-        tinymce.init({
-        theme: "modern",
-        mode : "specific_textareas",
-        editor_selector : "mceEditor",
-        plugins: [
-            "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-            "searchreplace wordcount visualblocks visualchars code fullscreen",
-            "insertdatetime media nonbreaking save table contextmenu directionality",
-            "emoticons template paste textcolor colorpicker textpattern imagetools moxiemanager",
-             "insertdatetime media table contextmenu jbimages"
-        ],
-      
-      relative_urls : false,
-      remove_script_host : false,
-      convert_urls : true,
-      document_base_url : "{{url('/')}}",
-      
-        image_advtab: true,
-        templates: [
-            {title: 'Test template 1', content: 'Test 1'},
-            {title: 'Test template 2', content: 'Test 2'}
-        ]
-    });
-    var g_readTerms = false;
-    </script>
-
-    <script>
-      @if(Session::has('success'))
-        flashMessage = {
-          type: "success",
-          description: "{{ Session::pull('success') }}"
-        };
-      @elseif(Session::has('info'))
-        flashMessage = {
-          type: "info",
-          description: "{{ Session::pull('info') }}"
-        };
-      @elseif(Session::has('warning'))
-        flashMessage = {
-          type: "warning",
-          description: "{{ Session::pull('warning') }}"
-        };
-      @elseif(Session::has('error'))
-        flashMessage = {
-          type: "error",
-          description: "{{ Session::pull('error') }}"
-        };
-      @endif
-
-      if(typeof flashMessage !== 'undefined'){
-        GLOBAL.displayFlashMessage(flashMessage);
-      }
-    </script>
+    
 <script type="text/javascript">
 
     $(document).ready(function($) {
+        $("#region_id").select2();
+        $("#province_id").select2();
+        $("#city_id").select2();
         $('#overlay').hide();
     });
      

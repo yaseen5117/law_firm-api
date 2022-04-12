@@ -3,7 +3,10 @@
 @section('content')
   <!-- Nested Row within Card Body -->
         <div class="row">
-             <div class="col-lg-6 d-none d-lg-block bg-login-image"></div> 
+             <div class="col-lg-6 d-none d-lg-block bg-login-image">
+             <img src="{{ asset('dog-prive/assets/img/hero.jpeg')}}" alt="" class="img-fluid" style="border-radius: 1rem 0 0 1rem;">
+
+             </div> 
             <div class="col-lg-6">
                 <div class="p-5">
                     <div class="text-center">
@@ -18,8 +21,8 @@
                     @endif
                     <form class="user" method="POST" action="{{ route('password.email') }}">
                         @csrf
-                        <div class="form-group">
-                            <input type="email" class="form-control-for-auth form-control-user  @error('email') is-invalid @enderror" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter Email Address..." value="{{ old('email') }}" name="email" id="email" required autocomplete="email" autofocus>
+                        <div class="form-group mb-4">
+                            <input type="email" class="form-control form-control-for-auth form-control-user  @error('email') is-invalid @enderror" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter Email Address..." value="{{ old('email') }}" name="email" id="email" required autocomplete="email" autofocus>
 
                              @error('email')
                                     <span class="invalid-feedback" role="alert">

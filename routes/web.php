@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,17 +13,27 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', function () {
-    return view('auth.login');
-});
-
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('members', 'App\Http\Controllers\HomeController@member');
+Route::get('/provinces','App\Http\Controllers\HomeController@province');
+Route::get('/cities','App\Http\Controllers\HomeController@city');
+// Route::get('/', function () {
+//     return view('auth.login');
+// });
+Route::get('/validate_email','App\Http\Controllers\HomeController@validateuseremail');
+Route::resource('user_profile', 'App\Http\Controllers\ProfileController');
 Auth::routes();
+Route::resource('post_uploads', 'App\Http\Controllers\PostController');
+Route::resource('post_comments', 'App\Http\Controllers\CommentController');
+Route::post('change_user_image', 'App\Http\Controllers\UsersController@chagneUserProfileImage');
+Route::post('rate_user', 'App\Http\Controllers\UsersController@rateUser');
 
-Route::get('dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('dashboard', [App\Http\Controllers\UsersController::class, 'index']);
 Route::resource('petitions', 'App\Http\Controllers\PetitionsController');
 Route::resource('users', 'App\Http\Controllers\UsersController');
-Route::get('change_status', 'App\Http\Controllers\UsersController@chagneUserStatus');
 Route::resource('petition_documents', 'App\Http\Controllers\AttachmentController');
 Route::post('petition/upload_documents', 'App\Http\Controllers\AttachmentController@uploadDocuments');
 Route::get('petition/get_documents', [App\Http\Controllers\AttachmentController::class, 'getDocuments']);
+
+Route::post('favourites', 'App\Http\Controllers\DashBoardController@favourite');

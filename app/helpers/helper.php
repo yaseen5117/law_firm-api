@@ -3,9 +3,12 @@
 //uploading files
 
 use App\Models\Attachment;
+use App\Models\Favourite;
 use SebastianBergmann\Environment\Console;
 use App\Models\Role;
 use App\Models\ModelHasRole;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 function uploadFile($request)
 {
@@ -56,4 +59,22 @@ function getRole($id)
     }
 
     return $role;
+}
+
+function isFavourite($user_id){ 
+    if(Auth::user()){
+        $isFav = Favourite::where('item_id', $user_id)->where('user_id', request()->user()->id)->first();
+    if($isFav){
+        return true;
+    }else{
+        return false;
+    }
+    } 
+}
+
+function postUserName($user_id){ 
+     if($user_id){
+         $user = User::find($user_id);
+         return $user->surname;
+     }
 }

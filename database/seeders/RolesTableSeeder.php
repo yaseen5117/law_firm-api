@@ -27,65 +27,40 @@ class RolesTableSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
          //Create Permissions
-        Permission::create(['name' => 'edit petition']);
-        Permission::create(['name' => 'view petition']);
-        Permission::create(['name' => 'delete petition']);
+        Permission::create(['name' => 'edit']);
+        Permission::create(['name' => 'view']);
+        Permission::create(['name' => 'delete']);
 
         // create roles and assign existing permissions
-        $roleAdmin = Role::create(['name' => 'admin']);
+        $roleAdmin = Role::create(['name' => 'admin']);         
 
-        $judge = Role::create(['name' => 'judge']);
-        $judge->givePermissionTo(Permission::all());
-        
-        
-        $lawyer = Role::create(['name' => 'lawyer']);
-        $lawyer->givePermissionTo(Permission::all());
-       
-        
-        $staff = Role::create(['name' => 'staff']);
-        $staff->givePermissionTo(Permission::all());
-           
-
-        $client = Role::create(['name' => 'client']);
-        $client->givePermissionTo(Permission::all());
-    
+        $client = Role::create(['name' => 'visitor_user']);
+        $client->givePermissionTo(Permission::all());    
         
         $user = User::find(1);
         $user->assignRole($roleAdmin);
-
-        $JudgeUser = User::create([
-            'first_name' => 'Judge',
-            'last_name' => '1',
-            'email' => 'judge@qc.com',
-            'password' => bcrypt('test1234'),
-         
-        ]);
-
-        $JudgeUser->assignRole($judge);
-
-        $LawyerUser = User::create([
-            'first_name' => 'Lawyer',
-            'last_name' => '1',
-            'email' => 'lawyer@qc.com',
-            'password' => bcrypt('test1234'),            
-        ]);
-
-        $LawyerUser->assignRole($lawyer);
-
-        $StaffUser = User::create([
-            'first_name' => 'Staff',
-            'last_name' => '1',
-            'email' => 'staff@qc.com',
-            'password' => bcrypt('test1234'),            
-        ]);
-
-        $StaffUser->assignRole($staff);
-
+ 
         $ClientUser = User::create([
-            'first_name' => 'Client',
-            'last_name' => '1',
-            'email' => 'client@qc.com',
-            'password' => bcrypt('test1234'),           
+            'owner_name'=> 'Yaseen',
+            'surname'=> 'yaseen1',
+            'dob'=> '',
+            'province_id'=> 1,
+            'region_id'=> 1,
+            'city_id'=> 1,
+            'dog_name'=> 'ST Pet',
+            'sex'=> 1, //1 is for male      
+            'age_month'=> 12,
+            'age_year'=> 10,
+            'race_type_id'=> null,
+            'relation_race'=> null,
+            'pedigree'=> null,
+            'particular_detail'=> 'Its Dog Particular Detail of User',
+            'email' => 'user@user.com',
+            'profile_image'=> '',
+            'owner_detail'=> 'Its an Owner Detail',
+            'dog_detail'=> 'Its Dog Detail',                         
+            'password' => bcrypt('test1234'),
+            'approval_status' => 1,           
         ]);
 
         $ClientUser->assignRole($client);

@@ -1,9 +1,12 @@
 @extends('layouts.app')
-
+@section('title','Login')
 @section('content')
         <!-- Nested Row within Card Body -->
         <div class="row">
-           <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+           <div class="col-lg-6 d-none d-lg-block" style="background-image: url('');">
+           <img src="{{ asset('dog-prive/assets/img/hero.jpeg')}}" alt="" class="img-fluid" style="border-radius: 1rem 0 0 1rem;">
+
+            </div>
             <div class="col-lg-6">
                 <div class="p-5">
                     <div class="text-center">
@@ -12,8 +15,8 @@
                     </div>
                     <form class="user" method="POST" action="{{ route('login') }}">
                         @csrf
-                        <div class="form-group">
-                            <input type="email" class="form-control-for-auth form-control-user  @error('email') is-invalid @enderror" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter Email Address..." value="{{ old('email') }}" name="email" id="email" required autocomplete="email" autofocus>
+                        <div class="form-group mb-3">
+                            <input type="email" class="form-control form-control-for-auth form-control-user  @error('email') is-invalid @enderror" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter Email Address..." value="{{ old('email') }}" name="email" id="email" required autocomplete="email" autofocus>
 
                              @error('email')
                                     <span class="invalid-feedback" role="alert">
@@ -22,8 +25,8 @@
                              @enderror
 
                         </div>
-                        <div class="form-group">
-                            <input id="password" type="password" name="password" autocomplete="current-password" class="form-control-for-auth form-control-user @error('password') is-invalid @enderror"placeholder="Password" required>
+                        <div class="form-group mb-3">
+                            <input id="password" type="password" name="password" autocomplete="current-password" class="form-control form-control-for-auth form-control-user @error('password') is-invalid @enderror"placeholder="Password" required>
 
                              @error('password')
                                     <span class="invalid-feedback" role="alert">
@@ -31,7 +34,7 @@
                                     </span>
                              @enderror
                         </div>
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             <div class="custom-control custom-checkbox small">
                                 <div class="form-check">                                
                                     <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
