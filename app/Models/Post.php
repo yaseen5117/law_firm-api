@@ -14,4 +14,12 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class,)->latest()->take(3);
     }
+    public function favourite_posts()
+    {
+        return $this->hasMany(FavouritePost::class,);
+    } 
+    public function getReactionsCount()
+    {
+        return $this->favourite_posts()->count();
+    }
 }

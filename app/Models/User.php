@@ -54,13 +54,17 @@ class User extends Authenticatable
     public function favourites()
     {
         return $this->hasMany(Favourite::class,);
+    }
+    public function favourite_posts()
+    {
+        return $this->hasMany(FavouritePost::class,);
     }  
     public function likes(){
         return $this->hasMany(Favourite::class, 'item_id', 'id');
     }
     public function posts()
     {
-        return $this->hasMany(Post::class,);
+        return $this->hasMany(Post::class);
     }
     # Use this to count the likes
     public function getLikeCountAttribute(){
@@ -93,6 +97,15 @@ class User extends Authenticatable
     }
     public function scopeWithRelations($query)
     {
-        return $query->with('favourites');
+        return $query->with('favourites','ratings','favourite_posts');
     }
+    public function ratings()
+    {
+        return $this->hasMany(UserRating::class);
+    }
+
+    public function getRatingAttributeCount()
+    {
+        return $this->ratings()->count();
+    }     
 }

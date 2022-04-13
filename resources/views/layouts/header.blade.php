@@ -9,14 +9,13 @@
       </div>
 
       <nav id="navbar" class="navbar">
-        <ul>
+        <ul class="box">
           <li><a class="active" href="{{ url('/') }}">Home</a></li>
          
-          <li><a href="#">Cai Ciama</a></li>
-          <li><a href="#">Dog</a></li>
-          <li><a href="#">Faq</a></li>
+          <!-- <li><a href="#">Shop</a></li>           -->
+          <li><a href="#">FAQ</a></li>
           <li><a href="#">Blog</a></li>
-          <li><a href="#">Contact</a></li>
+          <li><a href="#">Contact Us</a></li>
           @if(Auth::user())
           <li class="dropdown"> 
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -27,7 +27,8 @@ Route::resource('post_uploads', 'App\Http\Controllers\PostController');
 Route::resource('post_comments', 'App\Http\Controllers\CommentController');
 Route::post('change_user_image', 'App\Http\Controllers\UsersController@chagneUserProfileImage');
 Route::post('rate_user', 'App\Http\Controllers\UsersController@rateUser');
-
+Route::post('report_user', 'App\Http\Controllers\UsersController@reportingUser');
+Route::post('favourite_posts', 'App\Http\Controllers\PostController@favouritePost');
 
 Route::get('dashboard', [App\Http\Controllers\UsersController::class, 'index']);
 Route::resource('petitions', 'App\Http\Controllers\PetitionsController');

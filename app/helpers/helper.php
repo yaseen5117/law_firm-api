@@ -4,6 +4,7 @@
 
 use App\Models\Attachment;
 use App\Models\Favourite;
+use App\Models\FavouritePost;
 use SebastianBergmann\Environment\Console;
 use App\Models\Role;
 use App\Models\ModelHasRole;
@@ -71,6 +72,16 @@ function isFavourite($user_id){
     }
     } 
 }
+function isFavouritePost($post_id){ 
+    if(Auth::user()){
+        $isFavPost = FavouritePost::where('post_id', $post_id)->where('user_id', request()->user()->id)->first();
+    if($isFavPost){
+        return true;
+    }else{
+        return false;
+    }
+    } 
+}
 
 function postUserName($user_id){ 
      if($user_id){
@@ -78,3 +89,45 @@ function postUserName($user_id){
          return $user->surname;
      }
 }
+
+function totalFemaleUsers(){
+    $totalFemaleUsers = User::where('sex', 0);
+    if($totalFemaleUsers){
+        return $totalFemaleUsers->count();
+    }else{
+        return 0;
+    }    
+}
+function totalMaleUsers(){
+    $totalMaleUsers = User::where('sex', 1);
+    if($totalMaleUsers){
+        return $totalMaleUsers->count();
+    }else{
+        return 0;
+    }    
+}
+function totalRaces(){
+    $totalRaces = User::distinct()->get('race_type_id');
+    if($totalRaces){
+        return $totalRaces->count();
+    }else{
+        return 0;
+    }    
+}
+function totalCities(){
+    $totalCities = User::distinct()->get('city_id');
+    if($totalCities){
+        return $totalCities->count();
+    }else{
+        return 0;
+    }    
+}
+function totalMessagesSent(){
+    $totalMessagesSent = null;//User::distinct()->get('city_id');
+    if($totalMessagesSent){
+        return $totalMessagesSent->count();
+    }else{
+        return 0;
+    }    
+}
+

@@ -37,6 +37,7 @@
             @endif
           </div>
           <div class="col-md-3">
+          <input type="hidden" value="{{@$user->id}}" id="rated_user_id" name="rated_user_id">
             <h6>{{@$user->surname}}</h6>
             @if(@$user->profile_image)
             <img class="rounded-circle z-depth-2" alt="profile image" width="125px" height="125px" src="{{asset('').'storage/users/'.@$user->id.'/'.@$user->profile_image}}" data-holder-rendered="true">
@@ -72,24 +73,28 @@
       <div class="row">
         <div class="col-md-4 mt-3">
           <b>Users Like You</b>
-
+            @foreach(@$same_race_users as $same_race_user)
           <div class="row mt-3 mb-3">
             <div class="col-md-3 col-lg-3 col-sm-3">
+              @if($same_race_user->profile_image)
+              <img class="rounded-circle z-depth-2" alt="100x100" width="80px" height="80px" src="{{asset('').'storage/users/'.@$same_race_user->id.'/'.@$same_race_user->profile_image}}" data-holder-rendered="true">
+              @else
               <img class="rounded-circle z-depth-2" alt="100x100" width="80px" height="80px" src="{{ asset('dog-prive/assets/img/user.png')}}" data-holder-rendered="true">
+              @endif
 
             </div>
-            <div class="col-md-2 col-lg-2 col-sm-2">
+            <div class="col-md-6 col-lg-6 col-sm-6">
               <div class="row mt-3">
                 <div class="col-md-12 col-lg-12 col-sm-12">
-                  <span>UserName</span>
+                  <span>{{$same_race_user->surname}}</span>
                 </div>
                 <div class="col-md-12 col-lg-12 col-sm-12">
-                  <span>Age:</span>
+                  <span>Age: {{$same_race_user->age_month}} Month, {{$same_race_user->age_year}} Years </span>
                 </div>
               </div>
             </div>
           </div>
-
+          @endforeach
         </div>
         <div class="col-md-6">
           <div class="row">
@@ -97,7 +102,7 @@
               <div class="d-flex justify-content-between mb-2">
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="rate py-3">
-                  <form>
+                  <form class="mt-3">
                       @csrf
                     <div class="rating" @if(!Auth::user()) style="pointer-events: none;" @endif> 
                     <input class="rate" type="radio" name="rating" value="5" id="1">
@@ -114,7 +119,8 @@
                   </form>
                   </div>
                   <div class="f-size">
-                    (3.2 Reviews)
+                    (@if($user->getRatingAttributeCount()) 
+                    {{round($user->getRatingAttributeCount(), 1)}} @else 0 @endif Reviews)
                   </div>
                 </div>
               </div>
@@ -136,9 +142,11 @@
               <div class="justify-content-right">
                 <div class="justify-content-right">
                   <div class="text-end">
-                    <span @if(!Auth::user()) style="pointer-events: none;" @endif class="small text-danger ml"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
-                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
-                      </svg><span class="mrgn-left">Reactions</span></span>
+                  <a id="sp" href="javascript:void(0);">
+
+                    <span @if(!Auth::user()) style="pointer-events: none;" @endif class="small ml">
+                    <i class="fa fa-heart" @if(isFavouritePost($post->id)) style="color: red" @endif id="post_heart{{$post->id}}" onclick="changeColor({{$post->id}})"></i>
+                    <span class="mrgn-left">({{$post->getReactionsCount()}})Reactions</span></span></a>
                     <span class="report">
                       <a href="javascript:void(0);" @if(!Auth::user()) style="pointer-events: none;" @endif class="report">REPORT</a></span>
                      </div>
@@ -262,8 +270,7 @@
     //Rate a User
     $('.rating').change('.rate', function(e) { 
       
-          var id = {{ request()->route('id') }};
-      alert(id);
+      var user_id = $("#rated_user_id").val();         
       var ratingNum = $(".rate:checked").val();          
     $.ajaxSetup({
       headers: {
@@ -275,8 +282,12 @@
       cache: false,
       dataType: 'JSON',
       url: "{{ url('rate_user') }}",
-      data: {'value':ratingNum},
+      data: {
+        'stars':ratingNum,
+        'user_id': user_id
+      },
       success: function(data) {
+        location.reload();
         console.log(data);
       }
     });
@@ -306,5 +317,29 @@
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
 });
+function changeColor(post_id) {
+$.ajax({
+  url: "{{url('favourite_posts')}}",
+  type: 'POST',
+  data: {
+    'post_id': post_id
+  },
+  headers: {
+    'X-CSRF-TOKEN': '{{csrf_token()}}'
+  },
+  success: function(data) {     
+     
+    if (data.token == 1) {
+      document.getElementById("post_heart" + post_id).style.color = "grey";
+    } else if (data.token == 0) {
+      document.getElementById("post_heart" + data.favourite.post_id).style.color = "red";
+    } else {
+      console.log(data.redirect_url);
+      window.location.href = data.redirect_url;
+    }
+
+  }
+})
+} 
 </script>
 @endsection

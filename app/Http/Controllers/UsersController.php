@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserRating;
 use App\Models\Role;
 use App\Models\ModelHasRole;
 use App\Models\Province;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UsersController extends Controller
 {
@@ -25,11 +27,13 @@ class UsersController extends Controller
     }
 
     public function index(Request $request)
-    {         
+    {                 
         $user = Auth::user();
-        //dd($user->posts);
+        // dd($user->race->id);
+        $same_race_users = User::where('race_type_id',$user->race->id)->take(3)->get();
+         
         $logged_user_profile = false;
-        return view('users.profile', compact('user','logged_user_profile'));
+        return view('users.profile', compact('user','logged_user_profile','same_race_users'));
     }
 
     /**
@@ -102,14 +106,33 @@ class UsersController extends Controller
     }   
 
     public function rateUser(Request $request)
-    {
-        return request();
+    {         
         $user = Auth::user();
-        Post::create([
+        UserRating::create([
             'rated_by_user_id' => $user->id,  
-            'user_id' => $request->user_id                      
-        ]);
-        return $user->id;        
+            'user_id' => $request->user_id,
+            'star_rating' => $request->stars           
+        ]);    
+         
+        return response([
+            'message' => 'Thanks for Rating!'
+        ], 200);                  
+               
     }   
+    public function reportingUser(Request $request)
+    {      
+        return $request->all();   
+        $user = Auth::user();
+        UserRating::create([
+            'rated_by_user_id' => $user->id,  
+            'user_id' => $request->user_id,
+            'star_rating' => $request->stars           
+        ]);    
+         
+        return response([
+            'message' => 'Thanks for Rating!'
+        ], 200);                  
+               
+    }
         
 }

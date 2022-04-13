@@ -8,54 +8,54 @@
     <!-- <h1>Welcome to DogPrive</h1> -->
     <!-- <h2>We are team of talented designers making websites with Bootstrap</h2> -->
     <form action="{{ url('members') }}" type="get" role="search">
-    <div class="row g-3 align-items-center">
-      <div class="offset-lg-8 offset-md-8 offset-sm-0 col-lg-4 col-md-4 col-sm-12">
-        <input type="text" placeholder="type the race you search" id="surname" name="surname" class="form-control" aria-describedby="surname">
-      </div>
-      <div class="offset-lg-8 offset-md-8 offset-sm-0 col-lg-4 col-md-4 col-sm-12">
-        <select id="region_id" name="region_id" style="width: 100%;" class="form-control" value="">
-          <option value=""> type region </option>
-          @foreach ($regions as $region)
-          <option value="{{$region->id}}">
-            {{$region->title}}
-          </option>
-          @endforeach
-        </select>
+      <div class="row g-3 align-items-center">
+        <div class="offset-lg-8 offset-md-8 offset-sm-0 col-lg-4 col-md-4 col-sm-12">
+          <input type="text" placeholder="type the race you search" id="surname" name="surname" class="form-control" aria-describedby="surname">
+        </div>
+        <div class="offset-lg-8 offset-md-8 offset-sm-0 col-lg-4 col-md-4 col-sm-12">
+          <select id="region_id" name="region_id" style="width: 100%;" class="form-control" value="">
+            <option value=""> type region </option>
+            @foreach ($regions as $region)
+            <option value="{{$region->id}}">
+              {{$region->title}}
+            </option>
+            @endforeach
+          </select>
 
-      </div>
+        </div>
 
-      <div class="offset-lg-8 offset-md-8 offset-sm-0 col-lg-4 col-md-4 col-sm-12">
-        <select id="province_id" name="province_id" style="width: 100%;" class="province_dropdown form-control" value="">
-          <option value=""> type province </option>
-          @foreach ($provinces as $province)
-          <option value="{{$province->id}}">
-            {{$province->title}}
-          </option>
-          @endforeach
-        </select>
+        <div class="offset-lg-8 offset-md-8 offset-sm-0 col-lg-4 col-md-4 col-sm-12">
+          <select id="province_id" name="province_id" style="width: 100%;" class="province_dropdown form-control" value="">
+            <option value=""> type province </option>
+            @foreach ($provinces as $province)
+            <option value="{{$province->id}}">
+              {{$province->title}}
+            </option>
+            @endforeach
+          </select>
 
+        </div>
+        <div class="offset-lg-8 offset-md-8 offset-sm-0 col-lg-4 col-md-4 col-sm-12">
+          <select id="city_id" name="city_id" style="width: 100%;" class="city_dropdown form-control" value="">
+            <option value="">type city </option>
+            @foreach ($cities as $citylist)
+            <option @if($citylist->id == @$developmentApplication->city_id) selected="" @endif value="{{$citylist->id}}">
+              {{$citylist->title}}
+            </option>
+            @endforeach
+          </select>
+        </div>
+        <div class="offset-lg-8 offset-md-8 offset-sm-0 col-lg-4 col-md-4 col-sm-12">
+          <select class="form-control" id="sex" name="sex">
+            <option>Choose Sex</option>
+            <option value="1">male</option>
+            <option value="0">female</option>
+          </select>
+        </div>
+        <div class="offset-lg-8 offset-md-8 offset-sm-0 col-lg-4 col-md-4 col-sm-12">
+          <button class="btn btn-get-started">Search</button>
+        </div>
       </div>
-      <div class="offset-lg-8 offset-md-8 offset-sm-0 col-lg-4 col-md-4 col-sm-12">
-        <select id="city_id" name="city_id" style="width: 100%;" class="city_dropdown form-control" value="">
-          <option value="">type city </option>
-          @foreach ($cities as $citylist)
-          <option @if($citylist->id == @$developmentApplication->city_id) selected="" @endif value="{{$citylist->id}}">
-            {{$citylist->title}}
-          </option>
-          @endforeach
-        </select>
-      </div>
-      <div class="offset-lg-8 offset-md-8 offset-sm-0 col-lg-4 col-md-4 col-sm-12">
-        <select class="form-control" id="sex" name="sex">
-          <option>Choose Sex</option>
-          <option value="1">male</option>
-          <option value="0">female</option>
-        </select>
-      </div>
-      <div class="offset-lg-8 offset-md-8 offset-sm-0 col-lg-4 col-md-4 col-sm-12">
-        <button class="btn btn-get-started">Search</button>
-      </div>
-    </div>
     </form>
 
   </div>
@@ -75,7 +75,7 @@
               <div class="count-box py-5">
                 <span class="bi bi-emoji-smile"></span>
                 <p>Number of Users</p>
-                <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">Razza</a></p>
+                <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">{{@$users->count()}}</a></p>
               </div>
             </div>
 
@@ -83,7 +83,7 @@
               <div class="count-box py-5">
                 <span class="bi bi-journal-richtext"></span>
                 <p>Maschi</p>
-                <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">Razza</a></p>
+                <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">{{totalMaleUsers()}}</a></p>
               </div>
             </div>
 
@@ -91,7 +91,7 @@
               <div class="count-box pb-5 pt-0 pt-lg-5">
                 <span class="bi bi-clock"></span>
                 <p>Femmine</p>
-                <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">Razza</a></p>
+                <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">{{totalFemaleUsers()}}</a></p>
               </div>
             </div>
 
@@ -99,21 +99,21 @@
               <div class="count-box pb-5 pt-0 pt-lg-5">
                 <span class="bi bi-award"></span>
                 <p>Mossaggi</p>
-                <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">Razza</a></p>
+                <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">{{totalMessagesSent()}}</a></p>
               </div>
             </div>
             <div class="col-lg-2 col-md-5 col-6 d-md-flex align-items-md-stretch">
               <div class="count-box pb-5 pt-0 pt-lg-5">
                 <span class="bi bi-award"></span>
                 <p>Number Cities</p>
-                <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">Razza</a></p>
+                <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">{{totalCities()}}</a></p>
               </div>
             </div>
             <div class="col-lg-2 col-md-5 col-6 d-md-flex align-items-md-stretch">
               <div class="count-box pb-5 pt-0 pt-lg-5">
                 <span class="bi bi-award"></span>
                 <p>Number of Races</p>
-                <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">Razza</a></p>
+                <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">{{totalRaces()}}</a></p>
               </div>
             </div>
 
@@ -156,15 +156,15 @@
 
               <div class="d-flex justify-content-between mb-2">
                 <div class="d-flex justify-content-between align-items-center">
-                  <div class="rate py-3">                    
+                  <div class="rate py-3">
                     <div class="rating" @if(!Auth::user()) style="pointer-events: none;
-    opacity: 0.2;" @endif> 
+    opacity: 0.2;" @endif>
                       <input type="radio" name="rating" value="" id="rating">
-                      <label for="5">☆</label>                       
+                      <label for="5">☆</label>
                     </div>
                   </div>
                   <div class="f-size">
-                    (3.2 Reviews)
+                    (@if($user->getRatingAttributeCount()) {{round($user->getRatingAttributeCount(), 1)}} @else 0 @endif Reviews)
                   </div>
                 </div>
               </div>
@@ -172,9 +172,10 @@
           </div>
         </div>
         @endforeach
-
-        <div class="col-md-12 col-lg-12 mb-md-0">
-          <p class="small"><a href="{{ url('members') }}" class="btn mrgn-top clr">Show More Profiles</a></p>
+        
+        <div class="col-md-12 col-lg-12 mb-md-0 mt-3">
+        {{ $users->links() }}
+          <!-- <p class="small"><a href="{{ url('members') }}" class="btn mrgn-top clr">Show More Profiles</a></p> -->
         </div>
       </div>
     </div>
@@ -238,14 +239,14 @@
                 <div class="d-flex justify-content-between mb-2">
                   <div class="d-flex justify-content-between align-items-center">
                     <div class="rate py-3">
-                    <div class="rating" @if(!Auth::user()) style="pointer-events: none;
-    opacity: 0.2;" @endif> 
-                      <input type="radio" name="rating" value="" id="rating">
-                      <label for="5">☆</label>                       
-                    </div>
+                      <div class="rating" @if(!Auth::user()) style="pointer-events: none;
+    opacity: 0.2;" @endif>
+                        <input type="radio" name="rating" value="" id="rating">
+                        <label for="5">☆</label>
+                      </div>
                     </div>
                     <div class="f-size">
-                      (3.2 Reviews)
+                      (0 Reviews)
                     </div>
                   </div>
                 </div>
@@ -430,7 +431,16 @@
 @endsection
 @section('javascript')
 <script>
-   
+  // $(function() {
+  //   $('.pagination a').on('click', function(e) {
+  //     e.preventDefault();
+  //     var url = $(this).attr('href');
+  //     $.get(url, function(data) {
+  //       $('html').html(data.replace(/<html>(.*)<\/html>/, "$1"));
+  //     });
+  //   });
+  // });
+
   function changeColor(id) {
 
     $.ajax({
@@ -456,78 +466,79 @@
 
       }
     })
-  }  
-  function userProfile(id){
+  }
+
+  function userProfile(id) {
     $.ajax({
-            url: "{{url('user_profile')}}/"+id,
-            type: 'get',             
-            success: function(data) {
-                console.log(data);
-                window.location.href = data.redirect_url;
-            }
-        })
+      url: "{{url('user_profile')}}/" + id,
+      type: 'get',
+      success: function(data) {
+        console.log(data);
+        window.location.href = data.redirect_url;
+      }
+    })
   }
 
   $(function() {
-     
+
     $('#region_id').on('change', function(e) {
 
-        var regionId = $('#region_id').val()
+      var regionId = $('#region_id').val()
 
-        var div = $(this).parent();
+      var div = $(this).parent();
 
-        var op = " ";
+      var op = " ";
 
-        $.ajax({
-            url: "{{url('provinces')}}",
-            type: 'get',
-            data: {
-                'region_id': regionId
-            },
-            success: function(data) {
-                console.log(data);
-                // var html ='<select id="district_id" name="district_id" class="form-control" value="{{@$developmentApplication->district_id}}">'
-                op += '<option value="0" selected disabled>--SELECT PROVINCE--</option>';
-                for (var i = 0; i < data.length; i++) {
-                    op += '<option value="' + data[i].id + '">' + data[i].title + '</option>';
-                }
-                // html += '</select>'
+      $.ajax({
+        url: "{{url('provinces')}}",
+        type: 'get',
+        data: {
+          'region_id': regionId
+        },
+        success: function(data) {
+          console.log(data);
+          // var html ='<select id="district_id" name="district_id" class="form-control" value="{{@$developmentApplication->district_id}}">'
+          op += '<option value="0" selected disabled>--SELECT PROVINCE--</option>';
+          for (var i = 0; i < data.length; i++) {
+            op += '<option value="' + data[i].id + '">' + data[i].title + '</option>';
+          }
+          // html += '</select>'
 
-                $('.province_dropdown').empty().append(op);
+          $('.province_dropdown').empty().append(op);
 
-            }
-        })
+        }
+      })
 
     });
 
     $('#province_id').on('change', function(e) {
 
-        var provinceId = $('#province_id').val()
+      var provinceId = $('#province_id').val()
 
-        var div = $(this).parent();
+      var div = $(this).parent();
 
-        var op = " ";
+      var op = " ";
 
-        $.ajax({
-            url: "{{url('cities')}}",
-            type: 'get',
-            data: {
-                'province_id': provinceId
-            },
-            success: function(data) {
+      $.ajax({
+        url: "{{url('cities')}}",
+        type: 'get',
+        data: {
+          'province_id': provinceId
+        },
+        success: function(data) {
 
-                op += '<option value="0" selected disabled>--SELECT CITY--</option>';
-                for (var i = 0; i < data.length; i++) {
-                    op += '<option value="' + data[i].id + '">' + data[i].title + '</option>';
-                }
+          op += '<option value="0" selected disabled>--SELECT CITY--</option>';
+          for (var i = 0; i < data.length; i++) {
+            op += '<option value="' + data[i].id + '">' + data[i].title + '</option>';
+          }
 
-                $('.city_dropdown').empty().append(op);
+          $('.city_dropdown').empty().append(op);
 
-            }
-        })
+        }
+      })
 
     });
-})
+  })
 </script>
 
 @endsection

@@ -30,9 +30,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $users = User::take(4)->get();
+        $users = User::paginate(4);         
         $query = "SELECT *, COUNT(favourites.item_id) as likeCount from users INNER JOIN favourites ON users.id = favourites.item_id GROUP BY favourites.item_id ORDER BY COUNT(DISTINCT favourites.item_id) LIMIT 5";
         $popular_users = DB::select($query);
+        // foreach($popular_users as $user){
+        //     dd($user->getRatingAttributeCount());
+        // }
         $regions = Region::all();
         $provinces = Province::all();
         $cities = City::all();

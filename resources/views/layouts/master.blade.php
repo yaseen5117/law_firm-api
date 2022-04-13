@@ -115,6 +115,15 @@
         $("#province_id").select2();
         $("#city_id").select2();
         $('#overlay').hide();
+        //active header buttons
+        // $(function () {
+
+        // $('.box li a').click(function (e) {
+        //     e.preventDefault();
+        //     $(this).closest('li').addClass('active').siblings().removeClass('active');
+        // });
+
+        // });
     });
      
     $( document ).ajaxStart(function() {
