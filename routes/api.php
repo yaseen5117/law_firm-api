@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
     
     Route::group(['middleware' => 'auth:sanctum','namespace' => 'Api'], function () { 
   
+        Route::post('petitions/toggle_archived', 'PetitionController@toggleArchivedStatus');
         Route::resource('petitions', 'PetitionController');
         Route::resource('users', 'UserController');
              

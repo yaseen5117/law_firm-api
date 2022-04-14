@@ -28,8 +28,16 @@ class PetitionController extends Controller
      */
     public function index(Request $request)
     {
+        
         try {
             $query = Petition::select("petitions.*")->withRelations();
+
+            if ($request->archived=="true") {
+                $query->where('archived',1);
+            }else{
+                $query->where('archived',0);
+            }
+
             $query                
                 ->leftjoin('petition_petitioners', 'petitions.id', '=', 'petition_petitioners.petition_id')
                 ->leftjoin('users', 'users.id', '=', 'petition_petitioners.petitioner_id');
@@ -73,6 +81,7 @@ class PetitionController extends Controller
                     'petitions' => $petitions,
                     'events' => $events,
                     'message' => 'Petitions',
+                    'archived' => $request->archived,
                     'code' => 200
                 ]
             );
@@ -271,5 +280,22 @@ class PetitionController extends Controller
         //
     }
 
-     
+    public function toggleArchivedStatus(Request $request)
+     {
+         try {
+             Petition::where('id',$request->petition_id)->update([
+                'archived'=>$request->archived
+             ]);      
+             return response()->json(
+                [
+                    'message' => 'Petition updated',
+                    'code' => 200
+                ]
+            );  
+         } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+     } 
 }
