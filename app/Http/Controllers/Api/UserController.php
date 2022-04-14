@@ -287,7 +287,7 @@ class UserController extends Controller
         return User::with('roles')->whereId($requeset_user->id)->first();
     }
     public function signUp(Request $request)
-    {         
+    {      
         try{   
             $validator = Validator::make($request->all(), [                
                 'email' => 'required|email|unique:users',                 
@@ -317,8 +317,16 @@ class UserController extends Controller
             //     'password' => bcrypt($request->password),                 
             // ]);   
              
-            $user = User::updateOrCreate(['id'=>$request->id],$request->except('file','created_at_formated_date','roles','editMode','confirm_password'));             
-            $user->assignRole('client');
+            $user = User::updateOrCreate(['id'=>$request->id],$request->except('file','created_at_formated_date','roles','editMode','confirm_password','role_name'));             
+            
+            if($request->role_name == "PARTNER"){
+                $user->assignRole('admin');
+            }else if($request->role_name == "ASSOCIATE" || $request->role_name == "PARALEGAL"){
+                $user->assignRole('lawyer');
+            }else if($request->role_name == "CLIENT"){
+                $user->assignRole('client');
+            }  
+
             if($file){
                 $file_path = $file->storeAs('users/' . $user->id, $name, 'public');
             }
