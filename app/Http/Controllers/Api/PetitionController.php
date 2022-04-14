@@ -15,6 +15,8 @@ use App\Models\PetitionReplyParent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TestEmail;
 
 
 class PetitionController extends Controller
@@ -188,6 +190,10 @@ class PetitionController extends Controller
                     ]);                    
                 }
             }*/
+            //email module for testing purpose.
+            // $data = ['message' => 'This is a test!'];
+            
+            // Mail::to('ghulamyaseenmalik206@gmail.com')->send(new TestEmail($data));
             return response()->json(
                 [
                     'message' => 'Petitions',
