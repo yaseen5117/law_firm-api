@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 use Imagick;
+use Image;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class AttachmentController extends Controller
 {
@@ -45,13 +47,27 @@ class AttachmentController extends Controller
                     info("AttachmentController store Function: File mime_type: ".$file->getClientMimeType());
                     $name = time() . '_' . $file->getClientOriginalName();
                     $file_path = $file->storeAs('attachments/' . $request->attachmentable_id, $name, 'public');
+                    $mime_type = $file->getClientMimeType();                     
+                    
                     $file_name = time() . '_' . $file->getClientOriginalName();
                     $title = $file_name;
                     $attachmentable_type = $request->attachmentable_type;
                     $attachmentable_id = $request->attachmentable_id;
-                    $mime_type = $file->getClientMimeType();
+                    
                     
                     if ($mime_type!="application/pdf") {
+                        //START To Resize Images
+                        $resizeImage = Image::make($file);                            
+                        $resizeImage->resize(null, 100, function($constraint) {
+                            $constraint->aspectRatio();
+                        });  
+                        $path =  storage_path('app/public/attachments/'.$request->attachmentable_id.'/thumbs/');          
+                        if(!File::isDirectory($path)){
+                            File::makeDirectory($path, 0777, true, true);
+                        }
+                        $resizeImage->save(storage_path('app/public/attachments/'.$request->attachmentable_id.'/thumbs/'.$name));
+                        //END To Resize Images
+
                         //WE DONT WANT TO SAVE PDF IN DATABASE. BECAUSE WE ONLY CONVERT PDF TO IMAGES AND THEN SAVE THOSE IMAGES IN DATABASE.
                         Attachment::create([
                             'file_name' => $file_name,
@@ -93,6 +109,18 @@ class AttachmentController extends Controller
                                 $im->setImageCompressionQuality(100);
                                 $im->writeImage($output_path."/".$generated_jpg_filename); 
                                 
+                                //START To Resize Images
+                                $resizeImage = Image::make($output_path."/".$generated_jpg_filename);                            
+                                $resizeImage->resize(null, 100, function($constraint) {
+                                    $constraint->aspectRatio();
+                                });  
+                                $path =  storage_path('app/public/attachments/'.$request->attachmentable_id.'/thumbs/');          
+                                if(!File::isDirectory($path)){
+                                    File::makeDirectory($path, 0777, true, true);
+                                }
+                                $resizeImage->save(storage_path('app/public/attachments/'.$request->attachmentable_id.'/thumbs/'.$generated_jpg_filename));
+                                //END To Resize Images
+
                                 info("converting page: $page DONE");
                                 $im->clear(); 
                                 $im->destroy(); 
