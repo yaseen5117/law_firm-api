@@ -17,13 +17,7 @@ class DatabaseSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             
             DB::table('users')->truncate();
-            DB::table('courts')->truncate();
-            DB::table('courts')->insert([
-
-                'title' => 'THE ISLAMABAD HIGH COURT, ISLAMABAD'
-                 
-            ]);       
-
+           
             $this->call([UsersTableSeeder::class]);
             $this->call([PetitionTypeSeeder::class]);
             $this->call([PetitionTableSeeder::class]);
@@ -34,7 +28,7 @@ class DatabaseSeeder extends Seeder
 
             $this->call([PetitionPetitionersTableSeeder::class]);
             $this->call([PetitionOpponentsTableSeeder::class]);
-
+            $this->call([CourtSeeder::class]);
 
                  
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');

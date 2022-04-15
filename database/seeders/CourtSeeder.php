@@ -12,22 +12,25 @@ class CourtSeeder extends Seeder
      * @return void
      */
     public function run()
-    {
+    {    
         DB::table('courts')->truncate();
         DB::table('courts')->insert([
-
-            'id' => 1,
-            'title' => 'Hight Court',
-            'display_order' => '1',
-            
-        ]); 
-
+            'title' => 'THE ISLAMABAD HIGH COURT, ISLAMABAD'             
+        ]);    
         DB::table('courts')->insert([
-
-            'id' => 2,
-            'title' => 'Supreme Court',
-            'display_order' => '2',
-            
-        ]);   
+            'title' => 'SUPREME COURT OF PAKISTAN'             
+        ]);    
+        DB::table('courts')->insert([
+            'title' => 'PESHAWAR HIGH COURT'             
+        ]);    
+        DB::table('courts')->insert([
+            'title' => 'BALOCHISTAN HIGH COUT'             
+        ]);    
+        DB::table('courts')->insert([
+            'title' => 'LAHORE HIGH COURT'             
+        ]);       
+        DB::table('courts')->insert([
+            'title' => 'HIGH COURT OF SINDH'             
+        ]);
     }
 }
