@@ -75,14 +75,21 @@ class PetitionIndexController extends Controller
     {
         try {
             $petitionIndex = PetitionIndex::with('petition','attachments')->whereId($petitionIndex)->first();
+
+            $previous_index_id = PetitionIndex::with('petition','attachments')->where('id', '<', $petitionIndex->id)->max('id');
+            
+            $next_index_id = PetitionIndex::with('petition','attachments')->where('id', '>', $petitionIndex->id)->min('id');
+            
             $petition = Petition::withRelations()->whereId($petitionIndex->petition_id)->first();
 
             return response()->json(
                 [
                     'petition' => $petition,
                     'petition_index' => $petitionIndex,
+                    'next_index_id' => $next_index_id,
+                    'previous_index_id' => $previous_index_id,
                     'message' => 'Success',
-                    'code' => 200
+                    'code' => 200,
                 ]
             );
             return response($petitionIndex,200);
@@ -93,8 +100,7 @@ class PetitionIndexController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
+     /* Show the form for editing the specified resource.
      *
      * @param  \App\Models\PetitionIndex  $petitionIndex
      * @return \Illuminate\Http\Response
