@@ -9,6 +9,7 @@ use SebastianBergmann\Environment\Console;
 use App\Models\Role;
 use App\Models\ModelHasRole;
 use App\Models\User;
+use App\Models\UserRating;
 use Illuminate\Support\Facades\Auth;
 
 function uploadFile($request)
@@ -129,5 +130,19 @@ function totalMessagesSent(){
     }else{
         return 0;
     }    
+}
+function isRatedBefore(){
+    $user = Auth::user();
+    if($user){
+        $isRated = UserRating::where('rated_by_user_id', $user->id)->first();
+    if($isRated){
+        return true;
+    }else{
+        return false;
+    }
+    }else{
+        return false;
+    }
+    
 }
 

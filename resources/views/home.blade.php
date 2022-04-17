@@ -213,11 +213,11 @@
               <div class="card-body">
                 <div class="d-flex justify-content-between">
                   @if(Cache::has('user-is-online-' . $popular_user->item_id))
-                  <p class="small"><a href="#!" class="btn btn-success rounded-pill btn-sm">
+                  <p class="small"><a href="javascript:void(0);" class="btn btn-success rounded-pill btn-sm">
                       online
                     </a></p>
                   @else
-                  <p class="small"><a href="#!" class="btn btn-danger rounded-pill btn-sm">
+                  <p class="small"><a href="javascript:void(0);" class="btn btn-danger rounded-pill btn-sm">
                       offline
                     </a></p>
                   @endif
@@ -269,24 +269,26 @@
       </div>
 
       <div class="row">
+        @if(@$popular_posts)
+        @foreach($popular_posts as $popular_post)
         <div class="col-lg-4 col-md-6">
           <div class="icon-box" data-aos="fade-up">
 
-            <div class="card mb-3" style="max-width: 540px;">
+            <div class="card mb-3" style="max-width: 540px;">             
               <div class="row g-0">
                 <div class="col-md-4 col-sm-4">
-                  <img style="width: 100%; height: 100%;" src="./assets/img/hero.jpeg" class="card-img-top" alt="image" />
+                  <img style="width: 100%; height: 100%;" src="{{asset('').'storage/public/'.$popular_post->post_id.'/'.$popular_post->file_name}}" class="card-img-top" alt="{{$popular_post->title}}" />
                 </div>
                 <div class="col-md-8 col-sm-8">
                   <div class="card-body">
                     <div class="d-flex justify-content-between">
-                      <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">Razza</a></p>
-                      <a href="#" class="small text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                      <p class="small"><a href="{{ url('user_profile/'.$popular_post->user_id) }}">{{$popular_post->surname}}</a></p>
+                      <span class="small text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
                           <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
-                        </svg></a>
+                        </svg><span style="color: black;">({{$popular_post->postLikeCount}})</span></span>
                     </div>
-                    <p class="card-text">This is a wider card with supporting.</p>
-                    <p class="card-text"><a class="btn btn-success" href="#">View</a></p>
+                    <p class="card-text">{{substr($popular_post->title, 0, 20)}}..</p>
+                    <p class="card-text"><a class="btn btn-success" href="{{ url('user_profile/'.$popular_post->user_id) }}">View</a></p>
                   </div>
                 </div>
               </div>
@@ -294,134 +296,14 @@
 
           </div>
         </div>
-        <div class="col-lg-4 col-md-6">
-          <div class="icon-box" data-aos="fade-up">
-
-            <div class="card mb-3" style="max-width: 540px;">
-              <div class="row g-0">
-                <div class="col-md-4 col-sm-4">
-                  <img style="width: 100%; height: 100%;" src="./assets/img/hero.jpeg" class="card-img-top" alt="image" />
-                </div>
-                <div class="col-md-8 col-sm-8">
-                  <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                      <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">Razza</a></p>
-                      <a href="#" class="small text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
-                          <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
-                        </svg></a>
-                    </div>
-
-                    <p class="card-text">This is a wider card with supporting.</p>
-                    <p class="card-text"><a class="btn btn-success" href="#">View</a></p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+        @endforeach
+        @else
+        <div class="col-lg-12 col-md-12">
+          <div class="icon-box" data-aos="fade-up" style="text-align: center;">
+            <span>Posts Not Found!</span>
           </div>
         </div>
-        <div class="col-lg-4 col-md-6">
-          <div class="icon-box" data-aos="fade-up">
-
-            <div class="card mb-3" style="max-width: 540px;">
-              <div class="row g-0">
-                <div class="col-md-4 col-sm-4">
-                  <img style="width: 100%; height: 100%;" src="./assets/img/hero.jpeg" class="card-img-top" alt="image" />
-                </div>
-                <div class="col-md-8 col-sm-8">
-                  <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                      <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">Razza</a></p>
-                      <a href="#" class="small text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
-                          <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
-                        </svg></a>
-                    </div>
-                    <p class="card-text">This is a wider card with supporting.</p>
-                    <p class="card-text"><a class="btn btn-success" href="#">View</a></p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <div class="col-lg-4 col-md-6">
-          <div class="icon-box" data-aos="fade-up">
-
-            <div class="card mb-3" style="max-width: 540px;">
-              <div class="row g-0">
-                <div class="col-md-4 col-sm-4">
-                  <img style="width: 100%; height: 100%;" src="./assets/img/hero.jpeg" class="card-img-top" alt="image" />
-                </div>
-                <div class="col-md-8 col-sm-8">
-                  <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                      <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">Razza</a></p>
-                      <a href="#" class="small text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
-                          <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
-                        </svg></a>
-                    </div>
-                    <p class="card-text">This is a wider card with supporting.</p>
-                    <p class="card-text"><a class="btn btn-success" href="#">View</a></p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-        <div class="col-lg-4 col-md-6">
-          <div class="icon-box" data-aos="fade-up">
-
-            <div class="card mb-3" style="max-width: 540px;">
-              <div class="row g-0">
-                <div class="col-md-4 col-sm-4">
-                  <img style="width: 100%; height: 100%;" src="./assets/img/hero.jpeg" class="card-img-top" alt="image" />
-                </div>
-                <div class="col-md-8 col-sm-8">
-                  <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                      <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">Razza</a></p>
-                      <a href="#" class="small text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
-                          <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
-                        </svg></a>
-                    </div>
-
-                    <p class="card-text">This is a wider card with supporting.</p>
-                    <p class="card-text"><a class="btn btn-success" href="#">View</a></p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-        <div class="col-lg-4 col-md-6">
-          <div class="icon-box" data-aos="fade-up">
-
-            <div class="card mb-3" style="max-width: 540px;">
-              <div class="row g-0">
-                <div class="col-md-4 col-sm-4">
-                  <img style="width: 100%; height: 100%;" src="./assets/img/hero.jpeg" class="card-img-top" alt="image" />
-                </div>
-                <div class="col-md-8 col-sm-8">
-                  <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                      <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">Razza</a></p>
-                      <a href="#" class="small text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
-                          <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
-                        </svg></a>
-                    </div>
-                    <p class="card-text">This is a wider card with supporting.</p>
-                    <p class="card-text"><a class="btn btn-success" href="#">View</a></p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
+        @endif
       </div>
     </div>
   </section>

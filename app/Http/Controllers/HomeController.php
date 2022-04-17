@@ -33,14 +33,15 @@ class HomeController extends Controller
         $users = User::paginate(4);         
         $query = "SELECT *, COUNT(favourites.item_id) as likeCount from users INNER JOIN favourites ON users.id = favourites.item_id GROUP BY favourites.item_id ORDER BY COUNT(DISTINCT favourites.item_id) LIMIT 5";
         $popular_users = DB::select($query);
-        // foreach($popular_users as $user){
-        //     dd($user->getRatingAttributeCount());
-        // }
+         
+        $query = "SELECT *, COUNT(favourite_posts.post_id) as postLikeCount from posts INNER JOIN favourite_posts ON posts.id = favourite_posts.post_id JOIN users ON users.id = posts.user_id GROUP BY favourite_posts.post_id ORDER BY COUNT(DISTINCT favourite_posts.post_id) LIMIT 6";
+        $popular_posts = DB::select($query);
+        //dd($popular_posts);
         $regions = Region::all();
         $provinces = Province::all();
         $cities = City::all();
         //dd($popular_users);
-        return view('home', compact('users','popular_users','regions','provinces','cities'));
+        return view('home', compact('users','popular_users','regions','provinces','cities','popular_posts'));
     }
     public function member(Request $request)
     {
@@ -60,6 +61,13 @@ class HomeController extends Controller
         }
         if ($request->sex != "") {
             $query->where('sex', $request->sex);
+        }
+        if ($request->pedigree != "") {
+            $query->where('pedigree', $request->pedigree);
+        }
+        if ($request->to_age != "" && $request->from_age != "") {
+            $query->whereBetween('age_month', [$request->from_age, $request->to_age]);
+            $query->whereBetween('age_year', [$request->from_age, $request->to_age]);
         }
         $users = $query->paginate(10);
         return view('users.member', compact('users'));

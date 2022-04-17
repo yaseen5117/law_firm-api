@@ -17,7 +17,7 @@
   </div>
   <div class="container">
     <ol>
-      <li><a href="index.html">Home</a></li>
+      <li><a href="{{ url('/') }}">Home</a></li>
       <li>Members</li>
     </ol>
   </div>
@@ -29,7 +29,8 @@
 
     <div class="row">
       <div class="col-sm-4 col-md-3">
-        <form>
+        <h6>Search</h6>
+        <!-- <form>
           <div class="well">
             <div class="row">
               <div class="col-sm-12">
@@ -44,21 +45,21 @@
               </div>
             </div>
           </div>
-        </form>
+        </form> -->
 
         <!-- Filter -->
-        <form class="shop__filter">
+        <form action="{{ url('members') }}" type="get" role="search">
           <!-- Price -->
           <div class="col-xs-4">
             <button type="submit" class="btn btn-block btn-default" disabled="">Sex</button>
           </div>
-          <div class="radio">
-            <input type="radio" name="shop-filter__price" id="shop-filter-price_1" value="" checked="">
-            <label for="shop-filter-price_1">Male</label>
+          <div class="">
+          <input class="form-check-input" type="radio" id="sex" name="sex" value="1">
+                                <label class="form-check-label" for="male">MALE</label>
           </div>
-          <div class="radio">
-            <input type="radio" name="shop-filter__price" id="shop-filter-price_2" value="">
-            <label for="shop-filter-price_2">Female</label>
+          <div class="">
+          <input class="form-check-input" type="radio" id="sex" name="sex" value="0">
+                                <label class="form-check-label" for="female">FEMALE</label>
           </div>
 
 
@@ -68,12 +69,12 @@
                 <button type="submit" class="btn btn-block btn-default" disabled="">Age</button>
               </div>
               <div class="col-xs-4">
-                <label for="shop-filter-price_from" class="sr-only"></label>
-                <input id="shop-filter-price_from" type="number" min="0" class="form-control" placeholder="From">
+                <label for="from_age" class="sr-only"></label>
+                <input id="from_age" name="from_age" type="number" min="0" class="form-control" placeholder="From">
               </div>
               <div class="col-xs-4">
-                <label for="shop-filter-price_to" class="sr-only"></label>
-                <input id="shop-filter-price_to" type="number" min="0" class="form-control" placeholder="To">
+                <label for="to_age" class="sr-only"></label>
+                <input id="to_age" name="to_age" type="number" min="0" class="form-control" placeholder="To">
               </div>
 
             </div>
@@ -82,17 +83,17 @@
           <div class="col-xs-4">
             <button type="submit" class="btn btn-block btn-default" disabled="">Pedgree</button>
           </div>
-          <div class="radio">
-            <input type="radio" name="shop-filter__price" id="shop-filter-price_1" value="" checked="">
-            <label for="shop-filter-price_1">Yes</label>
+          <div class="">
+          <input class="form-check-input" type="radio" id="pedegree" name="pedigree" value="1">
+                                <label class="form-check-label" for="pedigree">YES</label>
           </div>
-          <div class="radio">
-            <input type="radio" name="shop-filter__price" id="shop-filter-price_2" value="">
-            <label for="shop-filter-price_2">No</label>
+          <div class="">
+          <input class="form-check-input" type="radio" id="pedigree" name="pedigree" value="0">
+                                <label class="form-check-label" for="pedigree">NO.</label>
           </div>
 
           <!-- Taglia -->
-          <div class="col-xs-4">
+          <!-- <div class="col-xs-4">
             <button type="submit" class="btn btn-block btn-default" disabled="">Taglia</button>
             <p class="taglia-raza">(In Refremento ala Raza)</p>
           </div>
@@ -107,23 +108,24 @@
           <div class="radio">
             <input type="radio" name="shop-filter__price" id="shop-filter-price_4" value="specify">
             <label for="shop-filter-price_4">Piccola</label>
-          </div>
-
+          </div> -->
+          <button class="btn btn-success mt-3">Search</button>
         </form>
       </div>
 
       <div class="col-sm-8 col-md-9">
         <!-- Filters -->
-        <ul class="shop__sorting">
+        <!-- <ul class="shop__sorting">
           <li class="active"><a href="#">All</a></li>
           <li><a href="#">Popular</a></li>
           <li><a href="#">Newest</a></li>
           <li><a href="#">Best</a></li>
           <li><a href="#">Trending</a></li>
            
-        </ul>
+        </ul> -->
 
-        <div class="row">    
+        <div class="row">  
+          @if($users != null)  
           @foreach(@$users as $user)
           <div class="col-lg-4 col-md-4 col-sm-6 mt-2">
             <div class="card" data-aos="fade-up" data-aos-delay="300">
@@ -134,7 +136,7 @@
             @endif
             <div class="card-body">
                 <div class="d-flex justify-content-between">
-                <p class="small"><a href="#!" class="btn btn-light rounded-pill btn-sm">{{$user->surname}}</a></p>
+                <p class="small"><a href="{{ url('user_profile/'.$user->id) }}" class="">{{$user->surname}}</a></p>
 
                 <p class="small"><a id="sp" href="javascript:void(0);"><i class="fa fa-heart" @if(isFavourite($user->id)) style="color: red" @endif id="heart{{$user->id}}" onclick="changeColor({{$user->id}})"></i></a> ({{$user->like_count}})</p>
 
@@ -154,7 +156,7 @@
                       </div>
                     </div>
                     <div class="f-size">
-                      3.2 (80)
+                    (@if($user->getRatingAttributeCount()) {{round($user->getRatingAttributeCount(), 1)}} @else 0 @endif Reviews)
                     </div>
                   </div>
                   <!-- <div class="d-flex justify-content-between align-items-center">
@@ -174,7 +176,14 @@
               </div>
             </div>
           </div>
-          @endforeach          
+          @endforeach       
+          @else
+          <div class="col-lg-12 col-md-12">
+          <div class="icon-box" data-aos="fade-up" style="text-align: center; color: red;">
+            <span>Record Not Found!</span>
+          </div>
+        </div>         
+          @endif
         </div> <!-- / .row -->      
       </div> <!-- / .col-sm-8 -->
     </div> <!-- / .row -->

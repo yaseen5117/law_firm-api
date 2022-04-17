@@ -12,7 +12,7 @@
         <ul class="box">
           <li><a class="active" href="{{ url('/') }}">Home</a></li>
          
-          <!-- <li><a href="#">Shop</a></li>           -->
+          <li><a href="{{ url('members') }}">Members</a></li>          
           <li><a href="#">FAQ</a></li>
           <li><a href="#">Blog</a></li>
           <li><a href="#">Contact Us</a></li>

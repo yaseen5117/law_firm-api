@@ -20,4 +20,4 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('auth.login');
 });
-Route::resource('case_files','App\Http\Controllers\PetitionsController');
+ 

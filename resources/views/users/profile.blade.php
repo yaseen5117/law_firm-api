@@ -102,6 +102,9 @@
               <div class="d-flex justify-content-between mb-2">
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="rate py-3">
+                    @if(@$isRatedBefore) 
+                    <label for="5" style="color: #ebb734; font-size: 20px;">☆</label>                   
+                   @else                    
                   <form class="mt-3">
                       @csrf
                     <div class="rating" @if(!Auth::user()) style="pointer-events: none;" @endif> 
@@ -117,8 +120,9 @@
                     <label class="rate" for="5">☆</label> 
                   </div>
                   </form>
+                  @endif
                   </div>
-                  <div class="f-size">
+                  <div>
                     (@if($user->getRatingAttributeCount()) 
                     {{round($user->getRatingAttributeCount(), 1)}} @else 0 @endif Reviews)
                   </div>

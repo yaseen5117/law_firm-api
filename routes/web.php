@@ -29,12 +29,4 @@ Route::post('change_user_image', 'App\Http\Controllers\UsersController@chagneUse
 Route::post('rate_user', 'App\Http\Controllers\UsersController@rateUser');
 Route::post('report_user', 'App\Http\Controllers\UsersController@reportingUser');
 Route::post('favourite_posts', 'App\Http\Controllers\PostController@favouritePost');
-
-Route::get('dashboard', [App\Http\Controllers\UsersController::class, 'index']);
-Route::resource('petitions', 'App\Http\Controllers\PetitionsController');
-Route::resource('users', 'App\Http\Controllers\UsersController');
-Route::resource('petition_documents', 'App\Http\Controllers\AttachmentController');
-Route::post('petition/upload_documents', 'App\Http\Controllers\AttachmentController@uploadDocuments');
-Route::get('petition/get_documents', [App\Http\Controllers\AttachmentController::class, 'getDocuments']);
-
 Route::post('favourites', 'App\Http\Controllers\DashBoardController@favourite');
