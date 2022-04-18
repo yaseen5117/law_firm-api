@@ -46,7 +46,7 @@ class AttachmentController extends Controller
                 foreach ($files as $key => $file) {
                     info("AttachmentController store Function: File mime_type: ".$file->getClientMimeType());
                     $name = time() . '_' . $file->getClientOriginalName();
-                    $file_path = $file->storeAs('attachments/' . $request->attachmentable_id, $name, 'public');
+                    $file_path = $file->storeAs('attachments/' . $request->attachmentable_id.'/original', $name, 'public');
                     $mime_type = $file->getClientMimeType();                     
                     
                     $file_name = time() . '_' . $file->getClientOriginalName();
@@ -58,14 +58,14 @@ class AttachmentController extends Controller
                     if ($mime_type!="application/pdf") {
                         //START To Resize Images
                         $resizeImage = Image::make($file);                            
-                        $resizeImage->resize(null, 100, function($constraint) {
+                        $resizeImage->resize(null, 1024, function($constraint) {
                             $constraint->aspectRatio();
                         });  
-                        $path =  storage_path('app/public/attachments/'.$request->attachmentable_id.'/thumbs/');          
+                        $path =  storage_path('app/public/attachments/'.$request->attachmentable_id);          
                         if(!File::isDirectory($path)){
                             File::makeDirectory($path, 0777, true, true);
                         }
-                        $resizeImage->save(storage_path('app/public/attachments/'.$request->attachmentable_id.'/thumbs/'.$name));
+                        $resizeImage->save(storage_path('app/public/attachments/'.$request->attachmentable_id.'/'.$name));
                         //END To Resize Images
 
                         //WE DONT WANT TO SAVE PDF IN DATABASE. BECAUSE WE ONLY CONVERT PDF TO IMAGES AND THEN SAVE THOSE IMAGES IN DATABASE.
@@ -84,7 +84,7 @@ class AttachmentController extends Controller
                         $attachmentable_id = $request->attachmentable_id;
                         $pdf_file_name = "$file_name";
                         $public_path =  public_path();
-                        $file_path = "$public_path/storage/attachments/$attachmentable_id/$pdf_file_name";
+                        $file_path = "$public_path/storage/attachments/$attachmentable_id/original/$pdf_file_name";
                         $output_path = "$public_path/storage/attachments/$attachmentable_id/";
 
                         try{
@@ -111,14 +111,14 @@ class AttachmentController extends Controller
                                 
                                 //START To Resize Images
                                 $resizeImage = Image::make($output_path."/".$generated_jpg_filename);                            
-                                $resizeImage->resize(null, 100, function($constraint) {
+                                $resizeImage->resize(null, 1024, function($constraint) {
                                     $constraint->aspectRatio();
                                 });  
-                                $path =  storage_path('app/public/attachments/'.$request->attachmentable_id.'/thumbs/');          
+                                $path =  storage_path('app/public/attachments/'.$request->attachmentable_id);          
                                 if(!File::isDirectory($path)){
                                     File::makeDirectory($path, 0777, true, true);
                                 }
-                                $resizeImage->save(storage_path('app/public/attachments/'.$request->attachmentable_id.'/thumbs/'.$generated_jpg_filename));
+                                $resizeImage->save(storage_path('app/public/attachments/'.$request->attachmentable_id.'/'.$generated_jpg_filename));
                                 //END To Resize Images
 
                                 info("converting page: $page DONE");
