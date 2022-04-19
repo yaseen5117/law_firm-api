@@ -32,7 +32,11 @@ use Illuminate\Support\Facades\Route;
     Route::post('roles', 'Api\UserController@getRoles');
     Route::post('signup', 'Api\UserController@signUp');
     Route::get('clients', 'Api\UserController@getClient');
-    Route::get('lawyers', 'Api\UserController@getLawyer');   
+    Route::get('lawyers', 'Api\UserController@getLawyer'); 
+    //contact request
+    Route::post('contact_requests', 'Api\FrontEndController@contactRequest');  
+    Route::get('get_contact_requests', 'Api\FrontEndController@getContactRequest');
+    Route::post('delete_contact_request/{id}', 'Api\FrontEndController@deleteContactRequest');
     //opinions
     Route::resource('opinions', 'Api\OpinionController');
     Route::resource('attachments', 'Api\AttachmentController');
