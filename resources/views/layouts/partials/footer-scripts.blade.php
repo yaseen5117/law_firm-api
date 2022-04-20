@@ -22,7 +22,7 @@
     </div> -->
 
  <script>
-     $(document).ready(function() {
+     $(document).ready(function() {          
          $("#region_id").select2();
          $("#province_id").select2();
          $("#city_id").select2();

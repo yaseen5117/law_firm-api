@@ -6,7 +6,9 @@ use App\Models\City;
 use App\Models\Favourite;
 use App\Models\Province;
 use App\Models\Region;
+use App\Models\Subscriber;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -30,6 +32,12 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // $date1 = Carbon::createFromFormat('Y-m-d H:i:s', '2022-04-27 12:00:00');
+        // $date2 = Carbon::createFromFormat('Y-m-d H:i:s', '2022-04-20 12:00:00');
+         
+        // if($date1->gt($date2)){
+        //     return view('counter');
+        // }
         $users = User::paginate(4);         
         $query = "SELECT *, COUNT(favourites.item_id) as likeCount from users INNER JOIN favourites ON users.id = favourites.item_id GROUP BY favourites.item_id ORDER BY COUNT(DISTINCT favourites.item_id) LIMIT 5";
         $popular_users = DB::select($query);
@@ -92,6 +100,17 @@ class HomeController extends Controller
         }
         echo json_encode($return);
         exit;
+    }
+    public function subscriber(Request $request)
+    {
+        try{
+            $subscriber = Subscriber::create([
+                'email' => $request->email,
+            ]);
+            return redirect()->with('message', 'Subscribe successfully! Thanks.');             
+        }catch (\Exception $e) {
+            return response()->json('error', $e->getCode());
+        }
     }
      
 }

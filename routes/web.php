@@ -22,6 +22,7 @@ Route::get('/cities','App\Http\Controllers\HomeController@city');
 // });
 Route::get('/validate_email','App\Http\Controllers\HomeController@validateuseremail');
 Route::resource('user_profile', 'App\Http\Controllers\ProfileController');
+Route::post('subscriber', 'App\Http\Controllers\HomeController@subscriber');
 Auth::routes();
 Route::resource('post_uploads', 'App\Http\Controllers\PostController');
 Route::resource('post_comments', 'App\Http\Controllers\CommentController');

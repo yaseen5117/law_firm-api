@@ -110,7 +110,7 @@
     
 <script type="text/javascript">
 
-    $(document).ready(function($) {
+    $(document).ready(function($) {      
         $("#region_id").select2();
         $("#province_id").select2();
         $("#city_id").select2();
@@ -124,7 +124,32 @@
         // });
 
         // });
+        
     });
+    $(document).ready(function() {   
+             
+            $('#subscriber').submit(function(e) {
+             
+            e.preventDefault();
+            var formData = new FormData(this);     
+            $.ajax({
+                type: 'POST',
+                url: "{{ url('subscriber')}}",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: (data) => {
+                this.reset();           
+                console.log(data);
+                window.location.href = data.redirect_url;
+                },
+                error: function(data) {
+                console.log(data);
+                }
+            });
+            });
+        });
      
     $( document ).ajaxStart(function() {
       $('#overlay').show();

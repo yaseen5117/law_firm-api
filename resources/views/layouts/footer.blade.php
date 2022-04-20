@@ -43,8 +43,14 @@
             <h4>Our Newsletter</h4>
             <p>Tamen quem nulla quae legam multos aute sint culpa legam noster magna veniam enim veniam illum dolore
               legam minim quorum culpa amet magna export quem marada parida nodela caramase seza.</p>
-            <form action="" method="post">
+            <form id="subscriber" enctype="multipart/form-data">
+            @csrf
               <input type="email" name="email"><input type="submit" value="Subscribe">
+              @if(session()->has('message'))
+                <div class="alert alert-success">
+                    {{ session()->get('message') }}
+                </div>
+              @endif
             </form>
           </div>
 
@@ -68,3 +74,4 @@
   
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
       class="bi bi-arrow-up-short"></i></a>
+      
