@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Route;
     Route::post('roles', 'Api\UserController@getRoles');
     Route::post('signup', 'Api\UserController@signUp');
     Route::get('clients', 'Api\UserController@getClient');
+    Route::get('client_users', 'Api\UserController@getClientUsers');
     Route::get('lawyers', 'Api\UserController@getLawyer'); 
     //contact request
     Route::post('contact_requests', 'Api\FrontEndController@contactRequest');  

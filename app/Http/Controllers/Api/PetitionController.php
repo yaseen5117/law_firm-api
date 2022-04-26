@@ -129,7 +129,7 @@ class PetitionController extends Controller
                         ]);
                     } else {
                         if (isset($petitioner['user']) && !empty(@$petitioner['user']['name'])) {
-                            $randomString = Str::random(30);
+                            $randomString = Str::random(10);
                             $userData['name'] = $petitioner['user']['name'];
                             $userData['password'] = bcrypt('test1234');
                             $userData['email'] = $randomString . "@mailinator.com";
@@ -161,7 +161,7 @@ class PetitionController extends Controller
                     } else {
 
                         if (isset($opponent['user']) && !empty(@$opponent['user']['name'])) {
-                            $randomString = Str::random(30);
+                            $randomString = Str::random(10);
                             $oppData['name'] = $opponent['user']['name'];
                             $oppData['password'] = bcrypt('test1234');
                             $oppData['email'] = $randomString . "@mailinator.com";

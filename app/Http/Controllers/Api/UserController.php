@@ -16,7 +16,7 @@ class UserController extends Controller
 
     public function __construct()
     {    
-        $this->middleware("role:admin", ['except' => ['store', 'show','index','getClient','getLoggedInUser','getRoles','signUp','getLawyer']]);      
+        $this->middleware("role:admin", ['except' => ['store', 'show','index','getClient','getLoggedInUser','getRoles','signUp','getLawyer','getClientUsers']]);      
     }
     /**
      * Display a listing of the resource.
@@ -24,7 +24,7 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {         
+    {                  
         try{
             $query = User::with('roles');
 
@@ -40,7 +40,10 @@ class UserController extends Controller
                 $role = Role::find($request->role_id);                                 
                 $query->role($role->name);
             }
-
+            if ($request->is_approved>-1) {                                                                        
+                $query->where("is_approved", $request->is_approved);
+            }
+            
             $users = $query->orderBy("name")->get();
 
             //$users = User::orderBy("name")->with('roles')->get();
@@ -253,6 +256,23 @@ class UserController extends Controller
             return response()->json(
                 [
                     'clients' => $clientUsers,
+                    'message' => 'All Clients',
+                    'code' => 200
+                ]
+            );
+        }catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    //get Client Users
+    public function getClientUsers(){         
+        try{
+            $clients = User::role('client')->orderBy("name")->get();
+            return response()->json(
+                [
+                    'clients' => $clients,
                     'message' => 'All Clients',
                     'code' => 200
                 ]
