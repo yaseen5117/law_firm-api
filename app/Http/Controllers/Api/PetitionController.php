@@ -121,7 +121,7 @@ class PetitionController extends Controller
 
             if (is_array($request->petitioners) && count($request->petitioners) > 0) {
                 foreach ($request->petitioners as $petitioner) {
-                   
+
                     if (isset($petitioner['user']['name']['label']) && !empty($petitioner['user']['name']['value'])) {
                         PetitionPetitioner::create([
                             'petition_id' => $petition->id,
@@ -191,7 +191,7 @@ class PetitionController extends Controller
                         'lawyer_id' => $lawyer_id,
                     ]);
                 }
-            }             
+            }
             return response()->json(
                 [
                     'message' => 'Petitions',
