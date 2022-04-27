@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\TestEmail;
 
 
+
 class PetitionController extends Controller
 {
     /**
@@ -129,10 +130,11 @@ class PetitionController extends Controller
                         ]);
                     } else {
                         if (isset($petitioner['user']) && !empty(@$petitioner['user']['name'])) {
-                            $randomString = Str::random(10);
+                            $slug = Str::of(($petitioner['user']['name']))->slug('-');
+                            $randomString = $slug."-".rand(10000,99999);
                             $userData['name'] = $petitioner['user']['name'];
                             $userData['password'] = bcrypt('test1234');
-                            $userData['email'] = $randomString . "@mailinator.com";
+                            $userData['email'] = $randomString . "@lfms.com";
 
                             if (isset($petitioner['user']['id'])) {
 
@@ -161,10 +163,13 @@ class PetitionController extends Controller
                     } else {
 
                         if (isset($opponent['user']) && !empty(@$opponent['user']['name'])) {
-                            $randomString = Str::random(10);
+
+                            $slug = Str::of(($opponent['user']['name']))->slug('-');
+                            $randomString = $slug."-".rand(10000,99999);
+                            
                             $oppData['name'] = $opponent['user']['name'];
                             $oppData['password'] = bcrypt('test1234');
-                            $oppData['email'] = $randomString . "@mailinator.com";
+                            $oppData['email'] = $randomString . "@lfms.com";
 
                             if (isset($opponent['user']['id'])) {
 
