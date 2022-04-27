@@ -27,6 +27,13 @@ class UserController extends Controller
     {                  
         try{
             $query = User::with('roles');
+            if($request->is_approved){ 
+                if($request->is_approved<2){
+                    $query->where("is_approved", $request->is_approved);     
+                }                                                             
+            }else{
+                $query->where("is_approved", 0);
+            }            
 
             $roles = Role::orderBy("name")->get();
             if (!empty($request->name)) {
@@ -39,10 +46,7 @@ class UserController extends Controller
             if (!empty($request->role_id)) {                
                 $role = Role::find($request->role_id);                                 
                 $query->role($role->name);
-            }
-            if ($request->is_approved>-1) {                                                                        
-                $query->where("is_approved", $request->is_approved);
-            }
+            }                  
             
             $users = $query->orderBy("name")->get();
 
