@@ -18,7 +18,7 @@ class PetitionOrderSheetController extends Controller
     public function index(Request $request)
     {
         try {
-            $petitionOrderSheets = PetitonOrderSheet::with('petition','attachments')->where('petition_id',$request->petition_id)->get();
+            $petitionOrderSheets = PetitonOrderSheet::with('petition','attachments')->where('petition_id',$request->petition_id)->orderby('order_sheet_date')->get();
              
             return response()->json(
                 [
