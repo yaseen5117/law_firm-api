@@ -115,7 +115,7 @@ class PetitionOrderSheetController extends Controller
             if ($request->id>0) {
                 $query->whereId($request->id);            
             }
-            $petitionOrderSheet = $query->first();
+            $petitionOrderSheet = $query->orderBy('order_sheet_date')->first();
             
             return response()->json(
                 [
