@@ -60,7 +60,7 @@ class PetitionOrderSheetController extends Controller
                 ]);
             }
             //return response($request->order_sheet_date,404);
-            PetitonOrderSheet::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+            PetitonOrderSheet::updateOrCreate(['id'=>$request->id],$request->except('editMode','petition','attachments'));
 
             return response()->json(
                 [
