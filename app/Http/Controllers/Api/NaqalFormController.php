@@ -164,6 +164,21 @@ class NaqalFormController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $naqalForm = PetitionNaqalForm::find($id);
+            if ($naqalForm) {
+                $naqalForm->delete();
+                return response(
+                    [
+                        'message' => 'Record Deleted successfully',
+                        'code' => 200
+                    ]
+                );
+            }
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 }

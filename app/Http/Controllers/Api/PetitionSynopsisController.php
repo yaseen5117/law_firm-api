@@ -164,6 +164,21 @@ class PetitionSynopsisController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $petitionSynopsis = PetitionSynopsis::find($id);
+            if ($petitionSynopsis) {
+                $petitionSynopsis->delete();
+                return response(
+                    [
+                        'message' => 'Record Deleted successfully',
+                        'code' => 200
+                    ]
+                );
+            }
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 }

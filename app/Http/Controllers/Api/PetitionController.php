@@ -135,7 +135,8 @@ class PetitionController extends Controller
                             $userData['name'] = $petitioner['user']['name'];
                             $userData['password'] = bcrypt('test1234');
                             $userData['email'] = $randomString . "@lfms.com";
-
+                            $userData['is_approved'] = 1;
+                            
                             if (isset($petitioner['user']['id'])) {
 
                                 $user = User::where('id', $petitioner['user']['id'])->update($userData);
@@ -170,6 +171,7 @@ class PetitionController extends Controller
                             $oppData['name'] = $opponent['user']['name'];
                             $oppData['password'] = bcrypt('test1234');
                             $oppData['email'] = $randomString . "@lfms.com";
+                            $oppData['is_approved'] = 1;
 
                             if (isset($opponent['user']['id'])) {
 
