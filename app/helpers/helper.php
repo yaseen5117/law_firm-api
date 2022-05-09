@@ -6,7 +6,6 @@ use App\Models\Attachment;
 use SebastianBergmann\Environment\Console;
 use App\Models\Role;
 use App\Models\ModelHasRole;
-use Imagick;
 
 function uploadFile($request)
 {
@@ -146,4 +145,25 @@ function to_date($date_in_any_format, $with_time = false) {
         }
 
         
+    }
+
+
+    function getTypeLabel($productTypeId)
+    {
+        $product = DB::table('products')->whereId($productTypeId)->first();
+        if ($product) {
+            return $product->name;
+        }else{
+            return "All";
+        }
+    }
+
+    function initialism($str, $as_space = array('-'))
+    {
+        $str = str_replace($as_space, ' ', trim($str));
+        $ret = '';
+        foreach (explode(' ', $str) as $word) {
+            $ret .= strtoupper($word[0]);
+        }
+        return $ret;
     }

@@ -11,8 +11,8 @@ class Petition extends Model
     use HasFactory;
 	use SoftDeletes;
 
-    protected $guarded=[];
-    protected $appends=['petitioner_names','opponent_names'];
+    protected $guarded=['type_abrivation'];
+    protected $appends=['petitioner_names','opponent_names','type_abrivation'];
     protected $dates = ['deleted_at'];
     protected $casts = [
         'institution_date'  => 'date:d/m/Y',        
@@ -99,5 +99,12 @@ class Petition extends Model
     public function petition_replies_parents()
     {
         return $this->hasMany('App\Models\PetitionReplyParent','petition_id');
+    }
+
+    public function getTypeAbrivationAttribute()
+    {
+        if ($this->type) {
+            return initialism($this->type->title);
+        }
     }
 }
