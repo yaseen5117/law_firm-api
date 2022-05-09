@@ -34,6 +34,8 @@ use Illuminate\Support\Facades\Route;
     Route::get('clients', 'Api\UserController@getClient');
     Route::get('client_users', 'Api\UserController@getClientUsers');
     Route::get('lawyers', 'Api\UserController@getLawyer'); 
+    Route::post('delete_folder', 'Api\AttachmentController@findOriginalFolder');
+  
     //contact request
     Route::post('contact_requests', 'Api\FrontEndController@contactRequest');  
     Route::get('get_contact_requests', 'Api\FrontEndController@getContactRequest');

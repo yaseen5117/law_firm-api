@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+
 use Imagick;
 use Image;
 
@@ -9,6 +10,7 @@ use App\Models\Attachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Filesystem\Filesystem;
 
 class AttachmentController extends Controller
 {
@@ -44,28 +46,28 @@ class AttachmentController extends Controller
             $files = $request->file('files');
             if ($files) {
                 foreach ($files as $key => $file) {
-                    info("AttachmentController store Function: File mime_type: ".$file->getClientMimeType());
+                    info("AttachmentController store Function: File mime_type: " . $file->getClientMimeType());
                     $name = time() . '_' . $file->getClientOriginalName();
-                    $file_path = $file->storeAs('attachments/' . $request->attachmentable_id.'/original', $name, 'public');
-                    $mime_type = $file->getClientMimeType();                     
-                    
+                    $file_path = $file->storeAs('attachments/' . $request->attachmentable_id . '/original', $name, 'public');
+                    $mime_type = $file->getClientMimeType();
+
                     $file_name = time() . '_' . $file->getClientOriginalName();
                     $title = $file_name;
                     $attachmentable_type = $request->attachmentable_type;
                     $attachmentable_id = $request->attachmentable_id;
-                    
-                    
-                    if ($mime_type!="application/pdf") {
+
+
+                    if ($mime_type != "application/pdf") {
                         //START To Resize Images
-                        $resizeImage = Image::make($file);                            
-                        $resizeImage->resize(null, 1024, function($constraint) {
+                        $resizeImage = Image::make($file);
+                        $resizeImage->resize(null, 1024, function ($constraint) {
                             $constraint->aspectRatio();
-                        });  
-                        $path =  storage_path('app/public/attachments/'.$request->attachmentable_id);          
-                        if(!File::isDirectory($path)){
+                        });
+                        $path =  storage_path('app/public/attachments/' . $request->attachmentable_id);
+                        if (!File::isDirectory($path)) {
                             File::makeDirectory($path, 0777, true, true);
                         }
-                        $resizeImage->save(storage_path('app/public/attachments/'.$request->attachmentable_id.'/'.$name));
+                        $resizeImage->save(storage_path('app/public/attachments/' . $request->attachmentable_id . '/' . $name));
                         //END To Resize Images
 
                         //WE DONT WANT TO SAVE PDF IN DATABASE. BECAUSE WE ONLY CONVERT PDF TO IMAGES AND THEN SAVE THOSE IMAGES IN DATABASE.
@@ -77,8 +79,8 @@ class AttachmentController extends Controller
                             'mime_type' => $mime_type,
                         ]);
                     }
-                    
-                    if ($mime_type=="application/pdf") {
+
+                    if ($mime_type == "application/pdf") {
                         info("****************CONVERTING PDF TO IMAGES START**********************");
                         /****************CONVERTING PDF TO IMAGES**********************/
                         $attachmentable_id = $request->attachmentable_id;
@@ -87,43 +89,43 @@ class AttachmentController extends Controller
                         $file_path = "$public_path/storage/attachments/$attachmentable_id/original/$pdf_file_name";
                         $output_path = "$public_path/storage/attachments/$attachmentable_id/";
 
-                        try{
-                            
+                        try {
+
                             $im = new Imagick();
                             //$im->setResolution(300,300);
-                            $im->readimage($file_path); 
+                            $im->readimage($file_path);
                             $num_page = $im->getnumberimages();
-                            $im->clear(); 
-                            $im->destroy(); 
-                            
-                            for($page = 0; $page<$num_page ; $page++){
+                            $im->clear();
+                            $im->destroy();
+
+                            for ($page = 0; $page < $num_page; $page++) {
                                 $im = new Imagick();
 
                                 info("converting page: $page");
-                                $im->setResolution(300,300);
-                                
-                                $im->readimage($file_path."[$page]"); 
-                                $im->setImageFormat('jpeg');    
-                                $generated_jpg_filename = $page ." - " .$file_name.'.jpg';
-                                $im->setImageCompression(imagick::COMPRESSION_JPEG); 
+                                $im->setResolution(300, 300);
+
+                                $im->readimage($file_path . "[$page]");
+                                $im->setImageFormat('jpeg');
+                                $generated_jpg_filename = $page . " - " . $file_name . '.jpg';
+                                $im->setImageCompression(imagick::COMPRESSION_JPEG);
                                 $im->setImageCompressionQuality(100);
-                                $im->writeImage($output_path."/".$generated_jpg_filename); 
-                                
+                                $im->writeImage($output_path . "/" . $generated_jpg_filename);
+
                                 //START To Resize Images
-                                $resizeImage = Image::make($output_path."/".$generated_jpg_filename);                            
-                                $resizeImage->resize(null, 1024, function($constraint) {
+                                $resizeImage = Image::make($output_path . "/" . $generated_jpg_filename);
+                                $resizeImage->resize(null, 1024, function ($constraint) {
                                     $constraint->aspectRatio();
-                                });  
-                                $path =  storage_path('app/public/attachments/'.$request->attachmentable_id);          
-                                if(!File::isDirectory($path)){
+                                });
+                                $path =  storage_path('app/public/attachments/' . $request->attachmentable_id);
+                                if (!File::isDirectory($path)) {
                                     File::makeDirectory($path, 0777, true, true);
                                 }
-                                $resizeImage->save(storage_path('app/public/attachments/'.$request->attachmentable_id.'/'.$generated_jpg_filename));
+                                $resizeImage->save(storage_path('app/public/attachments/' . $request->attachmentable_id . '/' . $generated_jpg_filename));
                                 //END To Resize Images
 
                                 info("converting page: $page DONE");
-                                $im->clear(); 
-                                $im->destroy(); 
+                                $im->clear();
+                                $im->destroy();
 
                                 $attachment = Attachment::updateOrCreate(['id' => $request->attachment_id], [ //attachment id
                                     'title' => $generated_jpg_filename,
@@ -132,15 +134,15 @@ class AttachmentController extends Controller
                                     'attachmentable_id' => $request->attachmentable_id,
                                     'attachmentable_type' => $request->attachmentable_type,
                                     'display_order' => $page,
-                                ]);    
+                                ]);
                             }
 
 
 
 
                             info("conversion done");
-                        }catch(\Exception $e) {
-                          info('Message: ' .$e->getMessage());
+                        } catch (\Exception $e) {
+                            info('Message: ' . $e->getMessage());
                         }
                         /****************CONVERTING PDF TO IMAGES**********************/
                         info("****************CONVERTING PDF TO IMAGES END**********************");
@@ -241,19 +243,18 @@ class AttachmentController extends Controller
         }
     }
     public function deleteSelected(Request $request)
-    {        
-        try {     
+    {
+        try {
             //request contains all selected records ids   
-            if ($request) {                 
-                DB::table("attachments")->whereIn('id',$request)->delete();                       
+            if ($request) {
+                DB::table("attachments")->whereIn('id', $request)->delete();
                 return response(
                     [
                         'message' => 'Records Deleted successfully',
                         'code' => 200
                     ]
                 );
-            }
-            else{
+            } else {
                 return response(
                     [
                         'message' => 'No Record Found',
@@ -261,6 +262,51 @@ class AttachmentController extends Controller
                     ]
                 );
             }
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function findOriginalFolder()
+    {
+        try {
+            $folders = [];
+            $original_folders = [];             
+            for($folder_num=1470; $folder_num<=1490; $folder_num++){
+                array_push($folders,$folder_num);
+            }
+
+            foreach ($folders as $folder) {
+                
+                $FileSystem = new Filesystem();
+                // Target directory.
+                $public_path =  public_path();
+                $file_path = "$public_path/storage/order_pictures/$folder/orig";
+               
+                // Check if the directory exists.
+                if ($FileSystem->exists($file_path)) {
+                    
+                    // Get all files in this directory.
+                    $files = $FileSystem->files($file_path);
+                     
+                    // Check if directory is empty.
+                    if (!empty($files)) {
+                        //keep ids of folder that have original folder
+                        $original_folders[] = $folder;                   
+                        // Yes, delete the directory.
+                        //$FileSystem->deleteDirectory($file_path);                         
+                    }
+                    else{
+                        //keep ids of folder that have original folder
+                        $original_folders[] =$folder;              
+                    }
+                }
+            }             
+            return response([
+                'original_folders' => $original_folders,                
+                'code' => 200
+            ]);
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
