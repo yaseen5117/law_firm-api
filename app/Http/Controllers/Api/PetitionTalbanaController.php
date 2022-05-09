@@ -56,10 +56,16 @@ class PetitionTalbanaController extends Controller
                     'talbana_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->talbana_date)->format('Y/m/d'),    
                 ]);
             }
-            PetitionTalbana::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+            if(!$request->talbana_type_id){
+                $request->merge([
+                    'talbana_type_id' => 1, 
+                ]);
+            }
+            $petitionTalbana = PetitionTalbana::updateOrCreate(['id'=>$request->id],$request->except('editMode','petition','attachments'));
 
             return response()->json(
                 [
+                    'petitionTalbana' => $petitionTalbana,
                     'message' => 'Saved successfully',
                     'code' => 200
                 ]

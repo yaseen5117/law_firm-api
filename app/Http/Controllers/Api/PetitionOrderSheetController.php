@@ -59,11 +59,17 @@ class PetitionOrderSheetController extends Controller
                     'order_sheet_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->order_sheet_date)->format('Y/m/d'),    
                 ]);
             }
+            if(!$request->order_sheet_type_id){
+                $request->merge([
+                    'order_sheet_type_id' => 1, 
+                ]);
+            }
             //return response($request->order_sheet_date,404);
-            PetitonOrderSheet::updateOrCreate(['id'=>$request->id],$request->except('editMode','petition','attachments'));
+            $petitionOrderSheet = PetitonOrderSheet::updateOrCreate(['id'=>$request->id],$request->except('editMode','petition','attachments'));
 
             return response()->json(
                 [
+                    'petitionOrderSheet' => $petitionOrderSheet,
                     'message' => 'Saved successfully',
                     'code' => 200
                 ]

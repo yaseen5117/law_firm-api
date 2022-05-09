@@ -56,10 +56,16 @@ class PetitionSynopsisController extends Controller
                     'synopsis_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->synopsis_date)->format('Y/m/d'), 
                 ]);
             }
-            PetitionSynopsis::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+            if(!$request->synopsis_type_id){
+                $request->merge([
+                    'synopsis_type_id' => 1, 
+                ]);
+            }
+            $petitionSynopsis = PetitionSynopsis::updateOrCreate(['id'=>$request->id],$request->except('editMode','petition','attachments'));
 
             return response()->json(
                 [
+                    'petitionSynopsis' => $petitionSynopsis,
                     'message' => 'Saved successfully',
                     'code' => 200
                 ]
