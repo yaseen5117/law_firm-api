@@ -56,7 +56,7 @@ class NaqalFormController extends Controller
                     'naqal_form_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->naqal_form_date)->format('Y/m/d'),   
                 ]);
             }
-            PetitionNaqalForm::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+            PetitionNaqalForm::updateOrCreate(['id'=>$request->id],$request->except('editMode','petition','attachments'));
 
             return response()->json(
                 [
