@@ -11,8 +11,8 @@ class Petition extends Model
     use HasFactory;
 	use SoftDeletes;
 
-    protected $guarded=[];
-    protected $appends=['petitioner_names','opponent_names'];
+    protected $guarded=['type_abrivation'];
+    protected $appends=['petitioner_names','opponent_names','type_abrivation'];
     protected $dates = ['deleted_at'];
     protected $casts = [
         'institution_date'  => 'date:d/m/Y',        
@@ -20,6 +20,10 @@ class Petition extends Model
     public function court()
     {
         return $this->belongsTo('App\Models\Court','court_id','id');
+    }
+    public function type()
+    {
+        return $this->belongsTo('App\Models\PetitionType','petition_type_id','id');
     }
     public function lawyers()
     {
@@ -63,7 +67,7 @@ class Petition extends Model
 
     public function scopeWithRelations($query)
     {
-        return $query->with('petitioners.user','opponents.user','court','lawyers');
+        return $query->with('petitioners.user','opponents.user','court','lawyers','type');
     }
 
     public function getPetitionerNamesAttribute()
@@ -95,5 +99,12 @@ class Petition extends Model
     public function petition_replies_parents()
     {
         return $this->hasMany('App\Models\PetitionReplyParent','petition_id');
+    }
+
+    public function getTypeAbrivationAttribute()
+    {
+        if ($this->type) {
+            return initialism($this->type->title);
+        }
     }
 }

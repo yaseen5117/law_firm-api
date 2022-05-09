@@ -18,7 +18,7 @@ class PetitionOrderSheetController extends Controller
     public function index(Request $request)
     {
         try {
-            $petitionOrderSheets = PetitonOrderSheet::with('petition','attachments')->where('petition_id',$request->petition_id)->get();
+            $petitionOrderSheets = PetitonOrderSheet::with('petition','attachments')->where('petition_id',$request->petition_id)->orderby('order_sheet_date','desc')->get();
              
             return response()->json(
                 [
@@ -60,7 +60,7 @@ class PetitionOrderSheetController extends Controller
                 ]);
             }
             //return response($request->order_sheet_date,404);
-            PetitonOrderSheet::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+            PetitonOrderSheet::updateOrCreate(['id'=>$request->id],$request->except('editMode','petition','attachments'));
 
             return response()->json(
                 [
@@ -115,7 +115,7 @@ class PetitionOrderSheetController extends Controller
             if ($request->id>0) {
                 $query->whereId($request->id);            
             }
-            $petitionOrderSheet = $query->first();
+            $petitionOrderSheet = $query->orderBy('order_sheet_date','desc')->first();
             
             return response()->json(
                 [
