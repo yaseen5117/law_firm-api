@@ -21,6 +21,10 @@ class Petition extends Model
     {
         return $this->belongsTo('App\Models\Court','court_id','id');
     }
+    public function type()
+    {
+        return $this->belongsTo('App\Models\PetitionType','petition_type_id','id');
+    }
     public function lawyers()
     {
         return $this->hasMany('App\Models\PetitionLawyer');
@@ -63,7 +67,7 @@ class Petition extends Model
 
     public function scopeWithRelations($query)
     {
-        return $query->with('petitioners.user','opponents.user','court','lawyers');
+        return $query->with('petitioners.user','opponents.user','court','lawyers','type');
     }
 
     public function getPetitionerNamesAttribute()
