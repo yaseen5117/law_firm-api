@@ -21,8 +21,7 @@ use Illuminate\Support\Facades\Route;
         Route::resource('petitions', 'PetitionController');
         Route::resource('users', 'UserController');
              
-        Route::resource('petition_hearing', 'PetitionHearingController');
-        
+        Route::resource('petition_hearing', 'PetitionHearingController');        
         
     });
  
@@ -58,10 +57,10 @@ use Illuminate\Support\Facades\Route;
     Route::POST('petition_talbana/by_petition', 'Api\PetitionTalbanaController@showTalbanaByPetition');
     //END route for Talbana forms
 
-  //START route for Petition Naqal Form
-  Route::resource('petition_naqal_forms', 'Api\NaqalFormController');
-  Route::POST('petition_naqal_forms/by_petition', 'Api\NaqalFormController@showNaqalFormByPetition');
-  //END route for Petition Naqal Form
+    //START route for Petition Naqal Form
+    Route::resource('petition_naqal_forms', 'Api\NaqalFormController');
+    Route::POST('petition_naqal_forms/by_petition', 'Api\NaqalFormController@showNaqalFormByPetition');
+    //END route for Petition Naqal Form
 
     Route::post('petition_reply_details/{id}', 'Api\PetitionReplyController@replyDetail');
     Route::resource('petition_reply_parents', 'Api\PetitionReplyParentController');
