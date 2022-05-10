@@ -19,9 +19,9 @@ use Illuminate\Support\Facades\Route;
   
         Route::post('petitions/toggle_archived', 'PetitionController@toggleArchivedStatus');
         Route::resource('petitions', 'PetitionController');
-        Route::resource('users', 'UserController');
-             
-        Route::resource('petition_hearing', 'PetitionHearingController');        
+        Route::resource('users', 'UserController');             
+        Route::resource('petition_hearing', 'PetitionHearingController');
+        Route::resource('invoices', 'InvoiceController');   
         
     });
  
@@ -35,6 +35,8 @@ use Illuminate\Support\Facades\Route;
     Route::get('lawyers', 'Api\UserController@getLawyer'); 
     Route::post('delete_folder', 'Api\AttachmentController@findOriginalFolder');
   
+    //invoices routes
+      
     //contact request
     Route::post('contact_requests', 'Api\FrontEndController@contactRequest');  
     Route::get('get_contact_requests', 'Api\FrontEndController@getContactRequest');
