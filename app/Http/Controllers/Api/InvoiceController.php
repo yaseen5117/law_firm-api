@@ -7,6 +7,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceMeta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use PDF;
 
 class InvoiceController extends Controller
@@ -121,7 +122,9 @@ class InvoiceController extends Controller
     }
     public function downloadInvoicePdf()
     {
-        try {             
+        try { 
+            $userInvoiceData = Invoice::find(1);            
+            return view('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));          
             $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf');             
             return $pdf->download('lawAndPolicyInvoice.pdf');
         } catch (\Exception $e) {

@@ -4,7 +4,7 @@
         table-layout: fixed;
         border-collapse: collapse;
         border: none;
-        width: 80%;
+        width: 90%;
         margin-left: auto;
         margin-right: auto;
     }
@@ -14,7 +14,7 @@
     }
 
     td {
-        border: none;
+        border: none;         
     }
 
     .row-grey {
@@ -49,7 +49,7 @@
         color: red;
     }
     .invoice-padding{
-        padding: 20px 20px 0px 20px;
+        padding: 15px 15px 15px 15px;
         border: 4px black solid;
     }
     .row-padding{
@@ -62,9 +62,15 @@
         padding-top: 3px; 
         padding-bottom: 3px; 
     }
+    .align-item-left{
+        text-align: left;
+    }
+    .align-item-register_shutdown_function{
+        text-align: right;
+    }
 </style>
 
-<table class="main">
+<table class="main">    
 <tr>
         <td colspan="6" class="cell-padding"></td>
         
@@ -77,17 +83,17 @@
         <td colspan="3" class="cell-padding"></td>
     </tr>
     <tr>
-        <td colspan="3">Office No. 5, Saeed Plaza, Plot 71, </td>
-        <td colspan="3">Phone: (+92301) 5011568</td>
+        <td class="align-item-left" colspan="3">Office No. 5, Saeed Plaza, Plot 71, </td>
+        <td class="align-item-right" colspan="3">Phone: (+92301) 5011568</td>
     </tr>
     <tr>
-        <td colspan="3">I & T Center, opposite</td>
-        <td colspan="3">(+9251) 8431759</td>
+        <td class="align-item-left" colspan="3">I & T Center, opposite</td>
+        <td class="align-item-right" colspan="3">(+9251) 8431759</td>
     </tr>
     <tr>
-        <td colspan="3">Islamabad High Court, Sector G-10/1
+        <td class="align-item-left" colspan="3">Islamabad High Court, Sector G-10/1
             Islamabad 44000, Pakistan</td>
-        <td colspan="3">Email: umer.gilani@lawandpolicychambers.com</td>
+        <td class="align-item-right" colspan="3">Email: umer.gilani@lawandpolicychambers.com</td>
     </tr>
 
     <tr>
@@ -102,51 +108,50 @@
         
     </tr>
     <tr>
-        <td><b>Client ID:</b></td>
-        <td>PEC</td>
-        <td><b>Invoice No:</b></td>
-        <td>PEC-28/20</td>
-        <td><b>Date:</b></td>
-        <td>December 19, 2020</td>
+        <td class="align-item-left"><b>Client ID:</b></td>
+        <td class="align-item-left">{{@$userInvoiceData->invoice_user->name}}</td>
+        <td class="align-item-left"><b>Invoice No:</b></td>
+        <td class="align-item-left">{{@$userInvoiceData->invoice_no}}</td>
+        <td class="align-item-left"><b>Date:</b></td>
+        <td class="align-item-left">{{@$userInvoiceData->due_date}}</td>
     </tr>
     <tr>
-        <td colspan="1"><b>Company:</b></td>
-        <td colspan="2">Pakistan Engineering Council</td>
-        <td colspan="1"><b>Phone:</b></td>
-        <td colspan="2"></td>
+        <td  class="align-item-left" colspan="1"><b>Company:</b></td>
+        <td class="align-item-left" colspan="2">{{@$userInvoiceData->invoice_user->company_name}}</td>
+        <td class="align-item-left" colspan="1"><b>Phone:</b></td>
+        <td class="align-item-left" colspan="2">{{@$userInvoiceData->invoice_user->phone}}</td>
     </tr>
     <tr>
-        <td colspan="1"><b>Attention:</b></td>
-        <td colspan="2">Engr. Dr. Nasir Mehmood Khan, Registrar</td>
-        <td colspan="1"><b>Fax:</b></td>
-        <td colspan="2"></td>
+        <td class="align-item-left" colspan="1"><b>Attention:</b></td>
+        <td class="align-item-left" colspan="2">Engr. Dr. Nasir Mehmood Khan, Registrar</td>
+        <td class="align-item-left" colspan="1"><b>Fax:</b></td>
+        <td class="align-item-left" colspan="2"></td>
     </tr>
     <tr>
-        <td colspan="1"><b>CC:</b></td>
-        <td colspan="2">Engr. Shahjehan Khattak, Deputy Registrar, MTLA
+        <td class="align-item-left" colspan="1"><b>CC:</b></td>
+        <td class="align-item-left" colspan="2">Engr. Shahjehan Khattak, Deputy Registrar, MTLA
             Mr. Iftikhar Khan, Head of Department (Finance and Accounts)</td>
-        <td colspan="3"></td>
+        <td class="align-item-left" colspan="3"></td>
 
     </tr>
     <tr>
-        <td colspan="1"><b>Address:</b></td>
-        <td colspan="2">
-            Ataturk Avenue, G-5, Islamabad</td>
-        <td colspan="1"><b>E-mail:</b></td>
-        <td colspan="2">registrar@pec.org.pk <br>
-            khattak@pec.org.pk </td>
+        <td class="align-item-left" colspan="1"><b>Address:</b></td>
+        <td class="align-item-left" colspan="2">
+        {{@$userInvoiceData->invoice_user->address}}</td>
+        <td class="align-item-left" colspan="1"><b>E-mail:</b></td>
+        <td class="align-item-left" colspan="2">{{@$userInvoiceData->invoice_user->email}}</td>
     </tr>
     <tr>
         <td colspan="3"></td>
 
-        <td colspan="1"><b>Via:</b></td>
-        <td colspan="2">Email Only</td>
+        <td class="align-item-left" colspan="1"><b>Via:</b></td>
+        <td class="align-item-left" colspan="2">Email Only</td>
     </tr>
 
 </table><br>
-<div style="width: 80%; margin-left: auto; margin-right: auto;">
+<div style="width: 90%; margin-left: auto; margin-right: auto;">
     <div>
-        <b>Subject:&emsp;<span>Professional Fee for Providing Legal Opinion</span></b>
+        <b>Subject:&emsp;<span>{{@$userInvoiceData->invoice_meta->subject}}</span></b>
     </div>
     <div><br>
         <b>Dear Sir:</b><br>
@@ -169,14 +174,14 @@
         <td colspan="3" class="cell-padding"></td>
     </tr>
     <tr>
-        <td colspan="3">Office No. 5, Saeed Plaza, Plot 71, I & T Center, Opposite </td>
-        <td colspan="3">Phone: (+92301) 501-1568<br>
+        <td class="align-item-left" colspan="3">Office No. 5, Saeed Plaza, Plot 71, I & T Center, Opposite </td>
+        <td class="align-item-right" colspan="3">Phone: (+92301) 501-1568<br>
 (+9251) 8431759</td>
     </tr>
     <tr>
-        <td colspan="3">Islamabad High Court, Sector G-10/1
+        <td class="align-item-left" colspan="3">Islamabad High Court, Sector G-10/1
 Islamabad 44000, Pakistan</td>
-        <td colspan="3">Email: umer.gilani@lawandpolicychambers.com</td>
+        <td class="align-item-right" colspan="3">Email: umer.gilani@lawandpolicychambers.com</td>
     </tr>
     <tr>
         <td colspan="6" class="cell-padding"></td>
@@ -196,12 +201,12 @@ Islamabad 44000, Pakistan</td>
         <td colspan="6" class="cell-padding"></td>        
     </tr>
     <tr>
-        <td><b>Client ID:</b></td>
-        <td>PEC</td>
-        <td><b>Invoice No:</b></td>
-        <td>PEC-28/20</td>
-        <td><b>Date:</b></td>
-        <td>December 19, 2020</td>
+        <td class="align-item-left"><b>Client ID:</b></td>
+        <td class="align-item-left">{{@$userInvoiceData->invoice_user->name}}</td>
+        <td class="align-item-left"><b>Invoice No:</b></td>
+        <td class="align-item-left">{{@$userInvoiceData->invoice_no}}</td>
+        <td class="align-item-left"><b>Date:</b></td>
+        <td class="align-item-left">{{@$userInvoiceData->due_date}}</td>
     </tr>
     <tr>
         <td class="row-padding"><b></b></td>
@@ -212,28 +217,27 @@ Islamabad 44000, Pakistan</td>
         <td></td>
     </tr>
     <tr>
-        <td class="row-padding" colspan="3"><b>Professional Services</b></td>
-        <td colspan="3"><b>Amount</b></td>
+        <td class="row-padding align-item-left" colspan="3"><b>Professional Services</b></td>
+        <td class="align-item-right" colspan="3"><b>Amount</b></td>
     </tr>
     <tr>
-        <td colspan="3">Legal Opinion on the matter of State Bank Circular
-related to Closure of Govt. Accounts in commercial banksRs.</td>
-        <td colspan="3">Rs. 25,000.00  </td>
+        <td class="align-item-left" colspan="3">{{@$userInvoiceData->invoice_meta->services}}</td>
+        <td class="align-item-right" colspan="3">{{@$userInvoiceData->amount}}</td>
     </tr>
     <tr>
-        <td colspan="3"><b>Withholding tax deduction @ 10% on professional services <br>
+        <td class="align-item-left" colspan="3"><b>Withholding tax deduction @ 10% on professional services <br>
         (NTN: 61101-9809897-3</b></td>
-        <td colspan="3"> Rs 2,500.00</td>
+        <td class="align-item-right" colspan="3"> Rs 2,500.00</td>
     </tr>
     <tr>         
-        <td colspan="6" style="text-align: left;"><b>Expenses</b></td>
+        <td class="align-item-left" colspan="6" style="text-align: left;"><b>Expenses</b></td>
     </tr>
     <tr>         
-        <td colspan="6" style="text-align: left;">1.  Miscellaneous litigation expenses (munshiana)    </td>
+        <td class="align-item-left" colspan="6" style="text-align: left;">1.  Miscellaneous litigation expenses (munshiana)    </td>
     </tr>
     <tr>
-        <td class="row-padding" colspan="3"><b>Total</b></td>
-        <td colspan="3"><b>Rs.22,500.00</b></td>
+        <td class="align-item-left" class="row-padding" colspan="3"><b>Total</b></td>
+        <td colspan="3" class="align-item-right"><b>Rs.22,500.00</b></td>
     </tr>
     <tr>
         <td class="row-padding" colspan="6"></td>

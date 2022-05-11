@@ -9,4 +9,13 @@ class Invoice extends Model
 {
     use HasFactory;
     protected $guarded = [];
+
+    public function invoice_user()
+    {
+        return $this->belongsTo('App\Models\User','invoiceable_id');
+    }
+    public function invoice_meta()
+    {
+        return $this->hasOne('App\Models\InvoiceMeta');
+    }
 }
