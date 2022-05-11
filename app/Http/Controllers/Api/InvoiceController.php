@@ -39,7 +39,7 @@ class InvoiceController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {         
         try {
             if ($request->due_date) {
                 $request->merge([
@@ -52,16 +52,23 @@ class InvoiceController extends Controller
 
             $request->merge([
                 'invoice_sender_id' => Auth::user()->id
-            ]);
+            ]);            
+             
             $invoice = Invoice::updateOrCreate(
-                ['invoiceable_id' => $request->id],
-                $request->only('due_date', 'invoiceable_type', 'invoice_no', 'amount')
+                ['id' => $request->id],
+                $request->only('due_date', 'invoiceable_id', 'invoiceable_type', 'invoice_no', 'amount','apply_tax','tax_percentage')
             );
-
-            $invoiceMeta = InvoiceMeta::updateOrCreate(
-                ['invoice_id' => $invoice->id],
-                $request->only('subject', 'services', 'content')
-            );
+            if($invoice){
+                $invoiceMeta = InvoiceMeta::updateOrCreate(
+                    ['invoice_id' => $invoice->id],
+                    $request->only('subject', 'services', 'content')
+                );
+            }
+            else{
+                return response([
+                    "error" => "Something went wrong with the creation of invoice!",
+                ], 500);
+            }            
 
             return response()->json(
                 [
