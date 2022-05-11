@@ -47,7 +47,7 @@ class InvoiceController extends Controller
                 ]);
             }
             $request->merge([
-                'invoiceable_type' => "App\Models\Invoice"
+                'invoiceable_type' => "App\Models\User"
             ]);
 
             $request->merge([
