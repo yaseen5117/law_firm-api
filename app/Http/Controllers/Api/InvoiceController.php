@@ -123,8 +123,8 @@ class InvoiceController extends Controller
     public function downloadInvoicePdf()
     {
         try { 
-            $userInvoiceData = Invoice::find(1);            
-            return view('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));          
+            $userInvoiceData = Invoice::find(1);              
+            //return view('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));          
             $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf');             
             return $pdf->download('lawAndPolicyInvoice.pdf');
         } catch (\Exception $e) {
