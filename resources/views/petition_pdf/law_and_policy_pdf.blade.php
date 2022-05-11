@@ -3,7 +3,7 @@
         text-align: center;
         table-layout: fixed;
         border-collapse: collapse;
-        border: 1px black dotted;
+        border: none;
         width: 80%;
         margin-left: auto;
         margin-right: auto;
@@ -14,7 +14,7 @@
     }
 
     td {
-        border: 1px black dotted;
+        border: none;
     }
 
     .row-grey {
@@ -57,11 +57,18 @@
         padding-bottom: 20px;
     }
     .color-black{
+        width: 50%;
         background-color: black;
+        padding-top: 3px; 
+        padding-bottom: 3px; 
     }
 </style>
 
 <table class="main">
+<tr>
+        <td colspan="6" class="cell-padding"></td>
+        
+    </tr>
     <tr>
         <td colspan="6"><h2>The Law and Policy Chambers</h2></td>
     </tr>
@@ -89,6 +96,10 @@
     </tr>
     <tr>
         <td colspan="6" class="color-black"></td>        
+    </tr>
+    <tr>
+        <td colspan="6" class="cell-padding"></td>
+        
     </tr>
     <tr>
         <td><b>Client ID:</b></td>
