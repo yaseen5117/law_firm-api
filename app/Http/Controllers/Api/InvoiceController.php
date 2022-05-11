@@ -7,6 +7,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceMeta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use PDF;
 
 class InvoiceController extends Controller
 {
@@ -37,7 +38,7 @@ class InvoiceController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {        
+    {
         try {
             if ($request->due_date) {
                 $request->merge([
@@ -47,14 +48,14 @@ class InvoiceController extends Controller
             $request->merge([
                 'invoiceable_type' => "App\Models\Invoice"
             ]);
-            
+
             $request->merge([
                 'invoice_sender_id' => Auth::user()->id
             ]);
             $invoice = Invoice::updateOrCreate(
                 ['invoiceable_id' => $request->id],
                 $request->only('due_date', 'invoiceable_type', 'invoice_no', 'amount')
-            );           
+            );
 
             $invoiceMeta = InvoiceMeta::updateOrCreate(
                 ['invoice_id' => $invoice->id],
@@ -117,5 +118,16 @@ class InvoiceController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function downloadInvoicePdf()
+    {
+        try {             
+            $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf');             
+            return $pdf->download('lawAndPolicyInvoice.pdf');
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 }

@@ -292,11 +292,5 @@ class PetitionController extends Controller
                 "error" => $e->getMessage()
             ], 500);
         }
-    }
-    public function PetitionPdf()
-    {     
-        //return view('petition_pdf.law_and_policy_pdf');   
-        $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf');         
-        return $pdf->download('law_and_policy.pdf');
-    }
+    }    
 }
