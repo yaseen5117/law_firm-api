@@ -19,7 +19,7 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        //
+        return Invoice::with('invoice_meta','client')->orderBy('due_date','desc')->get();
     }
 
     /**
