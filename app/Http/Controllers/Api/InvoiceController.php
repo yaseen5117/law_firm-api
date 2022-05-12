@@ -19,7 +19,20 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        return Invoice::with('invoice_meta','client')->orderBy('due_date','desc')->get();
+        try {
+            $invoices = Invoice::with('invoice_meta','client')->orderBy('due_date','desc')->get();
+            return response()->json(
+                [
+                    'invoices' => $invoices,
+                    'message' => 'All invoices',
+                    'code' => 200
+                ]
+            );
+        }catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

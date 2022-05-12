@@ -10,7 +10,7 @@ class Invoice extends Model
     use HasFactory;
     protected $guarded = [];
 
-    public function invoice_user()
+    public function client()
     {
         return $this->belongsTo('App\Models\User','invoiceable_id');
     }
