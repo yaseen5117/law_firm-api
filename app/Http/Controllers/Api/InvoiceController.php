@@ -75,9 +75,10 @@ class InvoiceController extends Controller
                 $request->only('due_date', 'invoiceable_id', 'invoiceable_type', 'invoice_no', 'amount','apply_tax','tax_percentage')
             );
             if($invoice){
+                $invoice_meta_data = $request->invoice_meta;
                 $invoiceMeta = InvoiceMeta::updateOrCreate(
                     ['invoice_id' => $invoice->id],
-                    $request->only('subject', 'services', 'content')
+                    $invoice_meta_data
                 );
 
                 if ($request->edit_client && $request->selectedClient) {
@@ -118,7 +119,20 @@ class InvoiceController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $invoice = Invoice::with('invoice_meta','client')->find($id);
+            return response()->json(
+                [
+                    'invoice' => $invoice,
+                    'message' => 'All invoices',
+                    'code' => 200
+                ]
+            );
+        }catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -150,9 +164,27 @@ class InvoiceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($invoiceId)
     {
-        //
+        try {             
+            $invoice = Invoice::find($invoiceId); 
+            $invoice_meta = InvoiceMeta::where('invoice_id', $invoice->id); 
+                    
+            if($invoice){
+                $invoice->delete();
+                if($invoice_meta){
+                    $invoice_meta->delete();
+                }
+                return response("Deleted Successfully",200);
+            }else{
+                return response('Invoice Not Found',404);
+            }
+            
+        } catch (\Exception $e) {
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
+        }
     }
     public function downloadInvoicePdf()
     {
