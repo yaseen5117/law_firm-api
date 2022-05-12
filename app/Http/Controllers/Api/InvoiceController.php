@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\Invoice;
 use App\Models\InvoiceMeta;
 use Illuminate\Http\Request;
@@ -54,6 +55,8 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {         
         try {
+
+            
             if ($request->due_date) {
                 $request->merge([
                     'due_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->due_date)->format('Y/m/d'),
@@ -76,12 +79,23 @@ class InvoiceController extends Controller
                     ['invoice_id' => $invoice->id],
                     $request->only('subject', 'services', 'content')
                 );
+
+                if ($request->edit_client && $request->selectedClient) {
+                    $selected_user_data= $request->selectedClient;
+                    User::where('id',$request->invoiceable_id)->update([
+                        'address'=>@$selected_user_data['address'],
+                        'company_name'=>@$selected_user_data['company_name'],
+                        'phone'=>@$selected_user_data['phone'],
+                    ]);
+                }
             }
             else{
                 return response([
                     "error" => "Something went wrong with the creation of invoice!",
                 ], 500);
-            }            
+            }        
+
+             
 
             return response()->json(
                 [
