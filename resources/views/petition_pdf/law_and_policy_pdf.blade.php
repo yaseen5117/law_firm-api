@@ -109,7 +109,7 @@
     </tr>
     <tr>
         <td class="align-item-left"><b>Client ID:</b></td>
-        <td class="align-item-left">{{@$userInvoiceData->invoice_user->name}}</td>
+        <td class="align-item-left">{{@$userInvoiceData->client->name}}</td>
         <td class="align-item-left"><b>Invoice No:</b></td>
         <td class="align-item-left">{{@$userInvoiceData->invoice_no}}</td>
         <td class="align-item-left"><b>Date:</b></td>
@@ -117,9 +117,9 @@
     </tr>
     <tr>
         <td  class="align-item-left" colspan="1"><b>Company:</b></td>
-        <td class="align-item-left" colspan="2">{{@$userInvoiceData->invoice_user->company_name}}</td>
+        <td class="align-item-left" colspan="2">{{@$userInvoiceData->client->company_name}}</td>
         <td class="align-item-left" colspan="1"><b>Phone:</b></td>
-        <td class="align-item-left" colspan="2">{{@$userInvoiceData->invoice_user->phone}}</td>
+        <td class="align-item-left" colspan="2">{{@$userInvoiceData->client->phone}}</td>
     </tr>
     <tr>
         <td class="align-item-left" colspan="1"><b>Attention:</b></td>
@@ -137,9 +137,9 @@
     <tr>
         <td class="align-item-left" colspan="1"><b>Address:</b></td>
         <td class="align-item-left" colspan="2">
-        {{@$userInvoiceData->invoice_user->address}}</td>
+        {{@$userInvoiceData->client->address}}</td>
         <td class="align-item-left" colspan="1"><b>E-mail:</b></td>
-        <td class="align-item-left" colspan="2">{{@$userInvoiceData->invoice_user->email}}</td>
+        <td class="align-item-left" colspan="2">{{@$userInvoiceData->client->email}}</td>
     </tr>
     <tr>
         <td colspan="3"></td>
@@ -202,7 +202,7 @@ Islamabad 44000, Pakistan</td>
     </tr>
     <tr>
         <td class="align-item-left"><b>Client ID:</b></td>
-        <td class="align-item-left">{{@$userInvoiceData->invoice_user->name}}</td>
+        <td class="align-item-left">{{@$userInvoiceData->client->name}}</td>
         <td class="align-item-left"><b>Invoice No:</b></td>
         <td class="align-item-left">{{@$userInvoiceData->invoice_no}}</td>
         <td class="align-item-left"><b>Date:</b></td>
