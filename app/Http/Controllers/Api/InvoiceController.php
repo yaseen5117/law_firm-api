@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Invoice;
 use App\Models\InvoiceMeta;
+use App\Models\InvoiceExpense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -54,6 +55,7 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {         
+        DB::beginTransaction();
         try {
 
             
@@ -89,6 +91,13 @@ class InvoiceController extends Controller
                         'phone'=>@$selected_user_data['phone'],
                     ]);
                 }
+
+                if (!empty($request->invoice_expenses)) {
+                    foreach ($request->invoice_expenses as $invoice_expense) {
+                        $invoice_expense['invoice_id'] = $invoice->id;
+                        InvoiceExpense::updateOrCreate(['id'=>$request->id] , $invoice_expense);
+                    }
+                }
             }
             else{
                 return response([
@@ -97,7 +106,7 @@ class InvoiceController extends Controller
             }        
 
              
-
+            DB::commit();
             return response()->json(
                 [
                     'message' => 'Saved successfully',
@@ -105,6 +114,7 @@ class InvoiceController extends Controller
                 ]
             );
         } catch (\Exception $e) {
+            DB::rollback();
             return response([
                 "error" => $e->getMessage()
             ], 500);
