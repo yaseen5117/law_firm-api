@@ -196,12 +196,12 @@ class InvoiceController extends Controller
             ],500);
         }
     }
-    public function downloadInvoicePdf()
-    {
+    public function downloadInvoicePdf($invoiceId)
+    {         
         try { 
-            $userInvoiceData = Invoice::find(1);              
+            $userInvoiceData = Invoice::with('invoice_meta','client')->find($invoiceId);        
             //return view('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));          
-            $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf');             
+            $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));             
             return $pdf->download('lawAndPolicyInvoice.pdf');
         } catch (\Exception $e) {
             return response([
