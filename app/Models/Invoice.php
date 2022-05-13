@@ -22,4 +22,8 @@ class Invoice extends Model
     {
         return $this->hasOne('App\Models\InvoiceMeta');
     }
+    public function invoice_expenses()
+    {
+        return $this->hasMany('App\Models\InvoiceExpense');
+    }
 }

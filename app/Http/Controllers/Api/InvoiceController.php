@@ -22,7 +22,7 @@ class InvoiceController extends Controller
     public function index()
     {
         try {
-            $invoices = Invoice::with('invoice_meta','client')->orderBy('due_date','desc')->get();
+            $invoices = Invoice::with('invoice_meta','client','invoice_expenses')->orderBy('id','desc')->get();
             return response()->json(
                 [
                     'invoices' => $invoices,
@@ -95,7 +95,7 @@ class InvoiceController extends Controller
                 if (!empty($request->invoice_expenses)) {
                     foreach ($request->invoice_expenses as $invoice_expense) {
                         $invoice_expense['invoice_id'] = $invoice->id;
-                        InvoiceExpense::updateOrCreate(['id'=>$request->id] , $invoice_expense);
+                        InvoiceExpense::updateOrCreate(['id'=>$invoice_expense['id']] , $invoice_expense);
                     }
                 }
             }
@@ -130,11 +130,11 @@ class InvoiceController extends Controller
     public function show($id)
     {
         try {
-            $invoice = Invoice::with('invoice_meta','client')->find($id);
+            $invoice = Invoice::with('invoice_meta','client','invoice_expenses')->find($id);
             return response()->json(
                 [
                     'invoice' => $invoice,
-                    'message' => 'All invoices',
+                    'message' => 'Invoice Details',
                     'code' => 200
                 ]
             );

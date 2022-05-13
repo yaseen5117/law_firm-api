@@ -40,7 +40,7 @@ class User extends Authenticatable
     ];
 
     protected $appends = [
-        'created_at_formated_date','is_admin'
+        'created_at_formated_date','is_admin','next_invoice_num'
     ];
 
     public function getCreatedAtFormatedDateAttribute()
@@ -76,10 +76,25 @@ class User extends Authenticatable
     {
         return $this->hasMany(Note::class,"user_id");
     }
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class,"invoiceable_id");
+    }
 
     public function getIsAdminAttribute()
     {
         return $this->hasRole(['admin']);
+    }
+
+    public function nextInvoiceNum()
+    {
+        $maxId = $this->invoices->max('id')+1;
+        return $invoiceNum = $this->name ."-".$maxId."-".date("Y");
+    }
+
+    public function getNextInvoiceNumAttribute($value='')
+    {
+        return $this->nextInvoiceNum();
     }
 
 }
