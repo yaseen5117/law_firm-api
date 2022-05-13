@@ -19,10 +19,20 @@ class InvoiceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $invoices = Invoice::with('invoice_meta','client','invoice_expenses')->orderBy('id','desc')->get();
+            $query = Invoice::with('invoice_meta','client','invoice_expenses');
+            if (!empty($request->invoice_no)) {
+                $query->where('invoice_no','like','%'.$request->invoice_no.'%');
+            }
+            $query                 
+                ->leftjoin('users', 'users.id', '=', 'invoices.invoiceable_id');
+            if (!empty($request->client_name)) {
+
+                $query->where('name','like','%'.$request->client_name.'%');
+            }
+            $invoices = $query->groupBy('invoices.id')->get();
             return response()->json(
                 [
                     'invoices' => $invoices,
@@ -54,10 +64,11 @@ class InvoiceController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {         
+    {          
         DB::beginTransaction();
         try {
-
+            //replace due date in content 
+            $content = str_replace("{due_date}",$request->due_date,$request->invoice_meta['content']);            
             
             if ($request->due_date) {
                 $request->merge([
@@ -76,8 +87,13 @@ class InvoiceController extends Controller
                 ['id' => $request->id],
                 $request->only('due_date', 'invoiceable_id', 'invoiceable_type', 'invoice_no', 'amount','apply_tax','tax_percentage')
             );
+            //replace total amount in content 
+            $content = str_replace("{total_amount}",$invoice->total(),$content);
+            
+             
             if($invoice){
                 $invoice_meta_data = $request->invoice_meta;
+                $invoice_meta_data['content'] = $content;
                 $invoiceMeta = InvoiceMeta::updateOrCreate(
                     ['invoice_id' => $invoice->id],
                     $invoice_meta_data
@@ -95,7 +111,7 @@ class InvoiceController extends Controller
                 if (!empty($request->invoice_expenses)) {
                     foreach ($request->invoice_expenses as $invoice_expense) {
                         $invoice_expense['invoice_id'] = $invoice->id;
-                        InvoiceExpense::updateOrCreate(['id'=>$invoice_expense['id']] , $invoice_expense);
+                        InvoiceExpense::updateOrCreate(['id'=>@$invoice_expense['id']] , $invoice_expense);
                     }
                 }
             }
@@ -113,7 +129,7 @@ class InvoiceController extends Controller
                     'code' => 200
                 ]
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollback();
             return response([
                 "error" => $e->getMessage()

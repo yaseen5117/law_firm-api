@@ -33,6 +33,6 @@ class Invoice extends Model
         if ($this->apply_tax && $this->tax_percentage>0) {
             $tax_amount = ($amount * $this->tax_percentage)/100;
         }
-        return $total = $amount + $invoice_expenses->sum('amount') - $tax_amount;
+        return $total = $amount + $this->invoice_expenses->sum('amount') - $tax_amount;
     }
 }
