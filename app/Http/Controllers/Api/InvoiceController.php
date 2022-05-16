@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Invoice;
 use App\Models\InvoiceMeta;
 use App\Models\InvoiceExpense;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -20,17 +21,23 @@ class InvoiceController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
+    {         
         try {
-            $query = Invoice::with('invoice_meta','client','invoice_expenses');
+            $query = Invoice::with('invoice_meta','client','invoice_expenses')->select("invoices.*");
             if (!empty($request->invoice_no)) {
                 $query->where('invoice_no','like','%'.$request->invoice_no.'%');
             }
             $query                 
-                ->leftjoin('users', 'users.id', '=', 'invoices.invoiceable_id');
+                ->join('users', 'users.id', '=', 'invoices.invoiceable_id');
             if (!empty($request->client_name)) {
 
                 $query->where('name','like','%'.$request->client_name.'%');
+            }     
+            $today_date =  Carbon::today();
+            if (!empty($request->is_archive)) {
+                $query->whereDate('invoices.due_date', "<", $today_date);
+            }else{
+                $query->whereDate('invoices.due_date', ">=", $today_date);
             }
             $invoices = $query->groupBy('invoices.id')->get();
             return response()->json(
@@ -144,7 +151,7 @@ class InvoiceController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {
+    {        
         try {
             $invoice = Invoice::with('invoice_meta','client','invoice_expenses')->find($id);
             return response()->json(
@@ -223,6 +230,21 @@ class InvoiceController extends Controller
             return response([
                 "error" => $e->getMessage()
             ], 500);
+        }
+    }
+    public function deleteInvoiceExpense($invoice_expense_id){
+        try {             
+            $invoice_expense = InvoiceExpense::find($invoice_expense_id);              
+            if($invoice_expense){
+                $invoice_expense->delete();               
+                return response("Invoice Expense Deleted Successfully",200);
+            }else{
+                return response('Invoice Expense Data Not Found',404);
+            }            
+        } catch (\Exception $e) {
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
         }
     }
 }

@@ -22,7 +22,8 @@ use Illuminate\Support\Facades\Route;
         Route::resource('users', 'UserController');             
         Route::resource('petition_hearing', 'PetitionHearingController');
         Route::resource('invoices', 'InvoiceController'); 
-        Route::get('download_pdf/{id}', 'InvoiceController@downloadInvoicePdf');      
+        Route::get('download_pdf/{id}', 'InvoiceController@downloadInvoicePdf');     
+        Route::delete('delete_invoice_expense/{invoice_expense_id}', 'InvoiceController@deleteInvoiceExpense'); 
         
     });
  
