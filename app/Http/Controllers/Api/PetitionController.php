@@ -197,10 +197,15 @@ class PetitionController extends Controller
                         'lawyer_id' => $lawyer_id,
                     ]);
                 }
-            }
+            } 
+            //sending Test email
+            // $data = ['message' => 'This is a test!'];
+			// Mail::to("ghulamyaseenmalik206@gmail.com")			 
+			// ->send(new TestEmail($data));
+
             return response()->json(
                 [
-                    'message' => 'Petitions',
+                    'message' => 'Petition created successfully.',
                     'code' => 200
                 ]
             );
