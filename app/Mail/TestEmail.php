@@ -33,7 +33,7 @@ class TestEmail extends Mailable
         $address = 'ghulamyaseenmalik206@gmail.com';
         $subject = 'This is a demo!';
         $name = 'Ghulam Yaseen';
-
+        info("Sending EMail". __LINE__);
         return $this->view('emails.test')
                     ->from($address, $name) 
                     ->subject($subject)

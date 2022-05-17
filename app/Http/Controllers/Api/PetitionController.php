@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\TestEmail; 
+use App\Mail\TestEmail;
 use PDF;
 
 class PetitionController extends Controller
@@ -116,7 +116,7 @@ class PetitionController extends Controller
                     'institution_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->institution_date)->format('Y/m/d'),
                 ]);
             }
-            $petition = Petition::updateOrCreate(['id' => $request->id], $request->except('new_petitioner', 'petitioners', 'opponents', 'petitioner_names', 'opponent_names', 'petitioners', 'court', 'lawyer_ids', 'lawyers', 'lawyer_ids_array','type'));
+            $petition = Petition::updateOrCreate(['id' => $request->id], $request->except('new_petitioner', 'petitioners', 'opponents', 'petitioner_names', 'opponent_names', 'petitioners', 'court', 'lawyer_ids', 'lawyers', 'lawyer_ids_array', 'type'));
 
 
             if (is_array($request->petitioners) && count($request->petitioners) > 0) {
@@ -130,12 +130,12 @@ class PetitionController extends Controller
                     } else {
                         if (isset($petitioner['user']) && !empty(@$petitioner['user']['name'])) {
                             $slug = Str::of(($petitioner['user']['name']))->slug('-');
-                            $randomString = $slug."-".rand(10000,99999);
+                            $randomString = $slug . "-" . rand(10000, 99999);
                             $userData['name'] = $petitioner['user']['name'];
                             $userData['password'] = bcrypt('test1234');
                             $userData['email'] = $randomString . "@lfms.com";
                             $userData['is_approved'] = 1;
-                            
+
                             if (isset($petitioner['user']['id'])) {
 
                                 $user = User::where('id', $petitioner['user']['id'])->update($userData);
@@ -165,8 +165,8 @@ class PetitionController extends Controller
                         if (isset($opponent['user']) && !empty(@$opponent['user']['name'])) {
 
                             $slug = Str::of(($opponent['user']['name']))->slug('-');
-                            $randomString = $slug."-".rand(10000,99999);
-                            
+                            $randomString = $slug . "-" . rand(10000, 99999);
+
                             $oppData['name'] = $opponent['user']['name'];
                             $oppData['password'] = bcrypt('test1234');
                             $oppData['email'] = $randomString . "@lfms.com";
@@ -198,9 +198,14 @@ class PetitionController extends Controller
                     ]);
                 }
             }
+            //sending Test email
+            // $data = ['message' => 'This is a test!'];
+            // Mail::to("ghulamyaseenmalik206@gmail.com")			 
+            // ->send(new TestEmail($data));
+
             return response()->json(
                 [
-                    'message' => 'Petitions',
+                    'message' => 'Petition created successfully.',
                     'code' => 200
                 ]
             );
@@ -292,5 +297,5 @@ class PetitionController extends Controller
                 "error" => $e->getMessage()
             ], 500);
         }
-    }    
+    }
 }
