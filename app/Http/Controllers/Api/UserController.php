@@ -26,7 +26,7 @@ class UserController extends Controller
     public function index(Request $request)
     {                  
         try{
-            $query = User::with('roles');
+            $query = User::with('roles','contact_persons')->excludeContactPersons();
             if($request->is_approved){ 
                 if($request->is_approved<2){
                     $query->where("is_approved", $request->is_approved);     
@@ -180,7 +180,7 @@ class UserController extends Controller
     public function show($id)
     {
         try {                      
-            $user = User::with('roles')->find($id);                     
+            $user = User::with('roles','contact_persons')->find($id);                     
             if($user){  
                 return response()->json(
                     [
