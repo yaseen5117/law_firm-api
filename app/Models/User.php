@@ -97,4 +97,14 @@ class User extends Authenticatable
         return $this->nextInvoiceNum();
     }
 
+    public function scopeExcludeContactPersons($query)
+    {
+        return $query->whereNull('contact_person_parent_id');
+    }
+
+    public function contact_persons()
+    {
+        return $this->hasMany('App\Models\User','contact_person_parent_id');
+    }
+
 }
