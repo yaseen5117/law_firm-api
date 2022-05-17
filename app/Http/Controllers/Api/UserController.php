@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 use function GuzzleHttp\Promise\all;
@@ -83,7 +84,8 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {  
+    {        
+        //DB::beginTransaction();  
         try{
             if($request->id == $request->user()->id || $request->user()->hasRole('admin')){
                 if($request->id){
@@ -136,7 +138,7 @@ class UserController extends Controller
                         'approved_by'=>null,
                     ]);
                 }
-                $user = User::updateOrCreate(['id'=>$request->id],$request->except('file','created_at_formated_date','roles','editMode','confirm_password','role_id'));             
+                $user = User::updateOrCreate(['id'=>$request->id],$request->except('file','created_at_formated_date','roles','editMode','confirm_password','role_id','contact_persons'));             
                 if($request->role_id){
                     $role = Role::find($request->role_id);
                     $user->roles()->detach();
@@ -145,7 +147,30 @@ class UserController extends Controller
                 if($file){
                     $file_path = $file->storeAs('users/' . $user->id, $name, 'public');
                 }
-    
+                
+                if (!empty($request->contact_persons)){
+                    foreach ($request->contact_persons as $contact_person) {
+                        $validator = Validator::make($contact_person, [                                  
+                           'email' => 'required|email|unique:users,email,'.@$contact_person->id,                              
+                        ]);
+                        if ($validator->fails()) {
+                            return response()->json(
+                                [
+                                    'contact_person_validation_error' => $validator->errors(),
+                                    'error' => "Validation error..!"
+                            ], 401);
+                        } 
+                        $contact_person['name'] = $contact_person["name"];
+                        $contact_person['email'] = $contact_person["email"];
+                        $contact_person['phone'] = $contact_person["phone"];
+                        $contact_person['cnic'] = $contact_person["cnic"];
+                        $contact_person['contact_person_parent_id'] = $user->id;
+                        $contact_person['password'] = bcrypt("test1234");
+                        $contact_person_single = User::updateOrCreate(['contact_person_parent_id'=>@$user->id] , $contact_person);
+                        $contact_person_single->assignRole("client");
+                    }
+                }
+                //DB::commit();
                 return response(
                     [
                         'user' => $user, 
@@ -161,6 +186,7 @@ class UserController extends Controller
                 );
             }        
         }catch (\Exception $e) {
+            //DB::rollback();
             return response([
                 "error" => $e->getMessage()
             ], 500);
