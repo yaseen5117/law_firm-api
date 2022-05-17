@@ -15,6 +15,10 @@ class Invoice extends Model
         'due_date'  => 'date:d/m/Y',        
     ];
 
+    public function status()
+    {
+        return $this->belongsTo('App\Models\InvoiceStatus','invoice_status_id');
+    }
     public function client()
     {
         return $this->belongsTo('App\Models\User','invoiceable_id');

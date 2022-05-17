@@ -1,0 +1,1 @@
+{!!$invoice->invoice_meta->content!!}

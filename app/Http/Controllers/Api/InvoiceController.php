@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\EmailService;
 use App\Models\User;
 use App\Models\Invoice;
 use App\Models\InvoiceMeta;
 use App\Models\InvoiceExpense;
+use App\Models\InvoiceStatus;
+use App\Models\InvoiceTemplate;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +26,7 @@ class InvoiceController extends Controller
     public function index(Request $request)
     {         
         try {
-            $query = Invoice::with('invoice_meta','client','invoice_expenses')->select("invoices.*");
+            $query = Invoice::with('invoice_meta','client','invoice_expenses','status')->select("invoices.*");
             if (!empty($request->invoice_no)) {
                 $query->where('invoice_no','like','%'.$request->invoice_no.'%');
             }
@@ -74,9 +77,10 @@ class InvoiceController extends Controller
     {          
         DB::beginTransaction();
         try {
+
             //replace due date in content 
-            $content = str_replace("{due_date}",$request->due_date,$request->invoice_meta['content']);            
-            
+            //$content = str_replace("{due_date}",$request->due_date,$request->invoice_meta['content']);            
+            $request->invoice_meta['content'];
             if ($request->due_date) {
                 $request->merge([
                     'due_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->due_date)->format('Y/m/d'),
@@ -92,15 +96,15 @@ class InvoiceController extends Controller
              
             $invoice = Invoice::updateOrCreate(
                 ['id' => $request->id],
-                $request->only('due_date', 'invoiceable_id', 'invoiceable_type', 'invoice_no', 'amount','apply_tax','tax_percentage')
+                $request->only('due_date', 'invoiceable_id', 'invoiceable_type', 'invoice_no', 'amount','apply_tax','tax_percentage','invoice_status_id')
             );
             //replace total amount in content 
-            $content = str_replace("{total_amount}",$invoice->total(),$content);
+            //$content = str_replace("{total_amount}",$invoice->total(),$content);
             
              
             if($invoice){
                 $invoice_meta_data = $request->invoice_meta;
-                $invoice_meta_data['content'] = $content;
+                //$invoice_meta_data['content'] = $content;
                 $invoiceMeta = InvoiceMeta::updateOrCreate(
                     ['invoice_id' => $invoice->id],
                     $invoice_meta_data
@@ -130,6 +134,10 @@ class InvoiceController extends Controller
 
              
             DB::commit();
+
+            //now invoice and its tables enteries completed, we can send email.
+            $emailService = new EmailService;
+            $emailService->sendInvoiceEmail($invoice);
             return response()->json(
                 [
                     'message' => 'Saved successfully',
@@ -153,7 +161,7 @@ class InvoiceController extends Controller
     public function show($id)
     {        
         try {
-            $invoice = Invoice::with('invoice_meta','client','invoice_expenses')->find($id);
+            $invoice = Invoice::with('invoice_meta','client','invoice_expenses','status')->find($id);
             return response()->json(
                 [
                     'invoice' => $invoice,
@@ -245,6 +253,37 @@ class InvoiceController extends Controller
             return response([
                 "error"=>$e->getMessage()
             ],500);
+        }
+    }
+
+    public function invoice_statuses()
+    {
+        try {
+            $invoice_statuses = InvoiceStatus::all();
+            return response()->json(
+                [
+                    'invoice_statuses' => $invoice_statuses,
+                    'message' => 'All invoice_statuses',
+                    'code' => 200
+                ]
+            );
+        } catch (\Exception $e) {
+            
+        }
+    }
+    public function invoice_templates()
+    {
+        try {
+            $invoice_templates = InvoiceTemplate::all();
+            return response()->json(
+                [
+                    'invoice_templates' => $invoice_templates,
+                    'message' => 'All invoice_templates',
+                    'code' => 200
+                ]
+            );
+        } catch (\Exception $e) {
+            
         }
     }
 }
