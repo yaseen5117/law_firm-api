@@ -74,7 +74,7 @@ class InvoiceController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {          
+    {             
         DB::beginTransaction();
         try {
 
@@ -136,15 +136,19 @@ class InvoiceController extends Controller
             DB::commit();
 
             //now invoice and its tables enteries completed, we can send email.
-            $emailService = new EmailService;
-            $emailService->sendInvoiceEmail($invoice);
+            if($request->sendEmail){
+                $emailService = new EmailService;
+                $emailService->sendInvoiceEmail($invoice);                 
+                $invoice->update(["invoice_status_id" => 2]);
+            }            
+
             return response()->json(
                 [
                     'message' => 'Saved successfully',
                     'code' => 200
                 ]
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             return response([
                 "error" => $e->getMessage()
