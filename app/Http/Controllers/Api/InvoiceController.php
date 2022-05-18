@@ -96,7 +96,7 @@ class InvoiceController extends Controller
              
             $invoice = Invoice::updateOrCreate(
                 ['id' => $request->id],
-                $request->only('due_date', 'invoiceable_id', 'invoiceable_type', 'invoice_no', 'amount','apply_tax','tax_percentage','invoice_status_id')
+                $request->only('due_date', 'invoiceable_id', 'invoiceable_type', 'invoice_no', 'amount','apply_tax','tax_percentage')
             );
             //replace total amount in content 
             //$content = str_replace("{total_amount}",$invoice->total(),$content);
@@ -272,7 +272,9 @@ class InvoiceController extends Controller
                 ]
             );
         } catch (\Exception $e) {
-            
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
         }
     }
     public function invoice_templates()
@@ -287,7 +289,31 @@ class InvoiceController extends Controller
                 ]
             );
         } catch (\Exception $e) {
-            
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
+        }
+    }
+
+    public function mark_paid(Request $request)
+    {
+        try {
+            $invoice = Invoice::whereId($request->id)->update([
+                'invoice_status_id'=>3,
+                'paid_date'=>now(),
+            ]);
+
+            return response()->json(
+                [
+                    'invoice' => $invoice,
+                    'paid_at' => date("Y-m-d"),
+                    'message' => 'All invoice_templates',
+                    'code' => 200
+            ]);
+        } catch (Exception $e) {
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
         }
     }
 }
