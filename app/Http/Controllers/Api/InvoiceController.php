@@ -165,7 +165,7 @@ class InvoiceController extends Controller
     public function show($id)
     {        
         try {
-            $invoice = Invoice::with('invoice_meta','client','invoice_expenses','status')->find($id);
+            $invoice = Invoice::with('invoice_meta','client','client.contact_persons','invoice_expenses','status')->find($id);
             return response()->json(
                 [
                     'invoice' => $invoice,
