@@ -27,7 +27,7 @@ class CreateInvoiceTemplatesTable extends Migration
 
  
 
-Please see attached our Invoice for professional services to the tune of Rs.25,000/-for providing legal opinion on a query about the State Bank’s Circular addressed to Commercial Banks regarding closure of bank accounts of government ministries and subordinate bodies. The opinion was sought by learned Head of Accounts via email dated 16th December, 2020. Legal Opinion was provided on an urgent basis via email dated 19th December, 2020.
+Please see attached our Invoice for professional services to the tune of Rs. [total_amount]/-for providing legal opinion on a query about the State Bank’s Circular addressed to Commercial Banks regarding closure of bank accounts of government ministries and subordinate bodies. The opinion was sought by learned Head of Accounts via email dated [due_date]. Legal Opinion was provided on an urgent basis via email dated [due_date].
 
  
 

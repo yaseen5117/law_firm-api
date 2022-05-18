@@ -139,7 +139,7 @@ class InvoiceController extends Controller
             if($request->sendEmail){
                 $emailService = new EmailService;
                 $emailService->sendInvoiceEmail($invoice);                 
-                $invoice->update(["invoice_status_id" => 2]);
+                $invoice->update(["invoice_status_id" => 2]);//2 is the invoice status id
             }            
 
             return response()->json(
