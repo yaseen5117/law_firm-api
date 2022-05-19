@@ -234,7 +234,7 @@ class InvoiceController extends Controller
     public function downloadInvoicePdf($invoiceId)
     {         
         try { 
-            $userInvoiceData = Invoice::with('invoice_meta','client')->find($invoiceId);        
+            $userInvoiceData = Invoice::with('invoice_meta','client','client.contact_persons','invoice_expenses','status')->find($invoiceId);
             //return view('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));          
             if($userInvoiceData){
                 $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));            

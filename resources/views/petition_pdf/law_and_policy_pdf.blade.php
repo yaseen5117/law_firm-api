@@ -4,7 +4,7 @@
         table-layout: fixed;
         border-collapse: collapse;
         border: none;
-        width: 90%;
+        width: 100%;
         margin-left: auto;
         margin-right: auto;
     }
@@ -129,8 +129,22 @@
     </tr>
     <tr>
         <td class="align-item-left" colspan="1"><b>CC:</b></td>
-        <td class="align-item-left" colspan="2">Engr. Shahjehan Khattak, Deputy Registrar, MTLA
-            Mr. Iftikhar Khan, Head of Department (Finance and Accounts)</td>
+        <td class="align-item-left" colspan="2">
+        @if(@$userInvoiceData->client->contact_persons) 
+            @php 
+                $count = 0;            
+            @endphp 
+            @foreach(@$userInvoiceData->client->contact_persons as $contact_person)            
+            @if(!$count == 0)
+            ,
+            @endif
+            {{@$contact_person->name}}
+            @php
+            $count++;
+            @endphp
+            @endforeach
+        @endif
+        </td>
         <td class="align-item-left" colspan="3"></td>
 
     </tr>
@@ -149,16 +163,13 @@
     </tr>
 
 </table><br>
-<div style="width: 90%; margin-left: auto; margin-right: auto;">
+<div style="width: 100%; margin-left: auto; margin-right: auto;">
     <div>
         <b>Subject:&emsp;<span>{{@$userInvoiceData->invoice_meta->subject}}</span></b>
     </div>
     <div><br>
         <b>Dear Sir:</b><br>
-        <p>Please see attached our Invoice for professional services to the tune of Rs.25,000/-for providing legal opinion on a query about the State Bank’s Circular addressed to Commercial Banks regarding closure of bank accounts of government ministries and subordinate bodies. The opinion was sought by learned Head of Accounts via email dated 16th December, 2020. Legal Opinion was provided on an urgent basis via email dated 19th December, 2020.</p>
-
-        <p>Please note that cheque is payable to “Umer Gilani”. We would appreciate payment of our invoice within seven (7) days.</p>
-        <p>Very truly yours,</p>
+        <p>{{@$userInvoiceData->invoice_meta->content}}</p>
         <img width="100px" height="100px" class="" src="{{ asset('admin-template/img/sign.png')}}" alt="sign">
     </div>
 </div>
@@ -227,17 +238,23 @@ Islamabad 44000, Pakistan</td>
     <tr>
         <td class="align-item-left" colspan="3"><b>Withholding tax deduction @ 10% on professional services <br>
         (NTN: 61101-9809897-3</b></td>
-        <td class="align-item-right" colspan="3"> Rs 2,500.00</td>
+        <td class="align-item-right" colspan="3">@if(@$userInvoiceData->apply_tax) {{@$userInvoiceData->amount*0.1}} @else  @endif</td>
     </tr>
+    @if(@$userInvoiceData->invoice_expenses)
     <tr>         
         <td class="align-item-left" colspan="6" style="text-align: left;"><b>Expenses</b></td>
     </tr>
-    <tr>         
-        <td class="align-item-left" colspan="6" style="text-align: left;">1.  Miscellaneous litigation expenses (munshiana)    </td>
+    <tr>  
+    @foreach(@$userInvoiceData->invoice_expenses as $invoice_expense)       
+    <tr>
+        <td class="align-item-left" colspan="3">{{@$invoice_expense->expense}}</td>
+        <td class="align-item-right" colspan="3">{{@$invoice_expense->amount}}</td>
     </tr>
+    @endforeach
+    @endif
     <tr>
         <td class="align-item-left" class="row-padding" colspan="3"><b>Total</b></td>
-        <td colspan="3" class="align-item-right"><b>Rs.22,500.00</b></td>
+        <td colspan="3" class="align-item-right"><b>{{@$userInvoiceData->total()}}</b></td>
     </tr>
     <tr>
         <td class="row-padding" colspan="6"></td>
