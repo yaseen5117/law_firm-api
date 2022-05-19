@@ -13,6 +13,7 @@ class Invoice extends Model
     protected $casts = [
         'created_at'  => 'date:d/m/Y',
         'due_date'  => 'date:d/m/Y',        
+        'paid_date'  => 'date:d/m/Y',        
     ];
 
     public function status()
