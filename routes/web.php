@@ -19,7 +19,7 @@ Route::get('/', function () {
 
     Route::get('logs', 'LogViewerController@index');
 Route::get('/pdf_to_img', 'TestController@pdf_to_img');
-
+Route::get('download_pdf/{id}', 'Api\InvoiceController@downloadInvoicePdf');    
 
 Auth::routes();
 
