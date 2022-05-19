@@ -238,7 +238,7 @@ class InvoiceController extends Controller
             //return view('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));          
             if($userInvoiceData){
                 $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));            
-                return response($pdf->download('lawAndPolicyInvoice.pdf'),200);
+                return $pdf->download('lawAndPolicyInvoice.pdf');
             }else{
                 return response('Invoice Data Not Found',404);
             }
