@@ -23,19 +23,7 @@ class CreateInvoiceTemplatesTable extends Migration
 
         DB::table('invoice_templates')->insert([
             'subject'=>'Professional Fee for Providing Legal Opinion',
-            'content'=>"Dear Sirs:
-
- 
-
-Please see attached our Invoice for professional services to the tune of Rs. [total_amount]/-for providing legal opinion on a query about the State Bank’s Circular addressed to Commercial Banks regarding closure of bank accounts of government ministries and subordinate bodies. The opinion was sought by learned Head of Accounts via email dated [due_date]. Legal Opinion was provided on an urgent basis via email dated [due_date].
-
- 
-
-Please note that cheque is payable to “Umer Gilani”. We would appreciate payment of our invoice within seven (7) days. 
-
- 
-
-Very truly yours,
+            'content'=>"<p>Dear Sirs: </p><p><br></p><p>Please see attached our Invoice for professional services to the tune of Rs.[total_amount]/-for providing legal opinion on a query about the State Bank’s Circular addressed to Commercial Banks regarding closure of bank accounts of government ministries and subordinate bodies. The opinion was sought by learned Head of Accounts via email dated [due_date]. Legal Opinion was provided on an urgent basis via email dated [due_date]. </p><p><br></p><p>Please note that cheque is payable to [client_name]. We would appreciate payment of our invoice within seven (7) days. </p><p><br></p><p>Very truly yours,</p>
 
 ",
         ]);

@@ -20,7 +20,7 @@ class PetitionHearingController extends Controller
             foreach($petitionHearings as $petitionHearing){
                 $events[] = [
                     'id' => @$petitionHearing->id,
-                    'title' => 'Case # '.@$petitionHearing->petition->case_no,
+                    'title' => $petitionHearing->petition->petition_standard_title,
                     'start' => $petitionHearing->hearing_date,   
                     'hearing_date' => $petitionHearing->hearing_date,   
                     'hearing_summary' => $petitionHearing->hearing_summary,   

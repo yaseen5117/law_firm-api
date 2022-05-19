@@ -11,8 +11,8 @@ class Petition extends Model
     use HasFactory;
 	use SoftDeletes;
 
-    protected $guarded=['type_abrivation'];
-    protected $appends=['petitioner_names','opponent_names','type_abrivation'];
+    protected $guarded=['type_abrivation','petition_standard_title','petition_standard_title_with_petitioner'];
+    protected $appends=['petitioner_names','opponent_names','type_abrivation','petition_standard_title','petition_standard_title_with_petitioner'];
     protected $dates = ['deleted_at'];
     protected $casts = [
         'institution_date'  => 'date:d/m/Y',        
@@ -106,5 +106,15 @@ class Petition extends Model
         if ($this->type) {
             return initialism($this->type->title);
         }
+    }
+
+    public function getPetitionStandardTitleAttribute()
+    {
+        return $this->type_abrivation." ".$this->case_no."/".$this->year;
+    }
+
+    public function getPetitionStandardTitleWithPetitionerAttribute()
+    {
+        return $this->type_abrivation." ".$this->case_no."/".$this->year. " ". $this->petitioner_names;
     }
 }

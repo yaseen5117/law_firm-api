@@ -70,7 +70,7 @@ class PetitionController extends Controller
             $events = [];
             foreach ($petitions as $petition) {
                 $events[] = [
-                    'title' => 'Case #: ' . $petition->case_no,
+                    'title' =>  $petition->petition_standard_title,
                     'start' => $petition->institution_date,
                     'url' => 'http://localhost:8080/petitions/' . $petition->id
                 ];
