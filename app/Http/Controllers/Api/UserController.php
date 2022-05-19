@@ -226,7 +226,7 @@ class UserController extends Controller
                 return response()->json(
                     [
                         'user' => $user,       
-                        'invoice_date'=>date('d/m/Y',strtotime("tomorrow")),                                                          
+                        'invoice_date'=>date('d/m/Y',strtotime("+7 days")),                                                          
                         'message' => 'user',
                         'code' => 200
                     ]
