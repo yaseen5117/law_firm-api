@@ -13,15 +13,15 @@ class EmailService
 		info("In email service:");
 	}
 
-	public function sendInvoiceEmail($invoice)
+	public function sendInvoiceEmail($invoice,$pdf)
 	{
 		info("EmailService: sendInvoiceEmail for Invoice $invoice->id");
-		try {
-
-			Mail::send('emails.invoice_email', compact('invoice') , function ($message) use ($invoice) {
+		try {			           
+			Mail::send('emails.invoice_email', compact('invoice') , function ($message) use ($invoice,$pdf) {
 
 	            $message->subject( $invoice->invoice_meta->subject );
 	            $message->to( $invoice->client->email , $invoice->client->name );
+				$message->attachData($pdf->output(), "Invoice.pdf");
 
 	            /*if( isset($emailData['cc']) && !empty($emailData['cc']) ) {
 	                $message->cc( $emailData['cc'] , $emailData['ccName'] );

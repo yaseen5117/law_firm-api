@@ -137,8 +137,11 @@ class InvoiceController extends Controller
 
             //now invoice and its tables enteries completed, we can send email.
             if($request->sendEmail){
+                $userInvoiceData = $invoice;
+			    $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData')); 
+                 
                 $emailService = new EmailService;
-                $emailService->sendInvoiceEmail($invoice);                 
+                $emailService->sendInvoiceEmail($invoice,$pdf);                 
                 $invoice->update(["invoice_status_id" => 2]);//2 is the invoice status id
             }            
 
@@ -238,7 +241,7 @@ class InvoiceController extends Controller
             //return view('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));          
             if($userInvoiceData){
                 $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));            
-                return $pdf->download('lawAndPolicyInvoice.pdf');
+                return $pdf->download('Invoice.pdf');
             }else{
                 return response('Invoice Data Not Found',404);
             }
