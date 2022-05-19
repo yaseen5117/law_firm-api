@@ -236,8 +236,13 @@ class InvoiceController extends Controller
         try { 
             $userInvoiceData = Invoice::with('invoice_meta','client')->find($invoiceId);        
             //return view('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));          
-            $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));             
-            return $pdf->download('lawAndPolicyInvoice.pdf');
+            if($userInvoiceData){
+                $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));            
+                return response($pdf->download('lawAndPolicyInvoice.pdf'),200);
+            }else{
+                return response('Invoice Data Not Found',404);
+            }
+            
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
