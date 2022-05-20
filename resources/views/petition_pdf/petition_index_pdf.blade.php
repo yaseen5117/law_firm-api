@@ -9,79 +9,31 @@
         margin-right: auto;
     }
     table.content {
-        text-align: left;
-        table-layout: fixed;
+        text-align: left;         
         border-collapse: collapse;        
         width: 100%;
         margin-left: auto;
         margin-right: auto;
         margin-top: 15px;
+        font-size: 12px;
     }
-
-    .cell-padding {
-        padding: 10px;
-    }
-
-    td {
-        border: none;         
-    }
-
-    .row-grey {
-        background-color: #D3D3D3;
-    }
-
-    .row-yellow {
-        background-color: #FFFF00;
-    }
-
     .page-break {
         page-break-after: always;
+    }   
+    .td{
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
     }
 
-    .text-center {
-        text-align: center;
-    }
-
-    .img-div-size {
-        width: 400;
-        min-height: 120;
-        max-height: 200;
-    }
-
-    .img-size {
-        max-width: 100%;
-        height: 200;
-        color: #FF0000;
-    }
-
-    .text-red {
-        color: red;
-    }
-    .invoice-padding{
-        padding: 15px 15px 15px 15px;
-        border: 4px black solid;
-    }
-    .row-padding{
-        padding-top: 20px; 
-        padding-bottom: 20px;
-    }
-    .color-black{
-        width: 50%;
-        background-color: black;
-        padding-top: 3px; 
-        padding-bottom: 3px; 
-    }
-    .align-item-left{
-        text-align: left;
-    }
-    .align-item-register_shutdown_function{
-        text-align: right;
+    .color:nth-child(even) {
+    background-color: #dddddd;
     }
 </style>
 
 <table class="main">       
     <tr>
-        <td  colspan="4"><h2 style="margin-top: 50px;">{{@$petition->court->title}}</h2></td>
+        <td  colspan="4"><h2 style="margin-top: 30%;">{{@$petition->court->title}}</h2></td>
     </tr>
     <tr>
         <td colspan="4"><h4>{{@$petition->petition_standard_title}}</h4></td>
@@ -90,13 +42,13 @@
         <td colspan="4"><h3>{{ @$petition->petitioner_names }}</h3></td>
     </tr>
     <tr>
-        <td colspan="4"><h4>VERSUS</h4></td>
+        <td colspan="4"><h5>VERSUS</h5></td>
     </tr>
     <tr>
         <td colspan="4"><h3>{{ @$petition->opponent_names }}</h3></td>
     </tr>
     <tr>
-        <td colspan="4"><h3>{{ @$petition->title }}</h3></td>
+        <td colspan="4"><h4>{{ @$petition->title }}</h4></td>
     </tr>
  
 </table> 
@@ -105,20 +57,23 @@
 <table class="content"> 
 <thead>
     <tr>
-        <th>Description of Documents</th>
-        <th>Date</th>
-        <th>Annexure</th>
-        <th>Page</th>     
+        <th colspan="4" style="text-align: center;"><h2>Index</h2></th>
+    </tr>
+    <tr>
+        <th class="td" >Description of Documents</th>
+        <th class="td" >Date</th>
+        <th class="td" >Annexure</th>
+        <th class="td" >Page</th>     
     </tr>
   </thead>
-  <tbody> 
+  <tbody>   
       @if(@$petition->petition_indexes)
       @foreach(@$petition->petition_indexes as $petition_index)
-    <tr>
-        <td style="padding-top: 15px;">{{ $petition_index->document_description }}</td>
-        <td>{{ $petition_index->date }}</td>
-        <td>{{ $petition_index->annexure }}</td>
-        <td>{{ $petition_index->page_info }}</td>
+    <tr class="color">
+        <td class="td" style="padding-top: 15px;">{{ $petition_index->document_description }}</td>
+        <td class="td">@if($petition_index->date){{ date('d/m/Y', strtotime($petition_index->date)) }}@endif</td>
+        <td class="td">{{ $petition_index->annexure }}</td>
+        <td class="td" style="width: 100px;">{{ $petition_index->page_info }}</td>
     </tr> 
     @endforeach
     @endif

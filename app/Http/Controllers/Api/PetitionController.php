@@ -303,10 +303,10 @@ class PetitionController extends Controller
             $petition = Petition::withRelations()->where('id', $petition_id)->first();
             //return view('petition_pdf.petition_index_pdf', compact('petition'));             
             if($petition){
-                $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('petition'));            
-                return $pdf->download('Invoice.pdf');
+                $pdf = PDF::loadView('petition_pdf.petition_index_pdf', compact('petition'));            
+                return $pdf->download('petition-no-'.$petition->case_no.'.pdf');
             }else{
-                return response('Invoice Data Not Found',404);
+                return response('Petition Data Not Found',404);
             }
             
         } catch (\Exception $e) {

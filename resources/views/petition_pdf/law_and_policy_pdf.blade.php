@@ -112,8 +112,8 @@
         <td class="align-item-left">{{@$userInvoiceData->client->name}}</td>
         <td class="align-item-left"><b>Invoice No:</b></td>
         <td class="align-item-left">{{@$userInvoiceData->invoice_no}}</td>
-        <td class="align-item-left"><b>Date:</b></td>
-        <td class="align-item-left">{{@$userInvoiceData->due_date}}</td>
+        <td class="align-item-left"><b>Created Date:</b></td>
+        <td class="align-item-left">{{ date('d/m/Y', strtotime(@$userInvoiceData->created_at))}}</td>
     </tr>
     <tr>
         <td  class="align-item-left" colspan="1"><b>Company:</b></td>
@@ -216,8 +216,8 @@ Islamabad 44000, Pakistan</td>
         <td class="align-item-left">{{@$userInvoiceData->client->name}}</td>
         <td class="align-item-left"><b>Invoice No:</b></td>
         <td class="align-item-left">{{@$userInvoiceData->invoice_no}}</td>
-        <td class="align-item-left"><b>Date:</b></td>
-        <td class="align-item-left">{{@$userInvoiceData->due_date}}</td>
+        <td class="align-item-left"><b>Created Date:</b></td>
+        <td class="align-item-left">{{ date('d/m/Y', strtotime(@$userInvoiceData->created_at)) }}</td>
     </tr>
     <tr>
         <td class="row-padding"><b></b></td>
