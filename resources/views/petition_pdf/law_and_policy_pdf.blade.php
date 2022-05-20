@@ -168,8 +168,8 @@
         <b>Subject:&emsp;<span>{{@$userInvoiceData->invoice_meta->subject}}</span></b>
     </div>
     <div><br>
-        <b>Dear Sir:</b><br>
-        <p>{{@$userInvoiceData->invoice_meta->content}}</p>
+        
+        {!!@$userInvoiceData->invoice_meta->content!!}<br>
         <img width="100px" height="100px" class="" src="{{ asset('admin-template/img/sign.png')}}" alt="sign">
     </div>
 </div>
