@@ -4,9 +4,8 @@
         table-layout: fixed;
         border-collapse: collapse;
         border: none;
-        width: 100%;
-        margin-left: auto;
-        margin-right: auto;
+        width: 100%;         
+        margin: 50% auto 50% auto;
     }
 
     table.content {
@@ -43,7 +42,7 @@
 <table class="main" cellspacing="0" cellpadding="0">
     <tr class="line-height">
         <td colspan="4">
-            <h2 style="margin-top: 30%;">{{@$petition->court->title}}</h2>
+            <h2>{{@$petition->court->title}}</h2>
         </td>
     </tr>
     <tr class="line-height">
@@ -95,9 +94,14 @@
 <div class="page-break">
 </div>
 
-<div class="main">
+<div>
     @if(@$petition->petition_indexes)
     @foreach(@$petition->petition_indexes as $petition_index)
+    <div style="text-align: center; margin: 50% auto 50% auto;">
+        <h1>{{ $petition_index->document_description }}</h1>
+    </div>
+    <div class="page-break">
+    </div>
     @foreach(@$petition_index->attachments as $attachment)
     <div>
     <!-- <a href="{{asset('').'storage/attachments/'.$petition_index->id.'/'.$attachment->file_name}}" target="_blank"> -->
