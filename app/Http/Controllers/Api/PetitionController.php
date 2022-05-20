@@ -298,4 +298,21 @@ class PetitionController extends Controller
             ], 500);
         }
     }
+    public function downloadPetitionPdf($petition_id){
+        try { 
+            $petition = Petition::withRelations()->where('id', $petition_id)->first();
+            //return view('petition_pdf.petition_index_pdf', compact('petition'));             
+            if($petition){
+                $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('petition'));            
+                return $pdf->download('Invoice.pdf');
+            }else{
+                return response('Invoice Data Not Found',404);
+            }
+            
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
 }

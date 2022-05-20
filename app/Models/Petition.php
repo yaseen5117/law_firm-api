@@ -67,7 +67,7 @@ class Petition extends Model
 
     public function scopeWithRelations($query)
     {
-        return $query->with('petitioners.user','opponents.user','court','lawyers','type');
+        return $query->with('petitioners.user','opponents.user','court','lawyers','type','petition_indexes');
     }
 
     public function getPetitionerNamesAttribute()
@@ -116,5 +116,10 @@ class Petition extends Model
     public function getPetitionStandardTitleWithPetitionerAttribute()
     {
         return $this->type_abrivation." ".$this->case_no."/".$this->year. " ". $this->petitioner_names;
+    }
+    public function petition_indexes()
+    {
+        return $this->hasMany('App\Models\PetitionIndex');
+
     }
 }
