@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PDF;
+use Symfony\Component\Process\Process;
 
 class InvoiceController extends Controller
 {
@@ -139,7 +140,8 @@ class InvoiceController extends Controller
             if($request->sendEmail){
                 $userInvoiceData = $invoice;
 			    $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData')); 
-                 
+                //$pdf = public_path('/storage/attachments/lawAndPolicyInvoice.pdf');
+                  
                 $emailService = new EmailService;
                 $emailService->sendInvoiceEmail($invoice,$pdf);                 
                 $invoice->update(["invoice_status_id" => 2]);//2 is the invoice status id

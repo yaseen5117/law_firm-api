@@ -21,7 +21,7 @@ class EmailService
 
 	            $message->subject( $invoice->invoice_meta->subject );
 	            $message->to( $invoice->client->email , $invoice->client->name );
-				$message->attachData($pdf->output(), "Invoice.pdf");
+				$message->attachData($pdf, "Invoice.pdf");
 
 	            /*if( isset($emailData['cc']) && !empty($emailData['cc']) ) {
 	                $message->cc( $emailData['cc'] , $emailData['ccName'] );
@@ -32,7 +32,7 @@ class EmailService
 	            }*/
         	});
 			
-			info("EmailService: sendInvoiceEmail successfully sent TO: ");
+			info("EmailService: sendInvoiceEmail successfully sent Email: ");
 		} catch (\Exception $e) {
 			info("EmailService: sendInvoiceEmail failed " . $e->getMessage());
 			
