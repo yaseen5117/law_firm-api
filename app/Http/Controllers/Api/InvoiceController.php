@@ -39,7 +39,7 @@ class InvoiceController extends Controller
             }     
             $today_date =  Carbon::today();
             if ($request->is_archive == "true") {
-                $query->whereDate('invoices.due_date', "<", $today_date);
+                $query->where('invoices.invoice_status_id', 3)->whereDate('invoices.due_date', "<", $today_date);//3 is the status of invoice.
             }else{
                 $query->whereDate('invoices.due_date', ">=", $today_date);
             }

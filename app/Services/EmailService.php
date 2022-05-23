@@ -19,8 +19,9 @@ class EmailService
 		try {			           
 			Mail::send('emails.invoice_email', compact('invoice') , function ($message) use ($invoice,$pdf) {
 
-	            $message->subject( $invoice->invoice_meta->subject );
-	            $message->to( $invoice->client->email , $invoice->client->name );
+	            $message->subject( $invoice->invoice_meta->subject);
+	            $message->to($invoice->client->email , $invoice->client->name);
+				$message->cc(['umer.gilani@gmail.com' , 'imhamzaaslam@gmail.com']);
 				$message->attachData($pdf, "Invoice.pdf");
 
 	            /*if( isset($emailData['cc']) && !empty($emailData['cc']) ) {

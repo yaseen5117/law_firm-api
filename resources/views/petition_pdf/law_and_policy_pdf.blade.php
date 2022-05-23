@@ -95,7 +95,7 @@
         <td class="align-item-left">{{@$userInvoiceData->client->name}}</td>
         <td class="align-item-left"><b>Invoice No:</b></td>
         <td class="align-item-left">{{@$userInvoiceData->invoice_no}}</td>
-        <td class="align-item-left"><b>Created Date:</b></td>
+        <td class="align-item-left"><b>Issued Date:</b></td>
         <td class="align-item-left">{{ date('d/m/Y', strtotime(@$userInvoiceData->created_at))}}</td>
     </tr>
     <tr>
@@ -204,7 +204,7 @@
         <td class="align-item-left">{{@$userInvoiceData->client->name}}</td>
         <td class="align-item-left"><b>Invoice No:</b></td>
         <td class="align-item-left">{{@$userInvoiceData->invoice_no}}</td>
-        <td class="align-item-left"><b>Created Date:</b></td>
+        <td class="align-item-left"><b>Issued Date:</b></td>
         <td class="align-item-left">{{ date('d/m/Y', strtotime(@$userInvoiceData->created_at)) }}</td>
     </tr>
     <tr>
@@ -223,11 +223,13 @@
         <td class="align-item-left" colspan="3">{{@$userInvoiceData->invoice_meta->services}}</td>
         <td class="align-item-right" colspan="3">{{@$userInvoiceData->amount}}</td>
     </tr>
+    @if(@$userInvoiceData->apply_tax)
     <tr>
-        <td class="align-item-left" colspan="3"><b>Withholding tax deduction @ 10% on professional services <br>
+        <td class="align-item-left" colspan="3"><b>Withholding tax deduction @ {{@$userInvoiceData->tax_percentage}}% on professional services <br>
                 (NTN: 61101-9809897-3</b></td>
-        <td class="align-item-right" colspan="3">@if(@$userInvoiceData->apply_tax) {{@$userInvoiceData->amount*0.1}} @else @endif</td>
+        <td class="align-item-right" colspan="3">@if(@$userInvoiceData->amount) {{@$userInvoiceData->amount*0.1}} @else @endif</td>
     </tr>
+    @endif
     @if(@$userInvoiceData->invoice_expenses)
     <tr>
         <td class="align-item-left" colspan="6" style="text-align: left;"><b>Expenses</b></td>
