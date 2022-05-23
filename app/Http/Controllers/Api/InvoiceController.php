@@ -25,22 +25,22 @@ class InvoiceController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {         
+    {
         try {
-            $query = Invoice::with('invoice_meta','client','invoice_expenses','status')->select("invoices.*");
+            $query = Invoice::with('invoice_meta', 'client', 'invoice_expenses', 'status')->select("invoices.*");
             if (!empty($request->invoice_no)) {
-                $query->where('invoice_no','like','%'.$request->invoice_no.'%');
+                $query->where('invoice_no', 'like', '%' . $request->invoice_no . '%');
             }
-            $query                 
+            $query
                 ->join('users', 'users.id', '=', 'invoices.invoiceable_id');
             if (!empty($request->client_name)) {
 
-                $query->where('name','like','%'.$request->client_name.'%');
-            }     
+                $query->where('name', 'like', '%' . $request->client_name . '%');
+            }
             $today_date =  Carbon::today();
             if ($request->is_archive == "true") {
-                $query->where('invoices.invoice_status_id', 3)->whereDate('invoices.due_date', "<", $today_date);//3 is the status of invoice.
-            }else{
+                $query->where('invoices.invoice_status_id', 3)->whereDate('invoices.due_date', "<", $today_date); //3 is the status of invoice.
+            } else {
                 $query->whereDate('invoices.due_date', ">=", $today_date);
             }
             $invoices = $query->groupBy('invoices.id')->get();
@@ -51,7 +51,7 @@ class InvoiceController extends Controller
                     'code' => 200
                 ]
             );
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
             ], 500);
@@ -75,7 +75,7 @@ class InvoiceController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {             
+    {
         DB::beginTransaction();
         try {
 
@@ -93,17 +93,17 @@ class InvoiceController extends Controller
 
             $request->merge([
                 'invoice_sender_id' => Auth::user()->id
-            ]);            
-             
+            ]);
+
             $invoice = Invoice::updateOrCreate(
                 ['id' => $request->id],
-                $request->only('due_date', 'invoiceable_id', 'invoiceable_type', 'invoice_no', 'amount','apply_tax','tax_percentage')
+                $request->only('due_date', 'invoiceable_id', 'invoiceable_type', 'invoice_no', 'amount', 'apply_tax', 'tax_percentage')
             );
             //replace total amount in content 
             //$content = str_replace("{total_amount}",$invoice->total(),$content);
-            
-             
-            if($invoice){
+
+
+            if ($invoice) {
                 $invoice_meta_data = $request->invoice_meta;
                 //$invoice_meta_data['content'] = $content;
                 $invoiceMeta = InvoiceMeta::updateOrCreate(
@@ -112,40 +112,39 @@ class InvoiceController extends Controller
                 );
 
                 if ($request->edit_client && $request->selectedClient) {
-                    $selected_user_data= $request->selectedClient;
-                    User::where('id',$request->invoiceable_id)->update([
-                        'address'=>@$selected_user_data['address'],
-                        'company_name'=>@$selected_user_data['company_name'],
-                        'phone'=>@$selected_user_data['phone'],
+                    $selected_user_data = $request->selectedClient;
+                    User::where('id', $request->invoiceable_id)->update([
+                        'address' => @$selected_user_data['address'],
+                        'company_name' => @$selected_user_data['company_name'],
+                        'phone' => @$selected_user_data['phone'],
                     ]);
                 }
 
                 if (!empty($request->invoice_expenses)) {
                     foreach ($request->invoice_expenses as $invoice_expense) {
                         $invoice_expense['invoice_id'] = $invoice->id;
-                        InvoiceExpense::updateOrCreate(['id'=>@$invoice_expense['id']] , $invoice_expense);
+                        InvoiceExpense::updateOrCreate(['id' => @$invoice_expense['id']], $invoice_expense);
                     }
                 }
-            }
-            else{
+            } else {
                 return response([
                     "error" => "Something went wrong with the creation of invoice!",
                 ], 500);
-            }        
+            }
 
-             
+
             DB::commit();
 
             //now invoice and its tables enteries completed, we can send email.
-            if($request->sendEmail){
+            if ($request->sendEmail) {
                 $userInvoiceData = $invoice;
-			    $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData')); 
+                $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));
                 //$pdf = public_path('/storage/attachments/lawAndPolicyInvoice.pdf');
-                  
+
                 $emailService = new EmailService;
-                $emailService->sendInvoiceEmail($invoice,$pdf);                 
-                $invoice->update(["invoice_status_id" => 2]);//2 is the invoice status id
-            }            
+                $emailService->sendInvoiceEmail($invoice, $pdf);
+                $invoice->update(["invoice_status_id" => 2]); //2 is the invoice status id
+            }
 
             return response()->json(
                 [
@@ -168,17 +167,19 @@ class InvoiceController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {        
+    {
         try {
-            $invoice = Invoice::with('invoice_meta','client','client.contact_persons','invoice_expenses','status')->find($id);
+            $invoice = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status')->find($id);
             return response()->json(
                 [
                     'invoice' => $invoice,
+                    'today_date' => \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', Carbon::today())->format('d/m/Y'),
+                    
                     'message' => 'Invoice Details',
                     'code' => 200
                 ]
             );
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
             ], 500);
@@ -216,57 +217,56 @@ class InvoiceController extends Controller
      */
     public function destroy($invoiceId)
     {
-        try {             
-            $invoice = Invoice::find($invoiceId); 
-            $invoice_meta = InvoiceMeta::where('invoice_id', $invoice->id); 
-                    
-            if($invoice){
+        try {
+            $invoice = Invoice::find($invoiceId);
+            $invoice_meta = InvoiceMeta::where('invoice_id', $invoice->id);
+
+            if ($invoice) {
                 $invoice->delete();
-                if($invoice_meta){
+                if ($invoice_meta) {
                     $invoice_meta->delete();
                 }
-                return response("Deleted Successfully",200);
-            }else{
-                return response('Invoice Not Found',404);
+                return response("Deleted Successfully", 200);
+            } else {
+                return response('Invoice Not Found', 404);
             }
-            
-        } catch (\Exception $e) {
-            return response([
-                "error"=>$e->getMessage()
-            ],500);
-        }
-    }
-    public function downloadInvoicePdf($invoiceId)
-    {         
-        try { 
-            $userInvoiceData = Invoice::with('invoice_meta','client','client.contact_persons','invoice_expenses','status')->find($invoiceId);
-            //return view('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));          
-            if($userInvoiceData){
-                $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));            
-                return $pdf->download('Invoice-'.$userInvoiceData->invoice_no.'.pdf');
-            }else{
-                return response('Invoice Data Not Found',404);
-            }
-            
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
             ], 500);
         }
     }
-    public function deleteInvoiceExpense($invoice_expense_id){
-        try {             
-            $invoice_expense = InvoiceExpense::find($invoice_expense_id);              
-            if($invoice_expense){
-                $invoice_expense->delete();               
-                return response("Invoice Expense Deleted Successfully",200);
-            }else{
-                return response('Invoice Expense Data Not Found',404);
-            }            
+    public function downloadInvoicePdf($invoiceId)
+    {
+        try {
+            $userInvoiceData = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status')->find($invoiceId);
+            //return view('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));          
+            if ($userInvoiceData) {
+                $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));
+                return $pdf->download('Invoice-' . $userInvoiceData->invoice_no . '.pdf');
+            } else {
+                return response('Invoice Data Not Found', 404);
+            }
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function deleteInvoiceExpense($invoice_expense_id)
+    {
+        try {
+            $invoice_expense = InvoiceExpense::find($invoice_expense_id);
+            if ($invoice_expense) {
+                $invoice_expense->delete();
+                return response("Invoice Expense Deleted Successfully", 200);
+            } else {
+                return response('Invoice Expense Data Not Found', 404);
+            }
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -283,8 +283,8 @@ class InvoiceController extends Controller
             );
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
     public function invoice_templates()
@@ -300,30 +300,38 @@ class InvoiceController extends Controller
             );
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
-    public function mark_paid(Request $request)
+    public function markAsPaid(Request $request)
     {
+        if ($request->paid_date) {
+            $request->merge([
+                'paid_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->paid_date)->format('Y/m/d'),
+            ]);
+        }
         try {
             $invoice = Invoice::whereId($request->id)->update([
-                'invoice_status_id'=>3,
-                'paid_date'=>now(),
+                'invoice_status_id' => 3,
+                'paid_date' => $request->paid_date,
+                'notes' => $request->notes,
+                'amount' => $request->paid_amount,
             ]);
 
             return response()->json(
                 [
                     'invoice' => $invoice,
-                    'paid_at' => date("Y-m-d"),
-                    'message' => 'All invoice_templates',
+                    'paid_at' => $request->paid_date,
+                    'message' => 'Mark Invoice as Paid',
                     'code' => 200
-            ]);
-        } catch (Exception $e) {
+                ]
+            );
+        } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 }

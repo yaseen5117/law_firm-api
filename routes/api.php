@@ -22,11 +22,12 @@ use Illuminate\Support\Facades\Route;
         Route::resource('users', 'UserController');             
         Route::resource('petition_hearing', 'PetitionHearingController');
         Route::resource('invoices', 'InvoiceController'); 
-        Route::post('invoices/mark_paid', 'InvoiceController@mark_paid'); 
+        //Route::post('invoices/mark_paid', 'InvoiceController@mark_paid'); 
         Route::get('download_pdf/{id}', 'InvoiceController@downloadInvoicePdf');     
         Route::delete('delete_invoice_expense/{invoice_expense_id}', 'InvoiceController@deleteInvoiceExpense'); 
         Route::get('invoice_statuses', 'InvoiceController@invoice_statuses'); 
         Route::get('invoice_templates', 'InvoiceController@invoice_templates'); 
+        Route::post('invoice/mark_as_paid','InvoiceController@markAsPaid');
         
     });
  
