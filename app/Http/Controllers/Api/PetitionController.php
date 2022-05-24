@@ -298,9 +298,10 @@ class PetitionController extends Controller
             ], 500);
         }
     }
-    public function downloadPetitionPdf($petition_id){
+    public function downloadPetitionPdf($petition_id)
+    {
         try { 
-            $petition = Petition::withRelations()->where('id', $petition_id)->first();
+            $petition = Petition::withRelations()->where('id', $petition_id)->first();            
             //return view('petition_pdf.petition_index_pdf', compact('petition'));             
             if($petition){
                 $pdf = PDF::loadView('petition_pdf.petition_index_pdf', compact('petition'));            
