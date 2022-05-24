@@ -304,7 +304,7 @@ class PetitionController extends Controller
             //return view('petition_pdf.petition_index_pdf', compact('petition'));             
             if($petition){
                 $pdf = PDF::loadView('petition_pdf.petition_index_pdf', compact('petition'));            
-                return $pdf->download('petition-no-'.$petition->case_no.'.pdf');
+                return $pdf->download($petition->petition_standard_title.".pdf");
             }else{
                 return response('Petition Data Not Found',404);
             }
