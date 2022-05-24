@@ -99,9 +99,7 @@
     @foreach(@$petition->petition_indexes as $petition_index)
     <div style="text-align: center; margin: 50% auto 50% auto;">
         <h1>{{ $petition_index->document_description }}</h1>
-    </div>
-    <div class="page-break">
-    </div>
+    </div>   
     @foreach(@$petition_index->attachments as $attachment)    
     <div>
     <!-- <a href="{{asset('').'storage/attachments/'.$petition_index->id.'/'.$attachment->file_name}}" target="_blank"> -->
