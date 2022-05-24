@@ -102,12 +102,12 @@
     </div>
     <div class="page-break">
     </div>
-    @foreach(@$petition_index->attachments as $attachment)
+    @foreach(@$petition_index->attachments as $attachment)    
     <div>
     <!-- <a href="{{asset('').'storage/attachments/'.$petition_index->id.'/'.$attachment->file_name}}" target="_blank"> -->
         <img class="image_style" width="100%" src="{{ asset('').'storage/attachments/'.$petition_index->id.'/'.$attachment->file_name }}" alt="File Not Found">
     <!-- </a> -->
-    </div><br>
+    </div>  
      
     @endforeach
     <div class="page-break">
