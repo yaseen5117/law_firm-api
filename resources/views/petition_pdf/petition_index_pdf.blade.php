@@ -107,9 +107,7 @@
     <!-- </a> -->
     </div>  
      
-    @endforeach
-    <div class="page-break">
-    </div>
+    @endforeach    
     @endforeach
     @endif
 </div>
