@@ -27,7 +27,7 @@ class InvoiceController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Invoice::with('invoice_meta', 'client', 'invoice_expenses', 'status')->select("invoices.*");
+            $query = Invoice::with('invoice_meta', 'client', 'invoice_expenses', 'status','attachment')->select("invoices.*");
             if (!empty($request->invoice_no)) {
                 $query->where('invoice_no', 'like', '%' . $request->invoice_no . '%');
             }
@@ -43,7 +43,7 @@ class InvoiceController extends Controller
             } else {
                 $query->whereDate('invoices.due_date', ">=", $today_date);
             }
-            $invoices = $query->groupBy('invoices.id')->get();
+            $invoices = $query->groupBy('invoices.id')->orderby('id','asc')->get();
             return response()->json(
                 [
                     'invoices' => $invoices,

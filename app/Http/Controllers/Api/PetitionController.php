@@ -66,7 +66,7 @@ class PetitionController extends Controller
             }
 
             //$query->orderBy('display_order');
-            $petitions = $query->groupBy('petitions.id')->get();
+            $petitions = $query->groupBy('petitions.id')->orderby('id','desc')->get();
             $events = [];
             foreach ($petitions as $petition) {
                 $events[] = [
@@ -205,6 +205,7 @@ class PetitionController extends Controller
 
             return response()->json(
                 [
+                    'petition_id' => $petition->id,
                     'message' => 'Petition created successfully.',
                     'code' => 200
                 ]
