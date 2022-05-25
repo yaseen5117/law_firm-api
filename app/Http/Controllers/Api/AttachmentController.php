@@ -46,10 +46,15 @@ class AttachmentController extends Controller
             $files = $request->file('files');
             if ($files) {
                 foreach ($files as $key => $file) {
-                    if ($request->attachmentable_type != "App\Models\Invoice") {
+                    if ($request->attachmentable_type == "App\Models\Invoice") {
+                        $sub_directory = "invoices/";
+                    }else{
+                        $sub_directory="";
+                    }
+                    
                         info("AttachmentController store Function: File mime_type: " . $file->getClientMimeType());
                         $name = time() . '_' . $file->getClientOriginalName();
-                        $file_path = $file->storeAs('attachments/' . $request->attachmentable_id . '/original', $name, 'public');
+                        $file_path = $file->storeAs('attachments/' .$sub_directory. $request->attachmentable_id . '/original', $name, 'public');
                         $mime_type = $file->getClientMimeType();
 
                         $file_name = time() . '_' . $file->getClientOriginalName();
@@ -148,30 +153,13 @@ class AttachmentController extends Controller
                             /****************CONVERTING PDF TO IMAGES**********************/
                             info("****************CONVERTING PDF TO IMAGES END**********************");
                         }
-                    } else {
-                        info("AttachmentController store Function: File mime_type: " . $file->getClientMimeType());
-                        $name = time() . '_' . $file->getClientOriginalName();
-                        $file_path = $file->storeAs('attachments/invoices/' . $request->attachmentable_id . '/', $name, 'public');
-                        $mime_type = $file->getClientMimeType();
-
-                        $file_name = time() . '_' . $file->getClientOriginalName();
-                        $title = $file_name;
-                        $attachmentable_type = $request->attachmentable_type;
-                        $attachmentable_id = $request->attachmentable_id;
-
-                        //WE DONT WANT TO SAVE PDF IN DATABASE. BECAUSE WE ONLY CONVERT PDF TO IMAGES AND THEN SAVE THOSE IMAGES IN DATABASE.
-                        Attachment::create([
-                            'file_name' => $file_name,
-                            'title' => $title,
-                            'attachmentable_type' => $attachmentable_type,
-                            'attachmentable_id' => $attachmentable_id,
-                            'mime_type' => $mime_type,
-                        ]);
-                    }
+                    
                 }
 
                 return response()->json([
                     'success' => 'Files uploaded successfully.',
+                    'sub_directory' => $sub_directory,
+                    'file_path' => $file_path,
                     'code' => 200,
                 ]);
             }
