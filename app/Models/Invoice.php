@@ -20,6 +20,13 @@ class Invoice extends Model
     {
         return $this->belongsTo('App\Models\InvoiceStatus','invoice_status_id');
     }
+
+    public function attachment()
+    {
+        return $this->morphOne(Attachment::class, 'attachmentable')->orderBy('display_order');
+
+    }
+
     public function client()
     {
         return $this->belongsTo('App\Models\User','invoiceable_id');
