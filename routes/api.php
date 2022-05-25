@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Route;
         Route::get('invoice_statuses', 'InvoiceController@invoice_statuses'); 
         Route::get('invoice_templates', 'InvoiceController@invoice_templates'); 
         Route::post('invoice/mark_as_paid','InvoiceController@markAsPaid');
+        Route::resource('contracts_and_agreements', 'ContractsAndAgreementController');
         
     });
  
