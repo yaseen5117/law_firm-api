@@ -170,11 +170,11 @@ class InvoiceController extends Controller
     {
         try {
             $invoice = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status')->find($id);
+             
             return response()->json(
                 [
                     'invoice' => $invoice,
-                    'today_date' => \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', Carbon::today())->format('d/m/Y'),
-                    
+                    'today_date' => \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', Carbon::today())->format('d/m/Y'),                    
                     'message' => 'Invoice Details',
                     'code' => 200
                 ]
@@ -306,18 +306,19 @@ class InvoiceController extends Controller
     }
 
     public function markAsPaid(Request $request)
-    {
-        if ($request->paid_date) {
-            $request->merge([
-                'paid_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->paid_date)->format('Y/m/d'),
-            ]);
-        }
+    {         
         try {
+            if ($request->paid_date) {
+                $request->merge([
+                    'paid_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->paid_date)->format('Y/m/d'),
+                ]);
+            }
+            
             $invoice = Invoice::whereId($request->id)->update([
                 'invoice_status_id' => 3,
                 'paid_date' => $request->paid_date,
                 'notes' => $request->notes,
-                'amount' => $request->paid_amount,
+                'paid_amount' => $request->amount,
             ]);
 
             return response()->json(
