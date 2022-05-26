@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attachment;
 use App\Models\ContractsAndAgreement;
 use Illuminate\Http\Request;
 
@@ -13,9 +14,16 @@ class ContractsAndAgreementController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $contracts_and_agreemnets = ContractsAndAgreement::get();
+        $query = ContractsAndAgreement::query()->with('attachment');
+        if (!empty($request->title)) {
+            $query->where('title', 'like', '%' . $request->title . '%');
+        }
+        if (!empty($request->contract_category_id)) {
+            $query->where('contract_category_id', $request->contract_category_id);
+        }
+        $contracts_and_agreemnets = $query->get();
         return response([
             'contracts_and_agreemnets' => $contracts_and_agreemnets,
             'message' => "All Contracts And Agreement"
@@ -40,7 +48,43 @@ class ContractsAndAgreementController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $contract_and_agreement = ContractsAndAgreement::updateOrCreate(['id' => $request->id], $request->except('editMode', 'files'));
+            //getting files from request
+            $files = $request->file('files');
+            if ($files) {
+                foreach ($files as $key => $file) {
+                    info("AttachmentController store Function: File mime_type: " . $file->getClientMimeType());
+                    $name = time() . '_' . $file->getClientOriginalName();
+                    $file_path = $file->storeAs('attachments/contracts-and-agreements/' . $contract_and_agreement->id . '/', $name, 'public');
+                    $mime_type = $file->getClientMimeType();
+
+                    $file_name = time() . '_' . $file->getClientOriginalName();
+                    $title = $file_name;
+                    $attachmentable_type = "App\Models\ContractsAndAgreement";
+                    $attachmentable_id = $contract_and_agreement->id;
+                    Attachment::updateOrCreate(
+                        ['attachmentable_id' => $request->id],
+                    [
+                        'file_name' => $file_name,
+                        'title' => $title,
+                        'attachmentable_type' => $attachmentable_type,
+                        'attachmentable_id' => $attachmentable_id,
+                        'mime_type' => $mime_type,
+                    ]);
+                }
+            }
+            return response()->json(
+                [
+                    'message' => 'Court Saved Successfully',
+                    'code' => 200
+                ]
+            );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -51,7 +95,21 @@ class ContractsAndAgreementController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $contract_and_agreement = ContractsAndAgreement::with('attachment')->find($id);
+
+            return response()->json(
+                [
+                    'contract_and_agreement' => $contract_and_agreement,
+                    'message' => 'Contract And Agreement Single',
+                    'code' => 200
+                ]
+            );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -85,6 +143,18 @@ class ContractsAndAgreementController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $ContractsAndAgreement = ContractsAndAgreement::find($id);
+            if ($ContractsAndAgreement) {
+                $ContractsAndAgreement->delete();
+                return response("Deleted Successfully", 200);
+            } else {
+                return response('Contracts Agreement Data Not Found', 404);
+            }
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 }
