@@ -43,7 +43,7 @@ class InvoiceController extends Controller
             } else {
                 $query->whereDate('invoices.due_date', ">=", $today_date);
             }
-            $invoices = $query->groupBy('invoices.id')->orderby('id','asc')->get();
+            $invoices = $query->groupBy('invoices.id')->orderby('id','desc')->get();
             return response()->json(
                 [
                     'invoices' => $invoices,
