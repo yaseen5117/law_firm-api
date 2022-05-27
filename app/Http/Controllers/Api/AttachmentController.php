@@ -94,8 +94,8 @@ class AttachmentController extends Controller
                             $attachmentable_id = $request->attachmentable_id;
                             $pdf_file_name = "$file_name";
                             $public_path =  public_path();
-                            $file_path = "$public_path/storage/attachments/$attachmentable_id/$sub_directory original/$pdf_file_name";
-                            $output_path = "$public_path/storage/attachments/$sub_directory.$attachmentable_id/";
+                            $file_path = $public_path.'/storage/attachments/'.$attachmentable_id.'/'.$sub_directory.'original/'.$pdf_file_name;
+                            $output_path = $public_path.'/storage/attachments/'.$sub_directory.$attachmentable_id.'/';
 
                             try {
 
@@ -124,11 +124,11 @@ class AttachmentController extends Controller
                                     $resizeImage->resize(null, 1024, function ($constraint) {
                                         $constraint->aspectRatio();
                                     });
-                                    $path =  storage_path('app/public/attachments/'.$sub_directory. $request->attachmentable_id);
+                                    $path =  storage_path('app/public/attachments/'.$sub_directory.$request->attachmentable_id);
                                     if (!File::isDirectory($path)) {
                                         File::makeDirectory($path, 0777, true, true);
                                     }
-                                    $resizeImage->save(storage_path('app/public/attachments/'.$sub_directory. $request->attachmentable_id . '/' . $generated_jpg_filename));
+                                    $resizeImage->save(storage_path('app/public/attachments/'.$sub_directory.$request->attachmentable_id . '/' . $generated_jpg_filename));
                                     //END To Resize Images
 
                                     info("converting page: $page DONE");
