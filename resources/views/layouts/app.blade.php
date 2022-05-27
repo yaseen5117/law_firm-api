@@ -19,7 +19,7 @@
                       <!-- ======= Header ======= -->
                     <header id="header" class="fixed-top ">
                       <div class="container d-flex align-items-center justify-content-between">
-                        <h1 class="logo"><a href="https://elawfirmpk.com/">LFMS</a></h1>
+                        <h1 class="logo"><a href="https://elawfirmpk.com/">E LAW FIRM </a></h1>
                         
                         <nav id="navbar" class="navbar">
                           <ul>
