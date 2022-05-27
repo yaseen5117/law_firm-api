@@ -66,7 +66,7 @@ class PetitionController extends Controller
             }
 
             //$query->orderBy('display_order');
-            $petitions = $query->groupBy('petitions.id')->orderby('id','desc')->get();
+            $petitions = $query->groupBy('petitions.id')->orderby('id','desc')->paginate(8);
             $events = [];
             foreach ($petitions as $petition) {
                 $events[] = [

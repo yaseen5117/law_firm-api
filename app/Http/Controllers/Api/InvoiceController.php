@@ -37,6 +37,10 @@ class InvoiceController extends Controller
 
                 $query->where('name', 'like', '%' . $request->client_name . '%');
             }
+            if (!empty($request->invoice_status_id)) {
+
+                $query->where('invoice_status_id',  $request->invoice_status_id );
+            }
             $today_date =  Carbon::today();
             if ($request->is_archive == "true") {
                 $query->where('invoices.invoice_status_id', 3)->whereDate('invoices.due_date', "<", $today_date); //3 is the status of invoice.
@@ -94,6 +98,7 @@ class InvoiceController extends Controller
             $request->merge([
                 'invoice_sender_id' => Auth::user()->id
             ]);
+
 
             $invoice = Invoice::updateOrCreate(
                 ['id' => $request->id],
