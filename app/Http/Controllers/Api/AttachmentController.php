@@ -55,7 +55,7 @@ class AttachmentController extends Controller
                     
                         info("AttachmentController store Function: File mime_type: " . $file->getClientMimeType());
                         $name = time() . '_' . $file->getClientOriginalName();
-                        $file_path = $file->storeAs('attachments/' .$sub_directory. $request->attachmentable_id . '/original', $name, 'public');
+                        $file_path = $file->storeAs('attachments/'.$sub_directory . $request->attachmentable_id . '/original', $name, 'public');
                         $mime_type = $file->getClientMimeType();
 
                         $file_name = time() . '_' . $file->getClientOriginalName();
@@ -70,11 +70,11 @@ class AttachmentController extends Controller
                             $resizeImage->resize(null, 1024, function ($constraint) {
                                 $constraint->aspectRatio();
                             });
-                            $path =  storage_path('app/public/attachments/'.$sub_directory. $request->attachmentable_id);
+                            $path =  storage_path('app/public/attachments/'.$sub_directory . $request->attachmentable_id);
                             if (!File::isDirectory($path)) {
                                 File::makeDirectory($path, 0777, true, true);
                             }
-                            $resizeImage->save(storage_path('app/public/attachments/'.$sub_directory. $request->attachmentable_id . '/' . $name));
+                            $resizeImage->save(storage_path('app/public/attachments/'.$sub_directory . $request->attachmentable_id . '/' . $name));
                             //END To Resize Images
 
                             //WE DONT WANT TO SAVE PDF IN DATABASE. BECAUSE WE ONLY CONVERT PDF TO IMAGES AND THEN SAVE THOSE IMAGES IN DATABASE.
@@ -94,7 +94,7 @@ class AttachmentController extends Controller
                             $attachmentable_id = $request->attachmentable_id;
                             $pdf_file_name = "$file_name";
                             $public_path =  public_path();
-                            $file_path = "$public_path/storage/attachments/$attachmentable_id/$sub_directory.original/$pdf_file_name";
+                            $file_path = "$public_path/storage/attachments/$attachmentable_id/$sub_directory original/$pdf_file_name";
                             $output_path = "$public_path/storage/attachments/$sub_directory.$attachmentable_id/";
 
                             try {
