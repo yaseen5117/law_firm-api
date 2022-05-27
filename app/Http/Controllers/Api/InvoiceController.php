@@ -46,7 +46,7 @@ class InvoiceController extends Controller
 
                 $query->where('invoices.invoice_status_id', $request->invoice_status_id);
             }
-            if ($request->start_to_end_date && $request->start_to_end_date[0] && $request->start_to_end_date[1]) {
+            if ($request->start_to_end_date && array_key_exists(0, $request->start_to_end_date) && array_key_exists(1, $request->start_to_end_date)) {
                 $request->merge([
                     'start_date' => date("Y-m-d", strtotime($request->start_to_end_date[0])) . ' 00:00:00',
 
