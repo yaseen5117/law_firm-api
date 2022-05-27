@@ -115,7 +115,7 @@ class InvoiceController extends Controller
 
             $invoice = Invoice::updateOrCreate(
                 ['id' => $request->id],
-                $request->only('due_date', 'invoiceable_id', 'invoiceable_type', 'invoice_no', 'amount', 'apply_tax', 'tax_percentage')
+                $request->only('due_date', 'invoiceable_id', 'invoiceable_type', 'invoice_no', 'amount', 'apply_tax', 'tax_percentage','invoice_status_id')
             );
             //replace total amount in content 
             //$content = str_replace("{total_amount}",$invoice->total(),$content);
