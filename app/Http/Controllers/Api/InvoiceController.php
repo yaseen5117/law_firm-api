@@ -43,6 +43,7 @@ class InvoiceController extends Controller
                 $query->where('name', 'like', '%' . $request->client_name . '%');
             }
             if (!empty($request->invoice_status_id)) {
+
                 $query->where('invoices.invoice_status_id', $request->invoice_status_id);
             }
             if ($request->start_to_end_date && array_key_exists(0, $request->start_to_end_date) && array_key_exists(1, $request->start_to_end_date)) {
@@ -53,6 +54,7 @@ class InvoiceController extends Controller
                 ]);
 
                 $query->whereBetween('invoices.' . $request->date_type, [$request->start_date, $request->end_date]);
+
             }
             $today_date =  Carbon::today();
             if ($request->is_archive == "true") {
@@ -112,6 +114,7 @@ class InvoiceController extends Controller
             $request->merge([
                 'invoice_sender_id' => Auth::user()->id
             ]);
+
 
             $invoice = Invoice::updateOrCreate(
                 ['id' => $request->id],
