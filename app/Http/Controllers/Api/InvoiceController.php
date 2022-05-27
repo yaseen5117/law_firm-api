@@ -11,11 +11,16 @@ use App\Models\InvoiceExpense;
 use App\Models\InvoiceStatus;
 use App\Models\InvoiceTemplate;
 use Carbon\Carbon;
+use DateInterval;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use PDF;
 use Symfony\Component\Process\Process;
+
+use function GuzzleHttp\Promise\all;
 
 class InvoiceController extends Controller
 {
@@ -27,7 +32,7 @@ class InvoiceController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Invoice::with('invoice_meta', 'client', 'invoice_expenses', 'status','attachment')->select("invoices.*");
+            $query = Invoice::with('invoice_meta', 'client', 'invoice_expenses', 'status', 'attachment')->select("invoices.*");
             if (!empty($request->invoice_no)) {
                 $query->where('invoice_no', 'like', '%' . $request->invoice_no . '%');
             }
@@ -37,13 +42,25 @@ class InvoiceController extends Controller
 
                 $query->where('name', 'like', '%' . $request->client_name . '%');
             }
+            if(!empty($request->invoice_status_id)){
+                $query->where('invoices.invoice_status_id', $request->invoice_status_id);
+            }
+            if ($request->start_to_end_date && $request->start_to_end_date[0] && $request->start_to_end_date[1]) {
+                $request->merge([
+                    'start_date' => date("Y-m-d", strtotime($request->start_to_end_date[0])) . ' 00:00:00',
+
+                    'end_date' => date("Y-m-d", strtotime($request->start_to_end_date[1])) . ' 23:59:59',
+                ]);
+
+                $query->whereBetween('invoices.' . $request->date_type, [$request->start_date, $request->end_date]);
+            }
             $today_date =  Carbon::today();
             if ($request->is_archive == "true") {
                 $query->where('invoices.invoice_status_id', 3)->whereDate('invoices.due_date', "<", $today_date); //3 is the status of invoice.
             } else {
                 $query->whereDate('invoices.due_date', ">=", $today_date);
             }
-            $invoices = $query->groupBy('invoices.id')->orderby('id','desc')->get();
+            $invoices = $query->groupBy('invoices.id')->orderby('id', 'desc')->get();
             return response()->json(
                 [
                     'invoices' => $invoices,
@@ -87,6 +104,7 @@ class InvoiceController extends Controller
                     'due_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->due_date)->format('Y/m/d'),
                 ]);
             }
+            //'start_date' => \Carbon\Carbon::parse($request->due_date)->addSeconds(120)->format('M d, Y'), its format like (may 24, 2022)
             $request->merge([
                 'invoiceable_type' => "App\Models\User"
             ]);
@@ -169,12 +187,12 @@ class InvoiceController extends Controller
     public function show($id)
     {
         try {
-            $invoice = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status','attachment')->find($id);
-             
+            $invoice = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status', 'attachment')->find($id);
+
             return response()->json(
                 [
                     'invoice' => $invoice,
-                    'today_date' => \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', Carbon::today())->format('d/m/Y'),                    
+                    'today_date' => \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', Carbon::today())->format('d/m/Y'),
                     'message' => 'Invoice Details',
                     'code' => 200
                 ]
@@ -306,14 +324,14 @@ class InvoiceController extends Controller
     }
 
     public function markAsPaid(Request $request)
-    {         
+    {
         try {
             if ($request->paid_date) {
                 $request->merge([
                     'paid_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->paid_date)->format('Y/m/d'),
                 ]);
             }
-            
+
             $invoice = Invoice::whereId($request->id)->update([
                 'invoice_status_id' => 3,
                 'paid_date' => $request->paid_date,
