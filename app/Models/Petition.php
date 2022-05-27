@@ -69,6 +69,10 @@ class Petition extends Model
     {
         return $query->with('petitioners.user','opponents.user','court','lawyers','type','petition_indexes.attachments');
     }
+    public function scopeWithRelationsIndex($query)
+    {
+        return $query->with('court','type');
+    }
 
     public function getPetitionerNamesAttribute()
     {

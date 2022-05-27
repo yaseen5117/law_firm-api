@@ -30,7 +30,7 @@ class PetitionController extends Controller
     {
 
         try {
-            $query = Petition::select("petitions.*")->withRelations();
+            $query = Petition::select("petitions.*")->withRelationsIndex();
 
             if ($request->archived == "true") {
                 $query->where('archived', 1);
