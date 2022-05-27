@@ -42,7 +42,7 @@ class InvoiceController extends Controller
 
                 $query->where('name', 'like', '%' . $request->client_name . '%');
             }
-            if(!empty($request->invoice_status_id)){
+            if (!empty($request->invoice_status_id)) {
                 $query->where('invoices.invoice_status_id', $request->invoice_status_id);
             }
             if ($request->start_to_end_date && $request->start_to_end_date[0] && $request->start_to_end_date[1]) {
