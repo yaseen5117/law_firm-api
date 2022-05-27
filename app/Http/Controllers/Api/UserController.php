@@ -49,7 +49,7 @@ class UserController extends Controller
                 $query->role($role->name);
             }                  
             
-            $users = $query->orderBy("name")->get();
+            $users = $query->orderBy("is_approved")->orderBy("name")->paginate(10);
 
             //$users = User::orderBy("name")->with('roles')->get();
             return response()->json(
