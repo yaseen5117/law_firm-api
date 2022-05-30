@@ -158,7 +158,7 @@ class InvoiceController extends Controller
 
             //now invoice and its tables enteries completed, we can send email.
             if ($request->sendEmail) {
-                $userInvoiceData = $invoice;
+                $userInvoiceData = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status')->find($invoice->id);
                 $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));
                 //$pdf = public_path('/storage/attachments/lawAndPolicyInvoice.pdf');
 
