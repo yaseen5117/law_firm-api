@@ -54,11 +54,11 @@ class AttachmentController extends Controller
                     }
                     
                         info("AttachmentController store Function: File mime_type: " . $file->getClientMimeType());
-                        $name = time() . '_' . $file->getClientOriginalName();
-                        $file_path = $file->storeAs('attachments/'.$sub_directory . $request->attachmentable_id . '/original', $name, 'public');
+                        $file_name = time() . '_' . $file->getClientOriginalName();
+                        $file_path = $file->storeAs('attachments/'.$sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
                         $mime_type = $file->getClientMimeType();
 
-                        $file_name = time() . '_' . $file->getClientOriginalName();
+                        
                         $title = $file_name;
                         $attachmentable_type = $request->attachmentable_type;
                         $attachmentable_id = $request->attachmentable_id;
@@ -74,7 +74,7 @@ class AttachmentController extends Controller
                             if (!File::isDirectory($path)) {
                                 File::makeDirectory($path, 0777, true, true);
                             }
-                            $resizeImage->save(storage_path('app/public/attachments/'.$sub_directory . $request->attachmentable_id . '/' . $name));
+                            $resizeImage->save(storage_path('app/public/attachments/'.$sub_directory . $request->attachmentable_id . '/' . $file_name));
                             //END To Resize Images
 
                             //WE DONT WANT TO SAVE PDF IN DATABASE. BECAUSE WE ONLY CONVERT PDF TO IMAGES AND THEN SAVE THOSE IMAGES IN DATABASE.

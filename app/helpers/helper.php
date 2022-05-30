@@ -7,6 +7,8 @@ use SebastianBergmann\Environment\Console;
 use App\Models\Role;
 use App\Models\ModelHasRole;
 
+define('SITE_NAME', 'E Law Firm'); 
+
 function uploadFile($request)
 {
     if ($request->file_name) {

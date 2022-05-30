@@ -22,7 +22,8 @@ class EmailService
 	            $message->subject( $invoice->invoice_meta->subject);
 	            $message->to($invoice->client->email , $invoice->client->name);
 				$message->cc(['umer.gilani@gmail.com' , 'imhamzaaslam@gmail.com']);
-				$message->attachData($pdf, 'Invoice-'.$invoice->invoice_no.'.pdf');
+				$message->attach($pdf, array('as' => 'Invoice-'.$invoice->invoice_no.'.pdf', 'mime' => 'application/pdf'));
+				//$message->attachData($pdf, 'Invoice-'.$invoice->invoice_no.'.pdf');
 
 	            /*if( isset($emailData['cc']) && !empty($emailData['cc']) ) {
 	                $message->cc( $emailData['cc'] , $emailData['ccName'] );
