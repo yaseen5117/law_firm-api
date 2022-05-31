@@ -54,7 +54,7 @@ class InvoiceController extends Controller
                     'end_date' => date("Y-m-d", strtotime($request->start_to_end_date[1])) . ' 23:59:59',
                 ]);
 
-                $query->whereBetween('invoices.' . $request->date_type, [$request->start_date, $request->end_date]);
+                $query->whereBetween('invoices.' . empty($request->date_type)?"created_at":$request->date_type , [$request->start_date, $request->end_date]);
 
             }
             $today_date =  Carbon::today();
@@ -63,11 +63,12 @@ class InvoiceController extends Controller
             } else {
                 $query->whereDate('invoices.due_date', ">=", $today_date);
             }
-            $query->groupBy('invoices.id')->orderby('invoices.id', 'desc');
             $invoices_total = $query->sum('amount');
-            $invoices = $query->paginate(10);
             $paid_invoices_total = $query->sum('amount');
             $due_invoices_total = $invoices_total - $paid_invoices_total;
+
+            $query->groupBy('invoices.id')->orderby('invoices.id', 'desc');
+            $invoices = $query->paginate(10);
 
             return response()->json(
                 [

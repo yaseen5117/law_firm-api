@@ -69,7 +69,7 @@ class AttachmentController extends Controller
                         if ($mime_type != "application/pdf") {
                             //START To Resize Images
                             $resizeImage = Image::make($file);
-                            $resizeImage->resize(null, 1024, function ($constraint) {
+                            $resizeImage->resize(2000, null, function ($constraint) {
                                 $constraint->aspectRatio();
                             });
                             $path =  storage_path('app/public/attachments/'.$sub_directory . $request->attachmentable_id);
@@ -123,7 +123,7 @@ class AttachmentController extends Controller
 
                                     //START To Resize Images
                                     $resizeImage = Image::make($output_path . "/" . $generated_jpg_filename);
-                                    $resizeImage->resize(null, 1024, function ($constraint) {
+                                    $resizeImage->resize(2000, null, function ($constraint) {
                                         $constraint->aspectRatio();
                                     });
                                     $path =  storage_path('app/public/attachments/'.$sub_directory.$request->attachmentable_id);
