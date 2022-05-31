@@ -63,11 +63,47 @@ class InvoiceController extends Controller
             } else {
                 $query->whereDate('invoices.due_date', ">=", $today_date);
             }
-            $invoices = $query->groupBy('invoices.id')->orderby('id', 'desc')->paginate(10);
+            $query->groupBy('invoices.id')->orderby('invoices.id', 'desc');
+            $invoices_total = $query->sum('amount');
+            $invoices = $query->paginate(10);
+            $paid_invoices_total = $query->sum('amount');
+            $due_invoices_total = $invoices_total - $paid_invoices_total;
+
             return response()->json(
                 [
                     'invoices' => $invoices,
+                    'invoices_stats'=>[
+                        'total' => $invoices_total,
+                        'total_paid' => $paid_invoices_total,
+                        'total_due' => $due_invoices_total,
+                    ],
                     'message' => 'All invoices',
+                    'code' => 200
+                ]
+            );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function invoicesStats()
+    {
+        try {
+            
+            $invoices_total = Invoice::sum('amount');
+            $paid_invoices_total = Invoice::where('invoice_status_id',3)->sum('paid_amount');
+            $due_invoices_total = $invoices_total - $paid_invoices_total;
+
+            return response()->json(
+                [
+                    'invoices_stats'=>[
+                        'total' => $invoices_total,
+                        'total_paid' => $paid_invoices_total,
+                        'total_due' => $due_invoices_total,
+                    ],
+                    'message' => 'All invoices stats',
                     'code' => 200
                 ]
             );

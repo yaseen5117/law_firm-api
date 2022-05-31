@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Route;
         Route::resource('petitions', 'PetitionController');
         Route::resource('users', 'UserController');             
         Route::resource('petition_hearing', 'PetitionHearingController');
+        Route::get('invoices/stats', 'InvoiceController@invoicesStats'); 
         Route::resource('invoices', 'InvoiceController'); 
         //Route::post('invoices/mark_paid', 'InvoiceController@mark_paid'); 
         Route::get('download_pdf/{id}', 'InvoiceController@downloadInvoicePdf');     

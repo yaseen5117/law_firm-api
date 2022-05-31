@@ -49,6 +49,8 @@ class AttachmentController extends Controller
                 foreach ($files as $key => $file) {
                     if ($request->attachmentable_type == "App\Models\Invoice") {
                         $sub_directory = "invoices/";
+
+                        Attachment::where('attachmentable_id' , $request->attachmentable_id)->where('attachmentable_type' , "App\Models\Invoice")->delete();
                     }else{
                         $sub_directory="";
                     }
