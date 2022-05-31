@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,18 @@ class SettingController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $setting = Setting::find(1)->getMeta()->toArray();
+            return response([
+                'setting' => count($setting)>0?$setting:['site_name'=>""],
+                'message' => 'all settings data',
+                'code' => 200
+            ]);
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -35,16 +47,26 @@ class SettingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //return $request;
+        try {
+            $setting = Setting::find(1);
+            $setting->setMeta($request->all());
+            $setting->save();
+            return response("Success", 200);
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Setting  $setting
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Setting $setting)
+    public function show($id)
     {
         //
     }
@@ -52,10 +74,10 @@ class SettingController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Setting  $setting
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Setting $setting)
+    public function edit($id)
     {
         //
     }
@@ -64,10 +86,10 @@ class SettingController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Setting  $setting
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Setting $setting)
+    public function update(Request $request, $id)
     {
         //
     }
@@ -75,10 +97,10 @@ class SettingController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Setting  $setting
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Setting $setting)
+    public function destroy($id)
     {
         //
     }

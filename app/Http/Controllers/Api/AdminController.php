@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Admin;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 
@@ -113,5 +114,5 @@ class AdminController extends Controller
     {
         Admin::findorfail($id)->delete();
         return "Admin deleted successfully!";
-    }
+    }     
 }

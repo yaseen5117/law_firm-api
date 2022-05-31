@@ -14,4 +14,8 @@ class ContractsAndAgreement extends Model
     {
         return $this->morphOne(Attachment::class, 'attachmentable')->orderBy('display_order');
     }
+    public function category()
+    {
+        return $this->belongsTo(ContractCategory::class, 'contract_category_id');
+    }
 }

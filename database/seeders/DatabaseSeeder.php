@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
             $this->call([PetitionPetitionersTableSeeder::class]);
             $this->call([PetitionOpponentsTableSeeder::class]);
             $this->call([CourtSeeder::class]);
-
+            $this->call([ContractCategoriesTableSeeder::class]);
                  
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 

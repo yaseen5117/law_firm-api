@@ -31,6 +31,8 @@ use Illuminate\Support\Facades\Route;
         Route::post('invoice/mark_as_paid','InvoiceController@markAsPaid');
         Route::resource('contracts_and_agreements', 'ContractsAndAgreementController');
         Route::resource('links', 'LinkController');
+        Route::get('contract_categories', 'ContractsAndAgreementController@contractCategory');
+        Route::resource('settings', 'SettingController');
         
     });
  

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attachment;
+use App\Models\ContractCategory;
 use App\Models\ContractsAndAgreement;
 use Illuminate\Http\Request;
 
@@ -16,7 +17,7 @@ class ContractsAndAgreementController extends Controller
      */
     public function index(Request $request)
     {
-        $query = ContractsAndAgreement::query()->with('attachment');
+        $query = ContractsAndAgreement::query()->with('attachment','category');
         if (!empty($request->title)) {
             $query->where('title', 'like', '%' . $request->title . '%');
         }
@@ -96,7 +97,7 @@ class ContractsAndAgreementController extends Controller
     public function show($id)
     {
         try {
-            $contract_and_agreement = ContractsAndAgreement::with('attachment')->find($id);
+            $contract_and_agreement = ContractsAndAgreement::with('attachment','category')->find($id);
 
             return response()->json(
                 [
@@ -151,6 +152,20 @@ class ContractsAndAgreementController extends Controller
             } else {
                 return response('Contracts Agreement Data Not Found', 404);
             }
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function contractCategory(){
+        try {
+             $categories = ContractCategory::all();
+             return response([
+                'categories' => $categories,
+                'message' => 'all contract categories',
+                'code' => 200
+             ]);
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
