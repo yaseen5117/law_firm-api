@@ -63,11 +63,12 @@ class InvoiceController extends Controller
             } else {
                 $query->whereDate('invoices.due_date', ">=", $today_date);
             }
-            $query->groupBy('invoices.id')->orderby('invoices.id', 'desc');
             $invoices_total = $query->sum('amount');
-            $invoices = $query->paginate(10);
             $paid_invoices_total = $query->sum('amount');
             $due_invoices_total = $invoices_total - $paid_invoices_total;
+            
+            $query->groupBy('invoices.id')->orderby('invoices.id', 'desc');
+            $invoices = $query->paginate(10);
 
             return response()->json(
                 [
