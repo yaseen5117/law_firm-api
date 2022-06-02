@@ -17,7 +17,7 @@ class SettingController extends Controller
     {
         try {
             $setting = Setting::find(1)->getMeta()->toArray();
-            if($setting["additionalemails"] == []){                        
+            if(empty($setting["additionalemails"])){                        
                 $setting["additionalemails"] = [];
             }
             
