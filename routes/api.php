@@ -33,6 +33,9 @@ use Illuminate\Support\Facades\Route;
         Route::resource('links', 'LinkController');
         Route::get('contract_categories', 'ContractsAndAgreementController@contractCategory');
         Route::resource('settings', 'SettingController');
+        Route::get('get_order_sheet_types', 'PetitionOrderSheetController@getOrderSheetType');
+        Route::post('save_order_sheet_types', 'PetitionOrderSheetController@saveOrderSheetType');
+        Route::delete('delete_order_sheet_type/{id}', 'PetitionOrderSheetController@deleteOrderSheet');
         
     });
  
