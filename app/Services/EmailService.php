@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Services;
+
+use App\Models\Setting;
 use Mail;
 /**
  * 
@@ -12,16 +14,29 @@ class EmailService
 	{
 		info("In email service:");
 	}
+	public function adminEmails(){
+		$setting = Setting::find(1)->getMeta()->toArray();		 
+		$adminEmails[] = $setting["site_email"];
+		info("EmailService: Site Email: ".$setting["site_email"]);
+		if(!empty($setting["additionalemails"])){  			      
+			$additional_emails = $setting["additionalemails"];	
+			info("EmailService: Additional Emails: ".$setting["additionalemails"]);		
+			return $adminEmails = array_merge($adminEmails,$additional_emails);
+		}else{
+			return $adminEmails;
+		}
+		
+	}
 
 	public function sendInvoiceEmail($invoice,$pdf)
 	{
 		info("EmailService: sendInvoiceEmail for Invoice $invoice->id");
-		try {			           
+	 		           
 			Mail::send('emails.invoice_email', compact('invoice') , function ($message) use ($invoice,$pdf) {
 
 	            $message->subject( $invoice->invoice_meta->subject);
 	            $message->to($invoice->client->email , $invoice->client->name);
-				$message->cc(['umer.gilani@gmail.com' , 'imhamzaaslam@gmail.com']);
+				$message->cc($this->adminEmails());
 				$message->attachData($pdf->output(), 'Invoice-'.$invoice->invoice_no.'.pdf');
 
 	            /*if( isset($emailData['cc']) && !empty($emailData['cc']) ) {
@@ -34,9 +49,6 @@ class EmailService
         	});
 			
 			info("EmailService: sendInvoiceEmail successfully sent Email: ");
-		} catch (\Exception $e) {
-			info("EmailService: sendInvoiceEmail failed " . $e->getMessage());
-			
-		}
+		 
 	}
 }

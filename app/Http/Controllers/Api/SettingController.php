@@ -17,7 +17,7 @@ class SettingController extends Controller
     {
         try {
             $setting = Setting::find(1)->getMeta()->toArray();
-            if($setting["additionalemails"] == []){                        
+            if(empty($setting["additionalemails"])){                        
                 $setting["additionalemails"] = [];
             }
             
@@ -53,6 +53,13 @@ class SettingController extends Controller
     {
         //return $request;
         try {
+
+            // $additional_emails_collection = collect($request->additionalemails);
+            // $additional_emails_arr = $additional_emails_collection->pluck('additional_email')->all();
+            // $request->merge(
+            //     ['additionalemails' => $additional_emails_arr]
+            // );
+            //return response($additional_emails_arr,422);
             $setting = Setting::find(1);
             $setting->setMeta($request->all());
             $setting->save();
