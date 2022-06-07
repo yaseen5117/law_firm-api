@@ -8,7 +8,11 @@ use App\Models\Role;
 use App\Models\ModelHasRole;
 
 define('SITE_NAME', 'E Law Firm'); 
-
+define('ORDER_SHEET', 1); 
+define('NAQAL_FORM', 2); 
+define('TALBANA', 3); 
+define('SYNOPSIS', 4); 
+ 
 function uploadFile($request)
 {
     if ($request->file_name) {

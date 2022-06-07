@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\OrderSheetType;
 use Illuminate\Http\Request;
 use App\Models\Petition;
+use App\Models\PetitionModuleType;
 use App\Models\PetitonOrderSheet;
 
 
@@ -66,7 +67,7 @@ class PetitionOrderSheetController extends Controller
                 ]);
             }
             //return response($request->order_sheet_date,404);
-            $petitionOrderSheet = PetitonOrderSheet::updateOrCreate(['id'=>$request->id],$request->except('editMode','petition','attachments'));
+            $petitionOrderSheet = PetitonOrderSheet::updateOrCreate(['id'=>$request->id],$request->except('editMode','petition','attachments','order_sheet_types'));
 
             return response()->json(
                 [
@@ -92,7 +93,7 @@ class PetitionOrderSheetController extends Controller
     {
         try {
             
-            $petitionOrderSheet = PetitonOrderSheet::with('petition','attachments')->whereId($id)->first();
+            $petitionOrderSheet = PetitonOrderSheet::with('petition','attachments','order_sheet_types')->whereId($id)->first();
             
 
             return response()->json(
@@ -186,9 +187,13 @@ class PetitionOrderSheetController extends Controller
             ], 500);
         }
     }
-    public function getOrderSheetType(){
-        try {
-            $orderSheetTypes = OrderSheetType::all();             
+    public function getOrderSheetType(Request $request){
+        try {               
+            $query = PetitionModuleType::query();
+            if(!empty($request->module_id)){                  
+                $query->where('module_id', $request->module_id);
+            }   
+            $orderSheetTypes = $query->orderby('display_order','desc')->get();
             return response()->json(
                 [
                     'orderSheetTypes' => $orderSheetTypes,
@@ -204,7 +209,7 @@ class PetitionOrderSheetController extends Controller
     }
     public function saveOrderSheetType(Request $request){
         try {
-            $orderSheetType = OrderSheetType::updateOrCreate(['id'=>$request->id],$request->except('editMode'));       
+            $orderSheetType = PetitionModuleType::updateOrCreate(['id'=>$request->id],$request->except('editMode'));       
             return response()->json(
                 [
                     'orderSheetType' => $orderSheetType,
@@ -221,7 +226,7 @@ class PetitionOrderSheetController extends Controller
     public function deleteOrderSheet($id)
     {
         try {
-            $orderSheetType = OrderSheetType::find($id);
+            $orderSheetType = PetitionModuleType::find($id);
             if ($orderSheetType) {
                 $orderSheetType->delete();
                 return response(

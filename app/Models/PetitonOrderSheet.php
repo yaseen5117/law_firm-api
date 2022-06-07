@@ -19,7 +19,10 @@ class PetitonOrderSheet extends Model
         return $this->belongsTo('App\Models\Petition');
 
     }
-    
+    public function order_sheet_types()
+    {
+        return $this->hasMany(PetitionModuleType::class,"module_id");
+    }
     public function attachments()
     {
         return $this->morphMany(Attachment::class, 'attachmentable')->orderBy('display_order');
