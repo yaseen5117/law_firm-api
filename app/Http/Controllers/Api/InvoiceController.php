@@ -54,7 +54,17 @@ class InvoiceController extends Controller
                     'end_date' => date("Y-m-d", strtotime($request->start_to_end_date[1])) . ' 23:59:59',
                 ]);
 
-                $query->whereBetween('invoices.' . empty($request->date_type)?"created_at":$request->date_type , [$request->start_date, $request->end_date]);
+                if ($request->date_type=="created_at") {
+                    $filter_col_name = "created_at";
+                }elseif($request->date_type=="due_date"){
+                    $filter_col_name = "due_date";
+                }elseif($request->date_type=="paid_date"){
+                    $filter_col_name = "paid_date";
+                }else{
+                    $filter_col_name = "created_at";
+                }
+
+                $query->whereBetween('invoices.'.$filter_col_name , [$request->start_date, $request->end_date]);
 
             }
             $today_date =  Carbon::today();
