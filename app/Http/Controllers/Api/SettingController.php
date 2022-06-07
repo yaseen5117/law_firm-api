@@ -113,6 +113,6 @@ class SettingController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return 'success';
     }
 }
