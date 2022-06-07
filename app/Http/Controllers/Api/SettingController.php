@@ -113,6 +113,27 @@ class SettingController extends Controller
      */
     public function destroy($id)
     {
-        return 'success';
+        //
     }
+    // public function deleteAdditionalEmail(Request $request)
+    // {         
+    //     $setting = Setting::find(1)->getMeta()->toArray();
+    //     if ($request->index) {
+    //         unset($setting['additionalemails'][$request->index]);               
+    //         return response([      
+    //             'additional_emails' => $setting['additionalemails'],       
+    //             'message' => 'Deleted Successfully!',
+    //             'code' => 200
+    //         ]);
+    //     }else{
+    //         return response([             
+    //             'message' => 'Not Found',
+    //             'code' => 404
+    //         ]);
+    //     }
+
+        
+    //     // $is = in_array($request->email, $setting['additionalemails']);
+    //     // return $is;
+    // }
 }

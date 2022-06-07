@@ -36,7 +36,7 @@ use Illuminate\Support\Facades\Route;
         Route::get('get_order_sheet_types', 'PetitionOrderSheetController@getOrderSheetType');
         Route::post('save_order_sheet_types', 'PetitionOrderSheetController@saveOrderSheetType');
         Route::delete('delete_order_sheet_type/{id}', 'PetitionOrderSheetController@deleteOrderSheet');
-        Route::resource('delete_additional_email','SettingController');
+        //Route::post('delete_additional_email','SettingController@deleteAdditionalEmail');
     });
  
     // Public routes
