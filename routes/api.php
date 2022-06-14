@@ -34,6 +34,7 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::get('contract_categories', 'ContractsAndAgreementController@contractCategory');
     Route::resource('settings', 'SettingController');
     Route::resource('module_types', 'PetitionModuleTypeController');
+    Route::get('get_order_sheet_types', 'PetitionOrderSheetController@getOrderSheetTypes');
     Route::get('get_naqal_form_types', 'NaqalFormController@getNaqalFormTypes');
     Route::get('get_talbana_types', 'PetitionTalbanaController@getTalbanaTypes');
     Route::get('get_synopsis_types', 'PetitionSynopsisController@getSynopsisTypes');    

@@ -187,5 +187,25 @@ class PetitionOrderSheetController extends Controller
             ], 500);
         }
     }    
-    
+    public function getOrderSheetTypes(Request $request)
+    {         
+        try {               
+            $query = PetitionModuleType::query();
+            if(!empty($request->module_id)){                  
+                $query->where('module_id', $request->module_id);
+            }   
+            $orderSheetTypes = $query->orderby('display_order','desc')->get();
+            return response()->json(
+                [
+                    'orderSheetTypes' => $orderSheetTypes,
+                    'message' => 'Successs',
+                    'code' => 200
+                ]
+            );            
+        } catch (\Exception $e) {
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
+        }
+    }
 }
