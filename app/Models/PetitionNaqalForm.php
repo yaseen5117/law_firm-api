@@ -17,7 +17,10 @@ class PetitionNaqalForm extends Model
     {
         return $this->belongsTo('App\Models\Petition');
     }
-    
+    public function naqal_form_types()
+    {
+        return $this->hasMany(PetitionModuleType::class,"module_id");
+    }
     public function attachments()
     {
         return $this->morphMany(Attachment::class, 'attachmentable')->orderBy('display_order');

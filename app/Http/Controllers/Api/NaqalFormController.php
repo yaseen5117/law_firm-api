@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\PetitionModuleType;
 use App\Models\PetitionNaqalForm;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,7 @@ class NaqalFormController extends Controller
      */
     public function index(Request $request)
     {
-        try {
+        try {             
             $PetitionNaqalForm = PetitionNaqalForm::with('petition','attachments')->where('petition_id',$request->petition_id)->get();
              
             return response()->json(
@@ -87,7 +88,7 @@ class NaqalFormController extends Controller
     {
         try {
             
-            $PetitionNaqalForm = PetitionNaqalForm::with('petition','attachments')->whereId($id)->first();
+            $PetitionNaqalForm = PetitionNaqalForm::with('petition','attachments','naqal_form_types')->whereId($id)->first();
             
 
             return response()->json(
@@ -112,7 +113,7 @@ class NaqalFormController extends Controller
                 'petition_id'=>'required'
             ]);
 
-             $query = PetitionNaqalForm::with('petition','attachments')->wherePetitionId($request->petition_id);
+             $query = PetitionNaqalForm::with('petition','attachments','naqal_form_types')->wherePetitionId($request->petition_id);
             
             if ($request->id>0) {
                 $query->whereId($request->id);            
@@ -179,6 +180,27 @@ class NaqalFormController extends Controller
             return response([
                 "error" => $e->getMessage()
             ], 500);
+        }
+    }
+    public function getNaqalFormTypes(Request $request)
+    {         
+        try {               
+            $query = PetitionModuleType::query();
+            if(!empty($request->module_id)){                  
+                $query->where('module_id', $request->module_id);
+            }   
+            $naqalFormTypes = $query->orderby('display_order','desc')->get();
+            return response()->json(
+                [
+                    'naqalFormTypes' => $naqalFormTypes,
+                    'message' => 'Successs',
+                    'code' => 200
+                ]
+            );            
+        } catch (\Exception $e) {
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
         }
     }
 }

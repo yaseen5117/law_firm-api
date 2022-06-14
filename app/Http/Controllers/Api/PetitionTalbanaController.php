@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\PetitionModuleType;
 use App\Models\PetitionTalbana;
 use Illuminate\Http\Request;
 
@@ -179,6 +180,27 @@ class PetitionTalbanaController extends Controller
             return response([
                 "error" => $e->getMessage()
             ], 500);
+        }
+    }
+    public function getTalbanaTypes(Request $request)
+    {         
+        try {               
+            $query = PetitionModuleType::query();
+            if(!empty($request->module_id)){                  
+                $query->where('module_id', $request->module_id);
+            }   
+            $talbanaTypes = $query->orderby('display_order','desc')->get();
+            return response()->json(
+                [
+                    'talbanaTypes' => $talbanaTypes,
+                    'message' => 'Successs',
+                    'code' => 200
+                ]
+            );            
+        } catch (\Exception $e) {
+            return response([
+                "error"=>$e->getMessage()
+            ],500);
         }
     }
 }

@@ -186,61 +186,6 @@ class PetitionOrderSheetController extends Controller
                 "error" => $e->getMessage()
             ], 500);
         }
-    }
-    public function getOrderSheetType(Request $request){
-        try {               
-            $query = PetitionModuleType::query();
-            if(!empty($request->module_id)){                  
-                $query->where('module_id', $request->module_id);
-            }   
-            $orderSheetTypes = $query->orderby('display_order','desc')->get();
-            return response()->json(
-                [
-                    'orderSheetTypes' => $orderSheetTypes,
-                    'message' => 'Successs',
-                    'code' => 200
-                ]
-            );            
-        } catch (\Exception $e) {
-            return response([
-                "error"=>$e->getMessage()
-            ],500);
-        }
-    }
-    public function saveOrderSheetType(Request $request){
-        try {
-            $orderSheetType = PetitionModuleType::updateOrCreate(['id'=>$request->id],$request->except('editMode'));       
-            return response()->json(
-                [
-                    'orderSheetType' => $orderSheetType,
-                    'message' => 'Successs',
-                    'code' => 200
-                ]
-            );            
-        } catch (\Exception $e) {
-            return response([
-                "error"=>$e->getMessage()
-            ],500);
-        }
-    }
-    public function deleteOrderSheet($id)
-    {
-        try {
-            $orderSheetType = PetitionModuleType::find($id);
-            if ($orderSheetType) {
-                $orderSheetType->delete();
-                return response(
-                    [
-                        'message' => 'Record Deleted successfully',
-                        'code' => 200
-                    ]
-                );
-            }
-        } catch (\Exception $e) {
-            return response([
-                "error" => $e->getMessage()
-            ], 500);
-        }
-    }
-
+    }    
+    
 }

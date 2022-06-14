@@ -33,9 +33,10 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::resource('links', 'LinkController');
     Route::get('contract_categories', 'ContractsAndAgreementController@contractCategory');
     Route::resource('settings', 'SettingController');
-    Route::get('get_order_sheet_types', 'PetitionOrderSheetController@getOrderSheetType');
-    Route::post('save_order_sheet_types', 'PetitionOrderSheetController@saveOrderSheetType');
-    Route::delete('delete_order_sheet_type/{id}', 'PetitionOrderSheetController@deleteOrderSheet');
+    Route::resource('module_types', 'PetitionModuleTypeController');
+    Route::get('get_naqal_form_types', 'NaqalFormController@getNaqalFormTypes');
+    Route::get('get_talbana_types', 'PetitionTalbanaController@getTalbanaTypes');
+    Route::get('get_synopsis_types', 'PetitionSynopsisController@getSynopsisTypes');    
     //Route::post('delete_additional_email','SettingController@deleteAdditionalEmail');
     
     Route::get('clients', 'UserController@getClient');
