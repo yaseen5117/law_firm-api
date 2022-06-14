@@ -105,6 +105,8 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::resource('petitions_index', 'PetitionIndexController');
 });
 
+Route::get('settings', 'Api\SettingController@index');
+
 Route::post('delete_contact_request/{id}', 'Api\FrontEndController@deleteContactRequest');
 Route::post('roles', 'Api\UserController@getRoles');
 Route::post('signup', 'Api\UserController@signUp');
