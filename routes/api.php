@@ -104,23 +104,23 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     //Route::resource('petitions', 'PetitionController');
 
     Route::resource('petitions_index', 'PetitionIndexController');
+    Route::resource('attachments', 'AttachmentController');
 });
-
-Route::get('settings', 'Api\SettingController@index');
-
+ 
 Route::post('delete_contact_request/{id}', 'Api\FrontEndController@deleteContactRequest');
 Route::post('roles', 'Api\UserController@getRoles');
-Route::post('signup', 'Api\UserController@signUp');
 Route::post('module_index_details_judgements/{id}', 'Api\JudgementController@judgementDetail');
 Route::post('module_index_details_extra_documents/{id}', 'Api\ExtraDocumentController@extraDocsDetail');
 Route::post('module_index_details_case_laws/{id}', 'Api\CaseLawController@caseLawDetail');
-Route::resource('attachments', 'Api\AttachmentController');
+
 Route::post('module_index_details_oral_arguments/{id}', 'Api\OralArgumentsController@oralArgumentDetail');
 Route::resource('petition_order_sheets', 'Api\PetitionOrderSheetController');
 Route::post('petition_reply_details/{id}', 'Api\PetitionReplyController@replyDetail');
 // Public routes
 Route::post('register', 'AuthController@register');
 Route::post('login', 'AuthController@login');
+Route::post('signup', 'Api\UserController@signUp');
+Route::get('settings', 'Api\SettingController@index');
 
 Route::middleware('auth:sanctum')->get('/user', 'Api\UserController@getLoggedInUser');
 Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function () {

@@ -194,7 +194,7 @@ class PetitionOrderSheetController extends Controller
             if(!empty($request->module_id)){                  
                 $query->where('module_id', $request->module_id);
             }   
-            $orderSheetTypes = $query->orderby('display_order','desc')->get();
+            $orderSheetTypes = $query->orderby('title')->get();
             return response()->json(
                 [
                     'orderSheetTypes' => $orderSheetTypes,

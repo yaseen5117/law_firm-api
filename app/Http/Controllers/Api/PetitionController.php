@@ -27,8 +27,7 @@ class PetitionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
-
+    {        
         try {
             $query = Petition::select("petitions.*")->withRelationsIndex();
 
@@ -66,7 +65,12 @@ class PetitionController extends Controller
             }
 
             //$query->orderBy('display_order');
-            $petitions = $query->groupBy('petitions.id')->orderby('id','desc')->paginate(8);
+            $petitions = [];
+            if($request->force_all_records){                
+                $petitions = $query->groupBy('petitions.id')->orderby('id','desc')->get();
+            }else{                
+                $petitions = $query->groupBy('petitions.id')->orderby('id','desc')->paginate(8);
+            }            
             $events = [];
             foreach ($petitions as $petition) {
                 $events[] = [
