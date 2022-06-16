@@ -7,6 +7,7 @@ use Image;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attachment;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -47,117 +48,147 @@ class AttachmentController extends Controller
             $files = $request->file('files');
             if ($files) {
                 foreach ($files as $key => $file) {
+
+                    info("AttachmentController store Function: File mime_type: " . $file->getClientMimeType());
+                    $file_name = time() . '_' . $file->getClientOriginalName();
+                    $mime_type = $file->getClientMimeType();
+
+
+                    $title = $file_name;
+                    $attachmentable_type = $request->attachmentable_type;
+                    $attachmentable_id = $request->attachmentable_id;
+
                     if ($request->attachmentable_type == "App\Models\Invoice") {
                         $sub_directory = "invoices/";
 
-                        Attachment::where('attachmentable_id' , $request->attachmentable_id)->where('attachmentable_type' , "App\Models\Invoice")->delete();
-                    }else{
-                        $sub_directory="";
-                    }
-                    
-                        info("AttachmentController store Function: File mime_type: " . $file->getClientMimeType());
-                        $file_name = time() . '_' . $file->getClientOriginalName();
-                        $file_path = $file->storeAs('attachments/'.$sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
-                        $mime_type = $file->getClientMimeType();
-
-                        
-                        $title = $file_name;
-                        $attachmentable_type = $request->attachmentable_type;
-                        $attachmentable_id = $request->attachmentable_id;
-
-
-                        if ($mime_type != "application/pdf") {
-                            //START To Resize Images
-                            $resizeImage = Image::make($file);
-                            $resizeImage->resize(2000, null, function ($constraint) {
-                                $constraint->aspectRatio();
-                            });
-                            $path =  storage_path('app/public/attachments/'.$sub_directory . $request->attachmentable_id);
-                            if (!File::isDirectory($path)) {
-                                File::makeDirectory($path, 0777, true, true);
-                            }
-                            $resizeImage->save(storage_path('app/public/attachments/'.$sub_directory . $request->attachmentable_id . '/' . $file_name));
-                            //END To Resize Images
-
-                            //WE DONT WANT TO SAVE PDF IN DATABASE. BECAUSE WE ONLY CONVERT PDF TO IMAGES AND THEN SAVE THOSE IMAGES IN DATABASE.
-                            
-                            Attachment::create([
-                                'file_name' => $file_name,
-                                'title' => $title,
-                                'attachmentable_type' => $attachmentable_type,
-                                'attachmentable_id' => $attachmentable_id,
-                                'mime_type' => $mime_type,
-                            ]);
+                        Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Invoice")->forceDelete();
+                    } else if ($request->attachmentable_type == "App\Models\Setting") {
+                        $sub_directory = "settings/";
+                        Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Setting")->forceDelete();
+                        /////
+                        $resizeImage = Image::make($file);
+                        $resizeImage->resize(2000, null, function ($constraint) {
+                            $constraint->aspectRatio();
+                        });
+                        $path =  storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id);
+                        if (!File::isDirectory($path)) {
+                            File::makeDirectory($path, 0777, true, true);
                         }
+                        $resizeImage->save(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/' . $file_name));
+                        //END To Resize Images
 
-                        if ($mime_type == "application/pdf") {
-                            info("****************CONVERTING PDF TO IMAGES START**********************");
-                            /****************CONVERTING PDF TO IMAGES**********************/
-                            $attachmentable_id = $request->attachmentable_id;
-                            $pdf_file_name = "$file_name";
-                            $public_path =  public_path();
-                            $file_path = $public_path.'/storage/attachments/'.$attachmentable_id.'/'.$sub_directory.'original/'.$pdf_file_name;
-                            $output_path = $public_path.'/storage/attachments/'.$sub_directory.$attachmentable_id.'/';
+                        //WE DONT WANT TO SAVE PDF IN DATABASE. BECAUSE WE ONLY CONVERT PDF TO IMAGES AND THEN SAVE THOSE IMAGES IN DATABASE.
+                        $setting = Setting::find(1);
+                        $request->merge([
+                            'site_file_name' => $file_name
+                        ]);
+                        $setting->setMeta($request->except('attachmentable_type','attachmentable_id','files'));
+                        $setting->save();
+                        return response("Successfully Save File Name To Setting MetaTable", 200);
+                        // Attachment::create([
+                        //     'file_name' => $file_name,
+                        //     'title' => $title,
+                        //     'attachmentable_type' => $attachmentable_type,
+                        //     'attachmentable_id' => $attachmentable_id,
+                        //     'mime_type' => $mime_type,
+                        // ]);
+                    } else {
+                        $sub_directory = "";
+                    }
 
-                            try {
+                    $file_path = $file->storeAs('attachments/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
 
+                    if ($mime_type != "application/pdf") {
+                        //START To Resize Images
+                        $resizeImage = Image::make($file);
+                        $resizeImage->resize(2000, null, function ($constraint) {
+                            $constraint->aspectRatio();
+                        });
+                        $path =  storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id);
+                        if (!File::isDirectory($path)) {
+                            File::makeDirectory($path, 0777, true, true);
+                        }
+                        $resizeImage->save(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/' . $file_name));
+                        //END To Resize Images
+
+                        //WE DONT WANT TO SAVE PDF IN DATABASE. BECAUSE WE ONLY CONVERT PDF TO IMAGES AND THEN SAVE THOSE IMAGES IN DATABASE.
+
+                        Attachment::create([
+                            'file_name' => $file_name,
+                            'title' => $title,
+                            'attachmentable_type' => $attachmentable_type,
+                            'attachmentable_id' => $attachmentable_id,
+                            'mime_type' => $mime_type,
+                        ]);
+                    }
+
+                    if ($mime_type == "application/pdf") {
+                        info("****************CONVERTING PDF TO IMAGES START**********************");
+                        /****************CONVERTING PDF TO IMAGES**********************/
+                        $attachmentable_id = $request->attachmentable_id;
+                        $pdf_file_name = "$file_name";
+                        $public_path =  public_path();
+                        $file_path = $public_path . '/storage/attachments/' . $attachmentable_id . '/' . $sub_directory . 'original/' . $pdf_file_name;
+                        $output_path = $public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id . '/';
+
+                        try {
+
+                            $im = new Imagick();
+                            //$im->setResolution(300,300);
+                            $im->readimage($file_path);
+                            $num_page = $im->getnumberimages();
+                            $im->clear();
+                            $im->destroy();
+
+                            for ($page = 0; $page < $num_page; $page++) {
                                 $im = new Imagick();
-                                //$im->setResolution(300,300);
-                                $im->readimage($file_path);
-                                $num_page = $im->getnumberimages();
+
+                                info("converting page: $page");
+                                $im->setResolution(300, 300);
+
+                                $im->readimage($file_path . "[$page]");
+                                $im->setImageFormat('jpeg');
+                                $generated_jpg_filename = $page . " - " . $file_name . '.jpg';
+                                $im->setImageCompression(imagick::COMPRESSION_JPEG);
+                                $im->setImageCompressionQuality(100);
+                                $im->writeImage($output_path . "/" . $generated_jpg_filename);
+
+                                //START To Resize Images
+                                $resizeImage = Image::make($output_path . "/" . $generated_jpg_filename);
+                                $resizeImage->resize(2000, null, function ($constraint) {
+                                    $constraint->aspectRatio();
+                                });
+                                $path =  storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id);
+                                if (!File::isDirectory($path)) {
+                                    File::makeDirectory($path, 0777, true, true);
+                                }
+                                $resizeImage->save(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/' . $generated_jpg_filename));
+                                //END To Resize Images
+
+                                info("converting page: $page DONE");
                                 $im->clear();
                                 $im->destroy();
 
-                                for ($page = 0; $page < $num_page; $page++) {
-                                    $im = new Imagick();
-
-                                    info("converting page: $page");
-                                    $im->setResolution(300, 300);
-
-                                    $im->readimage($file_path . "[$page]");
-                                    $im->setImageFormat('jpeg');
-                                    $generated_jpg_filename = $page . " - " . $file_name . '.jpg';
-                                    $im->setImageCompression(imagick::COMPRESSION_JPEG);
-                                    $im->setImageCompressionQuality(100);
-                                    $im->writeImage($output_path . "/" . $generated_jpg_filename);
-
-                                    //START To Resize Images
-                                    $resizeImage = Image::make($output_path . "/" . $generated_jpg_filename);
-                                    $resizeImage->resize(2000, null, function ($constraint) {
-                                        $constraint->aspectRatio();
-                                    });
-                                    $path =  storage_path('app/public/attachments/'.$sub_directory.$request->attachmentable_id);
-                                    if (!File::isDirectory($path)) {
-                                        File::makeDirectory($path, 0777, true, true);
-                                    }
-                                    $resizeImage->save(storage_path('app/public/attachments/'.$sub_directory.$request->attachmentable_id . '/' . $generated_jpg_filename));
-                                    //END To Resize Images
-
-                                    info("converting page: $page DONE");
-                                    $im->clear();
-                                    $im->destroy();
-
-                                    $attachment = Attachment::updateOrCreate(['id' => $request->attachment_id], [ //attachment id
-                                        'title' => $generated_jpg_filename,
-                                        'file_name' => $generated_jpg_filename,
-                                        'mime_type' => 'jpg',
-                                        'attachmentable_id' => $request->attachmentable_id,
-                                        'attachmentable_type' => $request->attachmentable_type,
-                                        'display_order' => $page,
-                                    ]);
-                                }
-
-
-
-
-                                info("conversion done");
-                            } catch (\Exception $e) {
-                                info('Message: ' . $e->getMessage());
+                                $attachment = Attachment::updateOrCreate(['id' => $request->attachment_id], [ //attachment id
+                                    'title' => $generated_jpg_filename,
+                                    'file_name' => $generated_jpg_filename,
+                                    'mime_type' => 'jpg',
+                                    'attachmentable_id' => $request->attachmentable_id,
+                                    'attachmentable_type' => $request->attachmentable_type,
+                                    'display_order' => $page,
+                                ]);
                             }
-                            /****************CONVERTING PDF TO IMAGES**********************/
-                            info("****************CONVERTING PDF TO IMAGES END**********************");
+
+
+
+
+                            info("conversion done");
+                        } catch (\Exception $e) {
+                            info('Message: ' . $e->getMessage());
                         }
-                    
+                        /****************CONVERTING PDF TO IMAGES**********************/
+                        info("****************CONVERTING PDF TO IMAGES END**********************");
+                    }
                 }
 
                 return response()->json([
