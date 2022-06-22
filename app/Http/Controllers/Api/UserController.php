@@ -289,19 +289,20 @@ class UserController extends Controller
         }
     }
     //getting petitioners and Opponents
-    public function getClient(){
-        try{
-            $clients = User::role('client')->orderBy("name")->get();
-            $clientUsers = [];
-            foreach($clients as $client){
-                $clientUsers[] = [
-                    "label" => $client->name,
-                    "value" =>  $client->id,             
-                ];
-            } 
+    public function getClient(Request $request){
+        try{             
+            $clients = User::role('client')->where('name','like','%'.$request->serach_param.'%')->orderBy("name")->get();
+            // $clientUsers = [];
+            // foreach($clients as $client){
+            //     $clientUsers[] = [
+            //         "title"
+            //         "label" => $client->name,
+            //         "value" =>  $client->id,             
+            //     ];
+            // } 
             return response()->json(
                 [
-                    'clients' => $clientUsers,
+                    'clients' => $clients,
                     'message' => 'All Clients',
                     'code' => 200
                 ]

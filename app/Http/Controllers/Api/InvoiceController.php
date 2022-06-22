@@ -54,18 +54,17 @@ class InvoiceController extends Controller
                     'end_date' => date("Y-m-d", strtotime($request->start_to_end_date[1])) . ' 23:59:59',
                 ]);
 
-                if ($request->date_type=="created_at") {
+                if ($request->date_type == "created_at") {
                     $filter_col_name = "created_at";
-                }elseif($request->date_type=="due_date"){
+                } elseif ($request->date_type == "due_date") {
                     $filter_col_name = "due_date";
-                }elseif($request->date_type=="paid_date"){
+                } elseif ($request->date_type == "paid_date") {
                     $filter_col_name = "paid_date";
-                }else{
+                } else {
                     $filter_col_name = "created_at";
                 }
 
-                $query->whereBetween('invoices.'.$filter_col_name , [$request->start_date, $request->end_date]);
-
+                $query->whereBetween('invoices.' . $filter_col_name, [$request->start_date, $request->end_date]);
             }
             $today_date =  Carbon::today();
             if ($request->is_archive == "true") {
@@ -83,7 +82,7 @@ class InvoiceController extends Controller
             return response()->json(
                 [
                     'invoices' => $invoices,
-                    'invoices_stats'=>[
+                    'invoices_stats' => [
                         'total' => $invoices_total,
                         'total_paid' => $paid_invoices_total,
                         'total_due' => $due_invoices_total,
@@ -102,14 +101,14 @@ class InvoiceController extends Controller
     public function invoicesStats()
     {
         try {
-            
+
             $invoices_total = Invoice::sum('amount');
-            $paid_invoices_total = Invoice::where('invoice_status_id',3)->sum('paid_amount');
+            $paid_invoices_total = Invoice::where('invoice_status_id', 3)->sum('paid_amount');
             $due_invoices_total = $invoices_total - $paid_invoices_total;
 
             return response()->json(
                 [
-                    'invoices_stats'=>[
+                    'invoices_stats' => [
                         'total' => $invoices_total,
                         'total_paid' => $paid_invoices_total,
                         'total_due' => $due_invoices_total,
@@ -142,8 +141,9 @@ class InvoiceController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {         
         DB::beginTransaction();
+
         try {
 
             //replace due date in content 
@@ -154,6 +154,7 @@ class InvoiceController extends Controller
                     'due_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->due_date)->format('Y/m/d'),
                 ]);
             }
+            
             //'start_date' => \Carbon\Carbon::parse($request->due_date)->addSeconds(120)->format('M d, Y'), its format like (may 24, 2022)
             $request->merge([
                 'invoiceable_type' => "App\Models\User"
@@ -161,16 +162,19 @@ class InvoiceController extends Controller
 
             $request->merge([
                 'invoice_sender_id' => Auth::user()->id
+            ]);            
+            
+            $request->merge([
+                 'invoiceable_id' => $request->selectedClient['id']
             ]);
-
-
+             
             $invoice = Invoice::updateOrCreate(
                 ['id' => $request->id],
-                $request->only('due_date', 'invoiceable_id', 'invoiceable_type', 'invoice_no', 'amount', 'apply_tax', 'tax_percentage','invoice_status_id')
+                $request->only('due_date', 'invoiceable_id', 'invoiceable_type', 'invoice_no', 'amount', 'apply_tax', 'tax_percentage', 'invoice_status_id')
             );
             //replace total amount in content 
             //$content = str_replace("{total_amount}",$invoice->total(),$content);
-
+             
 
             if ($invoice) {
                 $invoice_meta_data = $request->invoice_meta;
@@ -179,7 +183,7 @@ class InvoiceController extends Controller
                     ['invoice_id' => $invoice->id],
                     $invoice_meta_data
                 );
-
+               
                 if ($request->edit_client && $request->selectedClient) {
                     $selected_user_data = $request->selectedClient;
                     User::where('id', $request->invoiceable_id)->update([
@@ -206,10 +210,19 @@ class InvoiceController extends Controller
 
             //now invoice and its tables enteries completed, we can send email.
             if ($request->sendEmail) {
-                $userInvoiceData = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status')->find($invoice->id); 
+                //cc email
+                $cc_emails = null;
+                if ($request->contact_persons_email && is_array($request->contact_persons_email)) {
+                    $cc_emails = $request->contact_persons_email;
+                } else if ($request->contact_persons_email) {
+                    $cc_emails = explode(',', $request->contact_persons_email);
+                }
+
+                $userInvoiceData = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status')->find($invoice->id);
                 $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));
                 $emailService = new EmailService;
-                $emailService->sendInvoiceEmail($invoice, $pdf);
+                $d = $emailService->sendInvoiceEmail($invoice,$cc_emails, $pdf);
+                return response($d, 403);
                 $invoice->update(["invoice_status_id" => 2]); //2 is the invoice status id
             }
 
@@ -219,7 +232,7 @@ class InvoiceController extends Controller
                     'code' => 200
                 ]
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollback();
             return response([
                 "error" => $e->getMessage()
@@ -237,10 +250,10 @@ class InvoiceController extends Controller
     {
         try {
             $invoice = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status', 'attachment')->find($id);
-
+                 
             return response()->json(
                 [
-                    'invoice' => $invoice,
+                    'invoice' => $invoice,                     
                     'today_date' => \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', Carbon::today())->format('d/m/Y'),
                     'message' => 'Invoice Details',
                     'code' => 200

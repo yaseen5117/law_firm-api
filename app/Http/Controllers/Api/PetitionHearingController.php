@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\PetitionHearing;
 use Illuminate\Http\Request;
 
+use function GuzzleHttp\Promise\all;
+
 class PetitionHearingController extends Controller
 {
     /**
@@ -17,21 +19,21 @@ class PetitionHearingController extends Controller
     {
         $events = [];
         $petitionHearings = PetitionHearing::all();
-            foreach($petitionHearings as $petitionHearing){
-                $events[] = [
-                    'id' => @$petitionHearing->id,
-                    'title' => $petitionHearing->petition->petition_standard_title,
-                    'start' => $petitionHearing->hearing_date,   
-                    'hearing_date' => $petitionHearing->hearing_date,   
-                    'hearing_summary' => $petitionHearing->hearing_summary,   
-                    'petition_id' => $petitionHearing->petition_id,   
-                    
-                ];
-            }
+        foreach ($petitionHearings as $petitionHearing) {
+            $events[] = [
+                'id' => @$petitionHearing->id,
+                'title' => $petitionHearing->petition->petition_standard_title,
+                'start' => $petitionHearing->hearing_date,
+                'hearing_date' => $petitionHearing->hearing_date,
+                'hearing_summary' => $petitionHearing->hearing_summary,
+                'petition_id' => $petitionHearing->petition_id,
+
+            ];
+        }
         return response([
             'events' => $events,
             'server_time' => date("d/M/Y h:i A"),
-        ]);  
+        ]);
     }
 
     /**
@@ -51,12 +53,18 @@ class PetitionHearingController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        //return $request->all();
+    {         
         $request->merge([
-            'hearing_date' => date("Y-m-d",strtotime($request->hearing_date)),
+            'hearing_date' => date("Y-m-d", strtotime($request->hearing_date)),
         ]);
-        PetitionHearing::updateOrCreate(['id'=>$request->id],$request->all());
+
+        if(is_array($request->petition)){
+            $request->merge([
+                'petition_id' => $request->petition['id'],
+            ]);
+        }
+        //return response($request->all(), 403);
+        PetitionHearing::updateOrCreate(['id' => $request->id], $request->except('petition', 'editMode'));
     }
 
     /**
@@ -101,20 +109,19 @@ class PetitionHearingController extends Controller
      */
     public function destroy($id)
     {
-        try {             
-            $petitionHearing = PetitionHearing::find($id); 
-                    
-            if($petitionHearing){
+        try {
+            $petitionHearing = PetitionHearing::find($id);
+
+            if ($petitionHearing) {
                 $petitionHearing->delete();
-                return response($petitionHearing,200);
-            }else{
-                return response('Record Not Found',404);
+                return response($petitionHearing, 200);
+            } else {
+                return response('Record Not Found', 404);
             }
-            
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 }

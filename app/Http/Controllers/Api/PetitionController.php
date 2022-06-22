@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\TestEmail;
 use PDF;
 
+use function GuzzleHttp\Promise\all;
+
 class PetitionController extends Controller
 {
     /**
@@ -28,7 +30,8 @@ class PetitionController extends Controller
      */
     public function index(Request $request)
     {        
-        try {
+        try {         
+            //return $request->all();   
             $query = Petition::select("petitions.*")->withRelationsIndex();
 
             if ($request->archived == "true") {
@@ -66,7 +69,10 @@ class PetitionController extends Controller
 
             //$query->orderBy('display_order');
             $petitions = [];
-            if($request->force_all_records){                
+            if($request->force_all_records){                 
+                if (!empty($request->query_from_calendar_page)) {
+                    $query->where('case_no', 'like', '%' . $request->query_from_calendar_page . '%')->orWhere('name', 'like', '%' . $request->query_from_calendar_page . '%');
+                }
                 $petitions = $query->groupBy('petitions.id')->orderby('id','desc')->get();
             }else{                
                 $petitions = $query->groupBy('petitions.id')->orderby('id','desc')->paginate(8);
