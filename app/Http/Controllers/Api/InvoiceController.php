@@ -76,6 +76,12 @@ class InvoiceController extends Controller
             $paid_invoices_total = $query->sum('amount');
             $due_invoices_total = $invoices_total - $paid_invoices_total;
 
+
+            if ($request->user()->hasRole('client')) {
+                $query->where('invoiceable_id', $request->user()->id);
+            }
+
+            
             $query->groupBy('invoices.id')->orderby('invoices.id', 'desc');
             $invoices = $query->paginate(10);
 
