@@ -28,6 +28,10 @@ class PetitionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        $this->middleware('role:admin')->except(['index','show','toggleArchivedStatus']);
+    }
     public function index(Request $request)
     {        
         try {         

@@ -17,6 +17,10 @@ class PetitionOrderSheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        $this->middleware('role:admin')->only(['store','destroy','getOrderSheetTypes']);
+    }
     public function index(Request $request)
     {
         try {

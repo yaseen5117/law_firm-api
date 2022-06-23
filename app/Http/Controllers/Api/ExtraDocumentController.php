@@ -13,6 +13,10 @@ class ExtraDocumentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        $this->middleware('role:admin')->only(['store','destroy']);
+    }
     public function index()
     {
         //

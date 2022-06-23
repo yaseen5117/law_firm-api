@@ -7,7 +7,7 @@ use App\Models\ContactRequest;
 use Illuminate\Http\Request;
 
 class FrontEndController extends Controller
-{
+{   
     public function contactRequest(Request $request)
     {
         try {

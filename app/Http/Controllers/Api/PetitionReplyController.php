@@ -15,6 +15,10 @@ class PetitionReplyController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        $this->middleware('role:admin')->except(['replyDetail','show']);
+    }
     public function index()
     {
         //

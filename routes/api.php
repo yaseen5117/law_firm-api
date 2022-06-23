@@ -15,98 +15,101 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('test_convert', 'Api\PetitionController@test_convert');
 
-Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function () {
-
-    Route::post('petitions/toggle_archived', 'PetitionController@toggleArchivedStatus');
-    Route::resource('petitions', 'PetitionController');
+Route::group(['middleware' => 'auth:sanctum', 'role:admin', 'namespace' => 'Api'], function () {
     Route::resource('users', 'UserController');
     Route::resource('petition_hearing', 'PetitionHearingController');
     Route::get('invoices/stats', 'InvoiceController@invoicesStats');
     Route::resource('invoices', 'InvoiceController');
-    //Route::post('invoices/mark_paid', 'InvoiceController@mark_paid'); 
-    Route::get('download_pdf/{id}', 'InvoiceController@downloadInvoicePdf');
+
     Route::delete('delete_invoice_expense/{invoice_expense_id}', 'InvoiceController@deleteInvoiceExpense');
     Route::get('invoice_statuses', 'InvoiceController@invoice_statuses');
     Route::get('invoice_templates', 'InvoiceController@invoice_templates');
     Route::post('invoice/mark_as_paid', 'InvoiceController@markAsPaid');
     Route::resource('contracts_and_agreements', 'ContractsAndAgreementController');
     Route::resource('links', 'LinkController');
+
     Route::get('contract_categories', 'ContractsAndAgreementController@contractCategory');
     Route::resource('settings', 'SettingController');
-    Route::resource('module_types', 'PetitionModuleTypeController');
-    Route::get('get_order_sheet_types', 'PetitionOrderSheetController@getOrderSheetTypes');
+     
     Route::get('get_naqal_form_types', 'NaqalFormController@getNaqalFormTypes');
     Route::get('get_talbana_types', 'PetitionTalbanaController@getTalbanaTypes');
-    Route::get('get_synopsis_types', 'PetitionSynopsisController@getSynopsisTypes');    
-    //Route::post('delete_additional_email','SettingController@deleteAdditionalEmail');
-    
+    Route::get('get_synopsis_types', 'PetitionSynopsisController@getSynopsisTypes');
+
     Route::get('clients', 'UserController@getClient');
     Route::get('client_users', 'UserController@getClientUsers');
     Route::get('lawyers', 'UserController@getLawyer');
-    Route::post('delete_folder', 'AttachmentController@findOriginalFolder');
 
-
-    //contact request
-    Route::post('contact_requests', 'FrontEndController@contactRequest');
+    //contact request    
     Route::get('get_contact_requests', 'FrontEndController@getContactRequest');
+
     //opinions
     Route::resource('opinions', 'OpinionController');
-    
 
     Route::post('delete_selected', 'AttachmentController@deleteSelected');
-
+    Route::resource('module_types', 'PetitionModuleTypeController');
     Route::resource('petition_types', 'PetitionTypeController');
     Route::resource('courts', 'CourtController');
 
-    Route::resource('petition_replies', 'PetitionReplyController');
+    //START route for General Case Law
+    Route::resource('general_case_laws', 'GeneralCaseLawController');
+    //END route for General Case Law
 
-   
+    Route::resource('attachments', 'AttachmentController');
+});
+
+Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function () {
+
+    Route::post('petitions/toggle_archived', 'PetitionController@toggleArchivedStatus');
+    Route::resource('petitions', 'PetitionController'); //middleware added in controller __construct()
+    Route::resource('petition_replies', 'PetitionReplyController'); //middleware added in controller __construct()
+
+    Route::resource('petition_reply_parents', 'PetitionReplyParentController'); //middleware added in controller __construct()
+
+    //Route::post('invoices/mark_paid', 'InvoiceController@mark_paid'); 
+    Route::get('download_pdf/{id}', 'InvoiceController@downloadInvoicePdf');
+ 
+    //Route::post('delete_additional_email','SettingController@deleteAdditionalEmail');
+
+    Route::post('delete_folder', 'AttachmentController@findOriginalFolder');
+
     Route::POST('petition_order_sheets/by_petition', 'PetitionOrderSheetController@showOrderSheetByPetition');
     //START route for Talbana forms
-    Route::resource('petition_talbana', 'PetitionTalbanaController');
+    Route::resource('petition_talbana', 'PetitionTalbanaController'); //middleware added in controller __construct()
     Route::POST('petition_talbana/by_petition', 'PetitionTalbanaController@showTalbanaByPetition');
     //END route for Talbana forms
 
     //START route for Petition Naqal Form
-    Route::resource('petition_naqal_forms', 'NaqalFormController');
+    Route::resource('petition_naqal_forms', 'NaqalFormController'); //middleware added in controller __construct()
     Route::POST('petition_naqal_forms/by_petition', 'NaqalFormController@showNaqalFormByPetition');
     //END route for Petition Naqal Form
 
-    
-    Route::resource('petition_reply_parents', 'PetitionReplyParentController');
-
     //START route for standard page Oral Arguments
-    Route::resource('oral_arguments', 'OralArgumentsController');    
+    Route::resource('oral_arguments', 'OralArgumentsController'); //middleware added in controller __construct()
     //END route for standard page Oral Arguments
 
     //START route for standard page Case Law
-    Route::resource('case_laws', 'CaseLawController');    
+    Route::resource('case_laws', 'CaseLawController'); //middleware added in controller __construct()
     //END route for standard page Case Law
 
     //START route for standard page Extra Document
-    Route::resource('extra_documents', 'ExtraDocumentController');    
+    Route::resource('extra_documents', 'ExtraDocumentController'); //middleware added in controller __construct()
     //END route for standard page Extra Document
 
     //START route for standard page Judgement
-    Route::resource('judgements', 'JudgementController');    
+    Route::resource('judgements', 'JudgementController'); //middleware added in controller __construct()
     //END route for standard page Judgement
 
     //START route for Synopses forms
-    Route::resource('petition_synopsis', 'PetitionSynopsisController');
+    Route::resource('petition_synopsis', 'PetitionSynopsisController'); //middleware added in controller __construct()
     Route::POST('petition_synopsis/by_petition', 'PetitionSynopsisController@showSynopsisByPetition');
     //END route for Synopses forms
-
-    //START route for Synopses forms
-    Route::resource('general_case_laws', 'GeneralCaseLawController');
-    //END route for Synopses forms
-
-    //Route::resource('petition_indexes', 'PetitionIndexController');
-    //Route::resource('petitions', 'PetitionController');
-
-    Route::resource('petitions_index', 'PetitionIndexController');
-    Route::resource('attachments', 'AttachmentController');
-});
  
+    Route::resource('petitions_index', 'PetitionIndexController'); //middleware added in controller __construct()
+});
+
+//contact request to save
+Route::post('contact_requests', 'Api\FrontEndController@contactRequest'); //middleware added in controller __construct() for this route only
+
 Route::post('delete_contact_request/{id}', 'Api\FrontEndController@deleteContactRequest');
 Route::post('roles', 'Api\UserController@getRoles');
 Route::post('module_index_details_judgements/{id}', 'Api\JudgementController@judgementDetail');
@@ -114,7 +117,7 @@ Route::post('module_index_details_extra_documents/{id}', 'Api\ExtraDocumentContr
 Route::post('module_index_details_case_laws/{id}', 'Api\CaseLawController@caseLawDetail');
 
 Route::post('module_index_details_oral_arguments/{id}', 'Api\OralArgumentsController@oralArgumentDetail');
-Route::resource('petition_order_sheets', 'Api\PetitionOrderSheetController');
+Route::resource('petition_order_sheets', 'Api\PetitionOrderSheetController'); //middleware added in controller __construct()
 Route::post('petition_reply_details/{id}', 'Api\PetitionReplyController@replyDetail');
 // Public routes
 Route::post('register', 'AuthController@register');
