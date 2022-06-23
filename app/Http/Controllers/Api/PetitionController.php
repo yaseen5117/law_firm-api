@@ -18,6 +18,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TestEmail;
 use PDF;
+use Auth;
 
 use function GuzzleHttp\Promise\all;
 
@@ -94,6 +95,7 @@ class PetitionController extends Controller
                     'petitions' => $petitions,
                     'events' => $events,
                     'message' => 'Petitions',
+                    'user' => Auth::user()->email,
                     'archived' => $request->archived,
                     'code' => 200
                 ]
