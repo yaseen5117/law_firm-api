@@ -16,24 +16,24 @@ class PetitionSynopsisController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->only(['store','destroy']);
+        $this->middleware('role:admin')->only(['store', 'destroy']);
     }
     public function index(Request $request)
     {
         try {
-            $petitionSynopsis = PetitionSynopsis::with('petition','attachments')->where('petition_id',$request->petition_id)->get();
-             
+            $petitionSynopsis = PetitionSynopsis::with('petition', 'attachments')->where('petition_id', $request->petition_id)->get();
+
             return response()->json(
                 [
                     'records' => $petitionSynopsis,
                     'message' => 'Successs',
                     'code' => 200
                 ]
-            );            
+            );
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -55,18 +55,18 @@ class PetitionSynopsisController extends Controller
      */
     public function store(Request $request)
     {
-        try {       
-            if($request->synopsis_date){    
+        try {
+            if ($request->synopsis_date) {
                 $request->merge([
-                    'synopsis_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->synopsis_date)->format('Y/m/d'), 
+                    'synopsis_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->synopsis_date)->format('Y/m/d'),
                 ]);
             }
-            if(!$request->synopsis_type_id){
+            if (!$request->synopsis_type_id) {
                 $request->merge([
-                    'synopsis_type_id' => 1, 
+                    'synopsis_type_id' => 1,
                 ]);
             }
-            $petitionSynopsis = PetitionSynopsis::updateOrCreate(['id'=>$request->id],$request->except('editMode','petition','attachments'));
+            $petitionSynopsis = PetitionSynopsis::updateOrCreate(['id' => $request->id], $request->except('editMode', 'petition', 'attachments'));
 
             return response()->json(
                 [
@@ -91,9 +91,9 @@ class PetitionSynopsisController extends Controller
     public function show($id)
     {
         try {
-            
-            $petitionSynopsis = PetitionSynopsis::with('petition','attachments')->whereId($id)->first();
-            
+
+            $petitionSynopsis = PetitionSynopsis::with('petition', 'attachments')->whereId($id)->first();
+
 
             return response()->json(
                 [
@@ -101,40 +101,40 @@ class PetitionSynopsisController extends Controller
                     'message' => 'Successs',
                     'code' => 200
                 ]
-            );            
+            );
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
     public function showSynopsisByPetition(Request $request)
     {
         try {
-            
-            $this->validate($request,[
-                'petition_id'=>'required'
+
+            $this->validate($request, [
+                'petition_id' => 'required'
             ]);
 
-             $query = PetitionSynopsis::with('petition','attachments')->wherePetitionId($request->petition_id);
-            
-            if ($request->id>0) {
-                $query->whereId($request->id);            
+            $query = PetitionSynopsis::with('petition', 'attachments')->wherePetitionId($request->petition_id);
+
+            if ($request->id > 0) {
+                $query->whereId($request->id);
             }
             $petitionSynopsis = $query->first();
-            
+
             return response()->json(
                 [
                     'record' => $petitionSynopsis,
                     'message' => 'show Synopsis By Petition Successs',
                     'code' => 200
                 ]
-            );            
+            );
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -187,24 +187,24 @@ class PetitionSynopsisController extends Controller
         }
     }
     public function getSynopsisTypes(Request $request)
-    {         
-        try {               
+    {
+        try {
             $query = PetitionModuleType::query();
-            if(!empty($request->module_id)){                  
+            if (!empty($request->module_id)) {
                 $query->where('module_id', $request->module_id);
-            }   
-            $synopsisTypes = $query->orderby('display_order','desc')->get();
+            }
+            $synopsisTypes = $query->orderby('display_order', 'desc')->get();
             return response()->json(
                 [
                     'synopsisTypes' => $synopsisTypes,
                     'message' => 'Successs',
                     'code' => 200
                 ]
-            );            
+            );
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 }

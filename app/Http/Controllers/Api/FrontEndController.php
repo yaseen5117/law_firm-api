@@ -7,7 +7,7 @@ use App\Models\ContactRequest;
 use Illuminate\Http\Request;
 
 class FrontEndController extends Controller
-{   
+{
     public function contactRequest(Request $request)
     {
         try {
@@ -49,21 +49,20 @@ class FrontEndController extends Controller
         }
     }
     public function deleteContactRequest($id)
-    {         
-        try {             
-            $record = ContactRequest::find($id); 
-            
-            if($record){
+    {
+        try {
+            $record = ContactRequest::find($id);
+
+            if ($record) {
                 $record->delete();
-                return response($record,200);
-            }else{
-                return response('Data Not Found',404);
+                return response($record, 200);
+            } else {
+                return response('Data Not Found', 404);
             }
-            
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 }

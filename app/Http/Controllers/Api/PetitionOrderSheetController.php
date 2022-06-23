@@ -19,24 +19,24 @@ class PetitionOrderSheetController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->only(['store','destroy','getOrderSheetTypes']);
+        $this->middleware('role:admin')->only(['store', 'destroy', 'getOrderSheetTypes']);
     }
     public function index(Request $request)
     {
         try {
-            $petitionOrderSheets = PetitonOrderSheet::with('petition','attachments')->where('petition_id',$request->petition_id)->orderby('order_sheet_date','desc')->get();
-             
+            $petitionOrderSheets = PetitonOrderSheet::with('petition', 'attachments')->where('petition_id', $request->petition_id)->orderby('order_sheet_date', 'desc')->get();
+
             return response()->json(
                 [
                     'records' => $petitionOrderSheets,
                     'message' => 'Successs',
                     'code' => 200
                 ]
-            );            
+            );
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -58,20 +58,20 @@ class PetitionOrderSheetController extends Controller
      */
     public function store(Request $request)
     {
-        try {     
-            
-            if($request->order_sheet_date){ 
+        try {
+
+            if ($request->order_sheet_date) {
                 $request->merge([
-                    'order_sheet_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->order_sheet_date)->format('Y/m/d'),    
+                    'order_sheet_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->order_sheet_date)->format('Y/m/d'),
                 ]);
             }
-            if(!$request->order_sheet_type_id){
+            if (!$request->order_sheet_type_id) {
                 $request->merge([
-                    'order_sheet_type_id' => 1, 
+                    'order_sheet_type_id' => 1,
                 ]);
             }
             //return response($request->order_sheet_date,404);
-            $petitionOrderSheet = PetitonOrderSheet::updateOrCreate(['id'=>$request->id],$request->except('editMode','petition','attachments','order_sheet_types'));
+            $petitionOrderSheet = PetitonOrderSheet::updateOrCreate(['id' => $request->id], $request->except('editMode', 'petition', 'attachments', 'order_sheet_types'));
 
             return response()->json(
                 [
@@ -96,9 +96,9 @@ class PetitionOrderSheetController extends Controller
     public function show($id)
     {
         try {
-            
-            $petitionOrderSheet = PetitonOrderSheet::with('petition','attachments','order_sheet_types')->whereId($id)->first();
-            
+
+            $petitionOrderSheet = PetitonOrderSheet::with('petition', 'attachments', 'order_sheet_types')->whereId($id)->first();
+
 
             return response()->json(
                 [
@@ -106,40 +106,40 @@ class PetitionOrderSheetController extends Controller
                     'message' => 'Successs',
                     'code' => 200
                 ]
-            );            
+            );
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
     public function showOrderSheetByPetition(Request $request)
     {
         try {
-            
-            $this->validate($request,[
-                'petition_id'=>'required'
+
+            $this->validate($request, [
+                'petition_id' => 'required'
             ]);
 
-             $query = PetitonOrderSheet::with('petition','attachments')->wherePetitionId($request->petition_id);
-            
-            if ($request->id>0) {
-                $query->whereId($request->id);            
+            $query = PetitonOrderSheet::with('petition', 'attachments')->wherePetitionId($request->petition_id);
+
+            if ($request->id > 0) {
+                $query->whereId($request->id);
             }
-            $petitionOrderSheet = $query->orderBy('order_sheet_date','desc')->first();
-            
+            $petitionOrderSheet = $query->orderBy('order_sheet_date', 'desc')->first();
+
             return response()->json(
                 [
                     'record' => $petitionOrderSheet,
                     'message' => 'showOrderSheetByPetition Successs',
                     'code' => 200
                 ]
-            );            
+            );
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -190,14 +190,14 @@ class PetitionOrderSheetController extends Controller
                 "error" => $e->getMessage()
             ], 500);
         }
-    }    
+    }
     public function getOrderSheetTypes(Request $request)
-    {         
-        try {               
+    {
+        try {
             $query = PetitionModuleType::query();
-            if(!empty($request->module_id)){                  
+            if (!empty($request->module_id)) {
                 $query->where('module_id', $request->module_id);
-            }   
+            }
             $orderSheetTypes = $query->orderby('title')->get();
             return response()->json(
                 [
@@ -205,11 +205,11 @@ class PetitionOrderSheetController extends Controller
                     'message' => 'Successs',
                     'code' => 200
                 ]
-            );            
+            );
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 }

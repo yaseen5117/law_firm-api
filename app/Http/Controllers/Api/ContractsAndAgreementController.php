@@ -17,7 +17,7 @@ class ContractsAndAgreementController extends Controller
      */
     public function index(Request $request)
     {
-        $query = ContractsAndAgreement::query()->with('attachment','category');
+        $query = ContractsAndAgreement::query()->with('attachment', 'category');
         if (!empty($request->title)) {
             $query->where('title', 'like', '%' . $request->title . '%');
         }
@@ -66,13 +66,14 @@ class ContractsAndAgreementController extends Controller
                     $attachmentable_id = $contract_and_agreement->id;
                     Attachment::updateOrCreate(
                         ['attachmentable_id' => $request->id],
-                    [
-                        'file_name' => $file_name,
-                        'title' => $title,
-                        'attachmentable_type' => $attachmentable_type,
-                        'attachmentable_id' => $attachmentable_id,
-                        'mime_type' => $mime_type,
-                    ]);
+                        [
+                            'file_name' => $file_name,
+                            'title' => $title,
+                            'attachmentable_type' => $attachmentable_type,
+                            'attachmentable_id' => $attachmentable_id,
+                            'mime_type' => $mime_type,
+                        ]
+                    );
                 }
             }
             return response()->json(
@@ -97,7 +98,7 @@ class ContractsAndAgreementController extends Controller
     public function show($id)
     {
         try {
-            $contract_and_agreement = ContractsAndAgreement::with('attachment','category')->find($id);
+            $contract_and_agreement = ContractsAndAgreement::with('attachment', 'category')->find($id);
 
             return response()->json(
                 [
@@ -158,14 +159,15 @@ class ContractsAndAgreementController extends Controller
             ], 500);
         }
     }
-    public function contractCategory(){
+    public function contractCategory()
+    {
         try {
-             $categories = ContractCategory::all();
-             return response([
+            $categories = ContractCategory::all();
+            return response([
                 'categories' => $categories,
                 'message' => 'all contract categories',
                 'code' => 200
-             ]);
+            ]);
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()

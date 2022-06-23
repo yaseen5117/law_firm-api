@@ -30,7 +30,7 @@ Route::group(['middleware' => 'auth:sanctum', 'role:admin', 'namespace' => 'Api'
 
     Route::get('contract_categories', 'ContractsAndAgreementController@contractCategory');
     Route::resource('settings', 'SettingController');
-     
+
     Route::get('get_naqal_form_types', 'NaqalFormController@getNaqalFormTypes');
     Route::get('get_talbana_types', 'PetitionTalbanaController@getTalbanaTypes');
     Route::get('get_synopsis_types', 'PetitionSynopsisController@getSynopsisTypes');
@@ -67,7 +67,7 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
 
     //Route::post('invoices/mark_paid', 'InvoiceController@mark_paid'); 
     Route::get('download_pdf/{id}', 'InvoiceController@downloadInvoicePdf');
- 
+
     //Route::post('delete_additional_email','SettingController@deleteAdditionalEmail');
 
     Route::post('delete_folder', 'AttachmentController@findOriginalFolder');
@@ -103,7 +103,7 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::resource('petition_synopsis', 'PetitionSynopsisController'); //middleware added in controller __construct()
     Route::POST('petition_synopsis/by_petition', 'PetitionSynopsisController@showSynopsisByPetition');
     //END route for Synopses forms
- 
+
     Route::resource('petitions_index', 'PetitionIndexController'); //middleware added in controller __construct()
 });
 

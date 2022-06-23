@@ -16,12 +16,11 @@ class OralArgumentsController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->only(['store','destroy']);
+        $this->middleware('role:admin')->only(['store', 'destroy']);
     }
-    
+
     public function index()
     {
-        
     }
 
     /**
@@ -41,14 +40,14 @@ class OralArgumentsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {         
-        try {  
-            if($request->date){  
+    {
+        try {
+            if ($request->date) {
                 $request->merge([
-                    'date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->date)->format('Y/m/d'),   
+                    'date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->date)->format('Y/m/d'),
                 ]);
             }
-            OralArgument::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+            OralArgument::updateOrCreate(['id' => $request->id], $request->except('editMode'));
 
             return response()->json(
                 [
@@ -73,27 +72,26 @@ class OralArgumentsController extends Controller
     {
         try {
 
-            $oralArguments = OralArgument::where('petition_id',$id)->get();            
+            $oralArguments = OralArgument::where('petition_id', $id)->get();
             //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();
-             
+
             return response()->json(
-                [           
-                    'index_annexure_data' => $oralArguments,              
+                [
+                    'index_annexure_data' => $oralArguments,
                     'oral_arguments' => $oralArguments,
                     'index_data' => $oralArguments,
                     'compactInlineView' => true,
                     'ShowOnOralArgument' => true,
-                    'model_type' => "App\Models\OralArgument",     
+                    'model_type' => "App\Models\OralArgument",
                     'message' => 'Success',
                     'page_title' => "Oral Arguments",
                     'code' => 200
                 ]
             );
-            
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -128,46 +126,44 @@ class OralArgumentsController extends Controller
      */
     public function destroy($id)
     {
-        try {             
-            $record = OralArgument::find($id); 
-                    
-            if($record){
+        try {
+            $record = OralArgument::find($id);
+
+            if ($record) {
                 $record->delete();
-                return response($record,200);
-            }else{
-                return response('Data Not Found',404);
+                return response($record, 200);
+            } else {
+                return response('Data Not Found', 404);
             }
-            
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
     public function oralArgumentDetail($id)
     {
         try {
 
-            $oralArguments = OralArgument::with('petition','attachments')->whereId($id)->first();
+            $oralArguments = OralArgument::with('petition', 'attachments')->whereId($id)->first();
             //$petition = Petition::withRelations()->whereId($oralArguments->petition_id)->first();
-    
+
             //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();
-             
+
             return response()->json(
-                [                   
+                [
                     'index_detail_data' => $oralArguments,
-                    'model_type' => "App\Models\OralArgument",                    
-                    'petition' => $oralArguments->petition,                    
+                    'model_type' => "App\Models\OralArgument",
+                    'petition' => $oralArguments->petition,
                     'message' => 'Success',
                     'page_title' => "Oral Arguments Detail",
                     'code' => 200
                 ]
             );
-            
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 }

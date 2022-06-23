@@ -16,31 +16,30 @@ class OpinionController extends Controller
     public function index(Request $request)
     {
         try {
-         
-        $query = Opinion::with('user');
-         
-        if (!empty($request->client_id)) {
-            $query->where('client_id',$request->client_id);
+
+            $query = Opinion::with('user');
+
+            if (!empty($request->client_id)) {
+                $query->where('client_id', $request->client_id);
+            }
+            if (!empty($request->reference_no)) {
+                $query->where('reference_no', 'like', '%' . $request->reference_no . '%');
+            }
+            if (!empty($request->subject)) {
+                $query->where('subject', 'like', '%' . $request->subject . '%');
+            }
+
+            $opinions = $query->get();
+            return response([
+                'opinions' => $opinions,
+                'message' => 'All Opinions',
+                'status' => 200
+            ]);
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
         }
-        if (!empty($request->reference_no)) {
-            $query->where('reference_no','like','%'.$request->reference_no.'%');
-        }
-        if (!empty($request->subject)) {
-            $query->where('subject','like','%'.$request->subject.'%');            
-        }
-        
-        $opinions = $query->get(); 
-        return response([
-            'opinions' => $opinions,
-            'message' => 'All Opinions',
-            'status' => 200
-        ]);
-    }
-    catch (\Exception $e) {
-        return response([
-            "error" => $e->getMessage()
-        ], 500);
-    }
     }
 
     /**
@@ -60,14 +59,14 @@ class OpinionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {         
-        try { 
-            if($request->issuance_date){ 
+    {
+        try {
+            if ($request->issuance_date) {
                 $request->merge([
-                    'issuance_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->issuance_date)->format('Y/m/d'),   
+                    'issuance_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->issuance_date)->format('Y/m/d'),
                 ]);
             }
-            Opinion::updateOrCreate(['id'=>$request->id],$request->except('editMode','user'));
+            Opinion::updateOrCreate(['id' => $request->id], $request->except('editMode', 'user'));
 
             return response()->json(
                 [
@@ -124,20 +123,19 @@ class OpinionController extends Controller
      */
     public function destroy($id)
     {
-        try {             
-            $record = Opinion::find($id); 
-                    
-            if($record){
+        try {
+            $record = Opinion::find($id);
+
+            if ($record) {
                 $record->delete();
-                return response($record,200);
-            }else{
-                return response('Data Not Found',404);
+                return response($record, 200);
+            } else {
+                return response('Data Not Found', 404);
             }
-            
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 }

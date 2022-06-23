@@ -16,25 +16,25 @@ class PetitionTalbanaController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->only(['store','destroy']);
+        $this->middleware('role:admin')->only(['store', 'destroy']);
     }
-    
+
     public function index(Request $request)
     {
         try {
-            $petitionTalbana = PetitionTalbana::with('petition','attachments')->where('petition_id',$request->petition_id)->get();
-             
+            $petitionTalbana = PetitionTalbana::with('petition', 'attachments')->where('petition_id', $request->petition_id)->get();
+
             return response()->json(
                 [
                     'records' => $petitionTalbana,
                     'message' => 'Successs',
                     'code' => 200
                 ]
-            );            
+            );
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -56,18 +56,18 @@ class PetitionTalbanaController extends Controller
      */
     public function store(Request $request)
     {
-        try {   
-            if($request->talbana_date){      
+        try {
+            if ($request->talbana_date) {
                 $request->merge([
-                    'talbana_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->talbana_date)->format('Y/m/d'),    
+                    'talbana_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->talbana_date)->format('Y/m/d'),
                 ]);
             }
-            if(!$request->talbana_type_id){
+            if (!$request->talbana_type_id) {
                 $request->merge([
-                    'talbana_type_id' => 1, 
+                    'talbana_type_id' => 1,
                 ]);
             }
-            $petitionTalbana = PetitionTalbana::updateOrCreate(['id'=>$request->id],$request->except('editMode','petition','attachments'));
+            $petitionTalbana = PetitionTalbana::updateOrCreate(['id' => $request->id], $request->except('editMode', 'petition', 'attachments'));
 
             return response()->json(
                 [
@@ -92,9 +92,9 @@ class PetitionTalbanaController extends Controller
     public function show($id)
     {
         try {
-            
-            $petitionTalbana = PetitionTalbana::with('petition','attachments')->whereId($id)->first();
-            
+
+            $petitionTalbana = PetitionTalbana::with('petition', 'attachments')->whereId($id)->first();
+
 
             return response()->json(
                 [
@@ -102,40 +102,40 @@ class PetitionTalbanaController extends Controller
                     'message' => 'Successs',
                     'code' => 200
                 ]
-            );            
+            );
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
     public function showTalbanaByPetition(Request $request)
     {
         try {
-            
-            $this->validate($request,[
-                'petition_id'=>'required'
+
+            $this->validate($request, [
+                'petition_id' => 'required'
             ]);
 
-             $query = PetitionTalbana::with('petition','attachments')->wherePetitionId($request->petition_id);
-            
-            if ($request->id>0) {
-                $query->whereId($request->id);            
+            $query = PetitionTalbana::with('petition', 'attachments')->wherePetitionId($request->petition_id);
+
+            if ($request->id > 0) {
+                $query->whereId($request->id);
             }
             $petitionTalbana = $query->first();
-            
+
             return response()->json(
                 [
                     'record' => $petitionTalbana,
                     'message' => 'showTalbanaByPetition Successs',
                     'code' => 200
                 ]
-            );            
+            );
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -188,24 +188,24 @@ class PetitionTalbanaController extends Controller
         }
     }
     public function getTalbanaTypes(Request $request)
-    {         
-        try {               
+    {
+        try {
             $query = PetitionModuleType::query();
-            if(!empty($request->module_id)){                  
+            if (!empty($request->module_id)) {
                 $query->where('module_id', $request->module_id);
-            }   
-            $talbanaTypes = $query->orderby('display_order','desc')->get();
+            }
+            $talbanaTypes = $query->orderby('display_order', 'desc')->get();
             return response()->json(
                 [
                     'talbanaTypes' => $talbanaTypes,
                     'message' => 'Successs',
                     'code' => 200
                 ]
-            );            
+            );
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 }

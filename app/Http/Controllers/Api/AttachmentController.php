@@ -82,7 +82,7 @@ class AttachmentController extends Controller
                         $request->merge([
                             'site_file_name' => $file_name
                         ]);
-                        $setting->setMeta($request->except('attachmentable_type','attachmentable_id','files'));
+                        $setting->setMeta($request->except('attachmentable_type', 'attachmentable_id', 'files'));
                         $setting->save();
                         return response("Successfully Save File Name To Setting MetaTable", 200);
                         // Attachment::create([

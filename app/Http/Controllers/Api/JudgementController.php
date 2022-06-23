@@ -15,9 +15,9 @@ class JudgementController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->only(['store','destroy']);
+        $this->middleware('role:admin')->only(['store', 'destroy']);
     }
-    
+
     public function index()
     {
         //
@@ -41,13 +41,13 @@ class JudgementController extends Controller
      */
     public function store(Request $request)
     {
-        try {   
-            if($request->date){
+        try {
+            if ($request->date) {
                 $request->merge([
-                    'date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->date)->format('Y/m/d'),     
+                    'date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->date)->format('Y/m/d'),
                 ]);
             }
-            Judgement::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+            Judgement::updateOrCreate(['id' => $request->id], $request->except('editMode'));
 
             return response()->json(
                 [
@@ -72,11 +72,11 @@ class JudgementController extends Controller
     {
         try {
 
-            $judgements = Judgement::where('petition_id',$id)->get();            
-             
+            $judgements = Judgement::where('petition_id', $id)->get();
+
             return response()->json(
-                [           
-                    'index_annexure_data' => $judgements,              
+                [
+                    'index_annexure_data' => $judgements,
                     'judgements' => $judgements,
                     'index_data' => $judgements,
                     'message' => 'Success',
@@ -84,11 +84,10 @@ class JudgementController extends Controller
                     'code' => 200
                 ]
             );
-            
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -123,43 +122,41 @@ class JudgementController extends Controller
      */
     public function destroy($id)
     {
-        try {             
-            $record = Judgement::find($id); 
-                    
-            if($record){
+        try {
+            $record = Judgement::find($id);
+
+            if ($record) {
                 $record->delete();
-                return response($record,200);
-            }else{
-                return response('Data Not Found',404);
+                return response($record, 200);
+            } else {
+                return response('Data Not Found', 404);
             }
-            
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
     public function judgementDetail($id)
     {
         try {
 
-            $judgement = Judgement::with('petition','attachments')->whereId($id)->first();
-             
+            $judgement = Judgement::with('petition', 'attachments')->whereId($id)->first();
+
             return response()->json(
-                [                   
+                [
                     'index_detail_data' => $judgement,
                     'model_type' => "App\Models\Judgement",
-                    'petition' => $judgement->petition,                    
+                    'petition' => $judgement->petition,
                     'message' => 'Success',
                     'page_title' => "Judgement Detail",
                     'code' => 200
                 ]
             );
-            
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 }

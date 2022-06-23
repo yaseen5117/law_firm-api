@@ -15,7 +15,7 @@ class PetitionReplyParentController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->except(['index','show']);
+        $this->middleware('role:admin')->except(['index', 'show']);
     }
     public function index()
     {
@@ -40,8 +40,8 @@ class PetitionReplyParentController extends Controller
      */
     public function store(Request $request)
     {
-        try {             
-            PetitionReplyParent::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+        try {
+            PetitionReplyParent::updateOrCreate(['id' => $request->id], $request->except('editMode'));
 
             return response()->json(
                 [
@@ -63,13 +63,13 @@ class PetitionReplyParentController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {         
+    {
         try {
-            
-            $petition_reply_parents = PetitionReplyParent::where('petition_id',$id)->get();
-            
+
+            $petition_reply_parents = PetitionReplyParent::where('petition_id', $id)->get();
+
             return response()->json(
-                [                     
+                [
                     'petition_reply_parents' => $petition_reply_parents,
                     'message' => 'petition_reply_parents',
                     'code' => 200
@@ -113,20 +113,19 @@ class PetitionReplyParentController extends Controller
      */
     public function destroy($parentId)
     {
-        try {             
-            $petition_reply_parent = PetitionReplyParent::find($parentId); 
-                    
-            if($petition_reply_parent){
+        try {
+            $petition_reply_parent = PetitionReplyParent::find($parentId);
+
+            if ($petition_reply_parent) {
                 $petition_reply_parent->delete();
-                return response($petition_reply_parent,200);
-            }else{
-                return response('Data Not Found',404);
+                return response($petition_reply_parent, 200);
+            } else {
+                return response('Data Not Found', 404);
             }
-            
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 }

@@ -17,12 +17,12 @@ class SettingController extends Controller
     {
         try {
             $setting = Setting::find(1)->getMeta()->toArray();
-            if(empty($setting["additionalemails"])){                        
+            if (empty($setting["additionalemails"])) {
                 $setting["additionalemails"] = [];
             }
-            
+
             return response([
-                'setting' => count($setting)>0?$setting:['site_name'=>""],
+                'setting' => count($setting) > 0 ? $setting : ['site_name' => ""],
                 'message' => 'all settings data',
                 'code' => 200
             ]);
@@ -132,7 +132,7 @@ class SettingController extends Controller
     //         ]);
     //     }
 
-        
+
     //     // $is = in_array($request->email, $setting['additionalemails']);
     //     // return $is;
     // }

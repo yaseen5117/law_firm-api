@@ -19,12 +19,12 @@ class AdminController extends Controller
     public function index()
     {
         try {
-            $admins= Admin::all();
-            return response($admins,200);
+            $admins = Admin::all();
+            return response($admins, 200);
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -47,19 +47,19 @@ class AdminController extends Controller
     public function store(Request $request)
     {
         // Password covert into Hash_Password
-            $hash_password = Hash::make($request->password);   
-            $request->merge(['password' => $hash_password]);
+        $hash_password = Hash::make($request->password);
+        $request->merge(['password' => $hash_password]);
         //
 
         try {
-            Admin::updateOrCreate(['id'=>$request->id],$request->except('_token'));
+            Admin::updateOrCreate(['id' => $request->id], $request->except('_token'));
             return response([
-                "success"=>true
-            ],200);
+                "success" => true
+            ], 200);
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -73,11 +73,11 @@ class AdminController extends Controller
     {
         try {
             $Admin = Admin::findorfail($id);
-            return response($Admin,200);
+            return response($Admin, 200);
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -114,5 +114,5 @@ class AdminController extends Controller
     {
         Admin::findorfail($id)->delete();
         return "Admin deleted successfully!";
-    }     
+    }
 }

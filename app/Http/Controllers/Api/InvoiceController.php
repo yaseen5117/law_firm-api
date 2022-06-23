@@ -81,7 +81,7 @@ class InvoiceController extends Controller
                 $query->where('invoiceable_id', $request->user()->id);
             }
 
-            
+
             $query->groupBy('invoices.id')->orderby('invoices.id', 'desc');
             $invoices = $query->paginate(10);
 
@@ -147,7 +147,7 @@ class InvoiceController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {         
+    {
         DB::beginTransaction();
 
         try {
@@ -160,7 +160,7 @@ class InvoiceController extends Controller
                     'due_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->due_date)->format('Y/m/d'),
                 ]);
             }
-            
+
             //'start_date' => \Carbon\Carbon::parse($request->due_date)->addSeconds(120)->format('M d, Y'), its format like (may 24, 2022)
             $request->merge([
                 'invoiceable_type' => "App\Models\User"
@@ -168,19 +168,19 @@ class InvoiceController extends Controller
 
             $request->merge([
                 'invoice_sender_id' => Auth::user()->id
-            ]);            
-            
-            $request->merge([
-                 'invoiceable_id' => $request->selectedClient['id']
             ]);
-             
+
+            $request->merge([
+                'invoiceable_id' => $request->selectedClient['id']
+            ]);
+
             $invoice = Invoice::updateOrCreate(
                 ['id' => $request->id],
                 $request->only('due_date', 'invoiceable_id', 'invoiceable_type', 'invoice_no', 'amount', 'apply_tax', 'tax_percentage', 'invoice_status_id')
             );
             //replace total amount in content 
             //$content = str_replace("{total_amount}",$invoice->total(),$content);
-             
+
 
             if ($invoice) {
                 $invoice_meta_data = $request->invoice_meta;
@@ -189,7 +189,7 @@ class InvoiceController extends Controller
                     ['invoice_id' => $invoice->id],
                     $invoice_meta_data
                 );
-               
+
                 if ($request->edit_client && $request->selectedClient) {
                     $selected_user_data = $request->selectedClient;
                     User::where('id', $request->invoiceable_id)->update([
@@ -227,7 +227,7 @@ class InvoiceController extends Controller
                 $userInvoiceData = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status')->find($invoice->id);
                 $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));
                 $emailService = new EmailService;
-                $d = $emailService->sendInvoiceEmail($invoice,$cc_emails, $pdf);
+                $d = $emailService->sendInvoiceEmail($invoice, $cc_emails, $pdf);
                 return response($d, 403);
                 $invoice->update(["invoice_status_id" => 2]); //2 is the invoice status id
             }
@@ -256,10 +256,10 @@ class InvoiceController extends Controller
     {
         try {
             $invoice = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status', 'attachment')->find($id);
-                 
+
             return response()->json(
                 [
-                    'invoice' => $invoice,                     
+                    'invoice' => $invoice,
                     'today_date' => \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', Carbon::today())->format('d/m/Y'),
                     'message' => 'Invoice Details',
                     'code' => 200

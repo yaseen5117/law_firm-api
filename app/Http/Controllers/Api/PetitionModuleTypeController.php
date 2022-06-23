@@ -15,23 +15,23 @@ class PetitionModuleTypeController extends Controller
      */
     public function index(Request $request)
     {
-        try {               
+        try {
             $query = PetitionModuleType::query();
-            if(!empty($request->module_id)){                  
+            if (!empty($request->module_id)) {
                 $query->where('module_id', $request->module_id);
-            }   
-            $moduleTypes = $query->orderby('display_order','asc')->get();
+            }
+            $moduleTypes = $query->orderby('display_order', 'asc')->get();
             return response()->json(
                 [
                     'moduleTypes' => $moduleTypes,
                     'message' => 'Successs',
                     'code' => 200
                 ]
-            );            
+            );
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -54,18 +54,18 @@ class PetitionModuleTypeController extends Controller
     public function store(Request $request)
     {
         try {
-            $orderSheetType = PetitionModuleType::updateOrCreate(['id'=>$request->id],$request->except('editMode'));       
+            $orderSheetType = PetitionModuleType::updateOrCreate(['id' => $request->id], $request->except('editMode'));
             return response()->json(
                 [
                     'orderSheetType' => $orderSheetType,
                     'message' => 'Successs',
                     'code' => 200
                 ]
-            );            
+            );
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 

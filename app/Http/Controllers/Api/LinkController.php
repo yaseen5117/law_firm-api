@@ -16,7 +16,7 @@ class LinkController extends Controller
     public function index()
     {
         try {
-            $links = Link::all();             
+            $links = Link::all();
             return response()->json(
                 [
                     'links' => $links,
@@ -49,8 +49,8 @@ class LinkController extends Controller
      */
     public function store(Request $request)
     {
-        try {            
-            Link::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+        try {
+            Link::updateOrCreate(['id' => $request->id], $request->except('editMode'));
             return response()->json(
                 [
                     'message' => 'Link Saved Successfully',
@@ -77,7 +77,7 @@ class LinkController extends Controller
 
             return response()->json(
                 [
-                    'link' => $link,                     
+                    'link' => $link,
                     'message' => 'Single Link Details',
                     'code' => 200
                 ]
@@ -122,9 +122,9 @@ class LinkController extends Controller
     {
         try {
             $link_data = Link::find($link_id);
-            
+
             if ($link_data) {
-                $link_data->delete();                
+                $link_data->delete();
                 return response("Deleted Successfully", 200);
             } else {
                 return response('Link Data Not Found', 404);

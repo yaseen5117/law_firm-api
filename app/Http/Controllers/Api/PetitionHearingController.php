@@ -53,12 +53,12 @@ class PetitionHearingController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {         
+    {
         $request->merge([
             'hearing_date' => date("Y-m-d", strtotime($request->hearing_date)),
         ]);
 
-        if(is_array($request->petition)){
+        if (is_array($request->petition)) {
             $request->merge([
                 'petition_id' => $request->petition['id'],
             ]);

@@ -31,11 +31,11 @@ class PetitionController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->except(['index','show','toggleArchivedStatus']);
+        $this->middleware('role:admin')->except(['index', 'show', 'toggleArchivedStatus']);
     }
     public function index(Request $request)
-    {        
-        try {         
+    {
+        try {
             //return $request->all();   
             $query = Petition::select("petitions.*")->withRelationsIndex();
 
@@ -74,14 +74,14 @@ class PetitionController extends Controller
 
             //$query->orderBy('display_order');
             $petitions = [];
-            if($request->force_all_records){                 
+            if ($request->force_all_records) {
                 if (!empty($request->query_from_calendar_page)) {
                     $query->where('case_no', 'like', '%' . $request->query_from_calendar_page . '%')->orWhere('name', 'like', '%' . $request->query_from_calendar_page . '%');
                 }
-                $petitions = $query->groupBy('petitions.id')->orderby('id','desc')->get();
-            }else{                
-                $petitions = $query->groupBy('petitions.id')->orderby('id','desc')->paginate(8);
-            }            
+                $petitions = $query->groupBy('petitions.id')->orderby('id', 'desc')->get();
+            } else {
+                $petitions = $query->groupBy('petitions.id')->orderby('id', 'desc')->paginate(8);
+            }
             $events = [];
             foreach ($petitions as $petition) {
                 $events[] = [
@@ -317,16 +317,15 @@ class PetitionController extends Controller
     }
     public function downloadPetitionPdf($petition_id)
     {
-        try { 
-            $petition = Petition::withRelations()->where('id', $petition_id)->first();            
+        try {
+            $petition = Petition::withRelations()->where('id', $petition_id)->first();
             //return view('petition_pdf.petition_index_pdf', compact('petition'));             
-            if($petition){
-                $pdf = PDF::loadView('petition_pdf.petition_index_pdf', compact('petition'));            
-                return $pdf->download($petition->petition_standard_title.".pdf");
-            }else{
-                return response('Petition Data Not Found',404);
+            if ($petition) {
+                $pdf = PDF::loadView('petition_pdf.petition_index_pdf', compact('petition'));
+                return $pdf->download($petition->petition_standard_title . ".pdf");
+            } else {
+                return response('Petition Data Not Found', 404);
             }
-            
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()

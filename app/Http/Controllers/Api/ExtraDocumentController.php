@@ -15,7 +15,7 @@ class ExtraDocumentController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->only(['store','destroy']);
+        $this->middleware('role:admin')->only(['store', 'destroy']);
     }
     public function index()
     {
@@ -40,13 +40,13 @@ class ExtraDocumentController extends Controller
      */
     public function store(Request $request)
     {
-        try {   
-            if($request->date){          
+        try {
+            if ($request->date) {
                 $request->merge([
-                    'date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->date)->format('Y/m/d'),      
+                    'date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->date)->format('Y/m/d'),
                 ]);
             }
-            ExtraDocument::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+            ExtraDocument::updateOrCreate(['id' => $request->id], $request->except('editMode'));
 
             return response()->json(
                 [
@@ -71,11 +71,11 @@ class ExtraDocumentController extends Controller
     {
         try {
 
-            $extraDocs = ExtraDocument::where('petition_id',$id)->get();            
-             
+            $extraDocs = ExtraDocument::where('petition_id', $id)->get();
+
             return response()->json(
-                [           
-                    'index_annexure_data' => $extraDocs,              
+                [
+                    'index_annexure_data' => $extraDocs,
                     'extra_documents' => $extraDocs,
                     'index_data' => $extraDocs,
                     'message' => 'Success',
@@ -83,11 +83,10 @@ class ExtraDocumentController extends Controller
                     'code' => 200
                 ]
             );
-            
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -122,43 +121,41 @@ class ExtraDocumentController extends Controller
      */
     public function destroy($id)
     {
-        try {             
-            $record = ExtraDocument::find($id); 
-                    
-            if($record){
+        try {
+            $record = ExtraDocument::find($id);
+
+            if ($record) {
                 $record->delete();
-                return response($record,200);
-            }else{
-                return response('Data Not Found',404);
+                return response($record, 200);
+            } else {
+                return response('Data Not Found', 404);
             }
-            
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
     public function extraDocsDetail($id)
     {
         try {
 
-            $extraDoc = ExtraDocument::with('petition','attachments')->whereId($id)->first();
-             
+            $extraDoc = ExtraDocument::with('petition', 'attachments')->whereId($id)->first();
+
             return response()->json(
-                [                   
+                [
                     'index_detail_data' => $extraDoc,
                     'model_type' => "App\Models\ExtraDocument",
-                    'petition' => $extraDoc->petition,                    
+                    'petition' => $extraDoc->petition,
                     'message' => 'Success',
                     'page_title' => "Extra Documents Detail",
                     'code' => 200
                 ]
             );
-            
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 }

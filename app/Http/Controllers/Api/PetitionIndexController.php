@@ -16,17 +16,17 @@ class PetitionIndexController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->only(['store','destroy']);
+        $this->middleware('role:admin')->only(['store', 'destroy']);
     }
     public function index()
-    {         
+    {
         try {
-            $petition_index= PetitionIndex::orderby('created_at','desc')->get();
-            return response($petition_index,200);
+            $petition_index = PetitionIndex::orderby('created_at', 'desc')->get();
+            return response($petition_index, 200);
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -48,13 +48,13 @@ class PetitionIndexController extends Controller
      */
     public function store(Request $request)
     {
-         try {  
-            if($request->date){  
+        try {
+            if ($request->date) {
                 $request->merge([
-                    'date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->date)->format('Y/m/d'),    
+                    'date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->date)->format('Y/m/d'),
                 ]);
             }
-            PetitionIndex::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+            PetitionIndex::updateOrCreate(['id' => $request->id], $request->except('editMode'));
 
             return response()->json(
                 [
@@ -78,12 +78,12 @@ class PetitionIndexController extends Controller
     public function show($petitionIndex)
     {
         try {
-            $petitionIndex = PetitionIndex::with('petition','attachments')->whereId($petitionIndex)->first();
+            $petitionIndex = PetitionIndex::with('petition', 'attachments')->whereId($petitionIndex)->first();
 
-            $previous_index_id = PetitionIndex::with('petition','attachments')->where('id', '<', $petitionIndex->id)->max('id');
-            
-            $next_index_id = PetitionIndex::with('petition','attachments')->where('id', '>', $petitionIndex->id)->min('id');
-            
+            $previous_index_id = PetitionIndex::with('petition', 'attachments')->where('id', '<', $petitionIndex->id)->max('id');
+
+            $next_index_id = PetitionIndex::with('petition', 'attachments')->where('id', '>', $petitionIndex->id)->min('id');
+
             $petition = Petition::withRelations()->whereId($petitionIndex->petition_id)->first();
 
             return response()->json(
@@ -96,15 +96,15 @@ class PetitionIndexController extends Controller
                     'code' => 200,
                 ]
             );
-            return response($petitionIndex,200);
+            return response($petitionIndex, 200);
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
-     /* Show the form for editing the specified resource.
+    /* Show the form for editing the specified resource.
      *
      * @param  \App\Models\PetitionIndex  $petitionIndex
      * @return \Illuminate\Http\Response
@@ -134,20 +134,19 @@ class PetitionIndexController extends Controller
      */
     public function destroy($petitionIndexId)
     {
-        try {             
-            $petition_index = PetitionIndex::find($petitionIndexId); 
-                    
-            if($petition_index){
+        try {
+            $petition_index = PetitionIndex::find($petitionIndexId);
+
+            if ($petition_index) {
                 $petition_index->delete();
-                return response($petition_index,200);
-            }else{
-                return response('Data Not Found',404);
+                return response($petition_index, 200);
+            } else {
+                return response('Data Not Found', 404);
             }
-            
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 }

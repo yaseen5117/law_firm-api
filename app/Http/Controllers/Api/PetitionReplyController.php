@@ -17,7 +17,7 @@ class PetitionReplyController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->except(['replyDetail','show']);
+        $this->middleware('role:admin')->except(['replyDetail', 'show']);
     }
     public function index()
     {
@@ -41,14 +41,14 @@ class PetitionReplyController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {         
-        try {  
-            if($request->date){      
+    {
+        try {
+            if ($request->date) {
                 $request->merge([
-                    'date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->date)->format('Y/m/d'), 
+                    'date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->date)->format('Y/m/d'),
                 ]);
             }
-            PetitionReply::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+            PetitionReply::updateOrCreate(['id' => $request->id], $request->except('editMode'));
 
             return response()->json(
                 [
@@ -81,15 +81,15 @@ class PetitionReplyController extends Controller
     //     }
     // }
     public function show($petitionReplyId)
-    {    
+    {
         try {
-            $petition_replies = PetitionReply::where('petition_reply_parent_id',$petitionReplyId)->get();
+            $petition_replies = PetitionReply::where('petition_reply_parent_id', $petitionReplyId)->get();
             $petition_parent = PetitionReplyParent::find($petitionReplyId);
             $petition = Petition::find($petition_parent->petition_id);
             //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();
-             
+
             return response()->json(
-                [                    
+                [
                     'petition_replies' => $petition_replies,
                     'index_data' => $petition_replies,
                     'petition' => $petition,
@@ -98,15 +98,12 @@ class PetitionReplyController extends Controller
                     'code' => 200
                 ]
             );
-            return response($petition_replies,200);
+            return response($petition_replies, 200);
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
-
-
-
     }
 
     /**
@@ -140,43 +137,43 @@ class PetitionReplyController extends Controller
      */
     public function destroy($petitionReplyid)
     {
-        try {             
-            $petition_reply = PetitionReply::find($petitionReplyid); 
-                    
-            if($petition_reply){
+        try {
+            $petition_reply = PetitionReply::find($petitionReplyid);
+
+            if ($petition_reply) {
                 $petition_reply->delete();
-                return response($petition_reply,200);
-            }else{
-                return response('Data Not Found',404);
+                return response($petition_reply, 200);
+            } else {
+                return response('Data Not Found', 404);
             }
-            
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
-    public function replyDetail($petitionReplyId){
-        
-        
+    public function replyDetail($petitionReplyId)
+    {
+
+
         try {
-            $petition_reply_detail = PetitionReply::with('petition_reply_parent.petition','attachments')->where('id',$petitionReplyId)->first();
+            $petition_reply_detail = PetitionReply::with('petition_reply_parent.petition', 'attachments')->where('id', $petitionReplyId)->first();
             $petition_id = $petition_reply_detail->petition_reply_parent->petition->id;
-            $petition = Petition::withRelations()->where('id',$petition_id)->first();
-            
+            $petition = Petition::withRelations()->where('id', $petition_id)->first();
+
             return response()->json(
-                [                    
+                [
                     'petition_reply' => $petition_reply_detail,
                     'petition' => $petition,
                     'message' => 'Success',
                     'code' => 200
                 ]
             );
-            return response($petition_reply_detail,200);
+            return response($petition_reply_detail, 200);
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 }

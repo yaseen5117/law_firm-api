@@ -17,30 +17,29 @@ class GeneralCaseLawController extends Controller
     {
         try {
             $query = GeneralCaseLaw::query();
-    
-        if (!empty($request->case_title)) {
-            $query->where('case_title','like','%'.$request->case_title.'%');
-        }
 
-        if (!empty($request->keywords)) {
-            $query->where('keywords','like','%'.$request->keywords.'%');            
-        }
-        
-        $generalcaseLaws = $query->get(); 
-             
+            if (!empty($request->case_title)) {
+                $query->where('case_title', 'like', '%' . $request->case_title . '%');
+            }
+
+            if (!empty($request->keywords)) {
+                $query->where('keywords', 'like', '%' . $request->keywords . '%');
+            }
+
+            $generalcaseLaws = $query->get();
+
             return response()->json(
-                [           
-                    'general_case_Laws' => $generalcaseLaws,                     
+                [
+                    'general_case_Laws' => $generalcaseLaws,
                     'message' => 'Success',
                     'page_title' => "General Case Laws",
                     'code' => 200
                 ]
             );
-            
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -62,12 +61,12 @@ class GeneralCaseLawController extends Controller
      */
     public function store(Request $request)
     {
-        try {       
+        try {
             // $request->merge([
             //     'date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->date)->format('Y/m/d'),     
             // ]);
-            
-            GeneralCaseLaw::updateOrCreate(['id'=>$request->id],$request->except('editMode'));
+
+            GeneralCaseLaw::updateOrCreate(['id' => $request->id], $request->except('editMode'));
 
             return response()->json(
                 [
@@ -92,12 +91,12 @@ class GeneralCaseLawController extends Controller
     {
         try {
 
-            $caseLaws = GeneralCaseLaw::find($id);            
+            $caseLaws = GeneralCaseLaw::find($id);
             //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();
-             
+
             return response()->json(
-                [           
-                    'index_annexure_data' => $caseLaws,              
+                [
+                    'index_annexure_data' => $caseLaws,
                     'case_laws' => $caseLaws,
                     'index_data' => $caseLaws,
                     'message' => 'Success',
@@ -105,11 +104,10 @@ class GeneralCaseLawController extends Controller
                     'code' => 200
                 ]
             );
-            
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -144,20 +142,19 @@ class GeneralCaseLawController extends Controller
      */
     public function destroy($id)
     {
-        try {             
-            $record = GeneralCaseLaw::find($id); 
-                    
-            if($record){
+        try {
+            $record = GeneralCaseLaw::find($id);
+
+            if ($record) {
                 $record->delete();
-                return response($record,200);
-            }else{
-                return response('Data Not Found',404);
+                return response($record, 200);
+            } else {
+                return response('Data Not Found', 404);
             }
-            
         } catch (\Exception $e) {
             return response([
-                "error"=>$e->getMessage()
-            ],500);
+                "error" => $e->getMessage()
+            ], 500);
         }
     }
 }
