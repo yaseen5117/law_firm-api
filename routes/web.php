@@ -22,6 +22,9 @@ Route::get('/pdf_to_img', 'TestController@pdf_to_img');
 Route::get('download_pdf/{id}', 'Api\InvoiceController@downloadInvoicePdf');   
 Route::get('download_petition_pdf/{id}', 'Api\PetitionController@downloadPetitionPdf');
 
+Route::get('convert_word_to_pdf', 'Api\AttachmentController@convertWordToPDF');
+
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

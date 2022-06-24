@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Filesystem\Filesystem;
-
+use PDF;
 class AttachmentController extends Controller
 {
     /**
@@ -355,5 +355,20 @@ class AttachmentController extends Controller
                 "error" => $e->getMessage()
             ], 500);
         }
+    }
+    public function convertWordToPDF()
+    {
+            /* Set the PDF Engine Renderer Path */
+        $domPdfPath = base_path('vendor/dompdf/dompdf');
+        \PhpOffice\PhpWord\Settings::setPdfRendererPath($domPdfPath);
+        \PhpOffice\PhpWord\Settings::setPdfRendererName('DomPDF');
+        
+        //Load word file
+        $Content = \PhpOffice\PhpWord\IOFactory::load(storage_path('app/public/result.docx')); 
+          
+        //Save it into PDF
+        $PDFWriter = \PhpOffice\PhpWord\IOFactory::createWriter($Content,'PDF');
+        $PDFWriter->save(storage_path('app/public/new-result.pdf')); 
+        echo 'File has been successfully converted';
     }
 }
