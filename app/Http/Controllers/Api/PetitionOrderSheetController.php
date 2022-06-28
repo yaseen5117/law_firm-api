@@ -19,7 +19,7 @@ class PetitionOrderSheetController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->only(['store', 'destroy', 'getOrderSheetTypes']);
+        $this->middleware('role:admin')->only(['destroy']);
     }
     public function index(Request $request)
     {
@@ -123,15 +123,22 @@ class PetitionOrderSheetController extends Controller
             ]);
 
             $query = PetitonOrderSheet::with('petition', 'attachments')->wherePetitionId($request->petition_id);
-
+            $previous_index_id = null;
+            $next_index_id = null;
             if ($request->id > 0) {
                 $query->whereId($request->id);
+                $previous_index_id = PetitonOrderSheet::with('petition', 'attachments')->where('id', '<', $request->id)->max('id');
+
+                $next_index_id = PetitonOrderSheet::with('petition', 'attachments')->where('id', '>', $request->id)->min('id');
             }
             $petitionOrderSheet = $query->orderBy('order_sheet_date', 'desc')->first();
 
+            //return response($next_index_id, 403);
             return response()->json(
                 [
                     'record' => $petitionOrderSheet,
+                    'previous_index_id' => $previous_index_id,
+                    'next_index_id' => $next_index_id,
                     'message' => 'showOrderSheetByPetition Successs',
                     'code' => 200
                 ]

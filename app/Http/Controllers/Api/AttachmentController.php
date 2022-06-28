@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Storage;
 use PDF;
 class AttachmentController extends Controller
 {
@@ -53,11 +54,39 @@ class AttachmentController extends Controller
                     $file_name = time() . '_' . $file->getClientOriginalName();
                     $mime_type = $file->getClientMimeType();
 
-
                     $title = $file_name;
                     $attachmentable_type = $request->attachmentable_type;
                     $attachmentable_id = $request->attachmentable_id;
 
+                    //Word Doc. conversion to PDF
+                    if($mime_type == "application/msword"){
+                        /* Set the PDF Engine Renderer Path */
+                        $domPdfPath = base_path('vendor/dompdf/dompdf');
+                        \PhpOffice\PhpWord\Settings::setPdfRendererPath($domPdfPath);
+                        \PhpOffice\PhpWord\Settings::setPdfRendererName('DomPDF');
+                        
+                        //getting file name without extention
+                        $pdf_file_name = pathinfo($file_name, PATHINFO_FILENAME);  
+                        //store doc file
+                        $file_path = $file->storeAs('attachments/converted-pdf-files/'. $request->attachmentable_id . '/original', $pdf_file_name.'.docx', 'public');
+                        //return response($file_path, 403); 
+                        //Load word file
+                        $Content = \PhpOffice\PhpWord\IOFactory::load(storage_path($file_path)); 
+                        
+                        //Save it into PDF
+                        $PDFWriter = \PhpOffice\PhpWord\IOFactory::createWriter($Content,'PDF');
+                        $path = storage_path("app/public/attachments/converted-pdf-files/$attachmentable_id/original/");
+                        if (!File::isDirectory($path)) {
+                            File::makeDirectory($path, 0777, true, true);
+                        }                                  
+                         
+                        $PDFWriter->save(storage_path("app/public/attachments/converted-pdf-files/$attachmentable_id/original/$pdf_file_name.pdf"));  
+                        $sub_directory = 'converted-pdf-files/';   //
+                        $file_name = basename(storage_path("app/public/attachments/converted-pdf-files/$attachmentable_id/original/$pdf_file_name.pdf"));//pathinfo(storage_path("app/public/attachments/converted-pdf-files/$attachmentable_id/original/$pdf_file_name.pdf"), PATHINFO_FILENAME);
+                                        
+                    }                     
+                    //Word Doc. conversion to PDF
+ 
                     if ($request->attachmentable_type == "App\Models\Invoice") {
                         $sub_directory = "invoices/";
 
@@ -95,11 +124,12 @@ class AttachmentController extends Controller
                     } else {
                         $sub_directory = "";
                     }
-
-                    $file_path = $file->storeAs('attachments/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
-
-                    if ($mime_type != "application/pdf") {
-                        //START To Resize Images
+                    if($mime_type != "application/msword"){                         
+                        $file_path = $file->storeAs('attachments/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
+                    }
+                     
+                    if ($mime_type != "application/pdf" && $mime_type != "application/msword") {
+                         //START To Resize Images
                         $resizeImage = Image::make($file);
                         $resizeImage->resize(2000, null, function ($constraint) {
                             $constraint->aspectRatio();
@@ -122,7 +152,7 @@ class AttachmentController extends Controller
                         ]);
                     }
 
-                    if ($mime_type == "application/pdf") {
+                    if ($mime_type == "application/pdf" || $mime_type == "application/msword") {
                         info("****************CONVERTING PDF TO IMAGES START**********************");
                         /****************CONVERTING PDF TO IMAGES**********************/
                         $attachmentable_id = $request->attachmentable_id;
@@ -130,7 +160,7 @@ class AttachmentController extends Controller
                         $public_path =  public_path();
                         $file_path = $public_path . '/storage/attachments/' . $attachmentable_id . '/' . $sub_directory . 'original/' . $pdf_file_name;
                         $output_path = $public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id . '/';
-
+                        //return response($file_path, 403);
                         try {
 
                             $im = new Imagick();
