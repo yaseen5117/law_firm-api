@@ -127,9 +127,9 @@ class PetitionOrderSheetController extends Controller
             $next_index_id = null;
             if ($request->id > 0) {
                 $query->whereId($request->id);
-                $previous_index_id = PetitonOrderSheet::with('petition', 'attachments')->where('id', '<', $request->id)->max('id');
+                $previous_index_id = PetitonOrderSheet::with('petition', 'attachments')->wherePetitionId($request->petition_id)->where('id', '<', $request->id)->max('id');
 
-                $next_index_id = PetitonOrderSheet::with('petition', 'attachments')->where('id', '>', $request->id)->min('id');
+                $next_index_id = PetitonOrderSheet::with('petition', 'attachments')->wherePetitionId($request->petition_id)->where('id', '>', $request->id)->min('id');
             }
             $petitionOrderSheet = $query->orderBy('order_sheet_date', 'desc')->first();
 
