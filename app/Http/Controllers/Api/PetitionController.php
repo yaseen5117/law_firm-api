@@ -137,7 +137,7 @@ class PetitionController extends Controller
                 
                 foreach ($request->petitioners as $petitioner) {
                     
-                    if (is_array($petitioner['user']['name'])) {                                                                                         
+                    if (!empty($petitioner['user']) && !empty($petitioner['user']['name']) && is_array($petitioner['user']['name'])) {                                                                                         
                         PetitionPetitioner::create([
                             'petition_id' => $petition->id,
                             'petitioner_id' => $petitioner['user']['name']['id'],
@@ -173,7 +173,7 @@ class PetitionController extends Controller
             if (is_array($request->opponents) && count($request->opponents) > 0) {
                
                 foreach ($request->opponents as $opponent) {
-                    if (is_array($opponent['user']['name'])) {                       
+                    if (!empty(@$opponent['user']) && !empty(@$opponent['user']['name']) && is_array($opponent['user']['name'])) {                       
                         PetitionOpponent::create([
                             'petition_id' => $petition->id,
                             'opponent_id' => $opponent['user']['name']['id'],

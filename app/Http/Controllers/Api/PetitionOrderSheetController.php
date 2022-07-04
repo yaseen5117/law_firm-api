@@ -19,7 +19,7 @@ class PetitionOrderSheetController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->only(['destroy']);
+        $this->middleware('role:admin')->only(['']);
     }
     public function index(Request $request)
     {
