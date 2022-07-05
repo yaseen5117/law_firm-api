@@ -198,7 +198,7 @@ class AttachmentController extends Controller
                                         $constraint->aspectRatio();
                                     });
 
-                                //$resizeImage->save(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/' . $generated_jpg_filename));
+                                $resizeImage->save(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/' . $generated_jpg_filename));
                                 //END To Resize Images
 
                                 info("converting page: $page DONE");
