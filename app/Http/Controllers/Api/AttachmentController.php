@@ -168,14 +168,17 @@ class AttachmentController extends Controller
                         $output_path = $public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id . '/';
                         //return response($output_path, 403);
                         try {
-
                             $im = new Imagick();
                             //$im->setResolution(300,300);
                             $im->readimage($file_path);
                             $num_page = $im->getnumberimages();
+
                             $im->clear();
                             $im->destroy();
-
+                            $path =  storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id);
+                            if (!File::isDirectory($path)) {
+                                File::makeDirectory($path, 0777, true, true);
+                            }
                             for ($page = 0; $page < $num_page; $page++) {
                                 $im = new Imagick();
 
@@ -190,15 +193,12 @@ class AttachmentController extends Controller
                                 //$im->writeImage($output_path . "/" . $generated_jpg_filename);
 
                                 //START To Resize Images
-                                $resizeImage = Image::make($output_path . "/" . $generated_jpg_filename);
-                                $resizeImage->resize(2000, null, function ($constraint) {
-                                    $constraint->aspectRatio();
-                                });
-                                $path =  storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id);
-                                if (!File::isDirectory($path)) {
-                                    File::makeDirectory($path, 0777, true, true);
-                                }
-                                $resizeImage->save(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/' . $generated_jpg_filename));
+                                $resizeImage = Image::make($output_path . "/" . $generated_jpg_filename)
+                                    ->resize(2000, null, function ($constraint) {
+                                        $constraint->aspectRatio();
+                                    });
+
+                                //$resizeImage->save(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/' . $generated_jpg_filename));
                                 //END To Resize Images
 
                                 info("converting page: $page DONE");
