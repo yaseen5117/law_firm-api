@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 use PDF;
+
 class AttachmentController extends Controller
 {
     /**
@@ -44,20 +45,20 @@ class AttachmentController extends Controller
      */
     public function store(Request $request)
     {
-        //return $request->all();
+        ini_set('max_execution_time', '0'); // for infinite time of execution
         try {
             $files = $request->file('files');
             if ($files) {
                 foreach ($files as $key => $file) {
-                    
+
                     info("AttachmentController store Function: File mime_type: " . $file->getClientMimeType());
                     $file_name = time() . '_' . $file->getClientOriginalName();
                     $mime_type = $file->getClientMimeType();
-                    
+
                     $title = $file_name;
                     $attachmentable_type = $request->attachmentable_type;
-                    $attachmentable_id = $request->attachmentable_id;                       
- 
+                    $attachmentable_id = $request->attachmentable_id;
+
                     if ($request->attachmentable_type == "App\Models\Invoice") {
                         $sub_directory = "invoices/";
 
@@ -95,12 +96,12 @@ class AttachmentController extends Controller
                     } else {
                         $sub_directory = "";
                     }
-                    if($mime_type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){                         
+                    if ($mime_type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
                         $file_path = $file->storeAs('attachments/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
                     }
-                     
+
                     if ($mime_type != "application/pdf" && $mime_type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-                         //START To Resize Images
+                        //START To Resize Images
                         $resizeImage = Image::make($file);
                         $resizeImage->resize(2000, null, function ($constraint) {
                             $constraint->aspectRatio();
@@ -124,43 +125,43 @@ class AttachmentController extends Controller
                     }
 
                     //Word Doc. conversion to PDF
-                    if($mime_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
-                         
+                    if ($mime_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+
                         /* Set the PDF Engine Renderer Path */
                         $domPdfPath = base_path('vendor/dompdf/dompdf');
                         \PhpOffice\PhpWord\Settings::setPdfRendererPath($domPdfPath);
                         \PhpOffice\PhpWord\Settings::setPdfRendererName('DomPDF');
-                        
+
                         //getting file name without extention
-                        $pdf_file_name = pathinfo($file_name, PATHINFO_FILENAME);  
+                        $pdf_file_name = pathinfo($file_name, PATHINFO_FILENAME);
                         //store doc file
                         $file_path = $file->storeAs('attachments/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
-                         
+
                         //Load word file
-                        $Content = \PhpOffice\PhpWord\IOFactory::load(storage_path('app/public/attachments/'.$sub_directory.$request->attachmentable_id.'/original/'.$file_name)); 
-                           
+                        $Content = \PhpOffice\PhpWord\IOFactory::load(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/original/' . $file_name));
+
                         //Save it into PDF
-                        $PDFWriter = \PhpOffice\PhpWord\IOFactory::createWriter($Content,'PDF');
-                        $path = storage_path('app/public/attachments/'.$sub_directory.$attachmentable_id.'/original/');
+                        $PDFWriter = \PhpOffice\PhpWord\IOFactory::createWriter($Content, 'PDF');
+                        $path = storage_path('app/public/attachments/' . $sub_directory . $attachmentable_id . '/original/');
                         if (!File::isDirectory($path)) {
                             File::makeDirectory($path, 0777, true, true);
-                        }                                  
-                         
-                        $PDFWriter->save(storage_path('app/public/attachments/'.$sub_directory.$attachmentable_id.'/original/'.$pdf_file_name.'.pdf'));  
+                        }
+
+                        $PDFWriter->save(storage_path('app/public/attachments/' . $sub_directory . $attachmentable_id . '/original/' . $pdf_file_name . '.pdf'));
                         //$sub_directory = 'converted-pdf-files/';
-                        unlink(storage_path('app/public/attachments/'.$sub_directory.$request->attachmentable_id.'/original/'.$file_name));
-                        $file_name = basename(storage_path("app/public/attachments/$sub_directory$attachmentable_id/original/$pdf_file_name.pdf"));//pathinfo(storage_path("app/public/attachments/converted-pdf-files/$attachmentable_id/original/$pdf_file_name.pdf"), PATHINFO_FILENAME);
-                        
+                        unlink(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/original/' . $file_name));
+                        $file_name = basename(storage_path("app/public/attachments/$sub_directory$attachmentable_id/original/$pdf_file_name.pdf")); //pathinfo(storage_path("app/public/attachments/converted-pdf-files/$attachmentable_id/original/$pdf_file_name.pdf"), PATHINFO_FILENAME);
+
                         //return response($file_name, 403);
-                    }                     
+                    }
                     //Word Doc. conversion to PDF
 
 
                     if ($mime_type == "application/pdf" || $mime_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
                         info("****************CONVERTING PDF TO IMAGES START**********************");
                         /****************CONVERTING PDF TO IMAGES**********************/
-                        $attachmentable_id = $request->attachmentable_id;                        
-                        $pdf_file_name = "$file_name";                        
+                        $attachmentable_id = $request->attachmentable_id;
+                        $pdf_file_name = "$file_name";
                         $public_path =  public_path();
                         $file_path = $public_path . '/storage/attachments/' . $attachmentable_id . '/' . $sub_directory . 'original/' . $pdf_file_name;
                         $output_path = $public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id . '/';
@@ -392,17 +393,17 @@ class AttachmentController extends Controller
     }
     public function convertWordToPDF()
     {
-            /* Set the PDF Engine Renderer Path */
+        /* Set the PDF Engine Renderer Path */
         $domPdfPath = base_path('vendor/dompdf/dompdf');
         \PhpOffice\PhpWord\Settings::setPdfRendererPath($domPdfPath);
         \PhpOffice\PhpWord\Settings::setPdfRendererName('DomPDF');
-        
+
         //Load word file
-        $Content = \PhpOffice\PhpWord\IOFactory::load(storage_path('app/public/result.docx')); 
-          
+        $Content = \PhpOffice\PhpWord\IOFactory::load(storage_path('app/public/result.docx'));
+
         //Save it into PDF
-        $PDFWriter = \PhpOffice\PhpWord\IOFactory::createWriter($Content,'PDF');
-        $PDFWriter->save(storage_path('app/public/new-result.pdf')); 
+        $PDFWriter = \PhpOffice\PhpWord\IOFactory::createWriter($Content, 'PDF');
+        $PDFWriter->save(storage_path('app/public/new-result.pdf'));
         echo 'File has been successfully converted';
     }
 }
