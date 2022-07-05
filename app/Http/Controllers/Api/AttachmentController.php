@@ -175,7 +175,7 @@ class AttachmentController extends Controller
                             $num_page = $im->getnumberimages();
                             $im->clear();
                             $im->destroy();
-
+                            info("Total Number Of Pages: $num_page");
                             for ($page = 0; $page < $num_page; $page++) {
                                 $im = new Imagick();
 
@@ -187,7 +187,7 @@ class AttachmentController extends Controller
                                 $generated_jpg_filename = $page . " - " . $file_name . '.jpg';
                                 $im->setImageCompression(imagick::COMPRESSION_JPEG);
                                 $im->setImageCompressionQuality(100);
-                                //$im->writeImage($output_path . "/" . $generated_jpg_filename);
+                                $im->writeImage($output_path . "/" . $generated_jpg_filename);
 
                                 //START To Resize Images
                                 $resizeImage = Image::make($output_path . "/" . $generated_jpg_filename);
