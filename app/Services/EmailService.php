@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Setting;
 use Mail;
+use Exception;
 /**
  * 
  */
@@ -53,4 +54,47 @@ class EmailService
 			info("EmailService: sendInvoiceEmail successfully sent Email: ");
 		 
 	}
+
+	public function send_email_before_hearing($tomorrow_hearing)
+	{	
+		try {
+			info("EmailService: send_email_before_hearing for Hearing $tomorrow_hearing->id");
+	 		
+	 		$petition = $tomorrow_hearing->petition;
+
+	 		if ($petition->petitioners->count()>0) {
+	 			info("EmailService: send_email_before_hearing to petitioners" .print_r($petition->petitioners->pluck('id')->all(),1));
+	 			foreach ($petition->petitioners as $petition_petitioner) {
+		 			$user = $petition_petitioner->user;
+		 			Mail::send('emails.hearing_tomorrower_reminder', compact('user','petition') , function ($message) use ($user,$petition) {
+			            $message->subject( "Case (".$petition->petition_standard_title_with_petitioner.") Hearing Reminder");
+			            $message->to($user->email , $user->name);
+		        	});
+		        	info("EmailService: sendInvoiceEmail successfully sent to user email: ".$user->email);
+		 		}
+	 		}
+
+	 		if ($petition->lawyers->count()>0) {
+	 			info("EmailService: send_email_before_hearing to lawyers" .print_r($petition->lawyers->pluck('id')->all(),1));
+	 			foreach ($petition->lawyers as $petition_lawyer) {
+		 			$user = $petition_lawyer->user;
+		 			Mail::send('emails.hearing_tomorrower_reminder', compact('user','petition') , function ($message) use ($user,$petition) {
+			            $message->subject( "Case (".$petition->petition_standard_title_with_petitioner.") Hearing Reminder");
+			            $message->to($user->email , $user->name);
+		        	});
+		        	info("EmailService: sendInvoiceEmail successfully sent to user email: ".$user->email);
+		 		}
+	 		}
+
+
+			info("EmailService: sendInvoiceEmail function complete: ");
+			 	
+		} catch (Exception $e) {
+			 	info("EmailService: send_email_before_hearing for Hearing $tomorrow_hearing->id ERROR SENDING EMAIL: " .$e->getMessage() );
+		}	 
+			
+		 
+	}
+
+
 }
