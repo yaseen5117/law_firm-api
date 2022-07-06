@@ -12,7 +12,7 @@ class Petition extends Model
 	use SoftDeletes;
 
     protected $guarded=['type_abrivation','petition_standard_title','petition_standard_title_with_petitioner'];
-    protected $appends=['petitioner_names','opponent_names','type_abrivation','petition_standard_title','petition_standard_title_with_petitioner'];
+    protected $appends=['petitioner_names','opponent_names','type_abrivation','petition_standard_title','petition_standard_title_with_petitioner','pdf_download_url'];
     protected $dates = ['deleted_at'];
     protected $casts = [
         'institution_date'  => 'date:d/m/Y',        
@@ -125,5 +125,9 @@ class Petition extends Model
     {
         return $this->hasMany('App\Models\PetitionIndex');
 
+    }
+    public function getPdfDownloadUrlAttribute()
+    {
+        return url("download_petition_pdf/".+$this->id);
     }
 }
