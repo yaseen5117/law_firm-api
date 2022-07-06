@@ -67,7 +67,7 @@ class NaqalFormController extends Controller
                     'naqal_form_type_id' => 1,
                 ]);
             }
-            $PetitionNaqalForm = PetitionNaqalForm::updateOrCreate(['id' => $request->id], $request->except('editMode', 'petition', 'attachments'));
+            $PetitionNaqalForm = PetitionNaqalForm::updateOrCreate(['id' => $request->id], $request->except('editMode', 'petition', 'attachments', 'naqal_form_types'));
 
             return response()->json(
                 [
