@@ -3,6 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Attachment;
+use App\Models\Petition;
+use App\Models\PetitionIndex;
+use App\Models\PetitonOrderSheet;
+use App\Models\PetitionReply;
+use App\Services\EmailService;
 
 class TestController extends Controller
 {
@@ -46,5 +52,43 @@ class TestController extends Controller
           info('Message: ' .$e->getMessage());
         }
         /****************CONVERTING PDF TO IMAGES**********************/
+    }
+
+    public function test_send_document_uploading_email()
+    {
+        $attachmentable_type="App\Models\PetitonOrderSheet";
+        $attachmentable_id=;
+        
+        switch ($attachmentable_type) {
+            case 'App\Models\PetitonOrderSheet':
+                $entity_title = "Order Sheet";
+                $pettiion_ordersheet = PetitonOrderSheet::find($attachmentable_id);
+                $petition = $pettiion_ordersheet->petition;
+                break;
+            case 'App\Models\PetitionIndex':
+                //id22
+                $entity_title = "Petition Index";
+                $petition_index = PetitionIndex::find($attachmentable_id);
+                $petition = $petition_index->petition;
+
+                break;
+            case 'App\Models\PetitionReply':
+                $entity_title = "Replies";
+                $petition_reply = PetitionReply::find($attachmentable_id);
+                $petition = $petition_reply->petition_reply_parent->petition;
+                break;
+            
+            default:
+                $entity_title = "";
+                break;
+        }
+
+
+        try {
+            $emailService = new EmailService;
+            $emailService->send_document_uploading_email($petition,$entity_title);      
+        } catch (\Exception $e) {
+            info(print_r($e->getMessage()));
+        }
     }
 }
