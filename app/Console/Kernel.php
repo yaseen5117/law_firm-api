@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         //$schedule->command('inspire')->hourly();
         //info("scheduler is running");
-        $schedule->command('reminder:send-email-before-hearing')->everyMinute();
+        //$schedule->command('reminder:send-email-before-hearing')->everyMinute();
 
     }
 
