@@ -13,7 +13,7 @@ class EmailService
 	
 	function __construct()
 	{
-		info("In email service:");
+		
 	}
 	// public function adminEmails(){
 	// 	$setting = Setting::find(1)->getMeta()->toArray();		 
@@ -94,6 +94,42 @@ class EmailService
 		}	 
 			
 		 
+	}
+
+
+	public function send_document_uploading_email($petition,$attachmentable_type)
+	{	
+		$subject = "Case (".$petition->petition_standard_title_with_petitioner.") document(s) uploaded in: $attachmentable_type";
+		$view = "emails.documents_uploaded_email";
+		try {
+			info("EmailService: send_document_uploading_email for petition $petition->id");
+
+			if ($petition->petitioners->count()>0) {
+	 			info("EmailService: send_document_uploading_email for petition  petitioners" .print_r($petition->petitioners->pluck('id')->all(),1));
+	 			foreach ($petition->petitioners as $petition_petitioner) {
+		 			$user = $petition_petitioner->user;
+		 			Mail::send($view, compact('user','petition','attachmentable_type') , function ($message) use ($user,$petition,$subject) {
+			            $message->subject( $subject);
+			            $message->to($user->email , $user->name);
+		        	});
+		        	info("EmailService: send_document_uploading_email  successfully sent to user email: ".$user->email);
+		 		}
+	 		}
+	 		if ($petition->lawyers->count()>0) {
+	 			info("EmailService: send_email_before_hearing to lawyers" .print_r($petition->lawyers->pluck('id')->all(),1));
+	 			foreach ($petition->lawyers as $petition_lawyer) {
+		 			$user = $petition_lawyer->user;
+		 			Mail::send($view, compact('user','petition','attachmentable_type') , function ($message) use ($user,$petition,$subject) {
+			            $message->subject( $subject);
+			            $message->to($user->email , $user->name);
+		        	});
+		        	info("EmailService: send_document_uploading_email  successfully sent to user email: ".$user->email);
+		 		}
+	 		}
+	 		info("EmailService: send_document_uploading_email function complete: ");
+		} catch (Exception $e) {
+			 	info("EmailService: send_document_uploading_email for petition  $petition->id ERROR SENDING EMAIL: " .$e->getMessage() );
+		}	 
 	}
 
 

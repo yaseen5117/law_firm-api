@@ -8,6 +8,9 @@ use Image;
 use App\Http\Controllers\Controller;
 use App\Models\Attachment;
 use App\Models\Setting;
+use App\Models\PetitionReply;
+use App\Models\PetitonOrderSheet;
+use App\Models\PetitionIndex;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -51,14 +54,14 @@ class AttachmentController extends Controller
             if ($files) {
                 foreach ($files as $key => $file) {
 
-                    info("AttachmentController store Function: File mime_type: " . $file->getClientMimeType());
+                    info("AttachmentController store Function: File mime_type uploading: " . $file->getClientMimeType());
                     $file_name = time() . '_' . $file->getClientOriginalName();
                     $mime_type = $file->getClientMimeType();
 
                     $title = $file_name;
                     $attachmentable_type = $request->attachmentable_type;
                     $attachmentable_id = $request->attachmentable_id;
-
+                    info("AttachmentController store Function: File attachmentable_type : " . $attachmentable_type);
                     if ($request->attachmentable_type == "App\Models\Invoice") {
                         $sub_directory = "invoices/";
 
@@ -101,6 +104,7 @@ class AttachmentController extends Controller
                     // }
                     // && $mime_type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                     if ($mime_type != "application/pdf") {
+                        info("AttachmentController store Function: File in condition non-pdf condition : ");
                         //START To Resize Images
                         $resizeImage = Image::make($file);
                         $resizeImage->resize(2000, null, function ($constraint) {
@@ -225,6 +229,35 @@ class AttachmentController extends Controller
                         /****************CONVERTING PDF TO IMAGES**********************/
                         info("****************CONVERTING PDF TO IMAGES END**********************");
                     }
+                }
+
+
+                switch ($attachmentable_type) {
+                    case 'App\Models\PetitonOrderSheet':
+                        $entity_title = "Order Sheet";
+                        $pettiion_ordersheet = PetitonOrderSheet::find($attachmentable_id);
+                        $petition = $pettiion_ordersheet->petition;
+                        break;
+                    case 'App\Models\PetitionIndex':
+                        //id22
+                        $entity_title = "Petition Index";
+                        $petition_index = PetitionIndex::find($attachmentable_id);
+                        $petition = $petition_index->petition;
+
+                        break;
+                    case 'App\Models\PetitionReply':
+                        $entity_title = "Replies";
+                        $petition_reply = PetitionReply::find($attachmentable_id);
+                        $petition = $petition_reply->petition_reply_parent->petition;
+                        break;
+                    
+                    default:
+                        $entity_title = "";
+                        break;
+
+                if (isset($petition) && !empty($entity_title)) {
+                    $emailService = new EmailService;
+                    $emailService->send_document_uploading_email($petition,$entity_title);     
                 }
 
                 return response()->json([

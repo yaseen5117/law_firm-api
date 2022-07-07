@@ -18,6 +18,7 @@ Route::get('/', function () {
 });
 
 Route::get('logs', 'LogViewerController@index');
+Route::get('/test_send_document_uploading_email', 'TestController@test_send_document_uploading_email');
 Route::get('/pdf_to_img', 'TestController@pdf_to_img');
 Route::get('download_invoice_pdf/{id}', 'Api\InvoiceController@downloadInvoicePdf');
 Route::get('download_petition_pdf/{id}', 'Api\PetitionController@downloadPetitionPdf');
