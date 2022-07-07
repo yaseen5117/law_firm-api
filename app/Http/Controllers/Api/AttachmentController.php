@@ -254,6 +254,7 @@ class AttachmentController extends Controller
                     default:
                         $entity_title = "";
                         break;
+                }
 
                 if (isset($petition) && !empty($entity_title)) {
                     $emailService = new EmailService;
@@ -267,9 +268,13 @@ class AttachmentController extends Controller
                     'code' => 200,
                 ]);
             }
+
+
             return response([
                 "error" => "No files available"
             ], 404);
+
+
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
