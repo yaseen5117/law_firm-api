@@ -24,8 +24,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        info("scheduler is running at: ". date("d-M-Y h:i:s a"));
-        $schedule->command('reminder:send-email-before-hearing')->dailyAt('15:18');
+        //info("scheduler is running at: ". date("d-M-Y h:i:s a"));
+        $schedule->command('reminder:send-email-before-hearing')->dailyAt('15:40');
 
     }
 
