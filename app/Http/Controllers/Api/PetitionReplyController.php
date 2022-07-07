@@ -45,7 +45,7 @@ class PetitionReplyController extends Controller
         try {
             if ($request->date) {
                 $request->merge([
-                    'date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->date)->format('Y/m/d'),
+                    'date' => toDBDate($request->date), //\Carbon\Carbon::createFromFormat('d/m/Y', $request->date)->format('Y/m/d'),
                 ]);
             }
             PetitionReply::updateOrCreate(['id' => $request->id], $request->except('editMode'));

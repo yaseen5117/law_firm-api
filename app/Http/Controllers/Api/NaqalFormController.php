@@ -59,7 +59,7 @@ class NaqalFormController extends Controller
         try {
             if ($request->naqal_form_date) {
                 $request->merge([
-                    'naqal_form_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->naqal_form_date)->format('Y/m/d'),
+                    'naqal_form_date' => toDBDate($request->naqal_form_date), //\Carbon\Carbon::createFromFormat('d/m/Y', $request->naqal_form_date)->format('Y/m/d'),
                 ]);
             }
             if (!$request->naqal_form_type_id) {

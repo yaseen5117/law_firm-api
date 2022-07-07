@@ -9,10 +9,9 @@ class PetitionHearing extends Model
 {
     use HasFactory;
     protected $guarded = [];
-    
+
     public function petition()
     {
         return $this->belongsTo('App\Models\Petition');
-
     }
 }

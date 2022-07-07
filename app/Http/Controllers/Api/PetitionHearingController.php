@@ -55,7 +55,7 @@ class PetitionHearingController extends Controller
     public function store(Request $request)
     {
         $request->merge([
-            'hearing_date' => date("Y-m-d", strtotime($request->hearing_date)),
+            'hearing_date' => toDBDate($request->hearing_date)
         ]);
 
         if (is_array($request->petition)) {

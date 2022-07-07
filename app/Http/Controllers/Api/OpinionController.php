@@ -63,7 +63,7 @@ class OpinionController extends Controller
         try {
             if ($request->issuance_date) {
                 $request->merge([
-                    'issuance_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->issuance_date)->format('Y/m/d'),
+                    'issuance_date' => toDBDate($request->issuance_date), //\Carbon\Carbon::createFromFormat('d/m/Y', $request->issuance_date)->format('Y/m/d'),
                 ]);
             }
             Opinion::updateOrCreate(['id' => $request->id], $request->except('editMode', 'user'));

@@ -124,40 +124,40 @@ class PetitionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {          
+    {
         try {
             if ($request->institution_date) {
                 $request->merge([
-                    'institution_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->institution_date)->format('Y/m/d'),
+                    'institution_date' => toDBDate($request->institution_date), //\Carbon\Carbon::createFromFormat('d/m/Y', $request->institution_date)->format('Y/m/d'),
                 ]);
             }
             $petition = Petition::updateOrCreate(['id' => $request->id], $request->except('new_petitioner', 'petitioners', 'opponents', 'petitioner_names', 'opponent_names', 'petitioners', 'court', 'lawyer_ids', 'lawyers', 'lawyer_ids_array', 'type'));
             PetitionPetitioner::where('petition_id', $petition->id)->delete();
             if (is_array($request->petitioners) && count($request->petitioners) > 0) {
-                
+
                 foreach ($request->petitioners as $petitioner) {
-                    
-                    if (!empty($petitioner['user']) && !empty($petitioner['user']['name']) && is_array($petitioner['user']['name'])) {                                                                                         
+
+                    if (!empty($petitioner['user']) && !empty($petitioner['user']['name']) && is_array($petitioner['user']['name'])) {
                         PetitionPetitioner::create([
                             'petition_id' => $petition->id,
                             'petitioner_id' => $petitioner['user']['name']['id'],
                         ]);
-                    } else {                                
+                    } else {
                         if (isset($petitioner['user']) && !empty(@$petitioner['user']['name'])) {
-                             
+
                             $slug = Str::of(($petitioner['user']['name']))->slug('-');
                             $randomString = $slug . "-" . rand(10000, 99999);
                             $userData['name'] = $petitioner['user']['name'];
                             $userData['password'] = bcrypt('test1234');
                             $userData['email'] = $randomString . "@lfms.com";
-                            $userData['is_approved'] = 1;                           
-                            if (isset($petitioner['user']['id'])) {                                                                
+                            $userData['is_approved'] = 1;
+                            if (isset($petitioner['user']['id'])) {
                                 $user = User::where('id', $petitioner['user']['id'])->update($userData);
                                 PetitionPetitioner::create([
                                     'petition_id' => $petition->id,
                                     'petitioner_id' => $petitioner['user']['id'],
                                 ]);
-                            } else {                                
+                            } else {
                                 $user = User::create($userData);
                                 $user->assignRole('client');
                                 PetitionPetitioner::create([
@@ -168,18 +168,18 @@ class PetitionController extends Controller
                         }
                     }
                 }
-            }          
+            }
             PetitionOpponent::where('petition_id', $petition->id)->delete();
             if (is_array($request->opponents) && count($request->opponents) > 0) {
-               
+
                 foreach ($request->opponents as $opponent) {
-                    if (!empty(@$opponent['user']) && !empty(@$opponent['user']['name']) && is_array($opponent['user']['name'])) {                       
+                    if (!empty(@$opponent['user']) && !empty(@$opponent['user']['name']) && is_array($opponent['user']['name'])) {
                         PetitionOpponent::create([
                             'petition_id' => $petition->id,
                             'opponent_id' => $opponent['user']['name']['id'],
-                        ]);                        
+                        ]);
                     } else {
-                         
+
                         if (isset($opponent['user']) && !empty(@$opponent['user']['name'])) {
 
                             $slug = Str::of(($opponent['user']['name']))->slug('-');
@@ -195,7 +195,7 @@ class PetitionController extends Controller
                                 PetitionOpponent::create([
                                     'petition_id' => $petition->id,
                                     'opponent_id' => $opponent['user']['id'],
-                                ]);  
+                                ]);
                             } else {
                                 $user = User::create($oppData);
                                 $user->assignRole('client');

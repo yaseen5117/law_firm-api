@@ -62,7 +62,7 @@ class PetitionOrderSheetController extends Controller
 
             if ($request->order_sheet_date) {
                 $request->merge([
-                    'order_sheet_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->order_sheet_date)->format('Y/m/d'),
+                    'order_sheet_date' => toDBDate($request->order_sheet_date), //\Carbon\Carbon::createFromFormat('d/m/Y', $request->order_sheet_date)->format('Y/m/d'),
                 ]);
             }
             if (!$request->order_sheet_type_id) {

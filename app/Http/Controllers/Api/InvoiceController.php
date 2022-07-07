@@ -157,7 +157,7 @@ class InvoiceController extends Controller
             $request->invoice_meta['content'];
             if ($request->due_date) {
                 $request->merge([
-                    'due_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->due_date)->format('Y/m/d'),
+                    'due_date' => toDBDate($request->due_date), //\Carbon\Carbon::createFromFormat('d/m/Y', $request->due_date)->format('Y/m/d'),
                 ]);
             }
 
@@ -396,7 +396,7 @@ class InvoiceController extends Controller
         try {
             if ($request->paid_date) {
                 $request->merge([
-                    'paid_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->paid_date)->format('Y/m/d'),
+                    'paid_date' => toDBDate($request->paid_date), //\Carbon\Carbon::createFromFormat('d/m/Y', $request->paid_date)->format('Y/m/d'),
                 ]);
             }
 

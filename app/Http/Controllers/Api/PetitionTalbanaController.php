@@ -59,7 +59,7 @@ class PetitionTalbanaController extends Controller
         try {
             if ($request->talbana_date) {
                 $request->merge([
-                    'talbana_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->talbana_date)->format('Y/m/d'),
+                    'talbana_date' => toDBDate($request->talbana_date), //\Carbon\Carbon::createFromFormat('d/m/Y', $request->talbana_date)->format('Y/m/d'),
                 ]);
             }
             if (!$request->talbana_type_id) {
