@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //\App\Console\Commands\SendEmailBeforeHearing::class,
+        \App\Console\Commands\SendEmailBeforeHearing::class,
     ];
 
     /**
@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         info("scheduler is running at: ". date("d-M-Y h:i:s a"));
-        //$schedule->command('reminder:send-email-before-hearing')->dailyAt('13:15');
+        $schedule->command('reminder:send-email-before-hearing')->dailyAt('15:18');
 
     }
 

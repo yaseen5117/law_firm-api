@@ -28,8 +28,7 @@ class SendEmailBeforeHearing extends Command
     public function __construct()
     {
         parent::__construct();
-        $cronjobController = new CronjobController;
-        $cronjobController->send_email_before_hearing();
+        
     }
 
     /**
@@ -39,6 +38,8 @@ class SendEmailBeforeHearing extends Command
      */
     public function handle()
     {
-        return 0;
+        $cronjobController = new CronjobController;
+        $cronjobController->send_email_before_hearing();
+        return true;
     }
 }
