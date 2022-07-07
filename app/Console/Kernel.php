@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        \App\Console\Commands\SendEmailBeforeHearing::class,
     ];
 
     /**
@@ -27,6 +27,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         //$schedule->command('inspire')->hourly();
         //info("scheduler is running");
+        $schedule->command('reminder:send-email-before-hearing')->everyMinute();
 
     }
 
