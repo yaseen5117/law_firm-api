@@ -4,11 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attachment;
-use App\Models\ContractCategory;
-use App\Models\ContractsAndAgreement;
+use App\Models\SamplePleading;
 use Illuminate\Http\Request;
 
-class ContractsAndAgreementController extends Controller
+class SamplePleadingController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,17 +16,14 @@ class ContractsAndAgreementController extends Controller
      */
     public function index(Request $request)
     {
-        $query = ContractsAndAgreement::query()->with('attachment', 'category');
+        $query = SamplePleading::query()->with('attachment');
         if (!empty($request->title)) {
             $query->where('title', 'like', '%' . $request->title . '%');
         }
-        if (!empty($request->contract_category_id)) {
-            $query->where('contract_category_id', $request->contract_category_id);
-        }
-        $contracts_and_agreemnets = $query->get();
+        $sample_pleadings = $query->get();
         return response([
-            'contracts_and_agreemnets' => $contracts_and_agreemnets,
-            'message' => "All Contracts And Agreement"
+            'sample_pleadings' => $sample_pleadings,
+            'message' => "All sample_pleadings"
         ]);
     }
 
@@ -49,21 +45,22 @@ class ContractsAndAgreementController extends Controller
      */
     public function store(Request $request)
     {
+
         try {
-            $contract_and_agreement = ContractsAndAgreement::updateOrCreate(['id' => $request->id], $request->except('editMode', 'files'));
+            $sample_pleading = SamplePleading::updateOrCreate(['id' => $request->id], $request->except('editMode', 'files'));
             //getting files from request
             $files = $request->file('files');
             if ($files) {
                 foreach ($files as $key => $file) {
                     info("AttachmentController store Function: File mime_type: " . $file->getClientMimeType());
                     $name = time() . '_' . $file->getClientOriginalName();
-                    $file_path = $file->storeAs('attachments/contracts-and-agreements/' . $contract_and_agreement->id . '/', $name, 'public');
+                    $file_path = $file->storeAs('attachments/sample-pleadings/' . $sample_pleading->id . '/', $name, 'public');
                     $mime_type = $file->getClientMimeType();
 
                     $file_name = time() . '_' . $file->getClientOriginalName();
                     $title = $file_name;
-                    $attachmentable_type = "App\Models\ContractsAndAgreement";
-                    $attachmentable_id = $contract_and_agreement->id;
+                    $attachmentable_type = "App\Models\SamplePleading";
+                    $attachmentable_id = $sample_pleading->id;
                     Attachment::updateOrCreate(
                         [
                             'attachmentable_id' => $attachmentable_id,
@@ -101,12 +98,12 @@ class ContractsAndAgreementController extends Controller
     public function show($id)
     {
         try {
-            $contract_and_agreement = ContractsAndAgreement::with('attachment', 'category')->find($id);
+            $sample_pleading = SamplePleading::with('attachment')->find($id);
 
             return response()->json(
                 [
-                    'contract_and_agreement' => $contract_and_agreement,
-                    'message' => 'Contract And Agreement Single',
+                    'sample_pleading' => $sample_pleading,
+                    'message' => 'sample_pleading Single',
                     'code' => 200
                 ]
             );
@@ -149,28 +146,13 @@ class ContractsAndAgreementController extends Controller
     public function destroy($id)
     {
         try {
-            $ContractsAndAgreement = ContractsAndAgreement::find($id);
-            if ($ContractsAndAgreement) {
-                $ContractsAndAgreement->delete();
+            $sample_pleading = SamplePleading::find($id);
+            if ($sample_pleading) {
+                $sample_pleading->delete();
                 return response("Deleted Successfully", 200);
             } else {
-                return response('Contracts Agreement Data Not Found', 404);
+                return response('Data Not Found', 404);
             }
-        } catch (\Exception $e) {
-            return response([
-                "error" => $e->getMessage()
-            ], 500);
-        }
-    }
-    public function contractCategory()
-    {
-        try {
-            $categories = ContractCategory::all();
-            return response([
-                'categories' => $categories,
-                'message' => 'all contract categories',
-                'code' => 200
-            ]);
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()

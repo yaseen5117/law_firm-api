@@ -56,6 +56,8 @@ Route::group(['middleware' => 'auth:sanctum', 'role:admin', 'namespace' => 'Api'
     //END route for General Case Law
 
     Route::resource('attachments', 'AttachmentController');
+
+    Route::resource('sample_pleadings', 'SamplePleadingController');
 });
 
 Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function () {
