@@ -303,12 +303,6 @@ class AttachmentController extends Controller
                         $petition = $petition_judgement->petition;
                         break;
 
-                    case 'App\Models\Invoice':
-                        $entity_title = "Invoice";
-                        $petition_invoice = Invoice::find($attachmentable_id);
-                        $petition = $petition_invoice->petition;
-                        break;
-
                     default:
                         $entity_title = "";
                         break;
