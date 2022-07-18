@@ -7,10 +7,18 @@ use Image;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attachment;
+use App\Models\CaseLaw;
+use App\Models\ExtraDocument;
+use App\Models\Invoice;
+use App\Models\Judgement;
+use App\Models\OralArgument;
 use App\Models\Setting;
 use App\Models\PetitionReply;
 use App\Models\PetitonOrderSheet;
 use App\Models\PetitionIndex;
+use App\Models\PetitionNaqalForm;
+use App\Models\PetitionSynopsis;
+use App\Models\PetitionTalbana;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -239,19 +247,68 @@ class AttachmentController extends Controller
                         $pettiion_ordersheet = PetitonOrderSheet::find($attachmentable_id);
                         $petition = $pettiion_ordersheet->petition;
                         break;
+
                     case 'App\Models\PetitionIndex':
                         //id22
                         $entity_title = "Petition Index";
                         $petition_index = PetitionIndex::find($attachmentable_id);
                         $petition = $petition_index->petition;
-
                         break;
+
                     case 'App\Models\PetitionReply':
                         $entity_title = "Replies";
                         $petition_reply = PetitionReply::find($attachmentable_id);
                         $petition = $petition_reply->petition_reply_parent->petition;
                         break;
-                    
+
+                    case 'App\Models\OralArgument':
+                        $entity_title = "Oral Argument";
+                        $petition_oral_argument = OralArgument::find($attachmentable_id);
+                        $petition = $petition_oral_argument->petition;
+                        break;
+
+                    case 'App\Models\PetitionNaqalForm':
+                        $entity_title = "Naqal Form";
+                        $petition_naqal_form = PetitionNaqalForm::find($attachmentable_id);
+                        $petition = $petition_naqal_form->petition;
+                        break;
+
+                    case 'App\Models\PetitionTalbana':
+                        $entity_title = "Talbana";
+                        $petition_talbana = PetitionTalbana::find($attachmentable_id);
+                        $petition = $petition_talbana->petition;
+                        break;
+
+                    case 'App\Models\CaseLaw':
+                        $entity_title = "Case Laws";
+                        $petition_case_law = CaseLaw::find($attachmentable_id);
+                        $petition = $petition_case_law->petition;
+                        break;
+
+                    case 'App\Models\ExtraDocument':
+                        $entity_title = "Extra Document";
+                        $petition_extra_document = ExtraDocument::find($attachmentable_id);
+                        $petition = $petition_extra_document->petition;
+                        break;
+
+                    case 'App\Models\PetitionSynopsis':
+                        $entity_title = "Synopsis";
+                        $petition_synopsis = PetitionSynopsis::find($attachmentable_id);
+                        $petition = $petition_synopsis->petition;
+                        break;
+
+                    case 'App\Models\Judgement':
+                        $entity_title = "Judgement";
+                        $petition_judgement = Judgement::find($attachmentable_id);
+                        $petition = $petition_judgement->petition;
+                        break;
+
+                    case 'App\Models\Invoice':
+                        $entity_title = "Invoice";
+                        $petition_invoice = Invoice::find($attachmentable_id);
+                        $petition = $petition_invoice->petition;
+                        break;
+
                     default:
                         $entity_title = "";
                         break;
@@ -259,7 +316,7 @@ class AttachmentController extends Controller
 
                 if (isset($petition) && !empty($entity_title)) {
                     $emailService = new EmailService;
-                    $emailService->send_document_uploading_email($petition,$entity_title);     
+                    $emailService->send_document_uploading_email($petition, $entity_title);
                 }
 
                 return response()->json([
@@ -274,8 +331,6 @@ class AttachmentController extends Controller
             return response([
                 "error" => "No files available"
             ], 404);
-
-
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
