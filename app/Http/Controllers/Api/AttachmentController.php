@@ -58,6 +58,12 @@ class AttachmentController extends Controller
     public function store(Request $request)
     {
         ini_set('max_execution_time', '0'); // for infinite time of execution
+        ini_set('memory_limit', '2024M');
+        ini_set('post_max_size', '2024M');
+        ini_set('upload_max_filesize', '2024M');
+        ini_set('max_input_time', 36000); // 10 houres
+        set_time_limit(36000); // 10 houres
+
         try {
             $files = $request->file('files');
             if ($files) {
@@ -393,9 +399,11 @@ class AttachmentController extends Controller
      */
     public function destroy($id)
     {
+
         try {
             $attachment = Attachment::find($id);
             if ($attachment) {
+                removeImage($attachment);
                 $attachment->delete();
                 return response(
                     [
@@ -415,7 +423,12 @@ class AttachmentController extends Controller
         try {
             //request contains all selected records ids   
             if ($request) {
-                DB::table("attachments")->whereIn('id', $request)->delete();
+                foreach ($request->id as $id) {
+                    $attachment = Attachment::find($id);
+                    removeImage($attachment);
+                }
+                DB::table("attachments")->whereIn('id', $request->id)->delete();
+
                 return response(
                     [
                         'message' => 'Records Deleted successfully',
