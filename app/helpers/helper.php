@@ -179,3 +179,14 @@ function toDBDate($date_in_any_format)
         return null;
     }
 }
+//Removing Files from Folder.
+function removeImage($attachment)
+{
+    if (\File::exists(public_path("storage/attachments/$attachment->attachmentable_id/$attachment->file_name"))) {
+        \File::delete(public_path("storage/attachments/$attachment->attachmentable_id/$attachment->file_name"));
+    }
+    if (\File::exists(public_path("storage/attachments/$attachment->attachmentable_id/original/$attachment->file_name"))) {
+        \File::delete(public_path("storage/attachments/$attachment->attachmentable_id/original/$attachment->file_name"));
+    }
+    return;
+}

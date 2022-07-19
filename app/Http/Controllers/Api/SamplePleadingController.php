@@ -20,7 +20,7 @@ class SamplePleadingController extends Controller
         if (!empty($request->title)) {
             $query->where('title', 'like', '%' . $request->title . '%');
         }
-        $sample_pleadings = $query->get();
+        $sample_pleadings = $query->orderby('display_order', 'asc')->get();
         return response([
             'sample_pleadings' => $sample_pleadings,
             'message' => "All sample_pleadings"
@@ -45,7 +45,6 @@ class SamplePleadingController extends Controller
      */
     public function store(Request $request)
     {
-
         try {
             $sample_pleading = SamplePleading::updateOrCreate(['id' => $request->id], $request->except('editMode', 'files'));
             //getting files from request
