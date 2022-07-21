@@ -143,40 +143,6 @@ class AttachmentController extends Controller
                         ]);
                     }
 
-                    // //Word Doc. conversion to PDF
-                    // if ($mime_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-
-                    //     /* Set the PDF Engine Renderer Path */
-                    //     $domPdfPath = base_path('vendor/dompdf/dompdf');
-                    //     \PhpOffice\PhpWord\Settings::setPdfRendererPath($domPdfPath);
-                    //     \PhpOffice\PhpWord\Settings::setPdfRendererName('DomPDF');
-
-                    //     //getting file name without extention
-                    //     $pdf_file_name = pathinfo($file_name, PATHINFO_FILENAME);
-                    //     //store doc file
-                    //     $file_path = $file->storeAs('attachments/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
-
-                    //     //Load word file
-                    //     $Content = \PhpOffice\PhpWord\IOFactory::load(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/original/' . $file_name));
-
-                    //     //Save it into PDF
-                    //     $PDFWriter = \PhpOffice\PhpWord\IOFactory::createWriter($Content, 'PDF');
-                    //     $path = storage_path('app/public/attachments/' . $sub_directory . $attachmentable_id . '/original/');
-                    //     if (!File::isDirectory($path)) {
-                    //         File::makeDirectory($path, 0777, true, true);
-                    //     }
-
-                    //     $PDFWriter->save(storage_path('app/public/attachments/' . $sub_directory . $attachmentable_id . '/original/' . $pdf_file_name . '.pdf'));
-                    //     //$sub_directory = 'converted-pdf-files/';
-                    //     unlink(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/original/' . $file_name));
-                    //     $file_name = basename(storage_path("app/public/attachments/$sub_directory$attachmentable_id/original/$pdf_file_name.pdf")); //pathinfo(storage_path("app/public/attachments/converted-pdf-files/$attachmentable_id/original/$pdf_file_name.pdf"), PATHINFO_FILENAME);
-
-                    //     //return response($file_name, 403);
-                    // }
-                    // //Word Doc. conversion to PDF
-
-                    //|| $mime_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-
                     if ($mime_type == "application/pdf") {
                         info("****************CONVERTING PDF TO IMAGES START**********************");
                         /****************CONVERTING PDF TO IMAGES**********************/
@@ -206,7 +172,7 @@ class AttachmentController extends Controller
                                 $generated_jpg_filename = $page . " - " . $file_name . '.jpg';
                                 $im->setImageCompression(imagick::COMPRESSION_JPEG);
                                 $im->setImageCompressionQuality(100);
-                                $im->writeImage($output_path . "/" . $generated_jpg_filename);
+                                //$im->writeImage($output_path . "/" . $generated_jpg_filename);
 
                                 //START To Resize Images
                                 $resizeImage = Image::make($output_path . "/" . $generated_jpg_filename);
