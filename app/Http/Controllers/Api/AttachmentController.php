@@ -173,14 +173,14 @@ class AttachmentController extends Controller
                                 $im->setImageCompression(imagick::COMPRESSION_JPEG);
                                 $im->setImageCompressionQuality(100);
 
-                                $path = $output_path . "temp";
-                                if (!File::isDirectory($path)) {
-                                    File::makeDirectory($path, 0777, true, true);
+                                $temp_path = $output_path . "temp";
+                                if (!File::isDirectory($temp_path)) {
+                                    File::makeDirectory($temp_path, 0777, true, true);
                                 }
-                                $im->writeImage($path . "/" . $generated_jpg_filename);
+                                $im->writeImage($temp_path . "/" . $generated_jpg_filename);
 
                                 //START To Resize Images
-                                $resizeImage = Image::make($path . "/" . $generated_jpg_filename);
+                                $resizeImage = Image::make($temp_path . "/" . $generated_jpg_filename);
                                 $resizeImage->resize(2000, null, function ($constraint) {
                                     $constraint->aspectRatio();
                                 });
@@ -206,6 +206,7 @@ class AttachmentController extends Controller
                             }
 
                             //Deleting temp folder
+                            info("Deleting temp folder");
                             $public_path =  public_path();
                             if (File::exists($public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id . '/temp')) {
                                 File::deleteDirectory($public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id . '/temp');
