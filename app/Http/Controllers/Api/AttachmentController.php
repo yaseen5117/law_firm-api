@@ -151,7 +151,7 @@ class AttachmentController extends Controller
                         $pdf_file_name = "$file_name";
                         $public_path =  public_path();
                         $file_path = $public_path . '/storage/attachments/' . $attachmentable_id . '/' . $sub_directory . 'original/' . $pdf_file_name;
-                        $output_path = $public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id . '/';
+                        $output_path = $public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id;
                         //return response($output_path, 403);
                         try {
                             info('--------Imagick Process Start--------');
@@ -175,24 +175,20 @@ class AttachmentController extends Controller
                                 $im->setImageCompression(imagick::COMPRESSION_JPEG);
                                 $im->setImageCompressionQuality(100);
 
-                                $temp_path = $output_path . "temp";
-                                if (!File::isDirectory($temp_path)) {
-                                    File::makeDirectory($temp_path, 0777, true, true);
-                                }
-                                $im->writeImage($temp_path . "/" . $generated_jpg_filename);
+                                $im->writeImage($output_path . "/" . $generated_jpg_filename);
                                 info("END Imagick Setting up page# $page");
                                 //START To Resize Images
-                                info("START RESIZING page# $page");
-                                $resizeImage = Image::make($temp_path . "/" . $generated_jpg_filename);
-                                $resizeImage->resize(2000, null, function ($constraint) {
-                                    $constraint->aspectRatio();
-                                });
-                                $path =  storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id);
-                                if (!File::isDirectory($path)) {
-                                    File::makeDirectory($path, 0777, true, true);
-                                }
-                                $resizeImage->save(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/' . $generated_jpg_filename));
-                                info("END RESIZE page# $page");
+                                // info("START RESIZING page# $page");
+                                // $resizeImage = Image::make($temp_path . "/" . $generated_jpg_filename);
+                                // $resizeImage->resize(2000, null, function ($constraint) {
+                                //     $constraint->aspectRatio();
+                                // });
+                                // $path =  storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id);
+                                // if (!File::isDirectory($path)) {
+                                //     File::makeDirectory($path, 0777, true, true);
+                                // }
+                                // $resizeImage->save(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/' . $generated_jpg_filename));
+                                // info("END RESIZE page# $page");
                                 //END To Resize Images
 
                                 info("converting page: $page DONE");
@@ -210,12 +206,12 @@ class AttachmentController extends Controller
                                 info("END Storing Detail of page# $page Into DB");
                             }
                             info('--------Loop END--------');
-                            //Deleting temp folder
-                            info("Deleting temp folder");
-                            $public_path =  public_path();
-                            if (File::exists($public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id . '/temp')) {
-                                File::deleteDirectory($public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id . '/temp');
-                            }
+                            // //Deleting temp folder
+                            // info("Deleting temp folder");
+                            // $public_path =  public_path();
+                            // if (File::exists($public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id . '/temp')) {
+                            //     File::deleteDirectory($public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id . '/temp');
+                            // }
 
 
                             info("conversion done");
