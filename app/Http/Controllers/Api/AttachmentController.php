@@ -57,6 +57,7 @@ class AttachmentController extends Controller
      */
     public function store(Request $request)
     {
+        info('--------START ATTCHMENT PROCESS--------');
         ini_set('max_execution_time', '0'); // for infinite time of execution
         ini_set('memory_limit', '2024M');
         ini_set('post_max_size', '2024M');
@@ -153,7 +154,7 @@ class AttachmentController extends Controller
                         $output_path = $public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id . '/';
                         //return response($output_path, 403);
                         try {
-
+                            info('--------Imagick Process Start--------');
                             $im = new Imagick();
                             //$im->setResolution(300,300);
                             $im->readimage($file_path);
@@ -161,12 +162,13 @@ class AttachmentController extends Controller
                             $im->clear();
                             $im->destroy();
                             info("Total Number Of Pages: $num_page");
+                            info('--------LOOP START--------');
                             for ($page = 0; $page < $num_page; $page++) {
                                 $im = new Imagick();
 
                                 info("converting page: $page");
+                                info("START Imagick Setting up page# $page");
                                 $im->setResolution(300, 300);
-
                                 $im->readimage($file_path . "[$page]");
                                 $im->setImageFormat('jpeg');
                                 $generated_jpg_filename = $page . " - " . $file_name . '.jpg';
@@ -178,8 +180,9 @@ class AttachmentController extends Controller
                                     File::makeDirectory($temp_path, 0777, true, true);
                                 }
                                 $im->writeImage($temp_path . "/" . $generated_jpg_filename);
-
+                                info("END Imagick Setting up page# $page");
                                 //START To Resize Images
+                                info("START RESIZING page# $page");
                                 $resizeImage = Image::make($temp_path . "/" . $generated_jpg_filename);
                                 $resizeImage->resize(2000, null, function ($constraint) {
                                     $constraint->aspectRatio();
@@ -189,12 +192,13 @@ class AttachmentController extends Controller
                                     File::makeDirectory($path, 0777, true, true);
                                 }
                                 $resizeImage->save(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/' . $generated_jpg_filename));
+                                info("END RESIZE page# $page");
                                 //END To Resize Images
 
                                 info("converting page: $page DONE");
                                 $im->clear();
                                 $im->destroy();
-
+                                info("START Storing Detail of page# $page Into DB");
                                 $attachment = Attachment::updateOrCreate(['id' => $request->attachment_id], [ //attachment id
                                     'title' => $generated_jpg_filename,
                                     'file_name' => $generated_jpg_filename,
@@ -203,8 +207,9 @@ class AttachmentController extends Controller
                                     'attachmentable_type' => $request->attachmentable_type,
                                     'display_order' => $page,
                                 ]);
+                                info("END Storing Detail of page# $page Into DB");
                             }
-
+                            info('--------Loop END--------');
                             //Deleting temp folder
                             info("Deleting temp folder");
                             $public_path =  public_path();
