@@ -9,10 +9,14 @@ use App\Models\PetitionIndex;
 use App\Models\PetitonOrderSheet;
 use App\Models\PetitionReply;
 use App\Services\EmailService;
+use Carbon\Carbon;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use App\Jobs\SendDocumentUploadEmail;
+
 
 class TestController extends Controller
 {
-    
+    use DispatchesJobs;
     public function pdf_to_img()
     {
         $petition_id = 1;
@@ -57,7 +61,7 @@ class TestController extends Controller
     public function test_send_document_uploading_email()
     {
         $attachmentable_type="App\Models\PetitonOrderSheet";
-        $attachmentable_id=;
+        $attachmentable_id=22;
         
         switch ($attachmentable_type) {
             case 'App\Models\PetitonOrderSheet':
@@ -90,5 +94,16 @@ class TestController extends Controller
         } catch (\Exception $e) {
             info(print_r($e->getMessage()));
         }
+    }
+
+
+    public function test_queue()
+    {
+        $attachmentable_id = 22;
+        $attachmentable_type = "App\Models\PetitionIndex";
+        $job=(new SendDocumentUploadEmail($attachmentable_type,$attachmentable_id))->delay(Carbon::now()->addSeconds(40));
+        $this->dispatch($job);
+        dd("done");
+
     }
 }

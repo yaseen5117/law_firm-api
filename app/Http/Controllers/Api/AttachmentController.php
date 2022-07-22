@@ -26,11 +26,15 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 use PDF;
-
+use Carbon\Carbon;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use App\Jobs\SendDocumentUploadEmail;
 
 class AttachmentController extends Controller
 {
+
+    use DispatchesJobs;
+
     /**
      * Display a listing of the resource.
      *
@@ -193,8 +197,11 @@ class AttachmentController extends Controller
                 }
 
                 //SENDING EMAIL VIA QUEUE JOB
-                $sendDocumentUploadEmail = new SendDocumentUploadEmail($attachmentable_type,$attachmentable_id);
-                dispatch($sendDocumentUploadEmail);
+                /*$sendDocumentUploadEmail = new SendDocumentUploadEmail($attachmentable_type,$attachmentable_id);
+                $sendDocumentUploadEmail->dispatch();*/
+
+                $job=(new SendDocumentUploadEmail($attachmentable_type,$attachmentable_id))->delay(Carbon::now()->addSeconds(40));
+                $this->dispatch($job);
                 
 
                 return response()->json([
