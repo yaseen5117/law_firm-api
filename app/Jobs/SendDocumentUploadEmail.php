@@ -47,7 +47,8 @@ class SendDocumentUploadEmail implements ShouldQueue
      * @return void
      */
     public function handle()
-    {
+    {   
+        info("SendDocumentUploadEmail queue job start");
         $attachmentable_id =$this->attachmentable_id;
         $attachmentable_type =$this->attachmentable_type;
         switch ($attachmentable_type) {
@@ -121,5 +122,6 @@ class SendDocumentUploadEmail implements ShouldQueue
             $emailService = new EmailService;
             $emailService->send_document_uploading_email($petition, $entity_title);
         }
+        info("SendDocumentUploadEmail queue job end");
     }
 }
