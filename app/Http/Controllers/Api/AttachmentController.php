@@ -57,7 +57,7 @@ class AttachmentController extends Controller
      */
     public function store(Request $request)
     {
-        info('--------START ATTCHMENT PROCESS--------');
+        info('--------START ATTCHMENT UPLOADING PROCESS--------');
         ini_set('max_execution_time', '0'); // for infinite time of execution
         ini_set('memory_limit', '2024M');
         ini_set('post_max_size', '2024M');
@@ -85,7 +85,7 @@ class AttachmentController extends Controller
                     } else if ($request->attachmentable_type == "App\Models\Setting") {
                         $sub_directory = "settings/";
                         Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Setting")->forceDelete();
-                        /////
+
                         $resizeImage = Image::make($file);
                         $resizeImage->resize(2000, null, function ($constraint) {
                             $constraint->aspectRatio();
@@ -105,20 +105,10 @@ class AttachmentController extends Controller
                         $setting->setMeta($request->except('attachmentable_type', 'attachmentable_id', 'files'));
                         $setting->save();
                         return response("Successfully Save File Name To Setting MetaTable", 200);
-                        // Attachment::create([
-                        //     'file_name' => $file_name,
-                        //     'title' => $title,
-                        //     'attachmentable_type' => $attachmentable_type,
-                        //     'attachmentable_id' => $attachmentable_id,
-                        //     'mime_type' => $mime_type,
-                        // ]);
                     } else {
                         $sub_directory = "";
                     }
-                    // if ($mime_type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
                     $file_path = $file->storeAs('attachments/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
-                    // }
-                    // && $mime_type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                     if ($mime_type != "application/pdf") {
                         info("AttachmentController store Function: File in condition non-pdf condition : ");
                         //START To Resize Images
@@ -152,9 +142,7 @@ class AttachmentController extends Controller
                         $public_path =  public_path();
                         $file_path = $public_path . '/storage/attachments/' . $attachmentable_id . '/' . $sub_directory . 'original/' . $pdf_file_name;
                         $output_path = $public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id;
-                        //return response($output_path, 403);
                         try {
-                            info('--------Imagick Process Start--------');
                             $im = new Imagick();
                             //$im->setResolution(300,300);
                             $im->readimage($file_path);
@@ -162,40 +150,19 @@ class AttachmentController extends Controller
                             $im->clear();
                             $im->destroy();
                             info("Total Number Of Pages: $num_page");
-                            info('--------LOOP START--------');
                             for ($page = 0; $page < $num_page; $page++) {
                                 $im = new Imagick();
-
-                                info("converting page: $page");
-                                info("START Imagick Setting up page# $page");
                                 $im->setResolution(300, 300);
                                 $im->readimage($file_path . "[$page]");
                                 $im->setImageFormat('jpeg');
                                 $generated_jpg_filename = $page . " - " . $file_name . '.jpg';
                                 $im->setImageCompression(imagick::COMPRESSION_JPEG);
                                 $im->setImageCompressionQuality(100);
-
                                 $im->writeImage($output_path . "/" . $generated_jpg_filename);
-                                info("END Imagick Setting up page# $page");
-                                //START To Resize Images
-                                // info("START RESIZING page# $page");
-                                // $resizeImage = Image::make($temp_path . "/" . $generated_jpg_filename);
-                                // $resizeImage->resize(2000, null, function ($constraint) {
-                                //     $constraint->aspectRatio();
-                                // });
-                                // $path =  storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id);
-                                // if (!File::isDirectory($path)) {
-                                //     File::makeDirectory($path, 0777, true, true);
-                                // }
-                                // $resizeImage->save(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/' . $generated_jpg_filename));
-                                // info("END RESIZE page# $page");
-                                //END To Resize Images
-
-                                info("converting page: $page DONE");
                                 $im->clear();
                                 $im->destroy();
-                                info("START Storing Detail of page# $page Into DB");
-                                $attachment = Attachment::updateOrCreate(['id' => $request->attachment_id], [ //attachment id
+
+                                Attachment::updateOrCreate(['id' => $request->attachment_id], [ //attachment id
                                     'title' => $generated_jpg_filename,
                                     'file_name' => $generated_jpg_filename,
                                     'mime_type' => 'jpg',
@@ -203,18 +170,7 @@ class AttachmentController extends Controller
                                     'attachmentable_type' => $request->attachmentable_type,
                                     'display_order' => $page,
                                 ]);
-                                info("END Storing Detail of page# $page Into DB");
                             }
-                            info('--------Loop END--------');
-                            // //Deleting temp folder
-                            // info("Deleting temp folder");
-                            // $public_path =  public_path();
-                            // if (File::exists($public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id . '/temp')) {
-                            //     File::deleteDirectory($public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id . '/temp');
-                            // }
-
-
-                            info("conversion done");
                         } catch (\Exception $e) {
                             info('Message: ' . $e->getMessage());
                         }
