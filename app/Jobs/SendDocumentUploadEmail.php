@@ -119,6 +119,7 @@ class SendDocumentUploadEmail implements ShouldQueue
         }
 
         if (isset($petition) && !empty($entity_title)) {
+            info("SendDocumentUploadEmail queue job sending email to petition id: $petition->id for entity_title $entity_title");
             $emailService = new EmailService;
             $emailService->send_document_uploading_email($petition, $entity_title);
         }
