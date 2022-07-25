@@ -9,21 +9,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Petition extends Model
 {
     use HasFactory;
-	use SoftDeletes;
+    use SoftDeletes;
 
-    protected $guarded=['type_abrivation','petition_standard_title','petition_standard_title_with_petitioner'];
-    protected $appends=['petitioner_names','opponent_names','type_abrivation','petition_standard_title','petition_standard_title_with_petitioner','pdf_download_url'];
+    protected $guarded = ['type_abrivation', 'petition_standard_title', 'petition_standard_title_with_petitioner'];
+    protected $appends = ['petitioner_names', 'opponent_names', 'type_abrivation', 'petition_standard_title', 'petition_standard_title_with_petitioner', 'pdf_download_url'];
     protected $dates = ['deleted_at'];
     protected $casts = [
-        'institution_date'  => 'date:d/m/Y',        
+        'institution_date'  => 'date:d/m/Y',
     ];
     public function court()
     {
-        return $this->belongsTo('App\Models\Court','court_id','id');
+        return $this->belongsTo('App\Models\Court', 'court_id', 'id');
     }
     public function type()
     {
-        return $this->belongsTo('App\Models\PetitionType','petition_type_id','id');
+        return $this->belongsTo('App\Models\PetitionType', 'petition_type_id', 'id');
     }
     public function lawyers()
     {
@@ -32,7 +32,7 @@ class Petition extends Model
 
     public function case_status()
     {
-        return $this->belongsTo('App\Models\PetitionStatus','status','id');
+        return $this->belongsTo('App\Models\PetitionStatus', 'status', 'id');
     }
 
     public function petitioners()
@@ -48,17 +48,17 @@ class Petition extends Model
 
     public function petition_type()
     {
-        return $this->belongsTo('App\Models\PetitionType','petition_type_id','id');
+        return $this->belongsTo('App\Models\PetitionType', 'petition_type_id', 'id');
     }
-    
+
     public function petition_judges()
     {
-        return $this->hasMany('App\Models\PetitionJudge','petition_id','id');
+        return $this->hasMany('App\Models\PetitionJudge', 'petition_id', 'id');
     }
 
     public function petition_lawyers()
     {
-        return $this->hasMany('App\Models\PetitionLawyer','petition_id','id');
+        return $this->hasMany('App\Models\PetitionLawyer', 'petition_id', 'id');
     }
     public function attachments()
     {
@@ -67,29 +67,29 @@ class Petition extends Model
 
     public function scopeWithRelations($query)
     {
-        return $query->with('petitioners.user','opponents.user','court','lawyers','type','petition_indexes.attachments');
+        return $query->with('petitioners.user', 'opponents.user', 'court', 'lawyers', 'type', 'petition_indexes.attachments');
     }
     public function scopeWithRelationsIndex($query)
     {
-        return $query->with('court','type');
+        return $query->with('court', 'type');
     }
 
     public function getPetitionerNamesAttribute()
     {
-        $str="";
+        $str = "";
         foreach ($this->petitioners as $petitioner) {
-            $str .= @$petitioner->user->name.", ";
+            $str .= @$petitioner->user->name . ", ";
         }
-        return rtrim($str,", ");
-    }    
+        return rtrim($str, ", ");
+    }
 
     public function getOpponentNamesAttribute()
     {
-        $str="";
+        $str = "";
         foreach ($this->opponents as $opponent) {
-            $str .= @$opponent->user->name.", ";
+            $str .= @$opponent->user->name . ", ";
         }
-        return rtrim($str,", ");
+        return rtrim($str, ", ");
     }
     // public function getLawyerNamesAttribute()
     // {
@@ -102,7 +102,7 @@ class Petition extends Model
 
     public function petition_replies_parents()
     {
-        return $this->hasMany('App\Models\PetitionReplyParent','petition_id');
+        return $this->hasMany('App\Models\PetitionReplyParent', 'petition_id');
     }
 
     public function getTypeAbrivationAttribute()
@@ -114,20 +114,19 @@ class Petition extends Model
 
     public function getPetitionStandardTitleAttribute()
     {
-        return $this->type_abrivation." ".$this->case_no."/".$this->year;
+        return $this->type_abrivation . " " . $this->case_no . "/" . $this->year . " " . $this->title;
     }
 
     public function getPetitionStandardTitleWithPetitionerAttribute()
     {
-        return $this->type_abrivation." ".$this->case_no."/".$this->year. " ". $this->petitioner_names;
+        return $this->type_abrivation . " " . $this->case_no . "/" . $this->year . " " . $this->petitioner_names . " " . $this->title;
     }
     public function petition_indexes()
     {
         return $this->hasMany('App\Models\PetitionIndex');
-
     }
     public function getPdfDownloadUrlAttribute()
     {
-        return url("download_petition_pdf/".+$this->id);
+        return url("download_petition_pdf/" . +$this->id);
     }
 }

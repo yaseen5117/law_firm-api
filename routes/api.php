@@ -49,6 +49,7 @@ Route::group(['middleware' => 'auth:sanctum', 'role:admin', 'namespace' => 'Api'
     Route::post('delete_selected', 'AttachmentController@deleteSelected');
     Route::resource('module_types', 'PetitionModuleTypeController');
     Route::resource('petition_types', 'PetitionTypeController');
+    Route::get('get_court_names', 'PetitionTypeController@getCourtsName');
     Route::resource('courts', 'CourtController');
 
     //START route for General Case Law

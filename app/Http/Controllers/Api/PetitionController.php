@@ -76,7 +76,7 @@ class PetitionController extends Controller
             $petitions = [];
             if ($request->force_all_records) {
                 if (!empty($request->query_from_calendar_page)) {
-                    $query->where('case_no', 'like', '%' . $request->query_from_calendar_page . '%')->orWhere('name', 'like', '%' . $request->query_from_calendar_page . '%');
+                    $query->where('case_no', 'like', '%' . $request->query_from_calendar_page . '%')->orWhere('name', 'like', '%' . $request->query_from_calendar_page . '%')->orWhere('title', 'like', '%' . $request->query_from_calendar_page . '%');
                 }
                 $petitions = $query->groupBy('petitions.id')->orderby('id', 'desc')->get();
             } else {

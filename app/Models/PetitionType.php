@@ -11,4 +11,13 @@ class PetitionType extends Model
     protected $guarded = [];
 
     protected $table = "petition_types";
+
+    public function petition_type_courts()
+    {
+        return $this->hasMany(PetitionTypeCourt::class);
+    }
+    public function courts()
+    {
+        return $this->hasMany(Court::class);
+    }
 }
