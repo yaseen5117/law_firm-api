@@ -34,8 +34,8 @@ class PetitionTypeController extends Controller
             return response()->json(
                 [
                     'petition_types' => $petition_types,
-                    'message' => 'Case Types',
-                    'page_title' => 'Case Types',
+                    'message' => 'Case Categories',
+                    'page_title' => 'Case Categories',
                     'code' => 200
                 ]
             );
