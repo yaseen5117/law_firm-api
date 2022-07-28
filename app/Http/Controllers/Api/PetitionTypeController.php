@@ -15,15 +15,27 @@ class PetitionTypeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $petition_types = PetitionType::with('petition_type_courts', 'petition_type_courts.court')->orderBy("title")->get();
+            $query = PetitionType::query()->with('petition_type_courts', 'petition_type_courts.court');
+
+            if (!empty($request->title)) {
+                $query->where('title', 'like', '%' . $request->title . '%');
+            }
+
+            if (!empty($request->court_id)) {
+                $case_type_ids = PetitionTypeCourt::where('court_id', $request->court_id)->pluck('petition_type_id');
+                $query->whereIn('id', $case_type_ids);
+            }
+
+            $petition_types = $query->orderby('title')->get();
+
             return response()->json(
                 [
                     'petition_types' => $petition_types,
-                    'message' => 'Petition Types',
-                    'page_title' => 'Petition Types',
+                    'message' => 'Case Types',
+                    'page_title' => 'Case Types',
                     'code' => 200
                 ]
             );
@@ -58,13 +70,15 @@ class PetitionTypeController extends Controller
             $petition_type = PetitionType::updateOrCreate(['id' => $request->id], $request->only('title'));
 
             //Saving courts and petition to PetitionTypeCourt Table
-            if (is_array($request->court_ids) && count($request->court_ids) > 0) {
+            if (is_array($request->court_ids)) {
                 PetitionTypeCourt::where('petition_type_id', $petition_type->id)->delete();
-                foreach ($request->court_ids as $court_id) {
-                    PetitionTypeCourt::create([
-                        'petition_type_id' => $petition_type->id,
-                        'court_id' => $court_id,
-                    ]);
+                if (count($request->court_ids) > 0) {
+                    foreach ($request->court_ids as $court_id) {
+                        PetitionTypeCourt::create([
+                            'petition_type_id' => $petition_type->id,
+                            'court_id' => $court_id,
+                        ]);
+                    }
                 }
             }
             return response()->json(
