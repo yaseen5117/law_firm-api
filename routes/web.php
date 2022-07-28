@@ -17,7 +17,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('logs', 'LogViewerController@index');
+Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
 Route::get('/test_send_document_uploading_email', 'TestController@test_send_document_uploading_email');
 Route::get('/test_queue', 'TestController@test_queue');
 Route::get('/pdf_to_img', 'TestController@pdf_to_img');

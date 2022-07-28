@@ -67,7 +67,7 @@ return [
     |
     */
 
-     'timezone' => 'Asia/Karachi',
+    'timezone' => 'Asia/Karachi',
 
     /*
     |--------------------------------------------------------------------------
@@ -177,6 +177,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Arcanedev\LogViewer\LogViewerServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
+        Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
 
     ],
 
@@ -232,7 +233,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Image' => Intervention\Image\Facades\Image::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
-        
+
     ],
 
 ];
