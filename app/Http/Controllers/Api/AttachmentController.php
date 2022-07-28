@@ -157,27 +157,17 @@ class AttachmentController extends Controller
                             $im->destroy();
                             info("Total Number Of Pages: $num_page");
                             for ($page = 0; $page < $num_page; $page++) {
-                                info("creating Imagick Object");
                                 $im = new Imagick();
-                                info("Setting Up Resolution of Image");
                                 $im->setResolution(300, 300);
-                                info("Reading Image from Path");
                                 $im->readimage($file_path . "[$page]");
-                                info("Set Image Format");
                                 $im->setImageFormat('jpeg');
-                                info("Generating File JPG Name");
                                 $generated_jpg_filename = $page . " - " . $file_name . '.jpg';
-                                info("Set Image Compression");
                                 $im->setImageCompression(imagick::COMPRESSION_JPEG);
-                                info("Set Image Compression Quality");
                                 $im->setImageCompressionQuality(100);
-                                info("Writing Image To path");
                                 $im->writeImage($output_path . "/" . $generated_jpg_filename);
-                                info("Clearing object");
                                 $im->clear();
-                                info("Destroying Object");
                                 $im->destroy();
-                                info("Saving To DB");
+
                                 Attachment::updateOrCreate(['id' => $request->attachment_id], [ //attachment id
                                     'title' => $generated_jpg_filename,
                                     'file_name' => $generated_jpg_filename,
@@ -186,7 +176,6 @@ class AttachmentController extends Controller
                                     'attachmentable_type' => $request->attachmentable_type,
                                     'display_order' => $page,
                                 ]);
-                                info("Complete ALL Process for Image# $page");
                             }
                         } catch (\Exception $e) {
                             info('Message: ' . $e->getMessage());
@@ -200,12 +189,12 @@ class AttachmentController extends Controller
                 /*$sendDocumentUploadEmail = new SendDocumentUploadEmail($attachmentable_type,$attachmentable_id);
                 $sendDocumentUploadEmail->dispatch();*/
 
-                $job=(new SendDocumentUploadEmail($attachmentable_type,$attachmentable_id))->delay(Carbon::now()->addSeconds(40));
+                $job = (new SendDocumentUploadEmail($attachmentable_type, $attachmentable_id))->delay(Carbon::now()->addSeconds(40));
                 $this->dispatch($job);
 
 
                 info('--------end ATTCHMENT UPLOADING PROCESS--------');
-                
+
 
                 return response()->json([
                     'success' => 'Files uploaded successfully.',
