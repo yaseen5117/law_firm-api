@@ -141,47 +141,16 @@ class AttachmentController extends Controller
                     }
 
                     if ($mime_type == "application/pdf") {
-                        info("****************CONVERTING PDF TO IMAGES START**********************");
-                        /****************CONVERTING PDF TO IMAGES**********************/
+                        
                         $attachmentable_id = $request->attachmentable_id;
                         $pdf_file_name = "$file_name";
                         $public_path =  public_path();
                         $file_path = $public_path . '/storage/attachments/' . $attachmentable_id . '/' . $sub_directory . 'original/' . $pdf_file_name;
                         $output_path = $public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id;
-                        try {
-                            $im = new Imagick();
-                            //$im->setResolution(300,300);
-                            $im->readimage($file_path);
-                            $num_page = $im->getnumberimages();
-                            $im->clear();
-                            $im->destroy();
-                            info("Total Number Of Pages: $num_page");
-                            for ($page = 0; $page < $num_page; $page++) {
-                                $im = new Imagick();
-                                $im->setResolution(300, 300);
-                                $im->readimage($file_path . "[$page]");
-                                $im->setImageFormat('jpeg');
-                                $generated_jpg_filename = $page . " - " . $file_name . '.jpg';
-                                $im->setImageCompression(imagick::COMPRESSION_JPEG);
-                                $im->setImageCompressionQuality(100);
-                                $im->writeImage($output_path . "/" . $generated_jpg_filename);
-                                $im->clear();
-                                $im->destroy();
 
-                                Attachment::updateOrCreate(['id' => $request->attachment_id], [ //attachment id
-                                    'title' => $generated_jpg_filename,
-                                    'file_name' => $generated_jpg_filename,
-                                    'mime_type' => 'jpg',
-                                    'attachmentable_id' => $request->attachmentable_id,
-                                    'attachmentable_type' => $request->attachmentable_type,
-                                    'display_order' => $page,
-                                ]);
-                            }
-                        } catch (\Exception $e) {
-                            info('Message: ' . $e->getMessage());
-                        }
-                        /****************CONVERTING PDF TO IMAGES**********************/
-                        info("****************CONVERTING PDF TO IMAGES END**********************");
+                        $this->convertPdftoimages($file_path,$attachmentable_id,$attachmentable_type);
+
+
                     }
                 }
 
@@ -385,5 +354,48 @@ class AttachmentController extends Controller
         $PDFWriter = \PhpOffice\PhpWord\IOFactory::createWriter($Content, 'PDF');
         $PDFWriter->save(storage_path('app/public/new-result.pdf'));
         echo 'File has been successfully converted';
+    }
+
+
+    public function convertPdftoimages($file_path, $attachmentable_id , $attachmentable_type)
+    {
+        info("****************CONVERTING PDF TO IMAGES START**********************");
+        /****************CONVERTING PDF TO IMAGES**********************/
+
+        // $file_path contains path of pdf file that is already uploaded on the server.
+        try {
+            $im = new Imagick();
+            //$im->setResolution(300,300);
+            $im->readimage($file_path);
+            $num_page = $im->getnumberimages();
+            $im->clear();
+            $im->destroy();
+            info("Total Number Of Pages: $num_page");
+            for ($page = 0; $page < $num_page; $page++) {
+                $im = new Imagick();
+                $im->setResolution(300, 300);
+                $im->readimage($file_path . "[$page]");
+                $im->setImageFormat('jpeg');
+                $generated_jpg_filename = $page . " - " . $file_name . '.jpg';
+                $im->setImageCompression(imagick::COMPRESSION_JPEG);
+                $im->setImageCompressionQuality(100);
+                $im->writeImage($output_path . "/" . $generated_jpg_filename);
+                $im->clear();
+                $im->destroy();
+
+                Attachment::updateOrCreate(['id' => $request->attachment_id], [ //attachment id
+                    'title' => $generated_jpg_filename,
+                    'file_name' => $generated_jpg_filename,
+                    'mime_type' => 'jpg',
+                    'attachmentable_id' => $attachmentable_id,
+                    'attachmentable_type' => $attachmentable_type,
+                    'display_order' => $page,
+                ]);
+            }
+        } catch (\Exception $e) {
+            info('Message: ' . $e->getMessage());
+        }
+        /****************CONVERTING PDF TO IMAGES**********************/
+        info("****************CONVERTING PDF TO IMAGES END**********************");
     }
 }
