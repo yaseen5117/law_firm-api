@@ -11,21 +11,19 @@ class PetitonOrderSheet extends Model
 
     protected $guarded = [];
     protected $casts = [
-        'order_sheet_date'  => 'date:d/m/Y',        
+        'order_sheet_date'  => 'date:d/m/Y',
     ];
 
     public function petition()
     {
         return $this->belongsTo('App\Models\Petition');
-
     }
     public function order_sheet_types()
     {
-        return $this->hasMany(PetitionModuleType::class,"module_id");
+        return $this->belongsTo(PetitionModuleType::class, "order_sheet_type_id");
     }
     public function attachments()
     {
         return $this->morphMany(Attachment::class, 'attachmentable')->orderBy('display_order');
-
     }
 }

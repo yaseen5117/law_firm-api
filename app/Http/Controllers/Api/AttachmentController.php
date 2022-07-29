@@ -298,6 +298,7 @@ class AttachmentController extends Controller
     public function deleteSelected(Request $request)
     {
         try {
+            //return response($request->all(), 403);
             //request contains all selected records ids   
             if ($request) {
                 foreach ($request->id as $id) {
