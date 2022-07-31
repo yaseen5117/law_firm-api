@@ -218,6 +218,7 @@ class InvoiceController extends Controller
             if ($request->sendEmail) {
                 //cc email
                 try {
+                    info("PREPARING INVOICE EMAIL VARIABLES");
                     $cc_emails = null;
                     if ($request->contact_persons_email && is_array($request->contact_persons_email)) {
                         $cc_emails = $request->contact_persons_email;
@@ -226,7 +227,9 @@ class InvoiceController extends Controller
                     }
 
                     $userInvoiceData = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status')->find($invoice->id);
+                    info("PREPARING INVOICE EMAIL VARIABLES OF PDF");
                     $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));
+                    info("PREPARING INVOICE EMAIL SERVICE CALL");
                     $emailService = new EmailService;
                     $d = $emailService->sendInvoiceEmail($invoice, $cc_emails, $pdf);    
                 } catch (\Exception $e) {
