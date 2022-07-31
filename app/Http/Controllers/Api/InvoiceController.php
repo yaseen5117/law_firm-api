@@ -239,6 +239,7 @@ class InvoiceController extends Controller
                 ]
             );
         } catch (Exception $e) {
+            info("Error in invoice function: ".$e->getMessage());
             DB::rollback();
             return response([
                 "error" => $e->getMessage()
