@@ -228,7 +228,7 @@ class InvoiceController extends Controller
                 $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));
                 $emailService = new EmailService;
                 $d = $emailService->sendInvoiceEmail($invoice, $cc_emails, $pdf);
-                return response($d, 403);
+                //return response($d, 403);
                 $invoice->update(["invoice_status_id" => 2]); //2 is the invoice status id
             }
 
