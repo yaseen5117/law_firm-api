@@ -217,17 +217,23 @@ class InvoiceController extends Controller
             //now invoice and its tables enteries completed, we can send email.
             if ($request->sendEmail) {
                 //cc email
-                $cc_emails = null;
-                if ($request->contact_persons_email && is_array($request->contact_persons_email)) {
-                    $cc_emails = $request->contact_persons_email;
-                } else if ($request->contact_persons_email) {
-                    $cc_emails = explode(',', $request->contact_persons_email);
-                }
+                try {
+                    $cc_emails = null;
+                    if ($request->contact_persons_email && is_array($request->contact_persons_email)) {
+                        $cc_emails = $request->contact_persons_email;
+                    } else if ($request->contact_persons_email) {
+                        $cc_emails = explode(',', $request->contact_persons_email);
+                    }
 
-                $userInvoiceData = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status')->find($invoice->id);
-                $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));
-                $emailService = new EmailService;
-                $d = $emailService->sendInvoiceEmail($invoice, $cc_emails, $pdf);
+                    $userInvoiceData = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status')->find($invoice->id);
+                    $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));
+                    $emailService = new EmailService;
+                    $d = $emailService->sendInvoiceEmail($invoice, $cc_emails, $pdf);    
+                } catch (\Exception $e) {
+                    info("Error in invoice email function: ".$e->getMessage());
+                    
+                }
+                
                 //return response($d, 403);
                 $invoice->update(["invoice_status_id" => 2]); //2 is the invoice status id
             }
