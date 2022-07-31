@@ -151,7 +151,7 @@ class InvoiceController extends Controller
         DB::beginTransaction();
 
         try {
-
+            info("INVOICE STORE FUNCTION START");
             //replace due date in content 
             //$content = str_replace("{due_date}",$request->due_date,$request->invoice_meta['content']);            
             $request->invoice_meta['content'];
@@ -181,6 +181,7 @@ class InvoiceController extends Controller
             //replace total amount in content 
             //$content = str_replace("{total_amount}",$invoice->total(),$content);
 
+            info("INVOICE STORE FUNCTION: INVOICE SAVED.");
 
             if ($invoice) {
                 $invoice_meta_data = $request->invoice_meta;
@@ -214,6 +215,8 @@ class InvoiceController extends Controller
 
             DB::commit();
 
+            info("INVOICE STORE FUNCTION: EMAIL");
+
             //now invoice and its tables enteries completed, we can send email.
             if ($request->sendEmail) {
                 //cc email
@@ -241,6 +244,7 @@ class InvoiceController extends Controller
                 $invoice->update(["invoice_status_id" => 2]); //2 is the invoice status id
             }
 
+            info("INVOICE STORE FUNCTION END");
             return response()->json(
                 [
                     'message' => 'Saved successfully',
