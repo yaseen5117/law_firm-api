@@ -151,7 +151,7 @@ class InvoiceController extends Controller
         DB::beginTransaction();
 
         try {
-
+            info("INVOICE STORE FUNCTION START");
             //replace due date in content 
             //$content = str_replace("{due_date}",$request->due_date,$request->invoice_meta['content']);            
             $request->invoice_meta['content'];
@@ -181,6 +181,7 @@ class InvoiceController extends Controller
             //replace total amount in content 
             //$content = str_replace("{total_amount}",$invoice->total(),$content);
 
+            info("INVOICE STORE FUNCTION: INVOICE SAVED.");
 
             if ($invoice) {
                 $invoice_meta_data = $request->invoice_meta;
@@ -214,31 +215,43 @@ class InvoiceController extends Controller
 
             DB::commit();
 
+            info("INVOICE STORE FUNCTION: EMAIL");
+
             //now invoice and its tables enteries completed, we can send email.
             if ($request->sendEmail) {
                 //cc email
-                $cc_emails = null;
-                if ($request->contact_persons_email && is_array($request->contact_persons_email)) {
-                    $cc_emails = $request->contact_persons_email;
-                } else if ($request->contact_persons_email) {
-                    $cc_emails = explode(',', $request->contact_persons_email);
+                try {
+                    info("PREPARING INVOICE EMAIL VARIABLES");
+                    $cc_emails = null;
+                    if ($request->contact_person_emails && is_array($request->contact_person_emails)) {
+                        $cc_emails = $request->contact_person_emails;
+                    } else if ($request->contact_person_emails) {
+                        $cc_emails = explode(',', $request->contact_person_emails);
+                    }
+
+                    $userInvoiceData = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status')->find($invoice->id);
+                    info("PREPARING INVOICE EMAIL VARIABLES OF PDF");
+                    $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));
+                    info("PREPARING INVOICE EMAIL SERVICE CALL");
+                    $emailService = new EmailService;
+                    $d = $emailService->sendInvoiceEmail($invoice, $cc_emails, $pdf);
+                } catch (\Exception $e) {
+                    info("Error in invoice email function: " . $e->getMessage());
                 }
 
-                $userInvoiceData = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status')->find($invoice->id);
-                $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));
-                $emailService = new EmailService;
-                $d = $emailService->sendInvoiceEmail($invoice, $cc_emails, $pdf);
-                return response($d, 403);
+                //return response($d, 403);
                 $invoice->update(["invoice_status_id" => 2]); //2 is the invoice status id
             }
 
+            info("INVOICE STORE FUNCTION END");
             return response()->json(
                 [
                     'message' => 'Saved successfully',
                     'code' => 200
                 ]
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
+            info("Error in invoice function: " . $e->getMessage());
             DB::rollback();
             return response([
                 "error" => $e->getMessage()

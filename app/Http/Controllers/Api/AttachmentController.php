@@ -84,11 +84,7 @@ class AttachmentController extends Controller
                     $attachmentable_type = $request->attachmentable_type;
                     $attachmentable_id = $request->attachmentable_id;
                     info("AttachmentController store Function: File attachmentable_type : " . $attachmentable_type);
-                    if ($request->attachmentable_type == "App\Models\Invoice") {
-                        $sub_directory = "invoices/";
-
-                        Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Invoice")->forceDelete();
-                    } else if ($request->attachmentable_type == "App\Models\Setting") {
+                    if ($request->attachmentable_type == "App\Models\Setting") {
                         $sub_directory = "settings/";
                         Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Setting")->forceDelete();
 
@@ -112,9 +108,13 @@ class AttachmentController extends Controller
                         $setting->save();
                         return response("Successfully Save File Name To Setting MetaTable", 200);
                     } else {
-                        $sub_directory = "";
+                        $sub_directory = substr($attachmentable_type . "/", strpos($attachmentable_type, "'\'") + 11);
                     }
-                    $file_path = $file->storeAs('attachments/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
+                    if ($request->attachmentable_type == "App\Models\Invoice") {
+                        $file_path = $file->storeAs('attachments/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
+                    } else {
+                        $file_path = $file->storeAs('attachments/petitions/' . $request->petition_id . '/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
+                    }
                     if ($mime_type != "application/pdf") {
                         info("AttachmentController store Function: File in condition non-pdf condition : ");
                         //START To Resize Images
@@ -122,11 +122,20 @@ class AttachmentController extends Controller
                         $resizeImage->resize(2000, null, function ($constraint) {
                             $constraint->aspectRatio();
                         });
-                        $path =  storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id);
+                        if ($request->attachmentable_type == "App\Models\Invoice") {
+                            Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Invoice")->forceDelete();
+                            $path =  storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id);
+                        } else {
+                            $path =  storage_path('app/public/attachments/petitions/' . $request->petition_id . '/' . $sub_directory . $request->attachmentable_id);
+                        }
                         if (!File::isDirectory($path)) {
                             File::makeDirectory($path, 0777, true, true);
                         }
-                        $resizeImage->save(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/' . $file_name));
+                        if ($request->attachmentable_type == "App\Models\Invoice") {
+                            $resizeImage->save(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/' . $file_name));
+                        } else {
+                            $resizeImage->save(storage_path('app/public/attachments/petitions/' . $request->petition_id . '/' . $sub_directory . $request->attachmentable_id . '/' . $file_name));
+                        }
                         //END To Resize Images
 
                         //WE DONT WANT TO SAVE PDF IN DATABASE. BECAUSE WE ONLY CONVERT PDF TO IMAGES AND THEN SAVE THOSE IMAGES IN DATABASE.
@@ -141,25 +150,100 @@ class AttachmentController extends Controller
                     }
 
                     if ($mime_type == "application/pdf") {
-                        
+
                         $attachmentable_id = $request->attachmentable_id;
                         $pdf_file_name = "$file_name";
                         $public_path =  public_path();
-                        $file_path = $public_path . '/storage/attachments/' . $attachmentable_id . '/' . $sub_directory . 'original/' . $pdf_file_name;
-                        $output_path = $public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id;
+                        if ($request->attachmentable_type == "App\Models\Invoice") {
+                            $file_path = $public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id . '/original/' . $pdf_file_name;
+                            $output_path = $public_path . '/storage/attachments/'  . $sub_directory . $attachmentable_id;
+                        } else {
+                            $file_path = $public_path . '/storage/attachments/petitions/' . $request->petition_id  . '/' . $sub_directory . $attachmentable_id . '/original/' . $pdf_file_name;
+                            $output_path = $public_path . '/storage/attachments/petitions/' . $request->petition_id . '/'  . $sub_directory . $attachmentable_id;
+                        }
 
-                        $this->convertPdftoimages($file_path,$attachmentable_id,$attachmentable_type);
-
-
+                        $this->convertPdftoimages($file_path, $output_path, $file_name, $attachmentable_id, $attachmentable_type);
                     }
                 }
 
                 //SENDING EMAIL VIA QUEUE JOB
-                /*$sendDocumentUploadEmail = new SendDocumentUploadEmail($attachmentable_type,$attachmentable_id);
-                $sendDocumentUploadEmail->dispatch();*/
+                //$job = (new SendDocumentUploadEmail($attachmentable_type, $attachmentable_id))->delay(Carbon::now()->addSeconds(40));
+                //$this->dispatch($job);
 
-                $job = (new SendDocumentUploadEmail($attachmentable_type, $attachmentable_id))->delay(Carbon::now()->addSeconds(40));
-                $this->dispatch($job);
+                //SENDING EMAIL VIA email service
+                switch ($attachmentable_type) {
+                    case 'App\Models\PetitonOrderSheet':
+                        $entity_title = "Order Sheet";
+                        $pettiion_ordersheet = PetitonOrderSheet::find($attachmentable_id);
+                        $petition = $pettiion_ordersheet->petition;
+                        break;
+
+                    case 'App\Models\PetitionIndex':
+                        //id22
+                        $entity_title = "Petition Index";
+                        $petition_index = PetitionIndex::find($attachmentable_id);
+                        $petition = $petition_index->petition;
+                        break;
+
+                    case 'App\Models\PetitionReply':
+                        $entity_title = "Replies";
+                        $petition_reply = PetitionReply::find($attachmentable_id);
+                        $petition = $petition_reply->petition_reply_parent->petition;
+                        break;
+
+                    case 'App\Models\OralArgument':
+                        $entity_title = "Oral Argument";
+                        $petition_oral_argument = OralArgument::find($attachmentable_id);
+                        $petition = $petition_oral_argument->petition;
+                        break;
+
+                    case 'App\Models\PetitionNaqalForm':
+                        $entity_title = "Naqal Form";
+                        $petition_naqal_form = PetitionNaqalForm::find($attachmentable_id);
+                        $petition = $petition_naqal_form->petition;
+                        break;
+
+                    case 'App\Models\PetitionTalbana':
+                        $entity_title = "Talbana";
+                        $petition_talbana = PetitionTalbana::find($attachmentable_id);
+                        $petition = $petition_talbana->petition;
+                        break;
+
+                    case 'App\Models\CaseLaw':
+                        $entity_title = "Case Laws";
+                        $petition_case_law = CaseLaw::find($attachmentable_id);
+                        $petition = $petition_case_law->petition;
+                        break;
+
+                    case 'App\Models\ExtraDocument':
+                        $entity_title = "Extra Document";
+                        $petition_extra_document = ExtraDocument::find($attachmentable_id);
+                        $petition = $petition_extra_document->petition;
+                        break;
+
+                    case 'App\Models\PetitionSynopsis':
+                        $entity_title = "Synopsis";
+                        $petition_synopsis = PetitionSynopsis::find($attachmentable_id);
+                        $petition = $petition_synopsis->petition;
+                        break;
+
+                    case 'App\Models\Judgement':
+                        $entity_title = "Judgement";
+                        $petition_judgement = Judgement::find($attachmentable_id);
+                        $petition = $petition_judgement->petition;
+                        break;
+
+                    default:
+                        $entity_title = "";
+                        break;
+                }
+
+                if (isset($petition) && !empty($entity_title)) {
+                    info("SendDocumentUploadEmail queue job sending email to petition id: $petition->id for entity_title $entity_title");
+                    $emailService = new EmailService;
+                    $emailService->send_document_uploading_email($petition, $entity_title);
+                }
+                
 
 
                 info('--------end ATTCHMENT UPLOADING PROCESS--------');
@@ -357,13 +441,14 @@ class AttachmentController extends Controller
     }
 
 
-    public function convertPdftoimages($file_path, $attachmentable_id , $attachmentable_type)
+    public function convertPdftoimages($file_path, $output_path, $file_name, $attachmentable_id, $attachmentable_type)
     {
         info("****************CONVERTING PDF TO IMAGES START**********************");
         /****************CONVERTING PDF TO IMAGES**********************/
 
         // $file_path contains path of pdf file that is already uploaded on the server.
         try {
+            $file_name_without_extention = pathinfo($file_name, PATHINFO_FILENAME); //getting file name without extention
             $im = new Imagick();
             //$im->setResolution(300,300);
             $im->readimage($file_path);
@@ -376,21 +461,23 @@ class AttachmentController extends Controller
                 $im->setResolution(300, 300);
                 $im->readimage($file_path . "[$page]");
                 $im->setImageFormat('jpeg');
-                $generated_jpg_filename = $page . " - " . $file_name . '.jpg';
+                $generated_jpg_filename = $page . " - " . $file_name_without_extention . '.jpg';
                 $im->setImageCompression(imagick::COMPRESSION_JPEG);
                 $im->setImageCompressionQuality(100);
                 $im->writeImage($output_path . "/" . $generated_jpg_filename);
                 $im->clear();
                 $im->destroy();
 
-                Attachment::updateOrCreate(['id' => $request->attachment_id], [ //attachment id
-                    'title' => $generated_jpg_filename,
-                    'file_name' => $generated_jpg_filename,
-                    'mime_type' => 'jpg',
-                    'attachmentable_id' => $attachmentable_id,
-                    'attachmentable_type' => $attachmentable_type,
-                    'display_order' => $page,
-                ]);
+                Attachment::create(
+                    [
+                        'title' => $generated_jpg_filename,
+                        'file_name' => $generated_jpg_filename,
+                        'mime_type' => 'jpg',
+                        'attachmentable_id' => $attachmentable_id,
+                        'attachmentable_type' => $attachmentable_type,
+                        'display_order' => $page,
+                    ]
+                );
             }
         } catch (\Exception $e) {
             info('Message: ' . $e->getMessage());
