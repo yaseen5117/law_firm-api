@@ -468,8 +468,7 @@ class AttachmentController extends Controller
                 $im->clear();
                 $im->destroy();
 
-                Attachment::updateOrCreate(
-                    ['attachmentable_id' => $attachmentable_id, 'attachmentable_type' => $attachmentable_type],
+                Attachment::create(
                     [
                         'title' => $generated_jpg_filename,
                         'file_name' => $generated_jpg_filename,
