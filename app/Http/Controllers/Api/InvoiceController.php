@@ -223,10 +223,10 @@ class InvoiceController extends Controller
                 try {
                     info("PREPARING INVOICE EMAIL VARIABLES");
                     $cc_emails = null;
-                    if ($request->contact_persons_email && is_array($request->contact_persons_email)) {
-                        $cc_emails = $request->contact_persons_email;
-                    } else if ($request->contact_persons_email) {
-                        $cc_emails = explode(',', $request->contact_persons_email);
+                    if ($request->contact_person_emails && is_array($request->contact_person_emails)) {
+                        $cc_emails = $request->contact_person_emails;
+                    } else if ($request->contact_person_emails) {
+                        $cc_emails = explode(',', $request->contact_person_emails);
                     }
 
                     $userInvoiceData = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status')->find($invoice->id);
@@ -234,12 +234,11 @@ class InvoiceController extends Controller
                     $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));
                     info("PREPARING INVOICE EMAIL SERVICE CALL");
                     $emailService = new EmailService;
-                    $d = $emailService->sendInvoiceEmail($invoice, $cc_emails, $pdf);    
+                    $d = $emailService->sendInvoiceEmail($invoice, $cc_emails, $pdf);
                 } catch (\Exception $e) {
-                    info("Error in invoice email function: ".$e->getMessage());
-                    
+                    info("Error in invoice email function: " . $e->getMessage());
                 }
-                
+
                 //return response($d, 403);
                 $invoice->update(["invoice_status_id" => 2]); //2 is the invoice status id
             }
@@ -252,7 +251,7 @@ class InvoiceController extends Controller
                 ]
             );
         } catch (\Exception $e) {
-            info("Error in invoice function: ".$e->getMessage());
+            info("Error in invoice function: " . $e->getMessage());
             DB::rollback();
             return response([
                 "error" => $e->getMessage()

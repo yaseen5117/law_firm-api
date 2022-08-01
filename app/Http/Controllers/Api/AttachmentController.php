@@ -84,11 +84,7 @@ class AttachmentController extends Controller
                     $attachmentable_type = $request->attachmentable_type;
                     $attachmentable_id = $request->attachmentable_id;
                     info("AttachmentController store Function: File attachmentable_type : " . $attachmentable_type);
-                    if ($request->attachmentable_type == "App\Models\Invoice") {
-                        $sub_directory = "invoices/";
-
-                        Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Invoice")->forceDelete();
-                    } else if ($request->attachmentable_type == "App\Models\Setting") {
+                    if ($request->attachmentable_type == "App\Models\Setting") {
                         $sub_directory = "settings/";
                         Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Setting")->forceDelete();
 
@@ -112,9 +108,13 @@ class AttachmentController extends Controller
                         $setting->save();
                         return response("Successfully Save File Name To Setting MetaTable", 200);
                     } else {
-                        $sub_directory = "";
+                        $sub_directory = substr($attachmentable_type . "/", strpos($attachmentable_type, "'\'") + 11);
                     }
-                    $file_path = $file->storeAs('attachments/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
+                    if ($request->attachmentable_type == "App\Models\Invoice") {
+                        $file_path = $file->storeAs('attachments/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
+                    } else {
+                        $file_path = $file->storeAs('attachments/petitions/' . $request->petition_id . '/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
+                    }
                     if ($mime_type != "application/pdf") {
                         info("AttachmentController store Function: File in condition non-pdf condition : ");
                         //START To Resize Images
@@ -122,11 +122,20 @@ class AttachmentController extends Controller
                         $resizeImage->resize(2000, null, function ($constraint) {
                             $constraint->aspectRatio();
                         });
-                        $path =  storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id);
+                        if ($request->attachmentable_type == "App\Models\Invoice") {
+                            Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Invoice")->forceDelete();
+                            $path =  storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id);
+                        } else {
+                            $path =  storage_path('app/public/attachments/petitions/' . $request->petition_id . '/' . $sub_directory . $request->attachmentable_id);
+                        }
                         if (!File::isDirectory($path)) {
                             File::makeDirectory($path, 0777, true, true);
                         }
-                        $resizeImage->save(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/' . $file_name));
+                        if ($request->attachmentable_type == "App\Models\Invoice") {
+                            $resizeImage->save(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/' . $file_name));
+                        } else {
+                            $resizeImage->save(storage_path('app/public/attachments/petitions/' . $request->petition_id . '/' . $sub_directory . $request->attachmentable_id . '/' . $file_name));
+                        }
                         //END To Resize Images
 
                         //WE DONT WANT TO SAVE PDF IN DATABASE. BECAUSE WE ONLY CONVERT PDF TO IMAGES AND THEN SAVE THOSE IMAGES IN DATABASE.
@@ -141,16 +150,19 @@ class AttachmentController extends Controller
                     }
 
                     if ($mime_type == "application/pdf") {
-                        
+
                         $attachmentable_id = $request->attachmentable_id;
                         $pdf_file_name = "$file_name";
                         $public_path =  public_path();
-                        $file_path = $public_path . '/storage/attachments/' . $attachmentable_id . '/' . $sub_directory . 'original/' . $pdf_file_name;
-                        $output_path = $public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id;
+                        if ($request->attachmentable_type == "App\Models\Invoice") {
+                            $file_path = $public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id . '/original/' . $pdf_file_name;
+                            $output_path = $public_path . '/storage/attachments/'  . $sub_directory . $attachmentable_id;
+                        } else {
+                            $file_path = $public_path . '/storage/attachments/petitions/' . $request->petition_id  . '/' . $sub_directory . $attachmentable_id . '/original/' . $pdf_file_name;
+                            $output_path = $public_path . '/storage/attachments/petitions/' . $request->petition_id . '/'  . $sub_directory . $attachmentable_id;
+                        }
 
-                        $this->convertPdftoimages($file_path,$attachmentable_id,$attachmentable_type);
-
-
+                        $this->convertPdftoimages($file_path, $output_path, $file_name, $attachmentable_id, $attachmentable_type);
                     }
                 }
 
@@ -429,13 +441,14 @@ class AttachmentController extends Controller
     }
 
 
-    public function convertPdftoimages($file_path, $attachmentable_id , $attachmentable_type)
+    public function convertPdftoimages($file_path, $output_path, $file_name, $attachmentable_id, $attachmentable_type)
     {
         info("****************CONVERTING PDF TO IMAGES START**********************");
         /****************CONVERTING PDF TO IMAGES**********************/
 
         // $file_path contains path of pdf file that is already uploaded on the server.
         try {
+            $file_name_without_extention = pathinfo($file_name, PATHINFO_FILENAME); //getting file name without extention
             $im = new Imagick();
             //$im->setResolution(300,300);
             $im->readimage($file_path);
@@ -448,21 +461,24 @@ class AttachmentController extends Controller
                 $im->setResolution(300, 300);
                 $im->readimage($file_path . "[$page]");
                 $im->setImageFormat('jpeg');
-                $generated_jpg_filename = $page . " - " . $file_name . '.jpg';
+                $generated_jpg_filename = $page . " - " . $file_name_without_extention . '.jpg';
                 $im->setImageCompression(imagick::COMPRESSION_JPEG);
                 $im->setImageCompressionQuality(100);
                 $im->writeImage($output_path . "/" . $generated_jpg_filename);
                 $im->clear();
                 $im->destroy();
 
-                Attachment::updateOrCreate(['id' => $request->attachment_id], [ //attachment id
-                    'title' => $generated_jpg_filename,
-                    'file_name' => $generated_jpg_filename,
-                    'mime_type' => 'jpg',
-                    'attachmentable_id' => $attachmentable_id,
-                    'attachmentable_type' => $attachmentable_type,
-                    'display_order' => $page,
-                ]);
+                Attachment::updateOrCreate(
+                    ['attachmentable_id' => $attachmentable_id, 'attachmentable_type' => $attachmentable_type],
+                    [
+                        'title' => $generated_jpg_filename,
+                        'file_name' => $generated_jpg_filename,
+                        'mime_type' => 'jpg',
+                        'attachmentable_id' => $attachmentable_id,
+                        'attachmentable_type' => $attachmentable_type,
+                        'display_order' => $page,
+                    ]
+                );
             }
         } catch (\Exception $e) {
             info('Message: ' . $e->getMessage());
