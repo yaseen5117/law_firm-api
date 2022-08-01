@@ -167,11 +167,12 @@ class AttachmentController extends Controller
                 }
 
                 //SENDING EMAIL VIA QUEUE JOB
-                //$job = (new SendDocumentUploadEmail($attachmentable_type, $attachmentable_id))->delay(Carbon::now()->addSeconds(40));
-                //$this->dispatch($job);
+                $job = (new SendDocumentUploadEmail($attachmentable_type, $attachmentable_id))->delay(Carbon::now()->addSeconds(40));
+                $this->dispatch($job);
 
                 //SENDING EMAIL VIA email service
-                switch ($attachmentable_type) {
+                
+                /*switch ($attachmentable_type) {
                     case 'App\Models\PetitonOrderSheet':
                         $entity_title = "Order Sheet";
                         $pettiion_ordersheet = PetitonOrderSheet::find($attachmentable_id);
@@ -242,7 +243,7 @@ class AttachmentController extends Controller
                     info("SendDocumentUploadEmail queue job sending email to petition id: $petition->id for entity_title $entity_title");
                     $emailService = new EmailService;
                     $emailService->send_document_uploading_email($petition, $entity_title);
-                }
+                }*/
                 
 
 
