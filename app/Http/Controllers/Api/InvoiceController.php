@@ -218,10 +218,10 @@ class InvoiceController extends Controller
             if ($request->sendEmail) {
                 //cc email
                 $cc_emails = null;
-                if ($request->contact_persons_email && is_array($request->contact_persons_email)) {
-                    $cc_emails = $request->contact_persons_email;
-                } else if ($request->contact_persons_email) {
-                    $cc_emails = explode(',', $request->contact_persons_email);
+                if ($request->contact_person_emails && is_array($request->contact_person_emails)) {
+                    $cc_emails = $request->contact_person_emails;
+                } else if ($request->contact_person_emails) {
+                    $cc_emails = explode(',', $request->contact_person_emails);
                 }
 
                 $userInvoiceData = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status')->find($invoice->id);
