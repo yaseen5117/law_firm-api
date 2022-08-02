@@ -427,7 +427,7 @@ class AttachmentController extends Controller
     }
     public function copyIndexFiles(Request $request)
     {
-        $petitions = Petition::withRelations()->whereIn('id', [52, 55, 56])->get();
+        $petitions = Petition::withRelations()->get();
         //return response($petitions);
         if ($petitions) {
             foreach ($petitions as $petition) {
@@ -459,7 +459,7 @@ class AttachmentController extends Controller
     }
     public function copyReplyFiles(Request $request)
     {
-        $petition_replies = PetitionReply::with('petition_reply_parent.petition', 'attachments')->whereIn('id', [39, 40, 41])->get();
+        $petition_replies = PetitionReply::with('petition_reply_parent.petition', 'attachments')->get();
 
         if ($petition_replies) {
             foreach ($petition_replies as $reply) {
@@ -484,7 +484,7 @@ class AttachmentController extends Controller
     }
     public function copyOrderSheetFiles(Request $request)
     {
-        $order_sheets = PetitonOrderSheet::with('petition', 'attachments', 'order_sheet_types')->whereIn('petition_id', [52, 55, 56])->get();
+        $order_sheets = PetitonOrderSheet::with('petition', 'attachments', 'order_sheet_types')->get();
 
         if ($order_sheets) {
             foreach ($order_sheets as $order_sheet) {
@@ -509,7 +509,7 @@ class AttachmentController extends Controller
     }
     public function copyOralArgumentFiles(Request $request)
     {
-        $oral_arguments = OralArgument::with('petition', 'attachments')->whereIn('petition_id', [52, 55, 56])->get();
+        $oral_arguments = OralArgument::with('petition', 'attachments')->get();
 
         if ($oral_arguments) {
             foreach ($oral_arguments as $oral_argument) {
@@ -534,7 +534,7 @@ class AttachmentController extends Controller
     }
     public function copyNaqalFormFiles(Request $request)
     {
-        $naqal_forms = PetitionNaqalForm::with('petition', 'attachments')->whereIn('petition_id', [52, 55, 56])->get();
+        $naqal_forms = PetitionNaqalForm::with('petition', 'attachments')->get();
         if ($naqal_forms) {
             foreach ($naqal_forms as $naqal_form) {
                 if (!empty($naqal_form->attachments)) {
@@ -558,7 +558,7 @@ class AttachmentController extends Controller
     }
     public function copyTalbanaFiles(Request $request)
     {
-        $talbanas = PetitionTalbana::with('petition', 'attachments')->whereIn('petition_id', [52, 55, 56])->get();
+        $talbanas = PetitionTalbana::with('petition', 'attachments')->get();
         //return response($talbanas);
         if ($talbanas) {
             foreach ($talbanas as $talbana) {
@@ -583,7 +583,7 @@ class AttachmentController extends Controller
     }
     public function copyCaseLawFiles(Request $request)
     {
-        $case_laws = CaseLaw::with('petition', 'attachments')->whereIn('petition_id', [52, 55, 56])->get();
+        $case_laws = CaseLaw::with('petition', 'attachments')->get();
         if ($case_laws) {
             foreach ($case_laws as $case_law) {
                 if (!empty($case_law->attachments)) {
@@ -607,7 +607,7 @@ class AttachmentController extends Controller
     }
     public function copyExtraDocsFiles(Request $request)
     {
-        $extra_docs = ExtraDocument::with('petition', 'attachments')->whereIn('petition_id', [52, 55, 56])->get();
+        $extra_docs = ExtraDocument::with('petition', 'attachments')->get();
         if ($extra_docs) {
             foreach ($extra_docs as $extra_doc) {
                 if (!empty($extra_doc->attachments)) {
@@ -631,7 +631,7 @@ class AttachmentController extends Controller
     }
     public function copySynopsisFiles(Request $request)
     {
-        $synopsises = PetitionSynopsis::with('petition', 'attachments')->whereIn('petition_id', [52, 55, 56])->get();
+        $synopsises = PetitionSynopsis::with('petition', 'attachments')->get();
 
         if ($synopsises) {
             foreach ($synopsises as $synopsis) {
@@ -656,7 +656,7 @@ class AttachmentController extends Controller
     }
     public function copyJudgementFiles(Request $request)
     {
-        $judgements = Judgement::with('petition', 'attachments')->whereIn('petition_id', [52, 55, 56])->get();
+        $judgements = Judgement::with('petition', 'attachments')->get();
         if ($judgements) {
             foreach ($judgements as $judgement) {
                 if (!empty($judgement->attachments)) {
