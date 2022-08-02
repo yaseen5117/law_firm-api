@@ -30,6 +30,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use App\Jobs\SendDocumentUploadEmail;
 use App\Models\Petition;
+use App\Models\PetitionReplyParent;
 
 class AttachmentController extends Controller
 {
@@ -463,6 +464,9 @@ class AttachmentController extends Controller
                 $im->setResolution(300, 300);
                 $im->readimage($file_path . "[$page]");
                 $im->setImageFormat('jpeg');
+                $im->resize(2000, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
                 $generated_jpg_filename = $page . " - " . $file_name_without_extention . '.jpg';
                 $im->setImageCompression(imagick::COMPRESSION_JPEG);
                 $im->setImageCompressionQuality(100);
@@ -487,9 +491,9 @@ class AttachmentController extends Controller
         /****************CONVERTING PDF TO IMAGES**********************/
         info("****************CONVERTING PDF TO IMAGES END**********************");
     }
-    public function copyFiles(Request $request)
+    public function copyIndexFiles(Request $request)
     {
-        $petitions = Petition::withRelations()->whereIn('id', [52, 56])->get();
+        $petitions = Petition::withRelations()->whereIn('id', [52, 55, 56])->get();
         //return response($petitions);
         if ($petitions) {
             foreach ($petitions as $petition) {
@@ -511,6 +515,227 @@ class AttachmentController extends Controller
                                         File::copy($from_path, $to_path);
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+            return  response("Move all files Successfully", 200);
+        }
+    }
+    public function copyReplyFiles(Request $request)
+    {
+        $petition_replies = PetitionReply::with('petition_reply_parent.petition', 'attachments')->whereIn('id', [39, 40, 41])->get();
+
+        if ($petition_replies) {
+            foreach ($petition_replies as $reply) {
+                if (!empty($reply->attachments)) {
+                    foreach ($reply->attachments as $attachment) {
+                        if (!empty($attachment)) {
+                            $folder_name = substr($attachment->attachmentable_type, strpos($attachment->attachmentable_type, "'\'") + 11);
+                            $to_path =  public_path('storage/attachments/petitions/' . $reply->petition_reply_parent->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id . '/' . $attachment->file_name);
+                            $from_path = public_path() . "/storage/attachments/$attachment->attachmentable_id/$attachment->file_name";
+                            if (File::exists($from_path)) {
+                                if (!File::isDirectory(public_path('storage/attachments/petitions/' . $reply->petition_reply_parent->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id))) {
+                                    File::makeDirectory(public_path('storage/attachments/petitions/' . $reply->petition_reply_parent->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id), 0777, true, true);
+                                }
+                                File::copy($from_path, $to_path);
+                            }
+                        }
+                    }
+                }
+            }
+            return  response("Move all files Successfully", 200);
+        }
+    }
+    public function copyOrderSheetFiles(Request $request)
+    {
+        $order_sheets = PetitonOrderSheet::with('petition', 'attachments', 'order_sheet_types')->whereIn('petition_id', [52, 55, 56])->get();
+
+        if ($order_sheets) {
+            foreach ($order_sheets as $order_sheet) {
+                if (!empty($order_sheet->attachments)) {
+                    foreach ($order_sheet->attachments as $attachment) {
+                        if (!empty($attachment)) {
+                            $folder_name = substr($attachment->attachmentable_type, strpos($attachment->attachmentable_type, "'\'") + 11);
+                            $to_path =  public_path('storage/attachments/petitions/' . $order_sheet->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id . '/' . $attachment->file_name);
+                            $from_path = public_path() . "/storage/attachments/$attachment->attachmentable_id/$attachment->file_name";
+                            if (File::exists($from_path)) {
+                                if (!File::isDirectory(public_path('storage/attachments/petitions/' . $order_sheet->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id))) {
+                                    File::makeDirectory(public_path('storage/attachments/petitions/' . $order_sheet->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id), 0777, true, true);
+                                }
+                                File::copy($from_path, $to_path);
+                            }
+                        }
+                    }
+                }
+            }
+            return  response("Move all files Successfully", 200);
+        }
+    }
+    public function copyOralArgumentFiles(Request $request)
+    {
+        $oral_arguments = OralArgument::with('petition', 'attachments')->whereIn('petition_id', [52, 55, 56])->get();
+
+        if ($oral_arguments) {
+            foreach ($oral_arguments as $oral_argument) {
+                if (!empty($oral_argument->attachments)) {
+                    foreach ($oral_argument->attachments as $attachment) {
+                        if (!empty($attachment)) {
+                            $folder_name = substr($attachment->attachmentable_type, strpos($attachment->attachmentable_type, "'\'") + 11);
+                            $to_path =  public_path('storage/attachments/petitions/' . $oral_argument->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id . '/' . $attachment->file_name);
+                            $from_path = public_path() . "/storage/attachments/$attachment->attachmentable_id/$attachment->file_name";
+                            if (File::exists($from_path)) {
+                                if (!File::isDirectory(public_path('storage/attachments/petitions/' . $oral_argument->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id))) {
+                                    File::makeDirectory(public_path('storage/attachments/petitions/' . $oral_argument->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id), 0777, true, true);
+                                }
+                                File::copy($from_path, $to_path);
+                            }
+                        }
+                    }
+                }
+            }
+            return  response("Move all files Successfully", 200);
+        }
+    }
+    public function copyNaqalFormFiles(Request $request)
+    {
+        $naqal_forms = PetitionNaqalForm::with('petition', 'attachments')->whereIn('petition_id', [52, 55, 56])->get();
+        if ($naqal_forms) {
+            foreach ($naqal_forms as $naqal_form) {
+                if (!empty($naqal_form->attachments)) {
+                    foreach ($naqal_form->attachments as $attachment) {
+                        if (!empty($attachment)) {
+                            $folder_name = substr($attachment->attachmentable_type, strpos($attachment->attachmentable_type, "'\'") + 11);
+                            $to_path =  public_path('storage/attachments/petitions/' . $naqal_form->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id . '/' . $attachment->file_name);
+                            $from_path = public_path() . "/storage/attachments/$attachment->attachmentable_id/$attachment->file_name";
+                            if (File::exists($from_path)) {
+                                if (!File::isDirectory(public_path('storage/attachments/petitions/' . $naqal_form->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id))) {
+                                    File::makeDirectory(public_path('storage/attachments/petitions/' . $naqal_form->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id), 0777, true, true);
+                                }
+                                File::copy($from_path, $to_path);
+                            }
+                        }
+                    }
+                }
+            }
+            return  response("Move all files Successfully", 200);
+        }
+    }
+    public function copyTalbanaFiles(Request $request)
+    {
+        $talbanas = PetitionTalbana::with('petition', 'attachments')->whereIn('petition_id', [52, 55, 56])->get();
+        //return response($talbanas);
+        if ($talbanas) {
+            foreach ($talbanas as $talbana) {
+                if (!empty($talbana->attachments)) {
+                    foreach ($talbana->attachments as $attachment) {
+                        if (!empty($attachment)) {
+                            $folder_name = substr($attachment->attachmentable_type, strpos($attachment->attachmentable_type, "'\'") + 11);
+                            $to_path =  public_path('storage/attachments/petitions/' . $talbana->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id . '/' . $attachment->file_name);
+                            $from_path = public_path() . "/storage/attachments/$attachment->attachmentable_id/$attachment->file_name";
+                            if (File::exists($from_path)) {
+                                if (!File::isDirectory(public_path('storage/attachments/petitions/' . $talbana->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id))) {
+                                    File::makeDirectory(public_path('storage/attachments/petitions/' . $talbana->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id), 0777, true, true);
+                                }
+                                File::copy($from_path, $to_path);
+                            }
+                        }
+                    }
+                }
+            }
+            return  response("Move all files Successfully", 200);
+        }
+    }
+    public function copyCaseLawFiles(Request $request)
+    {
+        $case_laws = CaseLaw::with('petition', 'attachments')->whereIn('petition_id', [52, 55, 56])->get();
+        if ($case_laws) {
+            foreach ($case_laws as $case_law) {
+                if (!empty($case_law->attachments)) {
+                    foreach ($case_law->attachments as $attachment) {
+                        if (!empty($attachment)) {
+                            $folder_name = substr($attachment->attachmentable_type, strpos($attachment->attachmentable_type, "'\'") + 11);
+                            $to_path =  public_path('storage/attachments/petitions/' . $case_law->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id . '/' . $attachment->file_name);
+                            $from_path = public_path() . "/storage/attachments/$attachment->attachmentable_id/$attachment->file_name";
+                            if (File::exists($from_path)) {
+                                if (!File::isDirectory(public_path('storage/attachments/petitions/' . $case_law->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id))) {
+                                    File::makeDirectory(public_path('storage/attachments/petitions/' . $case_law->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id), 0777, true, true);
+                                }
+                                File::copy($from_path, $to_path);
+                            }
+                        }
+                    }
+                }
+            }
+            return  response("Move all files Successfully", 200);
+        }
+    }
+    public function copyExtraDocsFiles(Request $request)
+    {
+        $extra_docs = ExtraDocument::with('petition', 'attachments')->whereIn('petition_id', [52, 55, 56])->get();
+        if ($extra_docs) {
+            foreach ($extra_docs as $extra_doc) {
+                if (!empty($extra_doc->attachments)) {
+                    foreach ($extra_doc->attachments as $attachment) {
+                        if (!empty($attachment)) {
+                            $folder_name = substr($attachment->attachmentable_type, strpos($attachment->attachmentable_type, "'\'") + 11);
+                            $to_path =  public_path('storage/attachments/petitions/' . $extra_doc->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id . '/' . $attachment->file_name);
+                            $from_path = public_path() . "/storage/attachments/$attachment->attachmentable_id/$attachment->file_name";
+                            if (File::exists($from_path)) {
+                                if (!File::isDirectory(public_path('storage/attachments/petitions/' . $extra_doc->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id))) {
+                                    File::makeDirectory(public_path('storage/attachments/petitions/' . $extra_doc->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id), 0777, true, true);
+                                }
+                                File::copy($from_path, $to_path);
+                            }
+                        }
+                    }
+                }
+            }
+            return  response("Move all files Successfully", 200);
+        }
+    }
+    public function copySynopsisFiles(Request $request)
+    {
+        $synopsises = PetitionSynopsis::with('petition', 'attachments')->whereIn('petition_id', [52, 55, 56])->get();
+
+        if ($synopsises) {
+            foreach ($synopsises as $synopsis) {
+                if (!empty($synopsis->attachments)) {
+                    foreach ($synopsis->attachments as $attachment) {
+                        if (!empty($attachment)) {
+                            $folder_name = substr($attachment->attachmentable_type, strpos($attachment->attachmentable_type, "'\'") + 11);
+                            $to_path =  public_path('storage/attachments/petitions/' . $synopsis->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id . '/' . $attachment->file_name);
+                            $from_path = public_path() . "/storage/attachments/$attachment->attachmentable_id/$attachment->file_name";
+                            if (File::exists($from_path)) {
+                                if (!File::isDirectory(public_path('storage/attachments/petitions/' . $synopsis->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id))) {
+                                    File::makeDirectory(public_path('storage/attachments/petitions/' . $synopsis->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id), 0777, true, true);
+                                }
+                                File::copy($from_path, $to_path);
+                            }
+                        }
+                    }
+                }
+            }
+            return  response("Move all files Successfully", 200);
+        }
+    }
+    public function copyJudgementFiles(Request $request)
+    {
+        $judgements = Judgement::with('petition', 'attachments')->whereIn('petition_id', [52, 55, 56])->get();
+        if ($judgements) {
+            foreach ($judgements as $judgement) {
+                if (!empty($judgement->attachments)) {
+                    foreach ($judgement->attachments as $attachment) {
+                        if (!empty($attachment)) {
+                            $folder_name = substr($attachment->attachmentable_type, strpos($attachment->attachmentable_type, "'\'") + 11);
+                            $to_path =  public_path('storage/attachments/petitions/' . $judgement->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id . '/' . $attachment->file_name);
+                            $from_path = public_path() . "/storage/attachments/$attachment->attachmentable_id/$attachment->file_name";
+                            if (File::exists($from_path)) {
+                                if (!File::isDirectory(public_path('storage/attachments/petitions/' . $judgement->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id))) {
+                                    File::makeDirectory(public_path('storage/attachments/petitions/' . $judgement->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id), 0777, true, true);
+                                }
+                                File::copy($from_path, $to_path);
                             }
                         }
                     }
