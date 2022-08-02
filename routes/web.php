@@ -27,16 +27,16 @@ Route::get('send_email_before_hearing', 'Api\CronjobController@send_email_before
 
 Route::get('convert_word_to_pdf', 'Api\AttachmentController@convertWordToPDF');
 //Route to Move all files from old to new folder structure.
-Route::get('move_index_files', 'Api\AttachmentController@copyIndexFiles');
-Route::get('move_reply_files', 'Api\AttachmentController@copyReplyFiles');
-Route::get('move_order_sheet_files', 'Api\AttachmentController@copyOrderSheetFiles');
-Route::get('move_oral_argument_files', 'Api\AttachmentController@copyOralArgumentFiles');
-Route::get('move_naqal_form_files', 'Api\AttachmentController@copyNaqalFormFiles');
-Route::get('move_talbana_files', 'Api\AttachmentController@copyTalbanaFiles');
-Route::get('move_case_law_files', 'Api\AttachmentController@copyCaseLawFiles');
-Route::get('move_extra_doc_files', 'Api\AttachmentController@copyExtraDocsFiles');
-Route::get('move_synopsis_files', 'Api\AttachmentController@copySynopsisFiles');
-Route::get('move_judgement_files', 'Api\AttachmentController@copyJudgementFiles');
+Route::get('move_index_files/{id}', 'Api\AttachmentController@copyIndexFiles');
+Route::get('move_reply_files/{id}', 'Api\AttachmentController@copyReplyFiles');
+Route::get('move_order_sheet_files/{id}', 'Api\AttachmentController@copyOrderSheetFiles');
+Route::get('move_oral_argument_files/{id}', 'Api\AttachmentController@copyOralArgumentFiles');
+Route::get('move_naqal_form_files/{id}', 'Api\AttachmentController@copyNaqalFormFiles');
+Route::get('move_talbana_files/{id}', 'Api\AttachmentController@copyTalbanaFiles');
+Route::get('move_case_law_files/{id}', 'Api\AttachmentController@copyCaseLawFiles');
+Route::get('move_extra_doc_files/{id}', 'Api\AttachmentController@copyExtraDocsFiles');
+Route::get('move_synopsis_files/{id}', 'Api\AttachmentController@copySynopsisFiles');
+Route::get('move_judgement_files/{id}', 'Api\AttachmentController@copyJudgementFiles');
 
 Route::get('phpmyinfo', function () {
     phpinfo();

@@ -392,9 +392,6 @@ class AttachmentController extends Controller
                 $im->setResolution(300, 300);
                 $im->readimage($file_path . "[$page]");
                 $im->setImageFormat('jpeg');
-                $im->resize(2000, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                });
                 $generated_jpg_filename = $page . " - " . $file_name_without_extention . '.jpg';
                 $im->setImageCompression(imagick::COMPRESSION_JPEG);
                 $im->setImageCompressionQuality(100);
@@ -425,9 +422,9 @@ class AttachmentController extends Controller
         }
         info("Complete PDF Deletion");
     }
-    public function copyIndexFiles(Request $request)
+    public function copyIndexFiles($petition_id)
     {
-        $petitions = Petition::withRelations()->get();
+        $petitions = Petition::withRelations()->where('id', $petition_id)->get();
         //return response($petitions);
         if ($petitions) {
             foreach ($petitions as $petition) {
@@ -457,10 +454,9 @@ class AttachmentController extends Controller
             return  response("Move all files Successfully", 200);
         }
     }
-    public function copyReplyFiles(Request $request)
+    public function copyReplyFiles($reply_id)
     {
-        $petition_replies = PetitionReply::with('petition_reply_parent.petition', 'attachments')->get();
-
+        $petition_replies = PetitionReply::with('petition_reply_parent.petition', 'attachments')->where('id', $reply_id)->get();
         if ($petition_replies) {
             foreach ($petition_replies as $reply) {
                 if (!empty($reply->attachments)) {
@@ -482,9 +478,9 @@ class AttachmentController extends Controller
             return  response("Move all files Successfully", 200);
         }
     }
-    public function copyOrderSheetFiles(Request $request)
+    public function copyOrderSheetFiles($petition_id)
     {
-        $order_sheets = PetitonOrderSheet::with('petition', 'attachments', 'order_sheet_types')->get();
+        $order_sheets = PetitonOrderSheet::with('petition', 'attachments', 'order_sheet_types')->where('petition_id', $petition_id)->get();
 
         if ($order_sheets) {
             foreach ($order_sheets as $order_sheet) {
@@ -507,9 +503,9 @@ class AttachmentController extends Controller
             return  response("Move all files Successfully", 200);
         }
     }
-    public function copyOralArgumentFiles(Request $request)
+    public function copyOralArgumentFiles($petition_id)
     {
-        $oral_arguments = OralArgument::with('petition', 'attachments')->get();
+        $oral_arguments = OralArgument::with('petition', 'attachments')->where('petition_id', $petition_id)->get();
 
         if ($oral_arguments) {
             foreach ($oral_arguments as $oral_argument) {
@@ -532,9 +528,9 @@ class AttachmentController extends Controller
             return  response("Move all files Successfully", 200);
         }
     }
-    public function copyNaqalFormFiles(Request $request)
+    public function copyNaqalFormFiles($petition_id)
     {
-        $naqal_forms = PetitionNaqalForm::with('petition', 'attachments')->get();
+        $naqal_forms = PetitionNaqalForm::with('petition', 'attachments')->where('petition_id', $petition_id)->get();
         if ($naqal_forms) {
             foreach ($naqal_forms as $naqal_form) {
                 if (!empty($naqal_form->attachments)) {
@@ -556,9 +552,9 @@ class AttachmentController extends Controller
             return  response("Move all files Successfully", 200);
         }
     }
-    public function copyTalbanaFiles(Request $request)
+    public function copyTalbanaFiles($petition_id)
     {
-        $talbanas = PetitionTalbana::with('petition', 'attachments')->get();
+        $talbanas = PetitionTalbana::with('petition', 'attachments')->where('petition_id', $petition_id)->get();
         //return response($talbanas);
         if ($talbanas) {
             foreach ($talbanas as $talbana) {
@@ -581,9 +577,9 @@ class AttachmentController extends Controller
             return  response("Move all files Successfully", 200);
         }
     }
-    public function copyCaseLawFiles(Request $request)
+    public function copyCaseLawFiles($petition_id)
     {
-        $case_laws = CaseLaw::with('petition', 'attachments')->get();
+        $case_laws = CaseLaw::with('petition', 'attachments')->where('petition_id', $petition_id)->get();
         if ($case_laws) {
             foreach ($case_laws as $case_law) {
                 if (!empty($case_law->attachments)) {
@@ -605,9 +601,9 @@ class AttachmentController extends Controller
             return  response("Move all files Successfully", 200);
         }
     }
-    public function copyExtraDocsFiles(Request $request)
+    public function copyExtraDocsFiles($petition_id)
     {
-        $extra_docs = ExtraDocument::with('petition', 'attachments')->get();
+        $extra_docs = ExtraDocument::with('petition', 'attachments')->where('petition_id', $petition_id)->get();
         if ($extra_docs) {
             foreach ($extra_docs as $extra_doc) {
                 if (!empty($extra_doc->attachments)) {
@@ -629,9 +625,9 @@ class AttachmentController extends Controller
             return  response("Move all files Successfully", 200);
         }
     }
-    public function copySynopsisFiles(Request $request)
+    public function copySynopsisFiles($petition_id)
     {
-        $synopsises = PetitionSynopsis::with('petition', 'attachments')->get();
+        $synopsises = PetitionSynopsis::with('petition', 'attachments')->where('petition_id', $petition_id)->get();
 
         if ($synopsises) {
             foreach ($synopsises as $synopsis) {
@@ -654,9 +650,9 @@ class AttachmentController extends Controller
             return  response("Move all files Successfully", 200);
         }
     }
-    public function copyJudgementFiles(Request $request)
+    public function copyJudgementFiles($petition_id)
     {
-        $judgements = Judgement::with('petition', 'attachments')->get();
+        $judgements = Judgement::with('petition', 'attachments')->where('petition_id', $petition_id)->get();
         if ($judgements) {
             foreach ($judgements as $judgement) {
                 if (!empty($judgement->attachments)) {
