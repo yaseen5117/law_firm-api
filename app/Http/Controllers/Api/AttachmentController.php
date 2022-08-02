@@ -24,7 +24,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use File;
 use Illuminate\Filesystem\Filesystem;
-use Storage;
+use Illuminate\Support\Facades\Storage;
+//use Storage;
 use PDF;
 use Carbon\Carbon;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -417,6 +418,12 @@ class AttachmentController extends Controller
         }
         /****************CONVERTING PDF TO IMAGES**********************/
         info("****************CONVERTING PDF TO IMAGES END**********************");
+        //Deleting PDF File from folder
+        info("Deleting PDF File with File Name: " . $file_name);
+        if (File::exists($file_path)) {
+            File::delete($file_path);
+        }
+        info("Complete PDF Deletion");
     }
     public function copyIndexFiles(Request $request)
     {
