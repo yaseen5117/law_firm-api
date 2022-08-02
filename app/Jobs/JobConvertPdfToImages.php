@@ -15,15 +15,19 @@ class JobConvertPdfToImages implements ShouldQueue
     protected $attachmentable_type;
     protected $attachmentable_id;
     protected $file_path;
+    protected $output_path;
+    protected $file_name;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($file_path,$attachmentable_id,$attachmentable_type)
+    public function __construct($file_path,$output_path,$file_name,$attachmentable_id,$attachmentable_type)
     {
         $this->file_path = $file_path;
+        $this->output_path = $output_path;
+        $this->file_name = $file_name;
         $this->attachmentable_id = $attachmentable_id;
         $this->attachmentable_type = $attachmentable_type;
     }
@@ -36,6 +40,6 @@ class JobConvertPdfToImages implements ShouldQueue
     public function handle()
     {
         $objAttachmentController = new AttachmentController;
-        $objAttachmentController->convertPdftoimages($this->file_path,$this->attachmentable_id,$this->attachmentable_type);
+        $objAttachmentController->convertPdftoimages($this->file_path, $this->output_path, $this->file_name ,$this->attachmentable_id,$this->attachmentable_type);
     }
 }
