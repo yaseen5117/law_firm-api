@@ -489,7 +489,8 @@ class AttachmentController extends Controller
     }
     public function copyFiles(Request $request)
     {
-        $petitions = Petition::withRelations()->get();
+        $petitions = Petition::withRelations()->whereIn('id', [52, 56])->get();
+        //return response($petitions);
         if ($petitions) {
             foreach ($petitions as $petition) {
                 if (!empty($petition->petition_indexes)) {
