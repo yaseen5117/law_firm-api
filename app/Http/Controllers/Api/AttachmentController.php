@@ -22,13 +22,14 @@ use App\Models\PetitionTalbana;
 use App\Services\EmailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
+use File;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Storage;
+use Storage;
 use PDF;
 use Carbon\Carbon;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use App\Jobs\SendDocumentUploadEmail;
+use App\Models\Petition;
 
 class AttachmentController extends Controller
 {
@@ -171,7 +172,7 @@ class AttachmentController extends Controller
                 $this->dispatch($job);
 
                 //SENDING EMAIL VIA email service
-                
+
                 /*switch ($attachmentable_type) {
                     case 'App\Models\PetitonOrderSheet':
                         $entity_title = "Order Sheet";
@@ -244,7 +245,7 @@ class AttachmentController extends Controller
                     $emailService = new EmailService;
                     $emailService->send_document_uploading_email($petition, $entity_title);
                 }*/
-                
+
 
 
                 info('--------end ATTCHMENT UPLOADING PROCESS--------');
@@ -485,5 +486,36 @@ class AttachmentController extends Controller
         }
         /****************CONVERTING PDF TO IMAGES**********************/
         info("****************CONVERTING PDF TO IMAGES END**********************");
+    }
+    public function copyFiles(Request $request)
+    {
+        $petitions = Petition::withRelations()->get();
+        if ($petitions) {
+            foreach ($petitions as $petition) {
+                if (!empty($petition->petition_indexes)) {
+                    foreach ($petition->petition_indexes as $petition_index) {
+                        if (!empty($petition_index->attachments)) {
+                            foreach ($petition_index->attachments as $attachment) {
+                                if ($attachment) {
+                                    $folder_name = substr($attachment->attachmentable_type, strpos($attachment->attachmentable_type, "'\'") + 11);
+                                    $to_path =  public_path() . "/storage/attachments/petitions/$petition->id/$folder_name/$attachment->attachmentable_id/$attachment->file_name";
+                                    $from_path = public_path() . "/storage/attachments/$attachment->attachmentable_id/$attachment->file_name";
+                                    if (File::exists($from_path)) {
+                                        if (!File::isDirectory(public_path() . "/storage/attachments/petitions/$petition->id/$folder_name/$attachment->attachmentable_id")) {
+                                            File::makeDirectory(public_path() . "/storage/attachments/petitions/$petition->id/$folder_name/$attachment->attachmentable_id", 0777, true, true);
+                                        }
+                                        //return  response($attachment->attachmentable_id, 200);
+                                        //File::copy(public_path('icon.jpg'), public_path('/new/new.jpg'));
+
+                                        File::copy($from_path, $to_path);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return  response("Move all files Successfully", 200);
+        }
     }
 }

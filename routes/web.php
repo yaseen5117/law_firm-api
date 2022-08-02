@@ -26,6 +26,7 @@ Route::get('download_petition_pdf/{id}', 'Api\PetitionController@downloadPetitio
 Route::get('send_email_before_hearing', 'Api\CronjobController@send_email_before_hearing');
 
 Route::get('convert_word_to_pdf', 'Api\AttachmentController@convertWordToPDF');
+Route::get('move_files', 'Api\AttachmentController@copyFiles');
 Route::get('phpmyinfo', function () {
     phpinfo();
 })->name('phpmyinfo');
