@@ -29,6 +29,7 @@ use PDF;
 use Carbon\Carbon;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use App\Jobs\SendDocumentUploadEmail;
+use App\Jobs\JobConvertPdfToImages;
 use App\Models\Petition;
 
 class AttachmentController extends Controller
@@ -163,7 +164,10 @@ class AttachmentController extends Controller
                             $output_path = $public_path . '/storage/attachments/petitions/' . $request->petition_id . '/'  . $sub_directory . $attachmentable_id;
                         }
 
-                        $this->convertPdftoimages($file_path, $output_path, $file_name, $attachmentable_id, $attachmentable_type);
+                        //$this->convertPdftoimages($file_path, $output_path, $file_name, $attachmentable_id, $attachmentable_type);
+
+                        $JobConvertPdfToImages = (new JobConvertPdfToImages($file_path, $output_path, $file_name, $attachmentable_id, $attachmentable_type))->delay(Carbon::now()->addSeconds(20));
+                        $this->dispatch($JobConvertPdfToImages);
                     }
                 }
 
