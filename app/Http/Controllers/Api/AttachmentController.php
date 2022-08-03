@@ -424,8 +424,8 @@ class AttachmentController extends Controller
     }
     public function copyIndexFiles($petition_id)
     {
-        $petitions = Petition::withRelations()->where('id', $petition_id)->get();
-        //return response($petitions);
+        $petitions = Petition::where('id', $petition_id)->get();
+
         if ($petitions) {
             foreach ($petitions as $petition) {
                 if (!empty($petition->petition_indexes)) {
@@ -441,9 +441,9 @@ class AttachmentController extends Controller
                                             File::makeDirectory(public_path() . "/storage/attachments/petitions/$petition->id/$folder_name/$attachment->attachmentable_id", 0777, true, true);
                                         }
                                         //return  response($attachment->attachmentable_id, 200);
-                                        //File::copy(public_path('icon.jpg'), public_path('/new/new.jpg'));
+                                        //File::move(public_path('icon.jpg'), public_path('/new/new.jpg'));
 
-                                        File::copy($from_path, $to_path);
+                                        File::move($from_path, $to_path);
                                     }
                                 }
                             }
@@ -456,7 +456,7 @@ class AttachmentController extends Controller
     }
     public function copyReplyFiles($reply_id)
     {
-        $petition_replies = PetitionReply::with('petition_reply_parent.petition', 'attachments')->where('id', $reply_id)->get();
+        $petition_replies = PetitionReply::where('id', $reply_id)->get();
         if ($petition_replies) {
             foreach ($petition_replies as $reply) {
                 if (!empty($reply->attachments)) {
@@ -469,7 +469,7 @@ class AttachmentController extends Controller
                                 if (!File::isDirectory(public_path('storage/attachments/petitions/' . $reply->petition_reply_parent->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id))) {
                                     File::makeDirectory(public_path('storage/attachments/petitions/' . $reply->petition_reply_parent->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id), 0777, true, true);
                                 }
-                                File::copy($from_path, $to_path);
+                                File::move($from_path, $to_path);
                             }
                         }
                     }
@@ -480,8 +480,8 @@ class AttachmentController extends Controller
     }
     public function copyOrderSheetFiles($petition_id)
     {
-        $order_sheets = PetitonOrderSheet::with('petition', 'attachments', 'order_sheet_types')->where('petition_id', $petition_id)->get();
-
+        $order_sheets = PetitonOrderSheet::where('petition_id', $petition_id)->get();
+        return response($order_sheets);
         if ($order_sheets) {
             foreach ($order_sheets as $order_sheet) {
                 if (!empty($order_sheet->attachments)) {
@@ -494,7 +494,7 @@ class AttachmentController extends Controller
                                 if (!File::isDirectory(public_path('storage/attachments/petitions/' . $order_sheet->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id))) {
                                     File::makeDirectory(public_path('storage/attachments/petitions/' . $order_sheet->petition_id . '/' . $folder_name . '/' . $attachment->attachmentable_id), 0777, true, true);
                                 }
-                                File::copy($from_path, $to_path);
+                                File::move($from_path, $to_path);
                             }
                         }
                     }
@@ -505,7 +505,7 @@ class AttachmentController extends Controller
     }
     public function copyOralArgumentFiles($petition_id)
     {
-        $oral_arguments = OralArgument::with('petition', 'attachments')->where('petition_id', $petition_id)->get();
+        $oral_arguments = OralArgument::where('petition_id', $petition_id)->get();
 
         if ($oral_arguments) {
             foreach ($oral_arguments as $oral_argument) {
@@ -530,7 +530,7 @@ class AttachmentController extends Controller
     }
     public function copyNaqalFormFiles($petition_id)
     {
-        $naqal_forms = PetitionNaqalForm::with('petition', 'attachments')->where('petition_id', $petition_id)->get();
+        $naqal_forms = PetitionNaqalForm::where('petition_id', $petition_id)->get();
         if ($naqal_forms) {
             foreach ($naqal_forms as $naqal_form) {
                 if (!empty($naqal_form->attachments)) {
@@ -554,7 +554,7 @@ class AttachmentController extends Controller
     }
     public function copyTalbanaFiles($petition_id)
     {
-        $talbanas = PetitionTalbana::with('petition', 'attachments')->where('petition_id', $petition_id)->get();
+        $talbanas = PetitionTalbana::where('petition_id', $petition_id)->get();
         //return response($talbanas);
         if ($talbanas) {
             foreach ($talbanas as $talbana) {
@@ -579,7 +579,7 @@ class AttachmentController extends Controller
     }
     public function copyCaseLawFiles($petition_id)
     {
-        $case_laws = CaseLaw::with('petition', 'attachments')->where('petition_id', $petition_id)->get();
+        $case_laws = CaseLaw::where('petition_id', $petition_id)->get();
         if ($case_laws) {
             foreach ($case_laws as $case_law) {
                 if (!empty($case_law->attachments)) {
@@ -603,7 +603,7 @@ class AttachmentController extends Controller
     }
     public function copyExtraDocsFiles($petition_id)
     {
-        $extra_docs = ExtraDocument::with('petition', 'attachments')->where('petition_id', $petition_id)->get();
+        $extra_docs = ExtraDocument::where('petition_id', $petition_id)->get();
         if ($extra_docs) {
             foreach ($extra_docs as $extra_doc) {
                 if (!empty($extra_doc->attachments)) {
@@ -627,7 +627,7 @@ class AttachmentController extends Controller
     }
     public function copySynopsisFiles($petition_id)
     {
-        $synopsises = PetitionSynopsis::with('petition', 'attachments')->where('petition_id', $petition_id)->get();
+        $synopsises = PetitionSynopsis::where('petition_id', $petition_id)->get();
 
         if ($synopsises) {
             foreach ($synopsises as $synopsis) {
@@ -652,7 +652,7 @@ class AttachmentController extends Controller
     }
     public function copyJudgementFiles($petition_id)
     {
-        $judgements = Judgement::with('petition', 'attachments')->where('petition_id', $petition_id)->get();
+        $judgements = Judgement::where('petition_id', $petition_id)->get();
         if ($judgements) {
             foreach ($judgements as $judgement) {
                 if (!empty($judgement->attachments)) {
@@ -669,9 +669,13 @@ class AttachmentController extends Controller
                             }
                         }
                     }
+                } else {
+                    return response("judgement attachment Not Found", 404);
                 }
             }
             return  response("Move all files Successfully", 200);
+        } else {
+            return response("judgement Not Found", 404);
         }
     }
 }
