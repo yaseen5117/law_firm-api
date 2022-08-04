@@ -454,9 +454,9 @@ class AttachmentController extends Controller
             return  response("Move all files Successfully", 200);
         }
     }
-    public function copyReplyFiles($reply_id)
+    public function copyReplyFiles($parent_reply_id)
     {
-        $petition_replies = PetitionReply::where('id', $reply_id)->get();
+        $petition_replies = PetitionReply::where('petition_reply_parent_id', $parent_reply_id)->get();
         if ($petition_replies) {
             foreach ($petition_replies as $reply) {
                 if (!empty($reply->attachments)) {
@@ -481,7 +481,7 @@ class AttachmentController extends Controller
     public function copyOrderSheetFiles($petition_id)
     {
         $order_sheets = PetitonOrderSheet::where('petition_id', $petition_id)->get();
-        return response($order_sheets);
+        //return response($order_sheets);
         if ($order_sheets) {
             foreach ($order_sheets as $order_sheet) {
                 if (!empty($order_sheet->attachments)) {
