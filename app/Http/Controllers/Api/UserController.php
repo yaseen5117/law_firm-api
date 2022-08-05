@@ -295,7 +295,11 @@ class UserController extends Controller
     public function getClient(Request $request)
     {
         try {
-            $clients = User::role('client')->where('name', 'like', '%' . $request->serach_param . '%')->orderBy("name")->get();
+            $query = User::query()->role('client');
+            if (!empty($request->serach_param)) {
+                $query->where('name', 'LIKE', "%$request->serach_param%");
+            }
+            $clients = $query->orderBy("name")->get();
             // $clientUsers = [];
             // foreach($clients as $client){
             //     $clientUsers[] = [
