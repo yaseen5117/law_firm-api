@@ -15,16 +15,16 @@ class CreatePetitionsTable extends Migration
     {
         Schema::create('petitions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('court_id');
-            $table->unsignedBigInteger('petition_type_id');
-            $table->string('case_no')->nullable();;
-            $table->string('title')->nullable();;
+            $table->unsignedBigInteger('court_id')->nullable();
+            $table->unsignedBigInteger('petition_type_id')->nullable();
+            $table->string('case_no')->nullable();
+            $table->string('title')->nullable();
             $table->string('writ_number')->nullable();
             $table->text('judgement')->nullable();
-            $table->longText('order_sheet')->nullable(); 
-            $table->string('status')->nullable();   
-            $table->integer("display_order")->nullable();                    
-            $table->date("institution_date")->nullable();                    
+            $table->longText('order_sheet')->nullable();
+            $table->string('status')->nullable();
+            $table->integer("display_order")->nullable();
+            $table->date("institution_date")->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
