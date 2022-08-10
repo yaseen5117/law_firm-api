@@ -93,6 +93,7 @@ class PetitionReplyController extends Controller
                     'petition_replies' => $petition_replies,
                     'index_data' => $petition_replies,
                     'petition' => $petition,
+                    'petition_parent' => $petition_parent,
                     'message' => 'Success',
                     'page_title' => "Petition Reply",
                     'code' => 200
