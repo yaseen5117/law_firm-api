@@ -25,6 +25,7 @@ Route::group(['middleware' => 'auth:sanctum', 'role:admin', 'namespace' => 'Api'
     Route::get('invoice_statuses', 'InvoiceController@invoice_statuses');
     Route::get('invoice_templates', 'InvoiceController@invoice_templates');
     Route::post('invoice/mark_as_paid', 'InvoiceController@markAsPaid');
+    Route::delete('invoice/delete_payment/{payment_id}', 'InvoiceController@deleteInvoicePayment');
     Route::resource('contracts_and_agreements', 'ContractsAndAgreementController');
     Route::resource('links', 'LinkController');
 

@@ -10,6 +10,7 @@ use App\Models\InvoiceMeta;
 use App\Models\InvoiceExpense;
 use App\Models\InvoiceStatus;
 use App\Models\InvoiceTemplate;
+use App\Models\Payment;
 use Carbon\Carbon;
 use DateInterval;
 use DateTime;
@@ -33,7 +34,7 @@ class InvoiceController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Invoice::with('invoice_meta', 'client', 'invoice_expenses', 'status', 'attachment')->select("invoices.*");
+            $query = Invoice::with('invoice_meta', 'client', 'invoice_expenses', 'status', 'attachment', 'invoice_payments.attachment')->select("invoices.*");
             if (!empty($request->invoice_no)) {
                 $query->where('invoice_no', 'like', '%' . $request->invoice_no . '%');
             }
@@ -268,7 +269,7 @@ class InvoiceController extends Controller
     public function show($id)
     {
         try {
-            $invoice = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status', 'attachment')->find($id);
+            $invoice = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status', 'attachment', 'invoice_payments.attachment')->find($id);
 
             return response()->json(
                 [
@@ -407,27 +408,44 @@ class InvoiceController extends Controller
     public function markAsPaid(Request $request)
     {
         try {
-            if ($request->paid_date) {
-                $request->merge([
-                    'paid_date' => toDBDate($request->paid_date), //\Carbon\Carbon::createFromFormat('d/m/Y', $request->paid_date)->format('Y/m/d'),
-                ]);
+            if (is_array($request->payments)) {
+                foreach ($request->payments as $payment) {
+                    $pay = Payment::updateOrCreate(
+                        [
+                            'id' => $payment['id']
+                        ],
+                        [
+                            'invoice_id' => $request->invoice_id,
+                            'paid_date' => $payment['paid_date'] ? toDBDate($payment['paid_date']) : $payment['paid_date'],
+                            'paid_amount' => $payment['paid_amount'],
+                            'notes' => $payment['notes']
+                        ]
+                    );
+                }
+                Invoice::where('id', $request->invoice_id)->update(['invoice_status_id' => 3]); //3 is the status of paid invoice
             }
-
-            $invoice = Invoice::whereId($request->id)->update([
-                'invoice_status_id' => 3,
-                'paid_date' => $request->paid_date,
-                'notes' => $request->notes,
-                'paid_amount' => $request->amount,
-            ]);
 
             return response()->json(
                 [
-                    'invoice' => $invoice,
+                    'payment' => $pay,
                     'paid_at' => $request->paid_date,
                     'message' => 'Mark Invoice as Paid',
                     'code' => 200
                 ]
             );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function deleteInvoicePayment($payment_id)
+    {
+        try {
+            if ($payment_id) {
+                Payment::find($payment_id)->delete();
+                return response("deleted successfully", 200);
+            }
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()

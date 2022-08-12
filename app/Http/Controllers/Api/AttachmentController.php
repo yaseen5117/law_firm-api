@@ -114,8 +114,11 @@ class AttachmentController extends Controller
                     } else {
                         $sub_directory = substr($attachmentable_type . "/", strpos($attachmentable_type, "'\'") + 11);
                     }
+
                     if ($request->attachmentable_type == "App\Models\Invoice") {
                         $file_path = $file->storeAs('attachments/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
+                    } else if ($request->attachmentable_type == "App\Models\Payment") {
+                        $file_path = $file->storeAs('attachments/Invoice/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
                     } else {
                         $file_path = $file->storeAs('attachments/petitions/' . $request->petition_id . '/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
                     }
@@ -129,6 +132,9 @@ class AttachmentController extends Controller
                         if ($request->attachmentable_type == "App\Models\Invoice") {
                             Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Invoice")->forceDelete();
                             $path =  storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id);
+                        } else if ($request->attachmentable_type == "App\Models\Payment") {
+                            Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Payment")->forceDelete();
+                            $path =  storage_path('app/public/attachments/Invoice/' . $sub_directory . $request->attachmentable_id);
                         } else {
                             $path =  storage_path('app/public/attachments/petitions/' . $request->petition_id . '/' . $sub_directory . $request->attachmentable_id);
                         }
@@ -137,6 +143,8 @@ class AttachmentController extends Controller
                         }
                         if ($request->attachmentable_type == "App\Models\Invoice") {
                             $resizeImage->save(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/' . $file_name));
+                        } else if ($request->attachmentable_type == "App\Models\Payment") {
+                            $resizeImage->save(storage_path('app/public/attachments/Invoice/' . $sub_directory . $request->attachmentable_id . '/' . $file_name));
                         } else {
                             $resizeImage->save(storage_path('app/public/attachments/petitions/' . $request->petition_id . '/' . $sub_directory . $request->attachmentable_id . '/' . $file_name));
                         }

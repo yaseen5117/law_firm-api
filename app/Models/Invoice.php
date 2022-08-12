@@ -39,6 +39,10 @@ class Invoice extends Model
     {
         return $this->hasMany('App\Models\InvoiceExpense');
     }
+    public function invoice_payments()
+    {
+        return $this->hasMany('App\Models\Payment');
+    }
     public function total()
     {
         $tax_amount = 0;
