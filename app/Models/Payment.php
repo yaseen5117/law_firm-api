@@ -9,6 +9,9 @@ class Payment extends Model
 {
     use HasFactory;
     protected $guarded = [];
+    protected $casts = [
+        'paid_date'  => 'date:d/m/Y',
+    ];
 
     public function attachment()
     {
