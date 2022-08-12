@@ -115,11 +115,8 @@ class AttachmentController extends Controller
                         $sub_directory = substr($attachmentable_type . "/", strpos($attachmentable_type, "'\'") + 11);
                     }
 
-                    if ($request->attachmentable_type == "App\Models\Invoice") {
-                        $file_path = $file->storeAs('attachments/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
-                    } else if ($request->attachmentable_type == "App\Models\Payment") {
-                        $file_path = $file->storeAs('attachments/Invoice/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
-                    } else {
+                    if ($request->attachmentable_type != "App\Models\Payment") {
+
                         $file_path = $file->storeAs('attachments/petitions/' . $request->petition_id . '/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
                     }
                     if ($mime_type != "application/pdf") {
@@ -129,11 +126,16 @@ class AttachmentController extends Controller
                         $resizeImage->resize(2000, null, function ($constraint) {
                             $constraint->aspectRatio();
                         });
-                        if ($request->attachmentable_type == "App\Models\Invoice") {
-                            Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Invoice")->forceDelete();
-                            $path =  storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id);
-                        } else if ($request->attachmentable_type == "App\Models\Payment") {
-                            Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Payment")->forceDelete();
+                        if ($request->attachmentable_type == "App\Models\Payment") {
+                            $attachment = Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Payment")->first();
+                            if ($attachment) {
+                                $public_path =  public_path();
+                                $file_path = $public_path . '/storage/attachments/Invoice/' . $sub_directory . $attachmentable_id . '/' . $attachment->file_name;
+                                if (File::exists($file_path)) {
+                                    File::delete($file_path);
+                                }
+                                Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Payment")->forceDelete();
+                            }
                             $path =  storage_path('app/public/attachments/Invoice/' . $sub_directory . $request->attachmentable_id);
                         } else {
                             $path =  storage_path('app/public/attachments/petitions/' . $request->petition_id . '/' . $sub_directory . $request->attachmentable_id);
@@ -141,9 +143,7 @@ class AttachmentController extends Controller
                         if (!File::isDirectory($path)) {
                             File::makeDirectory($path, 0777, true, true);
                         }
-                        if ($request->attachmentable_type == "App\Models\Invoice") {
-                            $resizeImage->save(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/' . $file_name));
-                        } else if ($request->attachmentable_type == "App\Models\Payment") {
+                        if ($request->attachmentable_type == "App\Models\Payment") {
                             $resizeImage->save(storage_path('app/public/attachments/Invoice/' . $sub_directory . $request->attachmentable_id . '/' . $file_name));
                         } else {
                             $resizeImage->save(storage_path('app/public/attachments/petitions/' . $request->petition_id . '/' . $sub_directory . $request->attachmentable_id . '/' . $file_name));
@@ -162,22 +162,35 @@ class AttachmentController extends Controller
                     }
 
                     if ($mime_type == "application/pdf") {
-
                         $attachmentable_id = $request->attachmentable_id;
                         $pdf_file_name = "$file_name";
                         $public_path =  public_path();
-                        if ($request->attachmentable_type == "App\Models\Invoice") {
-                            $file_path = $public_path . '/storage/attachments/' . $sub_directory . $attachmentable_id . '/original/' . $pdf_file_name;
-                            $output_path = $public_path . '/storage/attachments/'  . $sub_directory . $attachmentable_id;
+                        if ($request->attachmentable_type == "App\Models\Payment") {
+                            $attachment = Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Payment")->first();
+                            if ($attachment) {
+                                $file_path = $public_path . '/storage/attachments/Invoice/' . $sub_directory . $attachmentable_id . '/' . $attachment->file_name;
+                                if (File::exists($file_path)) {
+                                    File::delete($file_path);
+                                }
+                                Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Payment")->forceDelete();
+                            }
+                            $file_path = $file->storeAs('attachments/Invoice/' . $sub_directory . $request->attachmentable_id . '/', $file_name, 'public');
+                            Attachment::create(
+                                [
+                                    'file_name' => $file_name,
+                                    'title' => $title,
+                                    'attachmentable_type' => $attachmentable_type,
+                                    'attachmentable_id' => $attachmentable_id,
+                                    'mime_type' => $mime_type,
+                                ]
+                            );
                         } else {
                             $file_path = $public_path . '/storage/attachments/petitions/' . $request->petition_id  . '/' . $sub_directory . $attachmentable_id . '/original/' . $pdf_file_name;
                             $output_path = $public_path . '/storage/attachments/petitions/' . $request->petition_id . '/'  . $sub_directory . $attachmentable_id;
+
+                            $JobConvertPdfToImages = (new JobConvertPdfToImages($file_path, $output_path, $file_name, $attachmentable_id, $attachmentable_type))->delay(Carbon::now()->addSeconds(20));
+                            $this->dispatch($JobConvertPdfToImages);
                         }
-
-                        //$this->convertPdftoimages($file_path, $output_path, $file_name, $attachmentable_id, $attachmentable_type);
-
-                        $JobConvertPdfToImages = (new JobConvertPdfToImages($file_path, $output_path, $file_name, $attachmentable_id, $attachmentable_type))->delay(Carbon::now()->addSeconds(20));
-                        $this->dispatch($JobConvertPdfToImages);
                     }
                 }
 
