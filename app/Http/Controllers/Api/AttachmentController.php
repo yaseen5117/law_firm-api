@@ -83,7 +83,7 @@ class AttachmentController extends Controller
                     info("AttachmentController store Function: File mime_type uploading: " . $file->getClientMimeType());
                     $file_name = time() . '_' . $file->getClientOriginalName();
                     $mime_type = $file->getClientMimeType();
-
+                    $file_path = null;
                     $title = $file_name;
                     $attachmentable_type = $request->attachmentable_type;
                     $attachmentable_id = $request->attachmentable_id;
@@ -119,7 +119,32 @@ class AttachmentController extends Controller
 
                         $file_path = $file->storeAs('attachments/petitions/' . $request->petition_id . '/' . $sub_directory . $request->attachmentable_id . '/original', $file_name, 'public');
                     }
-                    if ($mime_type != "application/pdf") {
+
+                    if ($mime_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+                        if ($request->attachmentable_type == "App\Models\Payment") {
+                            $attachment = Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Payment")->first();
+                            if ($attachment) {
+                                $public_path =  public_path();
+                                $file_path = $public_path . '/storage/attachments/Invoice/' . $sub_directory . $attachmentable_id;
+                                if (File::exists($file_path)) {
+                                    File::deleteDirectory($file_path);
+                                }
+                                Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Payment")->forceDelete();
+                            }
+                            $file_path = $file->storeAs('attachments/Invoice/' . $sub_directory . $request->attachmentable_id . '/', $file_name, 'public');
+                            Attachment::create(
+                                [
+                                    'file_name' => $file_name,
+                                    'title' => $title,
+                                    'attachmentable_type' => $attachmentable_type,
+                                    'attachmentable_id' => $attachmentable_id,
+                                    'mime_type' => $mime_type,
+                                ]
+                            );
+                        }
+                    }
+                    $allowedMimeTypes = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'];
+                    if (in_array($mime_type, $allowedMimeTypes)) {
                         info("AttachmentController store Function: File in condition non-pdf condition : ");
                         //START To Resize Images
                         $resizeImage = Image::make($file);
@@ -130,9 +155,9 @@ class AttachmentController extends Controller
                             $attachment = Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Payment")->first();
                             if ($attachment) {
                                 $public_path =  public_path();
-                                $file_path = $public_path . '/storage/attachments/Invoice/' . $sub_directory . $attachmentable_id . '/' . $attachment->file_name;
+                                $file_path = $public_path . '/storage/attachments/Invoice/' . $sub_directory . $attachmentable_id;
                                 if (File::exists($file_path)) {
-                                    File::delete($file_path);
+                                    File::deleteDirectory($file_path);
                                 }
                                 Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Payment")->forceDelete();
                             }
@@ -168,9 +193,9 @@ class AttachmentController extends Controller
                         if ($request->attachmentable_type == "App\Models\Payment") {
                             $attachment = Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Payment")->first();
                             if ($attachment) {
-                                $file_path = $public_path . '/storage/attachments/Invoice/' . $sub_directory . $attachmentable_id . '/' . $attachment->file_name;
+                                $file_path = $public_path . '/storage/attachments/Invoice/' . $sub_directory . $attachmentable_id;
                                 if (File::exists($file_path)) {
-                                    File::delete($file_path);
+                                    File::deleteDirectory($file_path);
                                 }
                                 Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Payment")->forceDelete();
                             }
@@ -281,11 +306,20 @@ class AttachmentController extends Controller
      */
     public function destroy($id)
     {
-
         try {
             $attachment = Attachment::find($id);
             if ($attachment) {
-                removeImage($attachment);
+                //getting module Id 
+                $standard_module = getIndexData($attachment->attachmentable_type, $attachment->attachmentable_id);
+                $sub_directory = substr($attachment->attachmentable_type, strpos($attachment->attachmentable_type, "'\'") + 11);
+                //return response($standard_module, 403);
+                $public_path =  public_path();
+                $origional_file_path = $public_path . '/storage/attachments/petitions/' . $standard_module->petition_id . '/' . $sub_directory . '/' . $attachment->attachmentable_id . '/original/' . $attachment->file_name;
+                $resized_file_path = $public_path . '/storage/attachments/petitions/' . $standard_module->petition_id . '/' . $sub_directory . '/' . $attachment->attachmentable_id . '/' . $attachment->file_name;
+                removeImage($resized_file_path, $origional_file_path);
+                Attachment::where('attachmentable_id', $attachment->attachmentable_id)->where('attachmentable_type', $attachment->attachmentable_type)->forceDelete();
+
+                //return response($attachment, 403);
                 $attachment->delete();
                 return response(
                     [
@@ -308,7 +342,20 @@ class AttachmentController extends Controller
             if ($request) {
                 foreach ($request->id as $id) {
                     $attachment = Attachment::find($id);
-                    removeImage($attachment);
+                    if ($attachment) {
+                        $standard_module = getIndexData($attachment->attachmentable_type, $attachment->attachmentable_id);
+
+                        $sub_directory = substr($attachment->attachmentable_type, strpos($attachment->attachmentable_type, "'\'") + 11);
+
+                        $public_path =  public_path();
+                        $origional_file_path = $public_path . '/storage/attachments/petitions/' . $standard_module->petition_id . '/' . $sub_directory . '/' . $attachment->attachmentable_id . '/original/' . $attachment->file_name;
+                        $resized_file_path = $public_path . '/storage/attachments/petitions/' . $standard_module->petition_id . '/' . $sub_directory . '/' . $attachment->attachmentable_id . '/' . $attachment->file_name;
+
+                        //$a = removeImage($resized_file_path, $origional_file_path);
+
+                        removeImage($resized_file_path, $origional_file_path);
+                        Attachment::find($id)->forceDelete();
+                    }
                 }
                 DB::table("attachments")->whereIn('id', $request->id)->delete();
 
@@ -410,6 +457,9 @@ class AttachmentController extends Controller
             info("Total Number Of Pages: $num_page");
             for ($page = 0; $page < $num_page; $page++) {
                 $im = new Imagick();
+                $im->resize(2000, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
                 $im->setResolution(300, 300);
                 $im->readimage($file_path . "[$page]");
                 $im->setImageFormat('jpeg');

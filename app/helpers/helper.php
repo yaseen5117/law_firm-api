@@ -3,9 +3,19 @@
 //uploading files
 
 use App\Models\Attachment;
+use App\Models\CaseLaw;
+use App\Models\ExtraDocument;
+use App\Models\Judgement;
 use SebastianBergmann\Environment\Console;
 use App\Models\Role;
 use App\Models\ModelHasRole;
+use App\Models\OralArgument;
+use App\Models\PetitionIndex;
+use App\Models\PetitionNaqalForm;
+use App\Models\PetitionReply;
+use App\Models\PetitionSynopsis;
+use App\Models\PetitionTalbana;
+use App\Models\PetitonOrderSheet;
 
 define('SITE_NAME', 'E Law Firm');
 define('ORDER_SHEET', 1);
@@ -180,13 +190,84 @@ function toDBDate($date_in_any_format)
     }
 }
 //Removing Files from Folder.
-function removeImage($attachment)
+function removeImage($resized_file_path, $origional_file_path)
 {
-    if (\File::exists(public_path("storage/attachments/$attachment->attachmentable_id/$attachment->file_name"))) {
-        \File::delete(public_path("storage/attachments/$attachment->attachmentable_id/$attachment->file_name"));
+    if (\File::exists($resized_file_path)) {
+        \File::delete($resized_file_path);
     }
-    if (\File::exists(public_path("storage/attachments/$attachment->attachmentable_id/original/$attachment->file_name"))) {
-        \File::delete(public_path("storage/attachments/$attachment->attachmentable_id/original/$attachment->file_name"));
+    if (\File::exists($origional_file_path)) {
+        \File::delete($origional_file_path);
     }
-    return;
+    return true;
+}
+
+function getIndexData($attachmentable_type, $attachmentable_id)
+{
+    switch ($attachmentable_type) {
+        case 'App\Models\PetitonOrderSheet':
+            $entity_title = "Order Sheet";
+            $standard_module = PetitonOrderSheet::find($attachmentable_id);
+
+            break;
+
+        case 'App\Models\PetitionIndex':
+            //id22
+            $entity_title = "Petition Index";
+            $standard_module = PetitionIndex::find($attachmentable_id);
+
+            break;
+
+        case 'App\Models\PetitionReply':
+            $entity_title = "Replies";
+            $petition_reply = PetitionReply::find($attachmentable_id);
+            $standard_module = $petition_reply->petition_reply_parent;
+            break;
+
+        case 'App\Models\OralArgument':
+            $entity_title = "Oral Argument";
+            $standard_module = OralArgument::find($attachmentable_id);
+
+            break;
+
+        case 'App\Models\PetitionNaqalForm':
+            $entity_title = "Naqal Form";
+            $standard_module = PetitionNaqalForm::find($attachmentable_id);
+
+            break;
+
+        case 'App\Models\PetitionTalbana':
+            $entity_title = "Talbana";
+            $standard_module = PetitionTalbana::find($attachmentable_id);
+
+            break;
+
+        case 'App\Models\CaseLaw':
+            $entity_title = "Case Laws";
+            $standard_module = CaseLaw::find($attachmentable_id);
+
+            break;
+
+        case 'App\Models\ExtraDocument':
+            $entity_title = "Extra Document";
+            $standard_module = ExtraDocument::find($attachmentable_id);
+
+            break;
+
+        case 'App\Models\PetitionSynopsis':
+            $entity_title = "Synopsis";
+            $standard_module = PetitionSynopsis::find($attachmentable_id);
+
+            break;
+
+        case 'App\Models\Judgement':
+            $entity_title = "Judgement";
+            $standard_module = Judgement::find($attachmentable_id);
+
+            break;
+
+        default:
+            $entity_title = "";
+            break;
+    }
+    return $standard_module;
 }

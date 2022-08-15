@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attachment;
 use App\Services\EmailService;
 use App\Models\User;
 use App\Models\Invoice;
@@ -21,7 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use PDF;
 use Symfony\Component\Process\Process;
-
+use File;
 use function GuzzleHttp\Promise\all;
 
 class InvoiceController extends Controller
@@ -443,8 +444,20 @@ class InvoiceController extends Controller
     {
         try {
             if ($payment_id) {
-                Payment::find($payment_id)->delete();
-                return response("deleted successfully", 200);
+                $payment = Payment::find($payment_id);
+                //deleting the file from folder
+                $attachment = Attachment::where('attachmentable_id', $payment_id)->where('attachmentable_type', "App\Models\Payment")->first();
+                if ($attachment) {
+                    $public_path =  public_path();
+                    $file_path = $public_path . '/storage/attachments/Invoice/Payment/' . $payment_id;
+                    if (File::exists($file_path)) {
+                        File::deleteDirectory($file_path);
+                    }
+                    Attachment::where('attachmentable_id', $payment_id)->where('attachmentable_type', "App\Models\Payment")->forceDelete();
+                }
+                //deleting the payment from DB
+                $payment->delete();
+                return response("Payment deleted successfully", 200);
             }
         } catch (\Exception $e) {
             return response([

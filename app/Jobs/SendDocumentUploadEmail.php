@@ -35,7 +35,7 @@ class SendDocumentUploadEmail implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($attachmentable_type,$attachmentable_id)
+    public function __construct($attachmentable_type, $attachmentable_id)
     {
         $this->attachmentable_id = $attachmentable_id;
         $this->attachmentable_type = $attachmentable_type;
@@ -47,15 +47,15 @@ class SendDocumentUploadEmail implements ShouldQueue
      * @return void
      */
     public function handle()
-    {   
+    {
         info("SendDocumentUploadEmail queue job start");
-        $attachmentable_id =$this->attachmentable_id;
-        $attachmentable_type =$this->attachmentable_type;
+        $attachmentable_id = $this->attachmentable_id;
+        $attachmentable_type = $this->attachmentable_type;
         switch ($attachmentable_type) {
             case 'App\Models\PetitonOrderSheet':
                 $entity_title = "Order Sheet";
-                $pettiion_ordersheet = PetitonOrderSheet::find($attachmentable_id);
-                $petition = $pettiion_ordersheet->petition;
+                $petition_ordersheet = PetitonOrderSheet::find($attachmentable_id);
+                $petition = $petition_ordersheet->petition;
                 break;
 
             case 'App\Models\PetitionIndex':

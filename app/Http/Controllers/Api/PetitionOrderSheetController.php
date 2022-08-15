@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attachment;
 use App\Models\OrderSheetType;
 use Illuminate\Http\Request;
 use App\Models\Petition;
 use App\Models\PetitionModuleType;
 use App\Models\PetitonOrderSheet;
-
+use File;
 
 class PetitionOrderSheetController extends Controller
 {
@@ -24,7 +25,7 @@ class PetitionOrderSheetController extends Controller
     public function index(Request $request)
     {
         try {
-            $petitionOrderSheets = PetitonOrderSheet::with('petition', 'attachments', 'order_sheet_types')->where('petition_id', $request->petition_id)->orderby('order_sheet_date', 'desc')->get();
+            $petitionOrderSheets = PetitonOrderSheet::with('attachments', 'order_sheet_types')->where('petition_id', $request->petition_id)->orderby('order_sheet_date', 'desc')->get();
 
             return response()->json(
                 [
@@ -97,8 +98,7 @@ class PetitionOrderSheetController extends Controller
     {
         try {
 
-            $petitionOrderSheet = PetitonOrderSheet::with('petition', 'attachments', 'order_sheet_types')->whereId($id)->first();
-
+            $petitionOrderSheet = PetitonOrderSheet::with('attachments')->whereId($id)->first();
 
             return response()->json(
                 [
@@ -122,7 +122,7 @@ class PetitionOrderSheetController extends Controller
                 'petition_id' => 'required'
             ]);
 
-            $query = PetitonOrderSheet::with('petition', 'attachments')->wherePetitionId($request->petition_id);
+            $query = PetitonOrderSheet::with('petition', 'attachments', 'order_sheet_types')->wherePetitionId($request->petition_id);
             $previous_index_id = null;
             $next_index_id = null;
             if ($request->id > 0) {
@@ -139,7 +139,7 @@ class PetitionOrderSheetController extends Controller
                     'record' => $petitionOrderSheet,
                     'previous_index_id' => $previous_index_id,
                     'next_index_id' => $next_index_id,
-                    'message' => 'showOrderSheetByPetition Successs',
+                    'message' => 'show OrderSheetByPetition Successs',
                     'code' => 200
                 ]
             );
@@ -184,6 +184,17 @@ class PetitionOrderSheetController extends Controller
         try {
             $orderSheet = PetitonOrderSheet::find($id);
             if ($orderSheet) {
+                $attachment =  Attachment::where('attachmentable_id', $orderSheet->id)->where('attachmentable_type', "App\Models\PetitonOrderSheet")->get();
+
+                if ($attachment) {
+                    $public_path =  public_path();
+                    $file_path = $public_path . '/storage/attachments/petitions/' . $orderSheet->petition_id . '/PetitonOrderSheet/' . $orderSheet->id;
+
+                    if (File::exists($file_path)) {
+                        File::deleteDirectory($file_path);
+                    }
+                    Attachment::where('attachmentable_id', $orderSheet->id)->where('attachmentable_type', "App\Models\PetitonOrderSheet")->forceDelete();
+                }
                 $orderSheet->delete();
                 return response(
                     [
