@@ -69,13 +69,13 @@ class PetitionController extends Controller
                 $query->where('name', 'like', '%' . $request->petitioner_name . '%');
             }
 
-            if ($request->user()->hasRole('client')) {
-                $query->where('petitioner_id', $request->user()->id);
-            }
             //getting logged in user
             $user = $request->user();
             if ($user->hasRole('lawyer')) {
                 $query->where('lawyer_id', $user->id);
+            }
+            if ($user->hasRole('client')) {
+                $query->where('petitioner_id', $request->user()->id);
             }
 
             //$query->orderBy('display_order');
