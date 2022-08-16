@@ -467,13 +467,13 @@ class AttachmentController extends Controller
                 $im->clear();
                 $im->destroy();
 
-                info("Resizing PDF image# " . $page);
+                //Resizing Image
                 $resizeImage = Image::make($output_path . "/" . $generated_jpg_filename);
                 $resizeImage->resize(2000, null, function ($constraint) {
                     $constraint->aspectRatio();
                 });
                 $resizeImage->save($output_path . '/' . $generated_jpg_filename);
-                info("Resizing PDF image# " . $page . " Completed");
+
                 Attachment::create(
                     [
                         'title' => $generated_jpg_filename,
