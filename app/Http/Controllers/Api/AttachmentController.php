@@ -457,9 +457,6 @@ class AttachmentController extends Controller
             info("Total Number Of Pages: $num_page");
             for ($page = 0; $page < $num_page; $page++) {
                 $im = new Imagick();
-                $im->resize(2000, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                });
                 $im->setResolution(300, 300);
                 $im->readimage($file_path . "[$page]");
                 $im->setImageFormat('jpeg');
@@ -470,6 +467,13 @@ class AttachmentController extends Controller
                 $im->clear();
                 $im->destroy();
 
+                info("Resizing PDF image# " . $page);
+                $resizeImage = Image::make($output_path . "/" . $generated_jpg_filename);
+                $resizeImage->resize(2000, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+                $resizeImage->save(storage_path($output_path . '/' . $generated_jpg_filename));
+                info("Resizing PDF image# " . $page . " Completed");
                 Attachment::create(
                     [
                         'title' => $generated_jpg_filename,
