@@ -47,7 +47,8 @@ class PetitionController extends Controller
 
             $query
                 ->leftjoin('petition_petitioners', 'petitions.id', '=', 'petition_petitioners.petition_id')
-                ->leftjoin('users', 'users.id', '=', 'petition_petitioners.petitioner_id');
+                ->leftjoin('users', 'users.id', '=', 'petition_petitioners.petitioner_id')
+                ->leftjoin('petition_lawyers', 'petition_lawyers.petition_id', '=', 'petitions.id');
 
             if (!empty($request->case_no)) {
                 $query->where('case_no', 'like', '%' . $request->case_no . '%');
@@ -70,6 +71,11 @@ class PetitionController extends Controller
 
             if ($request->user()->hasRole('client')) {
                 $query->where('petitioner_id', $request->user()->id);
+            }
+            //getting logged in user
+            $user = $request->user();
+            if ($user->hasRole('lawyer')) {
+                $query->where('lawyer_id', $user->id);
             }
 
             //$query->orderBy('display_order');
@@ -95,7 +101,7 @@ class PetitionController extends Controller
                     'petitions' => $petitions,
                     'events' => $events,
                     'message' => 'Petitions',
-                    'user' => Auth::user()->email,
+                    'user' => $user->email,
                     'archived' => $request->archived,
                     'code' => 200
                 ]
