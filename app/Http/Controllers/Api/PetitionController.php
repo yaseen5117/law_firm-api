@@ -31,12 +31,11 @@ class PetitionController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->except(['index', 'show', 'toggleArchivedStatus', 'downloadPetitionPdf']);
+        $this->middleware('role:admin')->except(['index', 'show', 'toggleArchivedStatus', 'downloadPetitionPdf', 'insertPendingTag']);
     }
     public function index(Request $request)
     {
         try {
-            //return $request->all();   
             $query = Petition::select("petitions.*")->withRelationsIndex();
 
             if ($request->archived == "true") {
@@ -67,6 +66,9 @@ class PetitionController extends Controller
             if (!empty($request->petitioner_name)) {
 
                 $query->where('name', 'like', '%' . $request->petitioner_name . '%');
+            }
+            if ($request->pending_tag == 'true') {
+                $query->whereNotNull('pending_tag');
             }
 
             //getting logged in user
@@ -337,6 +339,22 @@ class PetitionController extends Controller
             } else {
                 return response('Petition Data Not Found', 404);
             }
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function insertPendingTag(Request $request)
+    {
+        try {
+            Petition::where('id', $request->petition_id)->update(['pending_tag' => $request->pending_tag]);
+            if ($request->pending_tag) {
+                $message = "Tag Inserted Successfully";
+            } else {
+                $message = "Tag Removed Successfully";
+            }
+            return response($message, 200);
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
