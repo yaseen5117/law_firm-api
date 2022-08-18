@@ -16,14 +16,14 @@
     td {
         border: none;
     }
-     
+
     .page-break {
         page-break-after: always;
     }
 
     .text-center {
         text-align: center;
-    } 
+    }
 
     .invoice-padding {
         padding: 15px 15px 15px 15px;
@@ -106,7 +106,7 @@
     </tr>
     <tr>
         <td class="align-item-left" colspan="1"><b>Attention:</b></td>
-        <td class="align-item-left" colspan="2">Engr. Dr. Nasir Mehmood Khan, Registrar</td>
+        <td class="align-item-left" colspan="2">{{@$userInvoiceData->attention}}</td>
         <td class="align-item-left" colspan="1"><b>Fax:</b></td>
         <td class="align-item-left" colspan="2"></td>
     </tr>

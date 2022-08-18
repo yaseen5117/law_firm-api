@@ -178,7 +178,7 @@ class InvoiceController extends Controller
 
             $invoice = Invoice::updateOrCreate(
                 ['id' => $request->id],
-                $request->only('due_date', 'invoiceable_id', 'invoiceable_type', 'invoice_no', 'amount', 'apply_tax', 'tax_percentage', 'invoice_status_id')
+                $request->only('due_date', 'invoiceable_id', 'invoiceable_type', 'invoice_no', 'amount', 'apply_tax', 'tax_percentage', 'invoice_status_id', 'attention')
             );
             //replace total amount in content 
             //$content = str_replace("{total_amount}",$invoice->total(),$content);
@@ -341,7 +341,7 @@ class InvoiceController extends Controller
     {
         try {
             $userInvoiceData = Invoice::with('invoice_meta', 'client', 'client.contact_persons', 'invoice_expenses', 'status')->find($invoiceId);
-            //return view('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));          
+            //return view('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));
             if ($userInvoiceData) {
                 $pdf = PDF::loadView('petition_pdf.law_and_policy_pdf', compact('userInvoiceData'));
                 return $pdf->download('Invoice-' . $userInvoiceData->invoice_no . '.pdf');
