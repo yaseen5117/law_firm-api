@@ -31,7 +31,7 @@ class PetitionController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->except(['index', 'show', 'toggleArchivedStatus', 'downloadPetitionPdf', 'insertPendingTag', 'getPendingCase']);
+        $this->middleware('role:admin')->except(['index', 'show', 'toggleArchivedStatus', 'downloadPetitionPdf', 'insertPendingTag', 'getPendingCase', 'downloadPendingCase']);
     }
     public function index(Request $request)
     {

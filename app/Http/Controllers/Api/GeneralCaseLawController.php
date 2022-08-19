@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attachment;
 use App\Models\GeneralCaseLaw;
 use Illuminate\Http\Request;
+use File;
 
 class GeneralCaseLawController extends Controller
 {
@@ -144,7 +146,16 @@ class GeneralCaseLawController extends Controller
     {
         try {
             $record = GeneralCaseLaw::find($id);
+            $attachment = Attachment::where('attachmentable_id', $record->id)->where('attachmentable_type', "App\Models\GeneralCaseLaw")->first();
 
+            if ($attachment) {
+                $public_path =  public_path();
+                $file_path = $public_path . '/storage/attachments/GeneralCaseLaws/' . $record->id;
+                if (File::exists($file_path)) {
+                    File::deleteDirectory($file_path);
+                }
+                Attachment::where('id', $attachment->id)->forceDelete();
+            }
             if ($record) {
                 $record->delete();
                 return response($record, 200);
