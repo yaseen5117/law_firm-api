@@ -68,7 +68,7 @@ class GeneralCaseLawController extends Controller
             //     'date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->date)->format('Y/m/d'),     
             // ]);
 
-            GeneralCaseLaw::updateOrCreate(['id' => $request->id], $request->except('editMode'));
+            GeneralCaseLaw::updateOrCreate(['id' => $request->id], $request->except('editMode', 'attachment'));
 
             return response()->json(
                 [
