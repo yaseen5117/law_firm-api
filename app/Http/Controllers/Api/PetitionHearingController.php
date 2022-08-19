@@ -32,7 +32,7 @@ class PetitionHearingController extends Controller
         }
         return response([
             'events' => $events,
-            'server_time' => date("d/M/Y h:i A"),
+            'server_time' => date("d/m/Y h:i A"),
         ]);
     }
 

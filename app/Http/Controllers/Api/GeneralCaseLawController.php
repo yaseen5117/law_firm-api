@@ -16,7 +16,7 @@ class GeneralCaseLawController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = GeneralCaseLaw::query();
+            $query = GeneralCaseLaw::with('attachment');
 
             if (!empty($request->case_title)) {
                 $query->where('case_title', 'like', '%' . $request->case_title . '%');
@@ -91,7 +91,7 @@ class GeneralCaseLawController extends Controller
     {
         try {
 
-            $caseLaws = GeneralCaseLaw::find($id);
+            $caseLaws = GeneralCaseLaw::with('attachment')->find($id);
             //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();
 
             return response()->json(

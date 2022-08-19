@@ -88,6 +88,37 @@ class AttachmentController extends Controller
                     $attachmentable_type = $request->attachmentable_type;
                     $attachmentable_id = $request->attachmentable_id;
                     info("AttachmentController store Function: File attachmentable_type : " . $attachmentable_type);
+                    //General Case Law Start/ Frequently ask Questions
+                    if ($request->attachmentable_type == "App\Models\GeneralCaseLaw") {
+
+                        $sub_directory = "GeneralCaseLaws/";
+                        Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\GeneralCaseLaw")->forceDelete();
+                        $allowedMimeTypes = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'];
+                        if (in_array($mime_type, $allowedMimeTypes)) {
+                            $resizeImage = Image::make($file);
+                            $resizeImage->resize(2000, null, function ($constraint) {
+                                $constraint->aspectRatio();
+                            });
+                            $path =  storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id);
+                            if (!File::isDirectory($path)) {
+                                File::makeDirectory($path, 0777, true, true);
+                            }
+                            $resizeImage->save(storage_path('app/public/attachments/' . $sub_directory . $request->attachmentable_id . '/' . $file_name));
+                        } else {
+                            $file_path = $file->storeAs('attachments/' . $sub_directory . $request->attachmentable_id . '/', $file_name, 'public');
+                        }
+                        Attachment::create(
+                            [
+                                'file_name' => $file_name,
+                                'title' => $title,
+                                'attachmentable_type' => $attachmentable_type,
+                                'attachmentable_id' => $attachmentable_id,
+                                'mime_type' => $mime_type,
+                            ]
+                        );
+                        return response("File Save Successfully", 200);
+                    }
+
                     if ($request->attachmentable_type == "App\Models\Setting") {
                         $sub_directory = "settings/";
                         Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Setting")->forceDelete();

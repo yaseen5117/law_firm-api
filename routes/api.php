@@ -68,6 +68,7 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::resource('petitions', 'PetitionController'); //middleware added in controller __construct()
     Route::post('insert_pending_tag', 'PetitionController@insertPendingTag');
     Route::post('remove_pending_tag', 'PetitionController@insertPendingTag');
+    Route::get('get_pending_cases', 'PetitionController@getPendingCase');
     Route::resource('petition_replies', 'PetitionReplyController'); //middleware added in controller __construct()
 
     Route::resource('petition_reply_parents', 'PetitionReplyParentController'); //middleware added in controller __construct()

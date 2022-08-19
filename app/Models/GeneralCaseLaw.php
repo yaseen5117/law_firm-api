@@ -9,4 +9,9 @@ class GeneralCaseLaw extends Model
 {
     use HasFactory;
     protected $guarded = [];
+
+    public function attachment()
+    {
+        return $this->morphOne(Attachment::class, 'attachmentable')->orderBy('id', 'desc');
+    }
 }

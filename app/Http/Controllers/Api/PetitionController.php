@@ -31,7 +31,7 @@ class PetitionController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->except(['index', 'show', 'toggleArchivedStatus', 'downloadPetitionPdf', 'insertPendingTag']);
+        $this->middleware('role:admin')->except(['index', 'show', 'toggleArchivedStatus', 'downloadPetitionPdf', 'insertPendingTag', 'getPendingCase']);
     }
     public function index(Request $request)
     {
@@ -355,6 +355,40 @@ class PetitionController extends Controller
                 $message = "Tag Removed Successfully";
             }
             return response($message, 200);
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function getPendingCase(Request $request)
+    {
+        try {
+            $pending_cases = Petition::with('court')->where('archived', 0)->whereNotNull('pending_tag')->get();
+            return response(
+                [
+                    "pendingCases" => $pending_cases,
+                    "url" => url("download_pending_cases_pdf"),
+                ],
+                200
+            );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function downloadPendingCase(Request $request)
+    {
+        try {
+            $pendingCases = Petition::with('court')->where('archived', 0)->whereNotNull('pending_tag')->get();
+            //return view('petition_pdf.pending_cases_pdf', compact('pendingCases'));
+            if ($pendingCases) {
+                $pdf = PDF::loadView('petition_pdf.pending_cases_pdf', compact('pendingCases'));
+                return $pdf->download("Pending Cases_" . rand(1, 2) . ".pdf");
+            } else {
+                return response('Pending Petitions Data Not Found', 404);
+            }
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
