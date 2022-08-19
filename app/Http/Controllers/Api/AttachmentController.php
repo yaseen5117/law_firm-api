@@ -90,8 +90,7 @@ class AttachmentController extends Controller
                     info("AttachmentController store Function: File attachmentable_type : " . $attachmentable_type);
                     //General Case Law Start/ Frequently ask Questions
                     if ($request->attachmentable_type == "App\Models\GeneralCaseLaw") {
-
-                        $sub_directory = "GeneralCaseLaws/";
+                        $sub_directory = "Frequently-Asked-Legal-Propositions/";
                         Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\GeneralCaseLaw")->forceDelete();
                         $allowedMimeTypes = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'];
                         if (in_array($mime_type, $allowedMimeTypes)) {

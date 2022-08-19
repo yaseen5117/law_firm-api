@@ -102,7 +102,7 @@ class GeneralCaseLawController extends Controller
                     'case_laws' => $caseLaws,
                     'index_data' => $caseLaws,
                     'message' => 'Success',
-                    'page_title' => "Case Laws",
+                    'page_title' => "Frequently Asked Legal Propositions",
                     'code' => 200
                 ]
             );
@@ -150,7 +150,7 @@ class GeneralCaseLawController extends Controller
 
             if ($attachment) {
                 $public_path =  public_path();
-                $file_path = $public_path . '/storage/attachments/GeneralCaseLaws/' . $record->id;
+                $file_path = $public_path . '/storage/attachments/Frequently-Asked-Legal-Propositions/' . $record->id;
                 if (File::exists($file_path)) {
                     File::deleteDirectory($file_path);
                 }
