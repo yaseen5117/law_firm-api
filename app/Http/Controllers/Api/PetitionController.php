@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\CasePermissionService;
 use App\Models\Attachment;
 use App\Models\Petition;
 use App\Models\User;
@@ -252,13 +253,25 @@ class PetitionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         try {
 
             $petition = Petition::withRelations()->where('id', $id)->first();
+
+            $user = $request->user();
+            if (!CasePermissionService::userHasCasePermission($petition->id,$user)) {
+                return response([
+                    "error" => CasePermissionService::$unauthorizedMessage,
+                    "message" => CasePermissionService::$unauthorizedMessage,
+                ], CasePermissionService::$unauthorizedCode);
+            }
+            
+
             $petition->lawyer_ids_array = $petition->lawyers()->pluck('lawyer_id');
             $petition_details = PetitionIndex::with('petition', 'attachments')->where('petition_id', $id)->get();
+
+
 
 
             return response()->json(
