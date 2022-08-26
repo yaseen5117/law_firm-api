@@ -24,7 +24,7 @@
     </tr>
 </table>
 
-<table class="main">
+<table class="main" border="1">
     <thead>
         <th>Library No.</th>
         <th>Title</th>

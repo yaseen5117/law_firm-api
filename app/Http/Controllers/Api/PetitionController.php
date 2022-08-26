@@ -364,7 +364,7 @@ class PetitionController extends Controller
     public function getPendingCase(Request $request)
     {
         try {
-            $pending_cases = Petition::with('court')->where('archived', 0)->whereNotNull('pending_tag')->get();
+            $pending_cases = Petition::with('court')->where('archived', 0)->whereNotNull('pending_tag')->orderBy('id', 'DESC')->get();
             return response(
                 [
                     "pendingCases" => $pending_cases,

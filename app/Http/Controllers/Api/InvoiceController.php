@@ -111,7 +111,7 @@ class InvoiceController extends Controller
         try {
 
             $invoices_total = Invoice::sum('amount');
-            $paid_invoices_total = Invoice::where('invoice_status_id', 3)->sum('paid_amount');
+            $paid_invoices_total = Payment::sum('paid_amount');
             $due_invoices_total = $invoices_total - $paid_invoices_total;
 
             return response()->json(
@@ -320,13 +320,15 @@ class InvoiceController extends Controller
     {
         try {
             $invoice = Invoice::find($invoiceId);
-            $invoice_meta = InvoiceMeta::where('invoice_id', $invoice->id);
-
             if ($invoice) {
-                $invoice->delete();
+                $invoice_meta = InvoiceMeta::where('invoice_id', $invoice->id);
+            }
+            if ($invoice) {
+                $invoice->invoice_payments()->where("invoiceable_id", $invoiceId)->where("invoiceable_type", "App\Models\Invoice")->delete();
                 if ($invoice_meta) {
                     $invoice_meta->delete();
                 }
+                $invoice->delete();
                 return response("Deleted Successfully", 200);
             } else {
                 return response('Invoice Not Found', 404);
@@ -416,14 +418,15 @@ class InvoiceController extends Controller
                             'id' => $payment['id']
                         ],
                         [
-                            'invoice_id' => $request->invoice_id,
+                            'invoiceable_id' => $request->invoiceable_id,
+                            'invoiceable_type' => $request->invoiceable_type,
                             'paid_date' => $payment['paid_date'] ? toDBDate($payment['paid_date']) : $payment['paid_date'],
                             'paid_amount' => $payment['paid_amount'],
                             'notes' => $payment['notes']
                         ]
                     );
                 }
-                Invoice::where('id', $request->invoice_id)->update(['invoice_status_id' => 3]); //3 is the status of paid invoice
+                Invoice::where('id', $request->invoiceable_id)->update(['invoice_status_id' => 3]); //3 is the status of paid invoice
             }
 
             return response()->json(

@@ -10,7 +10,7 @@ class Invoice extends Model
 {
     use HasFactory, SoftDeletes;
     protected $guarded = [];
-    protected $appends = ['pdf_download_url'];
+    protected $appends = ['pdf_download_url', 'total_paid_amount'];
     protected $casts = [
         'created_at'  => 'date:d/m/Y',
         'due_date'  => 'date:d/m/Y',
@@ -41,7 +41,7 @@ class Invoice extends Model
     }
     public function invoice_payments()
     {
-        return $this->hasMany('App\Models\Payment');
+        return $this->morphMany(Payment::class, 'invoiceable');
     }
     public function total()
     {
@@ -55,5 +55,14 @@ class Invoice extends Model
     public function getPdfDownloadUrlAttribute()
     {
         return url("download_invoice_pdf/" . +$this->id);
+    }
+    public function getTotalPaidAmountAttribute()
+    {
+        $total_paid_amount = $this->invoice_payments->sum('paid_amount');
+        if ($total_paid_amount > 0) {
+            return ": " . $total_paid_amount . " Rs";
+        } else {
+            return "";
+        }
     }
 }
