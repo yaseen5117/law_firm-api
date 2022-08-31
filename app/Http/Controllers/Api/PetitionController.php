@@ -256,17 +256,14 @@ class PetitionController extends Controller
     public function show(Request $request, $id)
     {
         try {
-
-            $petition = Petition::withRelations()->where('id', $id)->first();
-
             $user = $request->user();
-            if (!CasePermissionService::userHasCasePermission($petition->id,$user)) {
+            if (!CasePermissionService::userHasCasePermission($id, $user)) {
                 return response([
                     "error" => CasePermissionService::$unauthorizedMessage,
                     "message" => CasePermissionService::$unauthorizedMessage,
                 ], CasePermissionService::$unauthorizedCode);
             }
-            
+            $petition = Petition::withRelations()->where('id', $id)->first();
 
             $petition->lawyer_ids_array = $petition->lawyers()->pluck('lawyer_id');
             $petition_details = PetitionIndex::with('petition', 'attachments')->where('petition_id', $id)->get();
@@ -345,10 +342,12 @@ class PetitionController extends Controller
     {
         try {
             $petition = Petition::withRelations()->where('id', $petition_id)->first();
-            //return view('petition_pdf.petition_index_pdf', compact('petition'));             
+            return view('petition_pdf.petition_index_pdf', compact('petition'));
             if ($petition) {
+                info("Start Downloading Petition PDF");
                 $pdf = PDF::loadView('petition_pdf.petition_index_pdf', compact('petition'));
                 return $pdf->download($petition->petition_standard_title . ".pdf");
+                info("Complete Downloading Petition PDF");
             } else {
                 return response('Petition Data Not Found', 404);
             }

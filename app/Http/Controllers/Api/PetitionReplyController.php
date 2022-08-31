@@ -7,6 +7,7 @@ use App\Models\Petition;
 use App\Models\PetitionReply;
 use App\Models\PetitionReplyParent;
 use Illuminate\Http\Request;
+use App\Services\CasePermissionService;
 
 class PetitionReplyController extends Controller
 {
@@ -17,7 +18,7 @@ class PetitionReplyController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->except(['replyDetail', 'show']);
+        $this->middleware('role:admin')->except(['show']);
     }
     public function index()
     {
@@ -85,8 +86,22 @@ class PetitionReplyController extends Controller
         try {
             $petition_replies = PetitionReply::where('petition_reply_parent_id', $petitionReplyId)->get();
             $petition_parent = PetitionReplyParent::find($petitionReplyId);
+
+            if (empty($petition_parent)) {
+                return response([
+                    "message" => "Data Not Found!",
+                ], 404);
+            }
+            $user = request()->user();
+            if (!CasePermissionService::userHasCasePermission($petition_parent->petition_id, $user)) {
+
+                return response([
+                    "error" => CasePermissionService::$unauthorizedMessage,
+                    "message" => CasePermissionService::$unauthorizedMessage,
+                ], CasePermissionService::$unauthorizedCode);
+            }
             $petition = Petition::find($petition_parent->petition_id);
-            //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();
+
 
             return response()->json(
                 [
@@ -155,11 +170,25 @@ class PetitionReplyController extends Controller
     }
     public function replyDetail($petitionReplyId)
     {
-
-
         try {
+
             $petition_reply_detail = PetitionReply::with('petition_reply_parent.petition', 'attachments')->where('id', $petitionReplyId)->first();
+            if (empty($petition_reply_detail)) {
+                return response([
+                    "message" => "Data Not Found!",
+                ], 404);
+            }
             $petition_id = $petition_reply_detail->petition_reply_parent->petition->id;
+
+            $user = request()->user();
+            return $user;
+            if (!CasePermissionService::userHasCasePermission($petition_id, $user)) {
+
+                return response([
+                    "error" => CasePermissionService::$unauthorizedMessage,
+                    "message" => CasePermissionService::$unauthorizedMessage,
+                ], CasePermissionService::$unauthorizedCode);
+            }
             $petition = Petition::withRelations()->where('id', $petition_id)->first();
 
             return response()->json(

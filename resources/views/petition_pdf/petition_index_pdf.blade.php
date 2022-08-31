@@ -4,7 +4,7 @@
         table-layout: fixed;
         border-collapse: collapse;
         border: none;
-        width: 100%;         
+        width: 100%;
         margin: 50% auto 50% auto;
     }
 
@@ -19,7 +19,7 @@
     }
 
     .page-break {
-        page-break-after: always;         
+        page-break-after: always;
     }
 
     .td {
@@ -100,17 +100,17 @@
     @if($petition_index)
     <div style="text-align: center; margin: 50% auto auto auto;">
         <h1>{{ $petition_index->document_description }}</h1>
-    </div>   
+    </div>
     @endif
-    @foreach(@$petition_index->attachments as $attachment)   
-    @if($attachment) 
+    @foreach(@$petition_index->attachments as $attachment)
+    @if($attachment)
     <div>
-    <!-- <a href="{{asset('').'storage/attachments/'.$petition_index->id.'/'.$attachment->file_name}}" target="_blank"> -->
+        <!-- <a href="{{asset('').'storage/attachments/'.$petition_index->id.'/'.$attachment->file_name}}" target="_blank"> -->
         <img class="image_style" width="100%" src="{{ asset('').'storage/attachments/'.$petition_index->id.'/'.$attachment->file_name }}" alt="File Not Found">
-    <!-- </a> -->
-    </div>   
-    @endif    
-    @endforeach    
+        <!-- </a> -->
+    </div>
+    @endif
+    @endforeach
     @endforeach
     @endif
 </div>

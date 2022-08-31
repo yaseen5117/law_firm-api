@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\PetitionReplyParent;
 use Illuminate\Http\Request;
+use App\Services\CasePermissionService;
 
 class PetitionReplyParentController extends Controller
 {
@@ -65,7 +66,13 @@ class PetitionReplyParentController extends Controller
     public function show($id)
     {
         try {
-
+            $user = request()->user();
+            if (!CasePermissionService::userHasCasePermission($id, $user)) {
+                return response([
+                    "error" => CasePermissionService::$unauthorizedMessage,
+                    "message" => CasePermissionService::$unauthorizedMessage,
+                ], CasePermissionService::$unauthorizedCode);
+            }
             $petition_reply_parents = PetitionReplyParent::where('petition_id', $id)->get();
 
             return response()->json(
