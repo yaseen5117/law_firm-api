@@ -342,7 +342,7 @@ class PetitionController extends Controller
     {
         try {
             $petition = Petition::withRelations()->where('id', $petition_id)->first();
-            return view('petition_pdf.petition_index_pdf', compact('petition'));
+            //return view('petition_pdf.petition_index_pdf', compact('petition'));
             if ($petition) {
                 info("Start Downloading Petition PDF");
                 $pdf = PDF::loadView('petition_pdf.petition_index_pdf', compact('petition'));
