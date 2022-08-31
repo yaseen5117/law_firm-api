@@ -106,7 +106,7 @@
     @if($attachment) 
     <div>
     <!-- <a href="{{asset('').'storage/attachments/'.$petition_index->id.'/'.$attachment->file_name}}" target="_blank"> -->
-        <img class="image_style" width="100%" src="{{ asset('').'storage/attachments/'.$petition_index->id.'/'.$attachment->file_name }}" alt="File Not Found">
+        <img class="image_style" width="100%" src="{{ asset('').'storage/attachments/petitions/'.$petition->id.'/PetitionIndex/'.$petition_index->id.'/'.$attachment->file_name }}" alt="File Not Found">
     <!-- </a> -->
     </div>   
     @endif    
