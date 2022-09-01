@@ -122,7 +122,7 @@ class PetitionOrderSheetController extends Controller
                 'petition_id' => 'required'
             ]);
 
-            $query = PetitonOrderSheet::with('petition', 'attachments', 'order_sheet_types')->wherePetitionId($request->petition_id);
+            $query = PetitonOrderSheet::with('petition', 'petition.court', 'attachments', 'order_sheet_types')->wherePetitionId($request->petition_id);
             $previous_index_id = null;
             $next_index_id = null;
             if ($request->id > 0) {

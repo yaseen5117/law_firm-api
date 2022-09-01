@@ -143,7 +143,7 @@ class CaseLawController extends Controller
     {
         try {
 
-            $caseLaw = CaseLaw::with('petition', 'attachments')->whereId($id)->first();
+            $caseLaw = CaseLaw::with('petition', 'petition.court', 'attachments')->whereId($id)->first();
 
             return response()->json(
                 [

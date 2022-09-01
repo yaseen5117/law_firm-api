@@ -145,7 +145,7 @@ class OralArgumentsController extends Controller
     {
         try {
 
-            $oralArguments = OralArgument::with('petition', 'attachments')->whereId($id)->first();
+            $oralArguments = OralArgument::with('petition', 'petition.court', 'attachments')->whereId($id)->first();
             //$petition = Petition::withRelations()->whereId($oralArguments->petition_id)->first();
 
             //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();

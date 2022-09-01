@@ -140,7 +140,7 @@ class ExtraDocumentController extends Controller
     {
         try {
 
-            $extraDoc = ExtraDocument::with('petition', 'attachments')->whereId($id)->first();
+            $extraDoc = ExtraDocument::with('petition', 'petition.court', 'attachments')->whereId($id)->first();
 
             return response()->json(
                 [

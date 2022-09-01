@@ -18,7 +18,7 @@ class PetitionReplyController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->except(['show']);
+        $this->middleware('role:admin')->except(['show', 'replyDetail']);
     }
     public function index()
     {
@@ -180,15 +180,6 @@ class PetitionReplyController extends Controller
             }
             $petition_id = $petition_reply_detail->petition_reply_parent->petition->id;
 
-            $user = request()->user();
-            return $user;
-            if (!CasePermissionService::userHasCasePermission($petition_id, $user)) {
-
-                return response([
-                    "error" => CasePermissionService::$unauthorizedMessage,
-                    "message" => CasePermissionService::$unauthorizedMessage,
-                ], CasePermissionService::$unauthorizedCode);
-            }
             $petition = Petition::withRelations()->where('id', $petition_id)->first();
 
             return response()->json(
