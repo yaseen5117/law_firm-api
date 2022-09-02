@@ -149,4 +149,19 @@ class PetitionIndexController extends Controller
             ], 500);
         }
     }
+
+    public function update_display_order(Request $request)
+    {
+        /*$petiions_index = collect($0);
+        $petiions_index = $petiions_index->pluck('id')->all();*/
+
+
+        foreach ($request->petition_details as $index => $petition_detail) {
+            
+            PetitionIndex::whereId($petition_detail['id'])->update([
+                'display_order' => $index
+            ]);
+        }
+        return response("done");
+    }
 }

@@ -266,7 +266,7 @@ class PetitionController extends Controller
             $petition = Petition::withRelations()->where('id', $id)->first();
 
             $petition->lawyer_ids_array = $petition->lawyers()->pluck('lawyer_id');
-            $petition_details = PetitionIndex::with('petition', 'attachments')->where('petition_id', $id)->get();
+            $petition_details = PetitionIndex::with('petition', 'attachments')->where('petition_id', $id)->orderby('display_order')->get();
 
 
 

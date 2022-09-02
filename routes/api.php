@@ -63,7 +63,7 @@ Route::group(['middleware' => 'auth:sanctum', 'role:admin', 'namespace' => 'Api'
 });
 
 Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function () {
-
+    Route::post('petitions_index/update_display_order', 'PetitionIndexController@update_display_order');
     Route::post('petitions/toggle_archived', 'PetitionController@toggleArchivedStatus');
     Route::resource('petitions', 'PetitionController'); //middleware added in controller __construct()
     Route::post('insert_pending_tag', 'PetitionController@insertPendingTag');
