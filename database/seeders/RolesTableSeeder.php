@@ -21,12 +21,12 @@ class RolesTableSeeder extends Seeder
     {
         DB::table('role_has_permissions')->truncate();
         DB::table('model_has_roles')->truncate();
-        DB::table('permissions')->truncate();        
+        DB::table('permissions')->truncate();
         DB::table('roles')->truncate();
-         // Reset cached roles and permissions
+        // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-         //Create Permissions
+        //Create Permissions
         Permission::create(['name' => 'edit petition']);
         Permission::create(['name' => 'view petition']);
         Permission::create(['name' => 'delete petition']);
@@ -34,55 +34,55 @@ class RolesTableSeeder extends Seeder
         // create roles and assign existing permissions
         $roleAdmin = Role::create(['name' => 'admin']);
 
-        $judge = Role::create(['name' => 'judge']);
+        $judge = Role::create(['name' => 'judge(Beta)']);
         $judge->givePermissionTo(Permission::all());
-        
-        
+
+
         $lawyer = Role::create(['name' => 'lawyer']);
         $lawyer->givePermissionTo(Permission::all());
-       
-        
+
+
         $staff = Role::create(['name' => 'staff']);
         $staff->givePermissionTo(Permission::all());
-           
+
 
         $client = Role::create(['name' => 'client']);
         $client->givePermissionTo(Permission::all());
-       
+
         $user = User::find(1);
         $user->assignRole($roleAdmin);
 
         $JudgeUser = User::create([
-            'name' => 'Judge 1',            
+            'name' => 'Judge 1',
             'email' => 'judge@qc.com',
             'password' => bcrypt('test1234'),
-         
+
         ]);
 
         $JudgeUser->assignRole($judge);
 
         $LawyerUser = User::create([
-            'name' => 'Lawyer 1',             
+            'name' => 'Lawyer 1',
             'email' => 'lawyer@qc.com',
-            'password' => bcrypt('test1234'),            
+            'password' => bcrypt('test1234'),
         ]);
 
         $LawyerUser->assignRole($lawyer);
 
         $StaffUser = User::create([
-            'name' => 'Staff 1',                
+            'name' => 'Staff 1',
             'email' => 'staff@qc.com',
-            'password' => bcrypt('test1234'),            
+            'password' => bcrypt('test1234'),
         ]);
 
         $StaffUser->assignRole($staff);
 
         $ClientUser = User::create([
             'id' => 5,
-            'name' => 'Kamran Khan',              
+            'name' => 'Kamran Khan',
             'company_name' => 'KAMRAN KHAN AND OTHERS',
             'email' => 'kamran@qc.com',
-            'password' => 'test1234',           
+            'password' => 'test1234',
         ]);
 
         $ClientUser->assignRole($client);
@@ -90,10 +90,10 @@ class RolesTableSeeder extends Seeder
 
         $ClientUser = User::create([
             'id' => 6,
-            'name' => 'CDA Others',  
+            'name' => 'CDA Others',
             'company_name' => 'CDA AND OTHERS',
             'email' => 'cda@qc.com',
-            'password' => bcrypt('test1234'),           
+            'password' => bcrypt('test1234'),
         ]);
 
         $ClientUser->assignRole($client);

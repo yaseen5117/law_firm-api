@@ -48,10 +48,15 @@ class PetitionController extends Controller
         try {
             $query = Petition::select("petitions.*")->withRelationsIndex();
 
-            if ($request->archived == "true") {
-                $query->where('archived', 1);
-            } else {
-                $query->where('archived', 0);
+            if (
+                empty($request->case_no) && empty($request->institution_date) &&
+                empty($request->year) && empty($request->court_id) && !isset($request->pending_tag)
+            ) {
+                if ($request->archived == "true") {
+                    $query->where('archived', 1);
+                } else {
+                    $query->where('archived', 0);
+                }
             }
 
             $query
