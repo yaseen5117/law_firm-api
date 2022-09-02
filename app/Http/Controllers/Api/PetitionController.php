@@ -18,8 +18,17 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TestEmail;
+use App\Models\CaseLaw;
+use App\Models\ExtraDocument;
+use App\Models\Judgement;
+use App\Models\OralArgument;
+use App\Models\PetitionNaqalForm;
+use App\Models\PetitionSynopsis;
+use App\Models\PetitionTalbana;
+use App\Models\PetitonOrderSheet;
 use PDF;
 use Auth;
+use File;
 
 use function GuzzleHttp\Promise\all;
 
@@ -39,10 +48,15 @@ class PetitionController extends Controller
         try {
             $query = Petition::select("petitions.*")->withRelationsIndex();
 
-            if ($request->archived == "true") {
-                $query->where('archived', 1);
-            } else {
-                $query->where('archived', 0);
+            if (
+                empty($request->case_no) && empty($request->institution_date) &&
+                empty($request->year) && empty($request->court_id) && !isset($request->pending_tag)
+            ) {
+                if ($request->archived == "true") {
+                    $query->where('archived', 1);
+                } else {
+                    $query->where('archived', 0);
+                }
             }
 
             $query
@@ -315,9 +329,99 @@ class PetitionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($petition_id)
     {
-        //
+        try {
+            $petition = Petition::find($petition_id);
+            $public_path =  public_path();
+            if ($petition) {
+                //Removing PetitionIndex attachments From DB
+                $petition_index_ids = $petition->petition_indexes()->pluck('id')->all();
+                if ($petition_index_ids) {
+                    Attachment::whereIn('attachmentable_id', $petition_index_ids)->where('attachmentable_type', "App\Models\PetitionIndex")->Delete();
+                    PetitionIndex::whereIn('id', $petition_index_ids)->update(["deleted_at" => now()]);
+                }
+                //Removing Reply attachments From DB
+                DB::table('petition_reply_parents')
+                    ->where('petition_reply_parents.petition_id', '=', $petition_id)
+                    ->join('petition_replies', 'petition_replies.petition_reply_parent_id', '=', 'petition_reply_parents.id')
+                    ->join('attachments', 'attachments.attachmentable_id', '=', 'petition_replies.id')
+                    ->where('attachments.attachmentable_type', '=', 'App\Models\PetitionReply')
+                    ->update(
+                        [
+                            "petition_reply_parents.deleted_at" => now(),
+                            "petition_replies.deleted_at" => now(),
+                            "attachments.deleted_at" => now(),
+
+                        ]
+                    );
+                //Removing OrderSheet attachments From DB
+                $petition_ordersheet_ids = $petition->petition_ordersheets()->pluck('id')->all();
+                if ($petition_ordersheet_ids) {
+                    Attachment::whereIn('attachmentable_id', $petition_ordersheet_ids)->where('attachmentable_type', "App\Models\PetitonOrderSheet")->Delete();
+                    PetitonOrderSheet::whereIn('id', $petition_ordersheet_ids)->update(["deleted_at" => now()]);
+                }
+                //Removing OralArgument attachments From DB
+                $petition_oral_argument_ids = $petition->petition_oral_arguments()->pluck('id')->all();
+                if ($petition_oral_argument_ids) {
+                    Attachment::whereIn('attachmentable_id', $petition_oral_argument_ids)->where('attachmentable_type', "App\Models\OralArgument")->Delete();
+                    OralArgument::whereIn('id', $petition_oral_argument_ids)->update(["deleted_at" => now()]);
+                }
+                //Removing PetitionNaqalForm attachments From DB
+                $petition_naqal_form_ids = $petition->petition_naqal_forms()->pluck('id')->all();
+                if ($petition_naqal_form_ids) {
+                    Attachment::whereIn('attachmentable_id', $petition_naqal_form_ids)->where('attachmentable_type', "App\Models\PetitionNaqalForm")->Delete();
+                    PetitionNaqalForm::whereIn('id', $petition_naqal_form_ids)->update(["deleted_at" => now()]);
+                }
+                //Removing PetitionTalbana attachments From DB
+                $petition_talbana_ids = $petition->petition_talbanas()->pluck('id')->all();
+                if ($petition_talbana_ids) {
+                    Attachment::whereIn('attachmentable_id', $petition_talbana_ids)->where('attachmentable_type', "App\Models\PetitionTalbana")->Delete();
+                    PetitionTalbana::whereIn('id', $petition_talbana_ids)->update(["deleted_at" => now()]);
+                }
+                //Removing CaseLaw attachments From DB
+                $case_law_ids = $petition->case_laws()->pluck('id')->all();
+                if ($case_law_ids) {
+                    Attachment::whereIn('attachmentable_id', $case_law_ids)->where('attachmentable_type', "App\Models\CaseLaw")->Delete();
+                    CaseLaw::whereIn('id', $case_law_ids)->update(["deleted_at" => now()]);
+                }
+                //Removing ExtraDocument attachments From DB
+                $extra_document_ids = $petition->extra_documents()->pluck('id')->all();
+                if ($extra_document_ids) {
+                    Attachment::whereIn('attachmentable_id', $extra_document_ids)->where('attachmentable_type', "App\Models\ExtraDocument")->Delete();
+                    ExtraDocument::whereIn('id', $extra_document_ids)->update(["deleted_at" => now()]);
+                }
+                //Removing PetitionSynopsis attachments From DB
+                $petition_synopsis_ids = $petition->petition_synopsis()->pluck('id')->all();
+                if ($petition_synopsis_ids) {
+                    Attachment::whereIn('attachmentable_id', $petition_synopsis_ids)->where('attachmentable_type', "App\Models\PetitionSynopsis")->Delete();
+                    PetitionSynopsis::whereIn('id', $petition_synopsis_ids)->update(["deleted_at" => now()]);
+                }
+                //Removing Judgement attachments From DB
+                $petition_Judgement_ids = $petition->petition_Judgements()->pluck('id')->all();
+                if ($petition_Judgement_ids) {
+                    Attachment::whereIn('attachmentable_id', $petition_Judgement_ids)->where('attachmentable_type', "App\Models\Judgement")->Delete();
+                    Judgement::whereIn('id', $petition_Judgement_ids)->update(["deleted_at" => now()]);
+                }
+                info("Deleting Petition $petition Folder");
+                $file_path = $public_path . '/storage/attachments/petitions/' . $petition->id;
+                if (File::exists($file_path)) {
+                    File::deleteDirectory($file_path);
+                }
+                info("Complete Deleting process of Petition $petition Folder");
+                $petition->delete();
+                return response([
+                    "petition" => $petition,
+                    "message" => "Deleted All files Successfully."
+                ], 200);
+            } else {
+                return response('Petition Not Found', 404);
+            }
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function toggleArchivedStatus(Request $request)

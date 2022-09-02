@@ -182,7 +182,7 @@ class UserController extends Controller
                         $contact_person['name'] = $contact_person["name"];
                         $contact_person['email'] = $contact_person["email"];
                         $contact_person['phone'] = $contact_person["phone"];
-                        $contact_person['cnic'] = $contact_person["cnic"];
+                        // $contact_person['cnic'] = $contact_person["cnic"];
                         $contact_person['contact_person_parent_id'] = $user->id;
                         $contact_person['password'] = bcrypt("test1234");
                         $contact_person_single = User::updateOrCreate(['id' => @$contact_person['id']], $contact_person);

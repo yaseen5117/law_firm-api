@@ -25,7 +25,7 @@ class PetitionOrderSheetController extends Controller
     public function index(Request $request)
     {
         try {
-            $petitionOrderSheets = PetitonOrderSheet::with('attachments', 'order_sheet_types')->where('petition_id', $request->petition_id)->orderby('order_sheet_date', 'desc')->get();
+            $petitionOrderSheets = PetitonOrderSheet::with('attachments', 'order_sheet_types')->where('petition_id', $request->petition_id)->orderby('order_sheet_date', 'asc')->get();
 
             return response()->json(
                 [
@@ -64,6 +64,11 @@ class PetitionOrderSheetController extends Controller
             if ($request->order_sheet_date) {
                 $request->merge([
                     'order_sheet_date' => toDBDate($request->order_sheet_date), //\Carbon\Carbon::createFromFormat('d/m/Y', $request->order_sheet_date)->format('Y/m/d'),
+                ]);
+            }
+            if ($request->next_hearing_date) {
+                $request->merge([
+                    'next_hearing_date' => toDBDate($request->next_hearing_date), //\Carbon\Carbon::createFromFormat('d/m/Y', $request->order_sheet_date)->format('Y/m/d'),
                 ]);
             }
             if (!$request->order_sheet_type_id) {
@@ -122,7 +127,7 @@ class PetitionOrderSheetController extends Controller
                 'petition_id' => 'required'
             ]);
 
-            $query = PetitonOrderSheet::with('petition', 'attachments', 'order_sheet_types')->wherePetitionId($request->petition_id);
+            $query = PetitonOrderSheet::with('petition', 'petition.court', 'attachments', 'order_sheet_types')->wherePetitionId($request->petition_id);
             $previous_index_id = null;
             $next_index_id = null;
             if ($request->id > 0) {

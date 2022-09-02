@@ -129,4 +129,36 @@ class Petition extends Model
     {
         return url("download_petition_pdf/" . +$this->id);
     }
+    public function petition_ordersheets()
+    {
+        return $this->hasMany('App\Models\PetitonOrderSheet');
+    }
+    public function petition_oral_arguments()
+    {
+        return $this->hasMany('App\Models\OralArgument');
+    }
+    public function petition_naqal_forms()
+    {
+        return $this->hasMany('App\Models\PetitionNaqalForm');
+    }
+    public function petition_talbanas()
+    {
+        return $this->hasMany('App\Models\PetitionTalbana');
+    }
+    public function case_laws()
+    {
+        return $this->hasMany('App\Models\CaseLaw');
+    }
+    public function extra_documents()
+    {
+        return $this->hasMany('App\Models\ExtraDocument');
+    }
+    public function petition_synopsis()
+    {
+        return $this->hasMany('App\Models\PetitionSynopsis');
+    }
+    public function petition_Judgements()
+    {
+        return $this->hasMany('App\Models\Judgement');
+    }
 }

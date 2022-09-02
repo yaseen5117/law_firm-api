@@ -141,7 +141,7 @@ class JudgementController extends Controller
     {
         try {
 
-            $judgement = Judgement::with('petition', 'attachments')->whereId($id)->first();
+            $judgement = Judgement::with('petition', 'petition.court', 'attachments')->whereId($id)->first();
 
             return response()->json(
                 [

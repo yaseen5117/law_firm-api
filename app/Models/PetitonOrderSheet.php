@@ -12,7 +12,9 @@ class PetitonOrderSheet extends Model
     protected $guarded = [];
     protected $casts = [
         'order_sheet_date'  => 'date:d/m/Y',
+        'next_hearing_date'  => 'date:d/m/Y',
     ];
+
 
     public function petition()
     {
