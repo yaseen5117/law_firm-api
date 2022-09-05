@@ -152,41 +152,20 @@ class UserController extends Controller
 
                 if (!empty($request->contact_persons)) {
                     foreach ($request->contact_persons as $contact_person) {
-                        //validation for email                        
-                        // if($contact_person->id){
-                        $validator = Validator::make($contact_person, [
-                            'email' => 'required|email|unique:users,email,' . @$contact_person["id"],
-                        ]);
-                        if ($validator->fails()) {
-                            return response()->json(
-                                [
-                                    'contact_person_validation_error' => $validator->errors(),
-                                    'error' => "Validation error..!"
-                                ],
-                                401
-                            );
+                        $already_availabe_contact_person = User::where('email', $contact_person["email"])->first();
+                        if (empty($already_availabe_contact_person)) {
+                            $contact_person['name'] = $contact_person["name"];
+                            $contact_person['email'] = $contact_person["email"];
+                            $contact_person['phone'] = $contact_person["phone"];
+                            // $contact_person['cnic'] = $contact_person["cnic"];
+                            $contact_person['contact_person_parent_id'] = $user->id;
+                            $contact_person['password'] = bcrypt("test1234");
+                            $contact_person_single = User::updateOrCreate(['id' => @$contact_person['id']], $contact_person);
+                            $contact_person_single->assignRole("client");
+                        } else {
+                            $contact_person['contact_person_parent_id'] = $user->id;
+                            $contact_person_single = User::where('id', $already_availabe_contact_person->id)->update(['contact_person_parent_id' => $user->id]);
                         }
-                        // }else{
-                        //     $validator = Validator::make($contact_person, [                                  
-                        //         'email' => 'required|email|unique:users,email,'.$contact_person["id"],                              
-                        //      ]);
-                        //      if ($validator->fails()) {
-                        //         return response()->json(
-                        //             [
-                        //                 'contact_person_validation_error' => $validator->errors(),
-                        //                 'error' => "Validation error..!"
-                        //         ], 401);
-                        //     }  
-                        // }                        
-
-                        $contact_person['name'] = $contact_person["name"];
-                        $contact_person['email'] = $contact_person["email"];
-                        $contact_person['phone'] = $contact_person["phone"];
-                        // $contact_person['cnic'] = $contact_person["cnic"];
-                        $contact_person['contact_person_parent_id'] = $user->id;
-                        $contact_person['password'] = bcrypt("test1234");
-                        $contact_person_single = User::updateOrCreate(['id' => @$contact_person['id']], $contact_person);
-                        $contact_person_single->assignRole("client");
                     }
                 }
                 DB::commit();

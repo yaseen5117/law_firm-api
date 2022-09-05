@@ -151,6 +151,7 @@ class AttachmentController extends Controller
                     }
 
                     if ($mime_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+
                         if ($request->attachmentable_type == "App\Models\Payment") {
                             $attachment = Attachment::where('attachmentable_id', $request->attachmentable_id)->where('attachmentable_type', "App\Models\Payment")->first();
                             if ($attachment) {
@@ -171,6 +172,21 @@ class AttachmentController extends Controller
                                     'mime_type' => $mime_type,
                                 ]
                             );
+                        } else {
+                            $word_file_path = $file->storeAs('attachments/petitions/' . $request->petition_id . '/' . $sub_directory . $request->attachmentable_id, $file_name, 'public');
+                            Attachment::create(
+                                [
+                                    'file_name' => $file_name,
+                                    'title' => $title,
+                                    'attachmentable_type' => $attachmentable_type,
+                                    'attachmentable_id' => $attachmentable_id,
+                                    'mime_type' => $mime_type,
+                                ]
+                            );
+                            //return response(public_path(), 403);
+                            if (File::exists(public_path('storage/attachments/petitions/' . $request->petition_id . '/' . $sub_directory . $request->attachmentable_id . '/original/' . $file_name))) {
+                                File::delete(public_path('storage/attachments/petitions/' . $request->petition_id . '/' . $sub_directory . $request->attachmentable_id . '/original/' . $file_name));
+                            }
                         }
                     }
                     $allowedMimeTypes = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'];
