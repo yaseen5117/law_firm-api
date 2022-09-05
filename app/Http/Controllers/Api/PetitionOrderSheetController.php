@@ -66,22 +66,20 @@ class PetitionOrderSheetController extends Controller
                     'order_sheet_date' => toDBDate($request->order_sheet_date), //\Carbon\Carbon::createFromFormat('d/m/Y', $request->order_sheet_date)->format('Y/m/d'),
                 ]);
             }
+            $petitionOrderSheet = PetitonOrderSheet::updateOrCreate(['id' => $request->id], $request->except('editMode', 'petition', 'attachments', 'order_sheet_types', 'next_hearing_date'));
+            $next_hearing_order_sheet = null;
             if ($request->next_hearing_date) {
                 $request->merge([
-                    'next_hearing_date' => toDBDate($request->next_hearing_date), //\Carbon\Carbon::createFromFormat('d/m/Y', $request->order_sheet_date)->format('Y/m/d'),
+                    'order_sheet_date' => toDBDate($request->next_hearing_date),
                 ]);
+
+                $next_hearing_order_sheet = PetitonOrderSheet::updateOrCreate(['order_sheet_date' => $request->order_sheet_date], $request->except('editMode', 'petition', 'attachments', 'order_sheet_types', 'order_sheet_type_id', 'next_hearing_date', 'id'));
             }
-            if (!$request->order_sheet_type_id) {
-                $request->merge([
-                    'order_sheet_type_id' => 1,
-                ]);
-            }
-            //return response($request->order_sheet_date,404);
-            $petitionOrderSheet = PetitonOrderSheet::updateOrCreate(['id' => $request->id], $request->except('editMode', 'petition', 'attachments', 'order_sheet_types'));
 
             return response()->json(
                 [
                     'petitionOrderSheet' => $petitionOrderSheet,
+                    'next_hearing_order_sheet' => $next_hearing_order_sheet,
                     'message' => 'Saved successfully',
                     'code' => 200
                 ]
