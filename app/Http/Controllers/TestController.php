@@ -12,7 +12,8 @@ use App\Services\EmailService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use App\Jobs\SendDocumentUploadEmail;
-
+use Illuminate\Support\Str;
+use DB;
 
 class TestController extends Controller
 {
@@ -105,5 +106,15 @@ class TestController extends Controller
         $this->dispatch($job);
         dd("done");
 
+    }
+
+    public function generate_slugs()
+    {
+        $records = DB::table('contracts_and_agreements')->get();
+        foreach ($records as $record) {
+            DB::table('contracts_and_agreements')->whereId($record->id)->update([
+                'slug'=>Str::slug($record->title)
+            ]);
+        }
     }
 }

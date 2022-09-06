@@ -20,6 +20,7 @@ Route::get('/', function () {
 Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
 Route::get('/test_send_document_uploading_email', 'TestController@test_send_document_uploading_email');
 Route::get('/test_queue', 'TestController@test_queue');
+Route::get('/generate_slugs', 'TestController@generate_slugs');
 Route::get('/pdf_to_img', 'TestController@pdf_to_img');
 Route::get('download_invoice_pdf/{id}', 'Api\InvoiceController@downloadInvoicePdf');
 Route::get('download_petition_pdf/{id}', 'Api\PetitionController@downloadPetitionPdf');

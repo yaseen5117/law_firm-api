@@ -7,6 +7,8 @@ use App\Models\Attachment;
 use App\Models\ContractCategory;
 use App\Models\ContractsAndAgreement;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
 
 class ContractsAndAgreementController extends Controller
 {
@@ -50,6 +52,9 @@ class ContractsAndAgreementController extends Controller
     public function store(Request $request)
     {
         try {
+            $request->merge([
+                'slug'=>Str::slug($request->title)
+            ]);
             $contract_and_agreement = ContractsAndAgreement::updateOrCreate(['id' => $request->id], $request->except('editMode', 'files'));
             //getting files from request
             $files = $request->file('files');

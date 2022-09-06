@@ -11,7 +11,7 @@ class CmsPageController extends Controller
     public function index(Request $request)
     {
         if ($request->page_type == "contract-and-agreement") {
-            $ContractsAndAgreementHtml = ContractsAndAgreement::where('title','like','%'.$request->page_slug.'%')->first();
+            $ContractsAndAgreementHtml = ContractsAndAgreement::where('slug','like','%'.$request->page_slug.'%')->first();
             return response(
                 $ContractsAndAgreementHtml
             ,200);
