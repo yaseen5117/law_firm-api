@@ -132,6 +132,8 @@ Route::post('register', 'AuthController@register');
 Route::post('login', 'AuthController@login');
 Route::post('signup', 'Api\UserController@signUp');
 Route::get('settings', 'Api\SettingController@index');
+Route::get('get_html_content', 'Api\CmsPageController@index');
+
 
 Route::middleware('auth:sanctum')->get('/user', 'Api\UserController@getLoggedInUser');
 Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function () {

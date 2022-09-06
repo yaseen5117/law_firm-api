@@ -9,6 +9,7 @@ class ContractsAndAgreement extends Model
 {
     use HasFactory;
     protected $guarded = [];
+    protected $appends = ['plain_content'];
 
     public function attachment()
     {
@@ -17,5 +18,10 @@ class ContractsAndAgreement extends Model
     public function category()
     {
         return $this->belongsTo(ContractCategory::class, 'contract_category_id');
+    }
+
+    public function getPlainContentAttribute()
+    {
+        return strip_tags($this->content);
     }
 }
