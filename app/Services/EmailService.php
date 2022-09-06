@@ -129,4 +129,37 @@ class EmailService
 			info("EmailService: send_document_uploading_email for petition  $petition->id ERROR SENDING EMAIL: " . $e->getMessage());
 		}
 	}
+	public function sendClientSignUpEmail($user, $setting, $password, $login_url, $send_email_and_password)
+	{
+		info("EmailService: sendClientSignUpEmail for User Eamil TO: $user->email");
+
+		Mail::send('emails.client_signup_email', compact('user', 'setting', 'password', 'login_url', 'send_email_and_password'), function ($message) use ($setting, $user) {
+			$message->subject("Welcome to " . $setting['site_name']);
+			$message->to($user->email, $user->name);
+		});
+
+		info("EmailService: sendClientSignUpEmail successfully sent Email TO: $user->email");
+	}
+	public function sendAdminSignUpEmail($user, $setting, $password, $login_url, $send_email_and_password)
+	{
+		info("EmailService: sendAdminSignUpEmail for User Eamil TO: $user->email");
+
+		Mail::send('emails.admin_signup_email', compact('user', 'setting', 'password', 'login_url', 'send_email_and_password'), function ($message) use ($setting, $user) {
+			$message->subject("Welcome to " . $setting['site_name']);
+			$message->to($user->email, $user->name);
+		});
+
+		info("EmailService: sendAdminSignUpEmail successfully sent Email TO: $user->email");
+	}
+	public function sendLawyerSignUpEmail($user, $setting, $password, $login_url, $send_email_and_password)
+	{
+		info("EmailService: sendLawyerSignUpEmail for User Eamil TO: $user->email");
+
+		Mail::send('emails.lawyer_signup_email', compact('user', 'setting', 'password', 'login_url', 'send_email_and_password'), function ($message) use ($setting, $user) {
+			$message->subject("Welcome to " . $setting['site_name']);
+			$message->to($user->email, $user->name);
+		});
+
+		info("EmailService: sendLawyerSignUpEmail successfully sent Email TO: $user->email");
+	}
 }

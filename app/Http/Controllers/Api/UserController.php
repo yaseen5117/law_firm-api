@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Role;
+use App\Models\Setting;
 use App\Models\User;
+use App\Services\EmailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Str;
 use function GuzzleHttp\Promise\all;
 
 class UserController extends Controller
@@ -17,7 +19,7 @@ class UserController extends Controller
 
     public function __construct()
     {
-        $this->middleware("role:admin", ['except' => ['store', 'show', 'index', 'getClient', 'getLoggedInUser', 'getRoles', 'signUp', 'getLawyer', 'getClientUsers']]);
+        $this->middleware("role:admin", ['except' => ['store', 'show', 'index', 'getClient', 'getLoggedInUser', 'getRoles', 'signUp', 'getLawyer', 'getClientUsers', 'clientEmail']]);
     }
     /**
      * Display a listing of the resource.
@@ -140,7 +142,7 @@ class UserController extends Controller
                         'approved_by' => null,
                     ]);
                 }
-                $user = User::updateOrCreate(['id' => $request->id], $request->except('file', 'created_at_formated_date', 'roles', 'editMode', 'confirm_password', 'role_id', 'contact_persons'));
+                $user = User::updateOrCreate(['id' => $request->id], $request->except('file', 'created_at_formated_date', 'roles', 'editMode', 'confirm_password', 'role_id', 'contact_persons', 'send_email'));
                 if ($request->role_id) {
                     $role = Role::find($request->role_id);
                     $user->roles()->detach();
@@ -166,6 +168,28 @@ class UserController extends Controller
                             $contact_person['contact_person_parent_id'] = $user->id;
                             $contact_person_single = User::where('id', $already_availabe_contact_person->id)->update(['contact_person_parent_id' => $user->id]);
                         }
+                    }
+                }
+                //sending email to user 
+                if ($request->send_email) {
+                    try {
+                        $setting = Setting::find(1)->getMeta();
+                        $password = $request->password;
+                        $login_url = url("login");
+                        $send_email_and_password = true;
+                        info("Sending Email to $user->email");
+                        $emailService = new EmailService;
+                        if ($user->hasRole('admin')) {
+                            $emailService->sendAdminSignUpEmail($user, $setting, $password, $login_url, $send_email_and_password);
+                        }
+                        if ($user->hasRole('lawyer')) {
+                            $emailService->sendLawyerSignUpEmail($user, $setting, $password, $login_url, $send_email_and_password);
+                        }
+                        if ($user->hasRole('client')) {
+                            $emailService->sendClientSignUpEmail($user, $setting, $password, $login_url, $send_email_and_password);
+                        }
+                    } catch (\Exception $e) {
+                        info("Error in User Signup email function: " . $e->getMessage());
                     }
                 }
                 DB::commit();
@@ -205,6 +229,7 @@ class UserController extends Controller
     {
         try {
             $user = User::with('roles', 'contact_persons')->find($id);
+
             if ($user) {
                 return response()->json(
                     [
@@ -394,7 +419,25 @@ class UserController extends Controller
             if ($file) {
                 $file_path = $file->storeAs('users/' . $user->id, $name, 'public');
             }
-
+            try {
+                $setting = Setting::find(1)->getMeta();
+                $password = $request->password;
+                $login_url = url("login");
+                $send_email_and_password = false;
+                info("Sending Email to $user->email");
+                $emailService = new EmailService;
+                if ($user->hasRole('admin')) {
+                    $emailService->sendAdminSignUpEmail($user, $setting, $password, $login_url, $send_email_and_password);
+                }
+                if ($user->hasRole('lawyer')) {
+                    $emailService->sendLawyerSignUpEmail($user, $setting, $password, $login_url, $send_email_and_password);
+                }
+                if ($user->hasRole('client')) {
+                    $emailService->sendClientSignUpEmail($user, $setting, $password, $login_url, $send_email_and_password);
+                }
+            } catch (\Exception $e) {
+                info("Error in User Signup email function: " . $e->getMessage());
+            }
             return response(
                 [
                     'user' => $user,
