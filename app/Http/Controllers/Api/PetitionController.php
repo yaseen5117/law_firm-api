@@ -449,6 +449,7 @@ class PetitionController extends Controller
             //return view('petition_pdf.petition_index_pdf', compact('petition'));
             if ($petition) {
                 info("Start Downloading Petition PDF");
+                ini_set('memory_limit', '-1');
                 $pdf = PDF::loadView('petition_pdf.petition_index_pdf', compact('petition'));
                 return $pdf->download($petition->petition_standard_title . ".pdf");
                 info("Complete Downloading Petition PDF");

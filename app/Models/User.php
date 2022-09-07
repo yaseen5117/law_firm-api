@@ -40,7 +40,7 @@ class User extends Authenticatable
     ];
 
     protected $appends = [
-        'created_at_formated_date','is_admin','next_invoice_num'
+        'created_at_formated_date', 'is_admin', 'is_lawyer', 'next_invoice_num'
     ];
 
     public function getCreatedAtFormatedDateAttribute()
@@ -48,16 +48,17 @@ class User extends Authenticatable
         //return to_date($this->created_at,1);
         return $this->created_at;
     }
-    public function setPasswordAttribute($value){
+    public function setPasswordAttribute($value)
+    {
         $this->attributes['password'] = bcrypt($value);
     }
     public function products()
     {
-        return $this->hasMany(UserProduct::class,"user_id");
+        return $this->hasMany(UserProduct::class, "user_id");
     }
     public function servers()
     {
-        return $this->morphMany(Serverable::class,'serverable');
+        return $this->morphMany(Serverable::class, 'serverable');
         //return $this->hasMany(Serverable::class,"user_id");
     }
     // public function role()
@@ -66,33 +67,37 @@ class User extends Authenticatable
     // }
     public function contacts()
     {
-        return $this->hasMany(Contact::class,"user_id");
+        return $this->hasMany(Contact::class, "user_id");
     }
     public function supportServices()
     {
-        return $this->hasMany(UserSupportService::class,"user_id");
+        return $this->hasMany(UserSupportService::class, "user_id");
     }
     public function notes()
     {
-        return $this->hasMany(Note::class,"user_id");
+        return $this->hasMany(Note::class, "user_id");
     }
     public function invoices()
     {
-        return $this->hasMany(Invoice::class,"invoiceable_id");
+        return $this->hasMany(Invoice::class, "invoiceable_id");
     }
 
     public function getIsAdminAttribute()
     {
         return $this->hasRole(['admin']);
     }
+    public function getIsLawyerAttribute()
+    {
+        return $this->hasRole(['lawyer']);
+    }
 
     public function nextInvoiceNum()
     {
-        $maxId = $this->invoices->max('id')+1;
-        return $invoiceNum = initialism($this->name) ."-".$maxId."-".date("Y");
+        $maxId = $this->invoices->max('id') + 1;
+        return $invoiceNum = initialism($this->name) . "-" . $maxId . "-" . date("Y");
     }
 
-    public function getNextInvoiceNumAttribute($value='')
+    public function getNextInvoiceNumAttribute($value = '')
     {
         return $this->nextInvoiceNum();
     }
@@ -104,7 +109,6 @@ class User extends Authenticatable
 
     public function contact_persons()
     {
-        return $this->hasMany('App\Models\User','contact_person_parent_id');
+        return $this->hasMany('App\Models\User', 'contact_person_parent_id');
     }
-
 }

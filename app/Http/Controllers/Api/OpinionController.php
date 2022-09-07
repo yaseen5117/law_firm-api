@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Opinion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OpinionController extends Controller
 {
@@ -18,6 +19,10 @@ class OpinionController extends Controller
         try {
 
             $query = Opinion::with('user');
+            $user = $request->user();
+            if ($user->hasRole('lawyer')) {
+                $query->where('lawyer_id', $user->id);
+            }
 
             if (!empty($request->client_id)) {
                 $query->where('client_id', $request->client_id);
@@ -64,6 +69,12 @@ class OpinionController extends Controller
             if ($request->issuance_date) {
                 $request->merge([
                     'issuance_date' => toDBDate($request->issuance_date), //\Carbon\Carbon::createFromFormat('d/m/Y', $request->issuance_date)->format('Y/m/d'),
+                ]);
+            }
+            $user = $request->user();
+            if ($user->hasRole('lawyer')) {
+                $request->merge([
+                    'lawyer_id' =>  $user->id,
                 ]);
             }
             Opinion::updateOrCreate(['id' => $request->id], $request->except('editMode', 'user'));

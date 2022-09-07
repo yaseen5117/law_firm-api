@@ -326,10 +326,21 @@ class UserController extends Controller
         }
     }
     //get Client Users
-    public function getClientUsers()
+    public function getClientUsers(Request $request)
     {
         try {
-            $clients = User::role('client')->orderBy("name")->get();
+            $user = $request->user();
+            $clients = null;
+            if ($user->hasRole('lawyer')) {
+                $clients = DB::table('petitions')->select('users.*')
+                    ->join('petition_lawyers', 'petition_lawyers.petition_id', '=', 'petitions.id')
+                    ->join('petition_petitioners', 'petition_petitioners.petition_id', '=', 'petitions.id')
+                    ->join('users', 'users.id', '=', 'petition_petitioners.petitioner_id')
+                    ->get();
+            }
+            if ($user->hasRole('admin')) {
+                $clients = User::role('client')->orderBy("name")->get();
+            }
             return response()->json(
                 [
                     'clients' => $clients,
