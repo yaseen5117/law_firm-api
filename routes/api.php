@@ -81,6 +81,10 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::post('delete_folder', 'AttachmentController@findOriginalFolder');
 
     Route::POST('petition_order_sheets/by_petition', 'PetitionOrderSheetController@showOrderSheetByPetition');
+    Route::POST('get_next_hearing_ordersheet', 'PetitionOrderSheetController@getNextHearingOrderSheet');
+    Route::POST('add_hearing_date', 'PetitionOrderSheetController@addNextHearingDateToOrderSheet');
+    Route::POST('remove_hearing_date', 'PetitionOrderSheetController@removeNextHearingDate');
+
     //START route for Talbana forms
     Route::resource('petition_talbana', 'PetitionTalbanaController'); //middleware added in controller __construct()
     Route::POST('petition_talbana/by_petition', 'PetitionTalbanaController@showTalbanaByPetition');

@@ -7,9 +7,12 @@ use App\Models\Attachment;
 use App\Models\OrderSheetType;
 use Illuminate\Http\Request;
 use App\Models\Petition;
+use App\Models\PetitionHearing;
 use App\Models\PetitionModuleType;
 use App\Models\PetitonOrderSheet;
 use File;
+
+use function GuzzleHttp\Promise\all;
 
 class PetitionOrderSheetController extends Controller
 {
@@ -224,6 +227,102 @@ class PetitionOrderSheetController extends Controller
                 [
                     'orderSheetTypes' => $orderSheetTypes,
                     'message' => 'Successs',
+                    'code' => 200
+                ]
+            );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function getNextHearingOrderSheet(Request $request)
+    {
+        try {
+            $nextHearingOrderSheet = PetitonOrderSheet::where('petition_id', $request->petition_id)->whereDate('order_sheet_date', '>=', now())->orderBy('order_sheet_date', 'asc')->first();
+
+            return response()->json(
+                [
+                    'nextHearingOrderSheet' => $nextHearingOrderSheet,
+                    'message' => 'Successs',
+                    'code' => 200
+                ]
+            );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function addNextHearingDateToOrderSheet(Request $request)
+    {
+        try {
+            //Add Hearing Date to OrderSheet
+            if ($request->order_sheet_date) {
+                $request->merge([
+                    'order_sheet_date' => date('Y-m-d', strtotime($request->order_sheet_date)), //choose this because time zone was not correct from frontend
+                ]);
+            }
+
+            $petitionOrderSheet = PetitonOrderSheet::updateOrCreate(
+                ['id' => $request->id],
+                [
+                    "order_sheet_date" => $request->order_sheet_date,
+                    "order_sheet_type_id" => null,
+                    "petition_id" => $request->petition_id,
+                ]
+            );
+            //Create Calendar Event
+            $petitionHearing = PetitionHearing::updateOrCreate(
+                [
+                    'petition_id' => $request->petition_id
+
+                ],
+                [
+                    'hearing_date' => $request->order_sheet_date,
+                    'petition_id' => $request->petition_id
+
+                ]
+            );
+
+            return response()->json(
+                [
+                    'nextHearingOrderSheet' => $petitionOrderSheet,
+                    ' $petitionHearing' =>  $petitionHearing,
+                    'message' => 'Success',
+                    'code' => 200
+                ]
+            );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function removeNextHearingDate(Request $request)
+    {
+        try {
+            if ($request->order_sheet_date) {
+                $request->merge([
+                    'order_sheet_date' => toDBDate($request->order_sheet_date),
+                ]);
+            }
+
+            PetitonOrderSheet::where(
+                "order_sheet_date",
+                $request->order_sheet_date
+            )->where("petition_id", $request->petition_id)->delete();
+
+            //Remove Calendar Event
+            PetitionHearing::where(
+                "hearing_date",
+                $request->order_sheet_date
+            )->where("petition_id", $request->petition_id)->delete();
+
+
+            return response()->json(
+                [
+                    'message' => 'Successfully Deleted Hearing Date And Calendar Event.',
                     'code' => 200
                 ]
             );
