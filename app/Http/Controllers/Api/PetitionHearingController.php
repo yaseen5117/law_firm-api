@@ -22,11 +22,11 @@ class PetitionHearingController extends Controller
         foreach ($petitionHearings as $petitionHearing) {
             $events[] = [
                 'id' => @$petitionHearing->id,
-                'title' => $petitionHearing->petition->petition_standard_title,
-                'start' => $petitionHearing->hearing_date,
-                'hearing_date' => $petitionHearing->hearing_date,
-                'hearing_summary' => $petitionHearing->hearing_summary,
-                'petition_id' => $petitionHearing->petition_id,
+                'title' => @$petitionHearing->petition->petition_standard_title,
+                'start' => @$petitionHearing->hearing_date,
+                'hearing_date' => @$petitionHearing->hearing_date,
+                'hearing_summary' => @$petitionHearing->hearing_summary,
+                'petition_id' => @$petitionHearing->petition_id,
 
             ];
         }
