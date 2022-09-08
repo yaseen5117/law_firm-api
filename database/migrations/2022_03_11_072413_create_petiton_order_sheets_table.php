@@ -16,7 +16,7 @@ class CreatePetitonOrderSheetsTable extends Migration
         Schema::create('petiton_order_sheets', function (Blueprint $table) {
             $table->id();
             $table->integer('petition_id');
-            $table->integer('order_sheet_type_id');
+            $table->integer('order_sheet_type_id')->nullable();
             $table->date('order_sheet_date')->nullable();
             $table->string('title');
             $table->text('description')->nullable();
