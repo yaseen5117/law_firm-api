@@ -73,7 +73,7 @@ class CaseLawController extends Controller
     {
         try {
 
-            $caseLaws = CaseLaw::where('petition_id', $id)->get();
+            $caseLaws = CaseLaw::where('petition_id', $id)->orderBy('display_order')->get();
             //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();
 
             return response()->json(
@@ -81,6 +81,7 @@ class CaseLawController extends Controller
                     'index_annexure_data' => $caseLaws,
                     'case_laws' => $caseLaws,
                     'index_data' => $caseLaws,
+                    'model_type' => "App\Models\CaseLaw",
                     'message' => 'Success',
                     'page_title' => "Case Laws",
                     'code' => 200

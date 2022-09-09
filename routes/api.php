@@ -70,9 +70,10 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::post('remove_pending_tag', 'PetitionController@insertPendingTag');
     Route::get('get_pending_cases', 'PetitionController@getPendingCase');
     Route::resource('petition_replies', 'PetitionReplyController'); //middleware added in controller __construct()
+    Route::post('petition_replies/update_display_order', 'PetitionReplyController@update_display_order');
 
     Route::resource('petition_reply_parents', 'PetitionReplyParentController'); //middleware added in controller __construct()
-
+    Route::post('petition_reply_parents/update_display_order', 'PetitionReplyParentController@update_display_order');
     //Route::post('invoices/mark_paid', 'InvoiceController@mark_paid'); 
     Route::get('download_pdf/{id}', 'InvoiceController@downloadInvoicePdf');
 
@@ -97,6 +98,7 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
 
     //START route for standard page Oral Arguments
     Route::resource('oral_arguments', 'OralArgumentsController'); //middleware added in controller __construct()
+    Route::post('standard_index_data/update_display_order', 'OralArgumentsController@update_display_order');
     //END route for standard page Oral Arguments
 
     //START route for standard page Case Law
