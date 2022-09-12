@@ -75,6 +75,10 @@ class PetitionController extends Controller
                 $query->where('year', 'like', '%' . $request->year . '%');
             }
 
+            if (!empty($request->pendingTag)) {
+                $query->where('pending_tag', 'like', '%' . $request->pendingTag . '%');
+            }
+
             if (!empty($request->court_id)) {
                 $query->where('court_id', $request->court_id);
             }
