@@ -73,7 +73,7 @@ class PetitionReplyParentController extends Controller
                     "message" => CasePermissionService::$unauthorizedMessage,
                 ], CasePermissionService::$unauthorizedCode);
             }
-            $petition_reply_parents = PetitionReplyParent::where('petition_id', $id)->get();
+            $petition_reply_parents = PetitionReplyParent::where('petition_id', $id)->orderBy('display_order')->get();
 
             return response()->json(
                 [
@@ -134,5 +134,15 @@ class PetitionReplyParentController extends Controller
                 "error" => $e->getMessage()
             ], 500);
         }
+    }
+    public function update_display_order(Request $request)
+    {
+        foreach ($request->petition_reply_parents as $index => $petition_reply_parent) {
+
+            PetitionReplyParent::whereId($petition_reply_parent['id'])->update([
+                'display_order' => $index
+            ]);
+        }
+        return response("Done Index Moving");
     }
 }

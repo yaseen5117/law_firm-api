@@ -71,13 +71,14 @@ class ExtraDocumentController extends Controller
     {
         try {
 
-            $extraDocs = ExtraDocument::where('petition_id', $id)->get();
+            $extraDocs = ExtraDocument::where('petition_id', $id)->orderBy('display_order')->get();
 
             return response()->json(
                 [
                     'index_annexure_data' => $extraDocs,
                     'extra_documents' => $extraDocs,
                     'index_data' => $extraDocs,
+                    'model_type' => "App\Models\ExtraDocument",
                     'message' => 'Success',
                     'page_title' => "Extra Documents",
                     'code' => 200

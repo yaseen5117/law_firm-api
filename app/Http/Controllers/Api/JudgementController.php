@@ -72,13 +72,14 @@ class JudgementController extends Controller
     {
         try {
 
-            $judgements = Judgement::where('petition_id', $id)->get();
+            $judgements = Judgement::where('petition_id', $id)->orderBy('display_order')->get();
 
             return response()->json(
                 [
                     'index_annexure_data' => $judgements,
                     'judgements' => $judgements,
                     'index_data' => $judgements,
+                    'model_type' => "App\Models\Judgement",
                     'message' => 'Success',
                     'page_title' => "Judgements",
                     'code' => 200

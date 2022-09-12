@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\CaseLaw;
+use App\Models\ExtraDocument;
+use App\Models\Judgement;
 use Illuminate\Http\Request;
 use App\Models\OralArgument;
 use App\Models\Petition;
@@ -72,7 +75,7 @@ class OralArgumentsController extends Controller
     {
         try {
 
-            $oralArguments = OralArgument::where('petition_id', $id)->get();
+            $oralArguments = OralArgument::where('petition_id', $id)->orderBy('display_order')->get();
             //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();
 
             return response()->json(
@@ -165,5 +168,33 @@ class OralArgumentsController extends Controller
                 "error" => $e->getMessage()
             ], 500);
         }
+    }
+    public function update_display_order(Request $request)
+    {
+        $model_type = substr($request->model_type, strpos($request->model_type, "'\'") + 11);
+
+        foreach ($request->index_data as $index => $single_index_data) {
+            if ($model_type == "OralArgument") {
+                OralArgument::whereId($single_index_data['id'])->update([
+                    'display_order' => $index
+                ]);
+            }
+            if ($model_type == "CaseLaw") {
+                CaseLaw::whereId($single_index_data['id'])->update([
+                    'display_order' => $index
+                ]);
+            }
+            if ($model_type == "ExtraDocument") {
+                ExtraDocument::whereId($single_index_data['id'])->update([
+                    'display_order' => $index
+                ]);
+            }
+            if ($model_type == "Judgement") {
+                Judgement::whereId($single_index_data['id'])->update([
+                    'display_order' => $index
+                ]);
+            }
+        }
+        return response("Done Index Moving");
     }
 }

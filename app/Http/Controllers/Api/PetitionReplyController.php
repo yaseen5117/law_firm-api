@@ -84,7 +84,7 @@ class PetitionReplyController extends Controller
     public function show($petitionReplyId)
     {
         try {
-            $petition_replies = PetitionReply::where('petition_reply_parent_id', $petitionReplyId)->get();
+            $petition_replies = PetitionReply::where('petition_reply_parent_id', $petitionReplyId)->orderBy('display_order')->get();
             $petition_parent = PetitionReplyParent::find($petitionReplyId);
 
             if (empty($petition_parent)) {
@@ -196,5 +196,15 @@ class PetitionReplyController extends Controller
                 "error" => $e->getMessage()
             ], 500);
         }
+    }
+    public function update_display_order(Request $request)
+    {
+        foreach ($request->petition_replies as $index => $petition_reply) {
+
+            PetitionReply::whereId($petition_reply['id'])->update([
+                'display_order' => $index
+            ]);
+        }
+        return response("Done Index Moving");
     }
 }
