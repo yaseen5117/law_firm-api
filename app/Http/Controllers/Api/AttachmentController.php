@@ -501,7 +501,7 @@ class AttachmentController extends Controller
             $im->clear();
             $im->destroy();
             info("Total Number Of Pages: $num_page");
-            for ($page = 1; $page < $num_page; $page++) {
+            for ($page = 0; $page < $num_page; $page++) {
                 $im = new Imagick();
                 $im->setResolution(300, 300);
                 $im->readimage($file_path . "[$page]");
