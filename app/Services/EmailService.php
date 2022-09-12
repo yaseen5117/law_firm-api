@@ -64,7 +64,7 @@ class EmailService
 			$petition = $tomorrow_hearing->petition;
 
 			if ($petition->petitioners->count() > 0) {
-				info("EmailService: send_email_before_hearing to petitioners" . print_r($petition->petitioners->pluck('id')->all(), 1));
+				info("EmailService: send_email_before_hearing to petitioners" . print_r($petition->petitioners->pluck('petitioner_id')->all(), 1));
 				foreach ($petition->petitioners as $petition_petitioner) {
 					$user = $petition_petitioner->user;
 					Mail::send('emails.hearing_tomorrower_reminder', compact('user', 'petition'), function ($message) use ($user, $petition) {
@@ -76,7 +76,7 @@ class EmailService
 			}
 
 			if ($petition->lawyers->count() > 0) {
-				info("EmailService: send_email_before_hearing to lawyers" . print_r($petition->lawyers->pluck('id')->all(), 1));
+				info("EmailService: send_email_before_hearing to lawyers" . print_r($petition->lawyers->pluck('lawyer_id')->all(), 1));
 				foreach ($petition->lawyers as $petition_lawyer) {
 					$user = $petition_lawyer->user;
 					Mail::send('emails.hearing_tomorrower_reminder', compact('user', 'petition'), function ($message) use ($user, $petition) {
