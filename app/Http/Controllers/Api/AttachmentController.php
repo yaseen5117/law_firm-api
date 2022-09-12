@@ -505,8 +505,12 @@ class AttachmentController extends Controller
                 $im = new Imagick();
                 $im->setResolution(300, 300);
                 $im->readimage($file_path . "[$page]");
-                $im->setImageFormat('jpeg');
+                $im->setImageFormat('jpg');
                 $generated_jpg_filename = $page . " - " . $file_name_without_extention . '.jpg';
+                $im->setImageBackgroundColor('white');
+
+                $im->flattenImages(); // This does not do anything.
+                $im = $im->flattenImages(); // Use this instead.
                 $im->setImageCompression(imagick::COMPRESSION_JPEG);
                 $im->setImageCompressionQuality(100);
                 $im->writeImage($output_path . "/" . $generated_jpg_filename);
