@@ -501,6 +501,7 @@ class AttachmentController extends Controller
             $im->clear();
             $im->destroy();
             info("Total Number Of Pages: $num_page");
+            $page_counter = 1;
             for ($page = 0; $page < $num_page; $page++) {
                 $im = new Imagick();
                 $im->setResolution(300, 300);
@@ -531,9 +532,10 @@ class AttachmentController extends Controller
                         'mime_type' => 'jpg',
                         'attachmentable_id' => $attachmentable_id,
                         'attachmentable_type' => $attachmentable_type,
-                        'display_order' => $page,
+                        'display_order' => $page_counter,
                     ]
                 );
+                $page_counter++;
             }
         } catch (\Exception $e) {
             info('Message: ' . $e->getMessage());
