@@ -501,12 +501,17 @@ class AttachmentController extends Controller
             $im->clear();
             $im->destroy();
             info("Total Number Of Pages: $num_page");
-            for ($page = 1; $page < $num_page; $page++) {
+            $page_counter = 1;
+            for ($page = 0; $page < $num_page; $page++) {
                 $im = new Imagick();
                 $im->setResolution(300, 300);
                 $im->readimage($file_path . "[$page]");
-                $im->setImageFormat('jpeg');
                 $generated_jpg_filename = $page . " - " . $file_name_without_extention . '.jpg';
+                $im->setImageBackgroundColor('white');
+
+                $im->flattenImages(); // This does not do anything.
+                $im->setImageFormat('jpg');
+                $im = $im->flattenImages(); // Use this instead.
                 $im->setImageCompression(imagick::COMPRESSION_JPEG);
                 $im->setImageCompressionQuality(100);
                 $im->writeImage($output_path . "/" . $generated_jpg_filename);
@@ -527,9 +532,10 @@ class AttachmentController extends Controller
                         'mime_type' => 'jpg',
                         'attachmentable_id' => $attachmentable_id,
                         'attachmentable_type' => $attachmentable_type,
-                        'display_order' => $page,
+                        'display_order' => $page_counter,
                     ]
                 );
+                $page_counter++;
             }
         } catch (\Exception $e) {
             info('Message: ' . $e->getMessage());
