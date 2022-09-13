@@ -271,3 +271,14 @@ function getIndexData($attachmentable_type, $attachmentable_id)
     }
     return $standard_module;
 }
+function textualDateFormate($date_in_any_format)
+{
+    //return $date_in_any_format;
+    $date = DateTime::createFromFormat('Y-m-d', $date_in_any_format);
+
+    if ($date) {
+        return $date->format('M d,Y');
+    } else {
+        return null;
+    }
+}

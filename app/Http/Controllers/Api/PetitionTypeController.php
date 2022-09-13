@@ -66,8 +66,14 @@ class PetitionTypeController extends Controller
     {
 
         try {
+            //create abbreviation if not set by user.
+            if (!$request->abbreviation) {
+                $request->merge([
+                    "abbreviation" => initialism($request->title),
+                ]);
+            }
 
-            $petition_type = PetitionType::updateOrCreate(['id' => $request->id], $request->only('title'));
+            $petition_type = PetitionType::updateOrCreate(['id' => $request->id], $request->only('title', 'abbreviation'));
 
             //Saving courts and petition to PetitionTypeCourt Table
             if (is_array($request->court_ids)) {
@@ -190,5 +196,15 @@ class PetitionTypeController extends Controller
                 "error" => $e->getMessage()
             ], 500);
         }
+    }
+    public function createAbbreviation()
+    {
+        $petition_types = PetitionType::get();
+        foreach ($petition_types as $petition_type) {
+            PetitionType::whereId($petition_type->id)->update([
+                "abbreviation" => initialism($petition_type->title),
+            ]);
+        }
+        return response('Done', 200);
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddColToCourtsTable extends Migration
+class AddColToPetitionTypesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class AddColToCourtsTable extends Migration
      */
     public function up()
     {
-        Schema::table('courts', function (Blueprint $table) {
+        Schema::table('petition_types', function (Blueprint $table) {
             $table->string('abbreviation')->nullable()->after('title');
         });
     }
@@ -25,7 +25,7 @@ class AddColToCourtsTable extends Migration
      */
     public function down()
     {
-        Schema::table('courts', function (Blueprint $table) {
+        Schema::table('petition_types', function (Blueprint $table) {
             $table->dropColumn('abbreviation');
         });
     }
