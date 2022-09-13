@@ -7,6 +7,9 @@ use App\Models\Attachment;
 use App\Models\GeneralCaseLaw;
 use Illuminate\Http\Request;
 use File;
+use Illuminate\Support\Str;
+
+use function GuzzleHttp\Promise\all;
 
 class GeneralCaseLawController extends Controller
 {
@@ -64,17 +67,18 @@ class GeneralCaseLawController extends Controller
     public function store(Request $request)
     {
         try {
-            // $request->merge([
-            //     'date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->date)->format('Y/m/d'),     
-            // ]);
+            $request->merge([
+                'slug' => Str::slug($request->case_title)
+            ]);
 
-            GeneralCaseLaw::updateOrCreate(['id' => $request->id], $request->except('editMode', 'attachment'));
+            GeneralCaseLaw::updateOrCreate(['id' => $request->id], $request->except('editMode', 'attachment', 'plain_content'));
 
             return response()->json(
                 [
                     'message' => 'General Case Law Saved Successfully',
                     'code' => 200
-                ]
+                ],
+                200
             );
         } catch (\Exception $e) {
             return response([
