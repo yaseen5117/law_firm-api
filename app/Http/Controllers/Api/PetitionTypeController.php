@@ -179,8 +179,14 @@ class PetitionTypeController extends Controller
             $courts = Court::orderBy("title")->get();
             $courtsData = [];
             foreach ($courts as $court) {
+                if (strlen($court->title) > 32) {
+                    $short_title = substr($court->title, 0, 32) . "...";
+                } else {
+                    $short_title = $court->title;
+                }
                 $courtsData[] = [
                     'label' => $court->title,
+                    'short_title' => strtoupper($short_title),
                     'value' =>  $court->id,
                 ];
             }
