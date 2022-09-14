@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Attachment;
 use App\Models\SamplePleading;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class SamplePleadingController extends Controller
 {
@@ -45,7 +46,12 @@ class SamplePleadingController extends Controller
      */
     public function store(Request $request)
     {
+
         try {
+            $request->merge([
+                'slug' => Str::slug($request->title)
+            ]);
+
             $sample_pleading = SamplePleading::updateOrCreate(['id' => $request->id], $request->except('editMode', 'files'));
             //getting files from request
             $files = $request->file('files');

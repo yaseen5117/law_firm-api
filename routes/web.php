@@ -39,6 +39,7 @@ Route::get('move_extra_doc_files/{id}', 'Api\AttachmentController@copyExtraDocsF
 Route::get('move_synopsis_files/{id}', 'Api\AttachmentController@copySynopsisFiles');
 Route::get('move_judgement_files/{id}', 'Api\AttachmentController@copyJudgementFiles');
 Route::get('send_client_signup_email', 'Api\UserController@clientEmail');
+Route::get('create_petiiton_types_abbreviation', 'Api\PetitionTypeController@createAbbreviation');
 
 Route::get('phpmyinfo', function () {
     phpinfo();

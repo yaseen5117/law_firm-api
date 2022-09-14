@@ -60,15 +60,15 @@ class EmailService
 	{
 		try {
 			info("EmailService: send_email_before_hearing for Hearing $tomorrow_hearing->id");
-
+			$setting = Setting::find(1)->getMeta()->toArray();
 			$petition = $tomorrow_hearing->petition;
 
 			if ($petition->petitioners->count() > 0) {
 				info("EmailService: send_email_before_hearing to petitioners" . print_r($petition->petitioners->pluck('petitioner_id')->all(), 1));
 				foreach ($petition->petitioners as $petition_petitioner) {
 					$user = $petition_petitioner->user;
-					Mail::send('emails.hearing_tomorrower_reminder', compact('user', 'petition'), function ($message) use ($user, $petition) {
-						$message->subject("Case (" . $petition->petition_standard_title_with_petitioner . ") Hearing Reminder");
+					Mail::send('emails.hearing_tomorrower_reminder', compact('user', 'petition', 'tomorrow_hearing', 'setting'), function ($message) use ($user, $petition) {
+						$message->subject("Hearing Reminder: $petition->petition_standard_title_with_petitioner ");
 						$message->to($user->email, $user->name);
 					});
 					info("EmailService: sendInvoiceEmail successfully sent to user email: " . $user->email);
@@ -79,8 +79,8 @@ class EmailService
 				info("EmailService: send_email_before_hearing to lawyers" . print_r($petition->lawyers->pluck('lawyer_id')->all(), 1));
 				foreach ($petition->lawyers as $petition_lawyer) {
 					$user = $petition_lawyer->user;
-					Mail::send('emails.hearing_tomorrower_reminder', compact('user', 'petition'), function ($message) use ($user, $petition) {
-						$message->subject("Case (" . $petition->petition_standard_title_with_petitioner . ") Hearing Reminder");
+					Mail::send('emails.hearing_tomorrower_reminder', compact('user', 'petition', 'tomorrow_hearing', 'setting'), function ($message) use ($user, $petition) {
+						$message->subject("Hearing Reminder: $petition->petition_standard_title_with_petitioner ");
 						$message->to($user->email, $user->name);
 					});
 					info("EmailService: sendInvoiceEmail successfully sent to user email: " . $user->email);
