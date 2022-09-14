@@ -108,7 +108,7 @@ class Petition extends Model
     public function getTypeAbrivationAttribute()
     {
         if ($this->type) {
-            return initialism($this->type->title);
+            return $this->type->abbreviation;
         }
     }
     public function getIndexTotalAttribute()
