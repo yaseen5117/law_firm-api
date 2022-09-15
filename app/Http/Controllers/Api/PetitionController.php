@@ -516,4 +516,30 @@ class PetitionController extends Controller
             ], 500);
         }
     }
+    public function getPetition(Request $request)
+    {
+        try {
+            $petition = Petition::withRelations()->find($request->petition_id);
+            return response([
+                'petition' => $petition
+            ], 200);
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function getLawyerTotalPetitions(Request $request)
+    {
+        try {
+            $lawyer_total_petitions = PetitionLawyer::where('lawyer_id', $request->lawyer_id)->count();
+            return response([
+                'lawyer_total_petitions' => $lawyer_total_petitions
+            ], 200);
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
 }
