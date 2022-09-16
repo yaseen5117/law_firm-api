@@ -57,12 +57,11 @@ class SamplePleadingController extends Controller
             $files = $request->file('files');
             if ($files) {
                 foreach ($files as $key => $file) {
-                    info("AttachmentController store Function: File mime_type: " . $file->getClientMimeType());
-                    $name = time() . '_' . $file->getClientOriginalName();
-                    $file_path = $file->storeAs('attachments/sample-pleadings/' . $sample_pleading->id . '/', $name, 'public');
+                    info("SamplePleadingController store Function: File mime_type: " . $file->getClientMimeType());
+                    $file_name = time() . '_' . $file->getClientOriginalName();
+                    $file_path = $file->storeAs('attachments/sample-pleadings/' . $sample_pleading->id . '/', $file_name, 'public');
                     $mime_type = $file->getClientMimeType();
 
-                    $file_name = time() . '_' . $file->getClientOriginalName();
                     $title = $file_name;
                     $attachmentable_type = "App\Models\SamplePleading";
                     $attachmentable_id = $sample_pleading->id;

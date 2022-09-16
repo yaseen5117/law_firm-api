@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attachment;
 use App\Models\Role;
 use App\Models\Setting;
 use App\Models\User;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use function GuzzleHttp\Promise\all;
+use File;
 
 class UserController extends Controller
 {
@@ -29,7 +31,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = User::with('roles', 'contact_persons')->excludeContactPersons();
+            $query = User::with('roles', 'attachment', 'contact_persons')->excludeContactPersons();
             if ($request->is_approved) {
                 if ($request->is_approved < 2) {
                     $query->where("is_approved", $request->is_approved);
@@ -103,33 +105,6 @@ class UserController extends Controller
                         401
                     );
                 }
-                // }else{
-                //     $validator = Validator::make($request->all(), [                
-                //         'password' => 'required', 
-                //         'email' => 'required|email|unique:users,email,'.$request->id,                              
-                //     ]);
-                //     if ($validator->fails()) {
-                //         return response()->json(
-                //             [
-                //                 'validation_error' => $validator->errors(),
-                //                 'error' => "Validation error..!"
-                //         ], 401);
-                //     } 
-                // }                   
-
-                $file = $request->file('file');
-
-                if ($file) {
-                    $name = time() . '_' . $file->getClientOriginalName();
-                    $file_name = time() . '_' . $file->getClientOriginalName();
-                    $request->merge([
-                        'profile_image' => $file_name
-                    ]);
-                }
-                // $request->merge([
-                //     'password' => bcrypt($request->password),                 
-                // ]);   
-
 
                 if ($request->is_approved) {
                     $request->merge([
@@ -147,9 +122,6 @@ class UserController extends Controller
                     $role = Role::find($request->role_id);
                     $user->roles()->detach();
                     $user->assignRole($role->name);
-                }
-                if ($file) {
-                    $file_path = $file->storeAs('users/' . $user->id, $name, 'public');
                 }
 
                 if (!empty($request->contact_persons)) {
@@ -197,7 +169,8 @@ class UserController extends Controller
                     [
                         'user' => $user,
                         'status' => 200
-                    ]
+                    ],
+                    200
                 );
             } else {
                 return response(
@@ -228,7 +201,7 @@ class UserController extends Controller
     public function show($id)
     {
         try {
-            $user = User::with('roles', 'contact_persons')->find($id);
+            $user = User::with('roles', 'attachment', 'contact_persons')->find($id);
 
             if ($user) {
                 return response()->json(
@@ -400,22 +373,10 @@ class UserController extends Controller
                 );
             }
 
-            $file = $request->file('file');
-
-            if ($file) {
-                $name = time() . '_' . $file->getClientOriginalName();
-                $file_name = time() . '_' . $file->getClientOriginalName();
-                $request->merge([
-                    'profile_image' => $file_name
-                ]);
-            }
             //initially set is_approved bit to false.
             $request->merge([
                 'is_approved' => 0
             ]);
-            // $request->merge([
-            //     'password' => bcrypt($request->password),                 
-            // ]);   
 
             $user = User::updateOrCreate(['id' => $request->id], $request->except('file', 'created_at_formated_date', 'roles', 'editMode', 'confirm_password', 'role_name'));
 
@@ -427,9 +388,6 @@ class UserController extends Controller
                 $user->assignRole('client');
             }
 
-            if ($file) {
-                $file_path = $file->storeAs('users/' . $user->id, $name, 'public');
-            }
             try {
                 $setting = Setting::find(1)->getMeta();
                 $password = $request->password;
@@ -453,7 +411,8 @@ class UserController extends Controller
                 [
                     'user' => $user,
                     'status' => 200
-                ]
+                ],
+                200
             );
         } catch (\Exception $e) {
             return response([
@@ -471,5 +430,42 @@ class UserController extends Controller
                 'code' => 200
             ]
         );
+    }
+    public function uploadImage(Request $request)
+    {
+        $files = $request->file('files');
+        if ($files) {
+            foreach ($files as $key => $file) {
+                info("UserController uploadImage Function: File mime_type: " . $file->getClientMimeType());
+                $file_name = time() . '_' . $file->getClientOriginalName();
+                Attachment::where('attachmentable_type', $request->attachmentable_id)->where('attachmentable_type', 'App\Models\User')->delete();
+                $public_path =  public_path();
+                $file_path = $public_path . '/storage/attachments/user/' . $request->attachmentable_id;
+                if (File::exists($file_path)) {
+                    File::deleteDirectory($file_path);
+                }
+                $file_path = $file->storeAs('attachments/user/' . $request->attachmentable_id . '/', $file_name, 'public');
+                $mime_type = $file->getClientMimeType();
+
+                $file_name = time() . '_' . $file->getClientOriginalName();
+                $title = $file_name;
+                $attachmentable_type = "App\Models\User";
+                $attachmentable_id = $request->attachmentable_id;
+                Attachment::updateOrCreate(
+                    [
+                        'attachmentable_id' => $attachmentable_id,
+                        'attachmentable_type' => $attachmentable_type
+                    ],
+                    [
+                        'file_name' => $file_name,
+                        'title' => $title,
+                        'attachmentable_type' => $attachmentable_type,
+                        'attachmentable_id' => $attachmentable_id,
+                        'mime_type' => $mime_type,
+                    ]
+                );
+            }
+            return response("Uploaded User Profile Image Successfully", 200);
+        }
     }
 }

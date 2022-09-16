@@ -111,4 +111,8 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Models\User', 'contact_person_parent_id');
     }
+    public function attachment()
+    {
+        return $this->morphOne(Attachment::class, 'attachmentable');
+    }
 }
