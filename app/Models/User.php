@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use App\Scopes\CompanyScope;
 
 class User extends Authenticatable
 {
@@ -42,6 +43,17 @@ class User extends Authenticatable
     protected $appends = [
         'created_at_formated_date', 'is_admin', 'is_lawyer', 'next_invoice_num'
     ];
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+
+    protected static function booted()
+    {
+        //static::addGlobalScope(new CompanyScope);
+    }
 
     public function getCreatedAtFormatedDateAttribute()
     {

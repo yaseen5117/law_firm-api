@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Scopes\CompanyScope;
 
 class Petition extends Model
 {
@@ -17,6 +18,19 @@ class Petition extends Model
     protected $casts = [
         'institution_date'  => 'date:d/m/Y',
     ];
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new CompanyScope);
+    }
+
+
     public function court()
     {
         return $this->belongsTo('App\Models\Court', 'court_id', 'id');
