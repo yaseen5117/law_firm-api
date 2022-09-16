@@ -257,10 +257,17 @@ class PetitionOrderSheetController extends Controller
     public function addNextHearingDateToOrderSheet(Request $request)
     {
         try {
+
             //Add Hearing Date to OrderSheet
             if ($request->order_sheet_date) {
                 $request->merge([
                     'order_sheet_date' => date('Y-m-d', strtotime($request->order_sheet_date)), //choose this because time zone was not correct from frontend
+                ]);
+            }
+
+            if ($request->previous_ordersheet_date) {
+                $request->merge([
+                    'previous_ordersheet_date' => toDBDate($request->previous_ordersheet_date),
                 ]);
             }
 
@@ -275,7 +282,8 @@ class PetitionOrderSheetController extends Controller
             //Create Calendar Event
             $petitionHearing = PetitionHearing::updateOrCreate(
                 [
-                    'petition_id' => $request->petition_id
+                    'petition_id' => $request->petition_id,
+                    'hearing_date' => $request->previous_ordersheet_date
 
                 ],
                 [
