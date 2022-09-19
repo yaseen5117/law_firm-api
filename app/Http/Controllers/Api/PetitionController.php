@@ -22,6 +22,7 @@ use App\Models\CaseLaw;
 use App\Models\ExtraDocument;
 use App\Models\Judgement;
 use App\Models\OralArgument;
+use App\Models\PetitionHearing;
 use App\Models\PetitionNaqalForm;
 use App\Models\PetitionSynopsis;
 use App\Models\PetitionTalbana;
@@ -41,7 +42,7 @@ class PetitionController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->except(['index', 'show', 'toggleArchivedStatus', 'downloadPetitionPdf', 'insertPendingTag', 'getPendingCase', 'downloadPendingCase']);
+        $this->middleware('role:admin')->except(['index', 'show', 'toggleArchivedStatus', 'downloadPetitionPdf', 'insertPendingTag', 'getPendingCase', 'downloadPendingCase', 'getLawyerTotalPetitions']);
     }
     public function index(Request $request)
     {
@@ -105,7 +106,7 @@ class PetitionController extends Controller
             $petitions = [];
             if ($request->force_all_records) {
                 if (!empty($request->query_from_calendar_page)) {
-                    $query->where('case_no', 'like', '%' . $request->query_from_calendar_page . '%')->orWhere('name', 'like', '%' . $request->query_from_calendar_page . '%')->orWhere('title', 'like', '%' . $request->query_from_calendar_page . '%');
+                    $query->where('case_no', 'like', '%' . $request->query_from_calendar_page . '%')->orWhere('users.name', 'like', '%' . $request->query_from_calendar_page . '%')->orWhere('users_opp.name', 'like', '%' . $request->query_from_calendar_page . '%')->orWhere('title', 'like', '%' . $request->query_from_calendar_page . '%');
                 }
                 $petitions = $query->groupBy('petitions.id')->orderby('id', 'desc')->get();
             } else {
@@ -414,7 +415,9 @@ class PetitionController extends Controller
                 if (File::exists($file_path)) {
                     File::deleteDirectory($file_path);
                 }
-                info("Complete Deleting process of Petition $petition Folder");
+                info("Deleteing Petition Hearing Related to Petition_ID: $petition->id");
+                PetitionHearing::where('petition_id', $petition->id)->delete();
+                info("Complete Deleting process of Petition $petition->id Folder");
                 $petition->delete();
                 return response([
                     "petition" => $petition,
@@ -487,7 +490,24 @@ class PetitionController extends Controller
     public function getPendingCase(Request $request)
     {
         try {
-            $pending_cases = Petition::with('court')->where('archived', 0)->whereNotNull('pending_tag')->orderBy('id', 'DESC')->get();
+            $query = Petition::select("petitions.*")->with('court');
+            $query
+                ->leftjoin('petition_petitioners', 'petitions.id', '=', 'petition_petitioners.petition_id')
+                ->leftjoin('users', 'users.id', '=', 'petition_petitioners.petitioner_id')
+                ->leftjoin('petition_opponents', 'petitions.id', '=', 'petition_opponents.petition_id')
+                ->leftjoin('users as users_opp', 'users_opp.id', '=', 'petition_opponents.opponent_id')
+                ->leftjoin('petition_lawyers', 'petition_lawyers.petition_id', '=', 'petitions.id');
+
+            //getting logged in user
+            $user = $request->user();
+            if ($user->hasRole('lawyer')) {
+                $query->where('lawyer_id', $user->id);
+            }
+            if ($user->hasRole('client')) {
+                $query->where('petitioner_id', $request->user()->id);
+            }
+
+            $pending_cases = $query->where('archived', 0)->whereNotNull('pending_tag')->orderBy('id', 'DESC')->get();
             return response(
                 [
                     "pendingCases" => $pending_cases,

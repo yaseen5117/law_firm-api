@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Petition;
 use App\Models\PetitionHearing;
 use Illuminate\Http\Request;
 
@@ -18,8 +19,10 @@ class PetitionHearingController extends Controller
     public function index()
     {
         $events = [];
-        $petitionHearings = PetitionHearing::all();
+        $petitionHearings = PetitionHearing::has('petition')->get();
+
         foreach ($petitionHearings as $petitionHearing) {
+
             $events[] = [
                 'id' => @$petitionHearing->id,
                 'title' => @$petitionHearing->petition->petition_standard_title,
