@@ -62,6 +62,8 @@ class PetitionController extends Controller
             $query
                 ->leftjoin('petition_petitioners', 'petitions.id', '=', 'petition_petitioners.petition_id')
                 ->leftjoin('users', 'users.id', '=', 'petition_petitioners.petitioner_id')
+                ->leftjoin('petition_opponents', 'petitions.id', '=', 'petition_opponents.petition_id')
+                ->leftjoin('users as users_opp', 'users_opp.id', '=', 'petition_opponents.opponent_id')
                 ->leftjoin('petition_lawyers', 'petition_lawyers.petition_id', '=', 'petitions.id');
 
             if (!empty($request->case_no)) {
@@ -83,9 +85,9 @@ class PetitionController extends Controller
                 $query->where('court_id', $request->court_id);
             }
             if (!empty($request->petitioner_name)) {
-
-                $query->where('name', 'like', '%' . $request->petitioner_name . '%');
+                $query->where('users.name', 'like', '%' . $request->petitioner_name . '%')->orWhere('users_opp.name', 'like', '%' . $request->petitioner_name . '%');
             }
+
             if ($request->pending_tag == 'true') {
                 $query->whereNotNull('pending_tag');
             }
