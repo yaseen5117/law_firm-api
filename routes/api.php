@@ -31,7 +31,7 @@ Route::group(['middleware' => 'auth:sanctum', 'role:admin', 'namespace' => 'Api'
 
     Route::get('contract_categories', 'ContractsAndAgreementController@contractCategory');
     Route::resource('settings', 'SettingController');
-
+    Route::get('settings', 'SettingController@index');
     Route::get('get_order_sheet_types', 'PetitionOrderSheetController@getOrderSheetTypes');
     Route::get('get_naqal_form_types', 'NaqalFormController@getNaqalFormTypes');
     Route::get('get_talbana_types', 'PetitionTalbanaController@getTalbanaTypes');
@@ -84,7 +84,7 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
 
     Route::post('delete_folder', 'AttachmentController@findOriginalFolder');
 
-    
+
     Route::POST('get_next_hearing_ordersheet', 'PetitionOrderSheetController@getNextHearingOrderSheet');
     Route::POST('add_hearing_date', 'PetitionOrderSheetController@addNextHearingDateToOrderSheet');
     Route::POST('remove_hearing_date', 'PetitionOrderSheetController@removeNextHearingDate');
@@ -143,7 +143,7 @@ Route::post('contact_requests', 'Api\FrontEndController@contactRequest'); //midd
 Route::post('register', 'AuthController@register');
 Route::post('login', 'AuthController@login');
 Route::post('signup', 'Api\UserController@signUp');
-Route::get('settings', 'Api\SettingController@index');
+
 Route::get('get_html_content', 'Api\CmsPageController@index');
 
 
