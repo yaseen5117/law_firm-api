@@ -29,6 +29,16 @@ class Invoice extends Model
         static::addGlobalScope(new CompanyScope);
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+        static::created(function ($model) {
+            $model->company_id = request()->user()->company_id;
+            $model->invoice_sender_id = request()->user()->id;
+            $model->save();
+        });
+    }
+
 
     public function status()
     {
