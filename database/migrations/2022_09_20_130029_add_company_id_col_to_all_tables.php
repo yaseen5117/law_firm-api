@@ -14,47 +14,48 @@ class AddCompanyIdColToAllTables extends Migration
     public function up()
     {
         Schema::table('attachments', function (Blueprint $table) {
-            $table->unsignedBigInteger('company_id')->default(1)->after('id');
+            $table->unsignedInteger('company_id')->nullable()->default(1)->after('id');
         });
         Schema::table('case_laws', function (Blueprint $table) {
-            $table->unsignedBigInteger('company_id')->default(1)->after('id');
+            $table->unsignedInteger('company_id')->nullable()->default(1)->after('id');
         });
         Schema::table('contact_requests', function (Blueprint $table) {
-            $table->unsignedBigInteger('company_id')->default(1)->after('id');
+            $table->unsignedInteger('company_id')->nullable()->default(1)->after('id');
         });
         Schema::table('contracts_and_agreements', function (Blueprint $table) {
-            $table->unsignedBigInteger('company_id')->default(1)->after('id');
+            $table->unsignedInteger('company_id')->nullable()->default(1)->after('id');
         });
         Schema::table('contract_categories', function (Blueprint $table) {
-            $table->unsignedBigInteger('company_id')->default(1)->after('id');
+
+            $table->unsignedInteger('company_id')->nullable()->default(1)->after('id');
         });
-       
+
         Schema::table('extra_documents', function (Blueprint $table) {
-            $table->unsignedBigInteger('company_id')->default(1)->after('id');
+            $table->unsignedInteger('company_id')->nullable()->default(1)->after('id');
         });
         Schema::table('general_case_laws', function (Blueprint $table) {
-            $table->unsignedBigInteger('company_id')->default(1)->after('id');
+            $table->unsignedInteger('company_id')->nullable()->default(1)->after('id');
         });
         Schema::table('invoices', function (Blueprint $table) {
-            $table->unsignedBigInteger('company_id')->default(1)->after('id');
+            $table->unsignedInteger('company_id')->nullable()->default(1)->after('id');
         });
         Schema::table('invoice_expenses', function (Blueprint $table) {
-            $table->unsignedBigInteger('company_id')->default(1)->after('id');
+            $table->unsignedInteger('company_id')->nullable()->default(1)->after('id');
         });
         Schema::table('invoice_metas', function (Blueprint $table) {
-            $table->unsignedBigInteger('company_id')->default(1)->after('id');
+            $table->unsignedInteger('company_id')->nullable()->default(1)->after('id');
         });
         Schema::table('invoice_statuses', function (Blueprint $table) {
-            $table->unsignedBigInteger('company_id')->default(1)->after('id');
+            $table->unsignedInteger('company_id')->nullable()->default(1)->after('id');
         });
         Schema::table('invoice_templates', function (Blueprint $table) {
-            $table->unsignedBigInteger('company_id')->default(1)->after('id');
+            $table->unsignedInteger('company_id')->nullable()->default(1)->after('id');
         });
         Schema::table('petition_hearings', function (Blueprint $table) {
-            $table->unsignedBigInteger('company_id')->default(1)->after('id');
+            $table->unsignedInteger('company_id')->nullable()->default(1)->after('id');
         });
         Schema::table('settings', function (Blueprint $table) {
-            $table->unsignedBigInteger('company_id')->default(1)->after('id');
+            $table->unsignedInteger('company_id')->nullable()->default(1)->after('id');
         });
     }
 
@@ -90,9 +91,6 @@ class AddCompanyIdColToAllTables extends Migration
             $table->dropColumn('company_id');
         });
         Schema::table('extra_documents', function (Blueprint $table) {
-            $table->dropColumn('company_id');
-        });
-        Schema::table('courts', function (Blueprint $table) {
             $table->dropColumn('company_id');
         });
         Schema::table('contract_categories', function (Blueprint $table) {
