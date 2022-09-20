@@ -28,9 +28,6 @@ class AddCompanyIdColToAllTables extends Migration
         Schema::table('contract_categories', function (Blueprint $table) {
             $table->unsignedInteger('company_id')->nullable()->default(1)->after('id');
         });
-        Schema::table('courts', function (Blueprint $table) {
-            $table->unsignedInteger('company_id')->nullable()->default(1)->after('id');
-        });
         Schema::table('extra_documents', function (Blueprint $table) {
             $table->unsignedInteger('company_id')->nullable()->default(1)->after('id');
         });
@@ -92,9 +89,6 @@ class AddCompanyIdColToAllTables extends Migration
             $table->dropColumn('company_id');
         });
         Schema::table('extra_documents', function (Blueprint $table) {
-            $table->dropColumn('company_id');
-        });
-        Schema::table('courts', function (Blueprint $table) {
             $table->dropColumn('company_id');
         });
         Schema::table('contract_categories', function (Blueprint $table) {
