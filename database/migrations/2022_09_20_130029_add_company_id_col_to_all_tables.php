@@ -28,9 +28,7 @@ class AddCompanyIdColToAllTables extends Migration
         Schema::table('contract_categories', function (Blueprint $table) {
             $table->unsignedBigInteger('company_id')->default(1)->after('id');
         });
-        Schema::table('courts', function (Blueprint $table) {
-            $table->unsignedBigInteger('company_id')->default(1)->after('id');
-        });
+       
         Schema::table('extra_documents', function (Blueprint $table) {
             $table->unsignedBigInteger('company_id')->default(1)->after('id');
         });
