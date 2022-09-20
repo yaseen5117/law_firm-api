@@ -282,6 +282,12 @@ class PetitionController extends Controller
                 ], CasePermissionService::$unauthorizedCode);
             }
             $petition = Petition::withRelations()->where('id', $id)->first();
+            if (!$petition) {
+                return response([
+                    "error" => "Not Found",
+                    "message" => "Not Found",
+                ], 500);
+            }
 
             $petition->lawyer_ids_array = $petition->lawyers()->pluck('lawyer_id');
             $petition_details = PetitionIndex::with('petition', 'attachments')->where('petition_id', $id)->orderby('display_order')->get();

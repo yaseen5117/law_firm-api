@@ -23,10 +23,11 @@ class PetitionOrderSheetController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->only(['']);
+        
     }
     public function index(Request $request)
     {
+        
         try {
             $petitionOrderSheets = PetitonOrderSheet::with('petition', 'attachments', 'order_sheet_types')->where('petition_id', $request->petition_id)->orderby('order_sheet_date', 'desc')->get();
 

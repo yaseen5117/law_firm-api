@@ -84,7 +84,7 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
 
     Route::post('delete_folder', 'AttachmentController@findOriginalFolder');
 
-    Route::POST('petition_order_sheets/by_petition', 'PetitionOrderSheetController@showOrderSheetByPetition');
+    
     Route::POST('get_next_hearing_ordersheet', 'PetitionOrderSheetController@getNextHearingOrderSheet');
     Route::POST('add_hearing_date', 'PetitionOrderSheetController@addNextHearingDateToOrderSheet');
     Route::POST('remove_hearing_date', 'PetitionOrderSheetController@removeNextHearingDate');
@@ -122,20 +122,23 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     //END route for Synopses forms
 
     Route::resource('petitions_index', 'PetitionIndexController'); //middleware added in controller __construct()
+
+    Route::post('delete_contact_request/{id}', 'FrontEndController@deleteContactRequest');
+    Route::post('module_index_details_judgements/{id}', 'JudgementController@judgementDetail');
+    Route::post('module_index_details_extra_documents/{id}', 'ExtraDocumentController@extraDocsDetail');
+    Route::post('module_index_details_case_laws/{id}', 'CaseLawController@caseLawDetail');
+
+    Route::post('module_index_details_oral_arguments/{id}', 'OralArgumentsController@oralArgumentDetail');
+    Route::resource('petition_order_sheets', 'PetitionOrderSheetController'); //middleware added in controller __construct()
+    Route::POST('petition_order_sheets/by_petition', 'PetitionOrderSheetController@showOrderSheetByPetition');
+    Route::post('petition_reply_details/{id}', 'PetitionReplyController@replyDetail');
 });
 
 //contact request to save
+Route::post('roles', 'Api\UserController@getRoles');
 Route::post('contact_requests', 'Api\FrontEndController@contactRequest'); //middleware added in controller __construct() for this route only
 
-Route::post('delete_contact_request/{id}', 'Api\FrontEndController@deleteContactRequest');
-Route::post('roles', 'Api\UserController@getRoles');
-Route::post('module_index_details_judgements/{id}', 'Api\JudgementController@judgementDetail');
-Route::post('module_index_details_extra_documents/{id}', 'Api\ExtraDocumentController@extraDocsDetail');
-Route::post('module_index_details_case_laws/{id}', 'Api\CaseLawController@caseLawDetail');
 
-Route::post('module_index_details_oral_arguments/{id}', 'Api\OralArgumentsController@oralArgumentDetail');
-Route::resource('petition_order_sheets', 'Api\PetitionOrderSheetController'); //middleware added in controller __construct()
-Route::post('petition_reply_details/{id}', 'Api\PetitionReplyController@replyDetail');
 // Public routes
 Route::post('register', 'AuthController@register');
 Route::post('login', 'AuthController@login');
@@ -176,8 +179,8 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
 
 // Route::resource('petition_replies', 'Api\PetitionReplyController');
 
-// Route::resource('petition_order_sheets', 'Api\PetitionOrderSheetController');
-// Route::POST('petition_order_sheets/by_petition', 'Api\PetitionOrderSheetController@showOrderSheetByPetition');
+
+
 // //START route for Talbana forms
 // Route::resource('petition_talbana', 'Api\PetitionTalbanaController');
 // Route::POST('petition_talbana/by_petition', 'Api\PetitionTalbanaController@showTalbanaByPetition');
