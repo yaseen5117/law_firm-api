@@ -60,6 +60,7 @@ Route::group(['middleware' => 'auth:sanctum', 'role:admin', 'namespace' => 'Api'
     Route::resource('attachments', 'AttachmentController');
 
     Route::resource('sample_pleadings', 'SamplePleadingController');
+    Route::resource('companies', 'CompanyController');
 });
 
 Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function () {

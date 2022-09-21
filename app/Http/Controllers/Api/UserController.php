@@ -51,7 +51,7 @@ class UserController extends Controller
                 $query->role($role->name);
             }
 
-            $users = $query->orderBy("is_approved")->orderBy("name")->paginate(10);
+            $users = $query->where("company_id", $request->user()->company_id)->orderBy("is_approved")->orderBy("name")->paginate(10);
 
             //$users = User::orderBy("name")->with('roles')->get();
             return response()->json(
@@ -129,20 +129,30 @@ class UserController extends Controller
                 // $request->merge([
                 //     'password' => bcrypt($request->password),                 
                 // ]);   
-
-
-                if ($request->is_approved) {
+                if (!$request->company_id) {
                     $request->merge([
-                        'approved_at' => now(),
-                        'approved_by' => $request->user()->id,
+                        'company_id' => $request->user()->company_id
                     ]);
                 } else {
                     $request->merge([
-                        'approved_at' => null,
-                        'approved_by' => null,
+                        'name' => "General"
                     ]);
+                    Setting::updateOrCreate(['company_id' => $request->company_id], $request->only('company_id', 'name'));
                 }
-                $user = User::updateOrCreate(['id' => $request->id], $request->except('file', 'created_at_formated_date', 'roles', 'editMode', 'confirm_password', 'role_id', 'contact_persons', 'send_email'));
+
+                // if ($request->is_approved) {
+                $request->merge([
+                    'approved_at' => now(),
+                    'approved_by' => $request->user()->id,
+                    'is_approved' => 1
+                ]);
+                // } else {
+                //     $request->merge([
+                //         'approved_at' => null,
+                //         'approved_by' => null,
+                //     ]);
+                // }
+                $user = User::updateOrCreate(['id' => $request->id], $request->except('name', 'file', 'created_at_formated_date', 'roles', 'editMode', 'confirm_password', 'role_id', 'contact_persons', 'send_email'));
                 if ($request->role_id) {
                     $role = Role::find($request->role_id);
                     $user->roles()->detach();
@@ -154,7 +164,7 @@ class UserController extends Controller
 
                 if (!empty($request->contact_persons)) {
                     foreach ($request->contact_persons as $contact_person) {
-                        $already_availabe_contact_person = User::where('email', $contact_person["email"])->first();
+                        $already_availabe_contact_person = User::where('email', $contact_person["email"])->where("company_id", $request->user()->company_id)->first();
                         if (empty($already_availabe_contact_person)) {
                             $contact_person['name'] = $contact_person["name"];
                             $contact_person['email'] = $contact_person["email"];
@@ -166,14 +176,14 @@ class UserController extends Controller
                             $contact_person_single->assignRole("client");
                         } else {
                             $contact_person['contact_person_parent_id'] = $user->id;
-                            $contact_person_single = User::where('id', $already_availabe_contact_person->id)->update(['contact_person_parent_id' => $user->id]);
+                            $contact_person_single = User::where('id', $already_availabe_contact_person->id)->where("company_id", $request->user()->company_id)->update(['contact_person_parent_id' => $user->id]);
                         }
                     }
                 }
                 //sending email to user 
                 if ($request->send_email) {
                     try {
-                        $setting = Setting::find(1)->getMeta();
+                        $setting = Setting::find($user->company_id)->getMeta();
                         $password = $request->password;
                         $login_url = url("login");
                         $send_email_and_password = true;
@@ -228,7 +238,7 @@ class UserController extends Controller
     public function show($id)
     {
         try {
-            $user = User::with('roles', 'contact_persons')->find($id);
+            $user = User::with('roles', 'contact_persons')->where("company_id", request()->user()->company_id)->find($id);
 
             if ($user) {
                 return response()->json(
@@ -281,7 +291,7 @@ class UserController extends Controller
     public function destroy($userId)
     {
         try {
-            $user = User::find($userId);
+            $user = User::where("id", $userId)->where("company_id", request()->user()->company_id)->first();
 
             if ($user) {
                 $user->delete();
@@ -299,7 +309,7 @@ class UserController extends Controller
     public function getClient(Request $request)
     {
         try {
-            $query = User::query()->role('client');
+            $query = User::query()->where("company_id", $request->user()->company_id)->role('client');
             if (!empty($request->serach_param)) {
                 $query->where('name', 'LIKE', "%$request->serach_param%");
             }
@@ -339,7 +349,7 @@ class UserController extends Controller
                     ->get();
             }
             if ($user->hasRole('admin')) {
-                $clients = User::role('client')->orderBy("name")->get();
+                $clients = User::role('client')->where("company_id", $user->company_id)->orderBy("name")->get();
             }
             return response()->json(
                 [
@@ -357,7 +367,8 @@ class UserController extends Controller
     public function getLawyer()
     {
         try {
-            $lawyers = User::role('lawyer')->orderBy("name")->get();
+            $user = request()->user();
+            $lawyers = User::role('lawyer')->where("company_id", $user->company_id)->orderBy("name")->get();
             $lawyerUsers = [];
             foreach ($lawyers as $lawyer) {
                 $lawyerUsers[] = [
@@ -431,7 +442,7 @@ class UserController extends Controller
                 $file_path = $file->storeAs('users/' . $user->id, $name, 'public');
             }
             try {
-                $setting = Setting::find(1)->getMeta();
+                $setting = Setting::find($request->user()->company_id)->getMeta();
                 $password = $request->password;
                 $login_url = url("login");
                 $send_email_and_password = false;

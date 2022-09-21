@@ -60,7 +60,8 @@ class EmailService
 	{
 		try {
 			info("EmailService: send_email_before_hearing for Hearing $tomorrow_hearing->id");
-			$setting = Setting::find(1)->getMeta()->toArray();
+			$user = request()->user();
+			$setting = Setting::find($user->company_id)->getMeta()->toArray();
 			$petition = $tomorrow_hearing->petition;
 
 			if ($petition->petitioners->count() > 0) {

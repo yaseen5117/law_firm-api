@@ -134,7 +134,7 @@ class AttachmentController extends Controller
                         //END To Resize Images
 
                         //WE DONT WANT TO SAVE PDF IN DATABASE. BECAUSE WE ONLY CONVERT PDF TO IMAGES AND THEN SAVE THOSE IMAGES IN DATABASE.
-                        $setting = Setting::find(1);
+                        $setting = Setting::find($request->user()->company_id);
                         $request->merge([
                             'site_file_name' => $file_name
                         ]);
@@ -285,7 +285,7 @@ class AttachmentController extends Controller
                 "error" => "No files available"
             ], 404);
         } catch (\Exception $e) {
-            info("error in attachmetn controller line : ".__LINE__." message: ".$e->getMessage());
+            info("error in attachmetn controller line : " . __LINE__ . " message: " . $e->getMessage());
             return response([
                 "error" => $e->getMessage()
             ], 500);
@@ -339,7 +339,7 @@ class AttachmentController extends Controller
                 );
             }
         } catch (\Exception $e) {
-            info("error in attachmetn controller line : ".__LINE__." message: ".$e->getMessage());
+            info("error in attachmetn controller line : " . __LINE__ . " message: " . $e->getMessage());
             return response([
                 "error" => $e->getMessage()
             ], 500);
@@ -377,7 +377,7 @@ class AttachmentController extends Controller
                 );
             }
         } catch (\Exception $e) {
-            info("error in attachmetn controller line : ".__LINE__." message: ".$e->getMessage());
+            info("error in attachmetn controller line : " . __LINE__ . " message: " . $e->getMessage());
             return response([
                 "error" => $e->getMessage()
             ], 500);
@@ -423,7 +423,7 @@ class AttachmentController extends Controller
                 );
             }
         } catch (\Exception $e) {
-            info("error in attachmetn controller line : ".__LINE__." message: ".$e->getMessage());
+            info("error in attachmetn controller line : " . __LINE__ . " message: " . $e->getMessage());
             return response([
                 "error" => $e->getMessage()
             ], 500);
@@ -542,7 +542,7 @@ class AttachmentController extends Controller
                 $page_counter++;
             }
         } catch (\Exception $e) {
-            info("error in attachmetn controller line : ".__LINE__." message: ".$e->getMessage());
+            info("error in attachmetn controller line : " . __LINE__ . " message: " . $e->getMessage());
         }
         /****************CONVERTING PDF TO IMAGES**********************/
         info("****************CONVERTING PDF TO IMAGES END**********************");
