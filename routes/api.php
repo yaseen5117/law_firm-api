@@ -40,6 +40,7 @@ Route::group(['middleware' => 'auth:sanctum', 'role:admin', 'namespace' => 'Api'
     Route::get('clients', 'UserController@getClient');
     Route::get('client_users', 'UserController@getClientUsers');
     Route::get('lawyers', 'UserController@getLawyer');
+    Route::post('upload_user_image', 'UserController@uploadImage');
 
     //contact request    
     Route::get('get_contact_requests', 'FrontEndController@getContactRequest');
