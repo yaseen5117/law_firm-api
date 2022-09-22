@@ -22,16 +22,15 @@ class PetitionHearing extends Model
         static::addGlobalScope(new CompanyScope);
     }
 
-    public static function boot()
+    protected static function boot()
     {
-        
-        self::created(function($model){
-            $model->update([
-                'company_id'=>request()->user()->company_id
-            ]);
-            
+        parent::boot();
+        static::created(function ($model) {
+            $model->company_id = request()->user()->company_id;
+            $model->save();
         });
     }
+    
 
 
 }
