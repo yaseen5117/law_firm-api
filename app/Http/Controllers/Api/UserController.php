@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Models\Role;
 use App\Models\Setting;
 use App\Models\User;
@@ -129,15 +130,30 @@ class UserController extends Controller
                 // $request->merge([
                 //     'password' => bcrypt($request->password),                 
                 // ]);   
+                $setting = null;
                 if (!$request->company_id) {
                     $request->merge([
                         'company_id' => $request->user()->company_id
                     ]);
                 } else {
-                    $request->merge([
-                        'name' => "General"
-                    ]);
-                    Setting::updateOrCreate(['company_id' => $request->company_id], $request->only('company_id', 'name'));
+                    if ($request->company_name) {
+                        $request->merge([
+                            'site_name' => $request->company_name,
+                        ]);
+                    } else {
+                        $company = Company::find($request->company_id);
+                        $request->merge([
+                            'site_name' => $company->name,
+                        ]);
+                    }
+                    $setting_data = array(
+                        'name' => "General",
+                    );
+
+                    $setting = Setting::updateOrCreate(['company_id' => $request->company_id], $setting_data);
+
+                    $setting->setMeta($request->only('site_name'));
+                    $setting->save();
                 }
 
                 // if ($request->is_approved) {
@@ -152,7 +168,8 @@ class UserController extends Controller
                 //         'approved_by' => null,
                 //     ]);
                 // }
-                $user = User::updateOrCreate(['id' => $request->id], $request->except('name', 'file', 'created_at_formated_date', 'roles', 'editMode', 'confirm_password', 'role_id', 'contact_persons', 'send_email'));
+                $user = User::updateOrCreate(['id' => $request->id], $request->except('file', 'created_at_formated_date', 'roles', 'editMode', 'confirm_password', 'role_id', 'contact_persons', 'send_email'));
+
                 if ($request->role_id) {
                     $role = Role::find($request->role_id);
                     $user->roles()->detach();
@@ -183,7 +200,10 @@ class UserController extends Controller
                 //sending email to user 
                 if ($request->send_email) {
                     try {
-                        $setting = Setting::find($user->company_id)->getMeta();
+                        if (!$request->company_id) {
+                            $setting = Setting::where('company_id', $user->company_id)->first()->getMeta();
+                        }
+
                         $password = $request->password;
                         $login_url = url("login");
                         $send_email_and_password = true;
@@ -422,7 +442,8 @@ class UserController extends Controller
             }
             //initially set is_approved bit to false.
             $request->merge([
-                'is_approved' => 0
+                'is_approved' => 0,
+                'company_id' => 1
             ]);
             // $request->merge([
             //     'password' => bcrypt($request->password),                 
