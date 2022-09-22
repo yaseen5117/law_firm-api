@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attachment;
 use App\Models\Company;
 use App\Models\Role;
 use App\Models\Setting;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use function GuzzleHttp\Promise\all;
+use File;
 
 class UserController extends Controller
 {
@@ -257,7 +259,7 @@ class UserController extends Controller
     public function show($id)
     {
         try {
-            $user = User::with('roles', 'contact_persons')->where("company_id", request()->user()->company_id)->find($id);
+            $user = User::with('roles', 'contact_persons', 'attachment')->where("company_id", request()->user()->company_id)->find($id);
 
             if ($user) {
                 return response()->json(
@@ -502,5 +504,42 @@ class UserController extends Controller
                 'code' => 200
             ]
         );
+    }
+    public function uploadImage(Request $request)
+    {
+        $files = $request->file('files');
+        if ($files) {
+            foreach ($files as $key => $file) {
+                info("UserController uploadImage Function: File mime_type: " . $file->getClientMimeType());
+                $file_name = time() . '_' . $file->getClientOriginalName();
+                Attachment::where('attachmentable_type', $request->attachmentable_id)->where('attachmentable_type', 'App\Models\User')->delete();
+                $public_path =  public_path();
+                $file_path = $public_path . '/storage/attachments/user/' . $request->attachmentable_id;
+                if (File::exists($file_path)) {
+                    File::deleteDirectory($file_path);
+                }
+                $file_path = $file->storeAs('attachments/user/' . $request->attachmentable_id . '/', $file_name, 'public');
+                $mime_type = $file->getClientMimeType();
+
+                $file_name = time() . '_' . $file->getClientOriginalName();
+                $title = $file_name;
+                $attachmentable_type = "App\Models\User";
+                $attachmentable_id = $request->attachmentable_id;
+                Attachment::updateOrCreate(
+                    [
+                        'attachmentable_id' => $attachmentable_id,
+                        'attachmentable_type' => $attachmentable_type
+                    ],
+                    [
+                        'file_name' => $file_name,
+                        'title' => $title,
+                        'attachmentable_type' => $attachmentable_type,
+                        'attachmentable_id' => $attachmentable_id,
+                        'mime_type' => $mime_type,
+                    ]
+                );
+            }
+            return response("Uploaded User Profile Image Successfully", 200);
+        }
     }
 }

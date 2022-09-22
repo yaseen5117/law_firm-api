@@ -59,6 +59,7 @@ Route::group(['middleware' => 'auth:sanctum', 'role:admin', 'namespace' => 'Api'
     //END route for General Case Law
 
     Route::resource('attachments', 'AttachmentController');
+    Route::post('petition_reply_details/{id}', 'PetitionReplyController@replyDetail');
 
     Route::resource('sample_pleadings', 'SamplePleadingController');
     Route::resource('companies', 'CompanyController');
@@ -133,7 +134,6 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::post('module_index_details_oral_arguments/{id}', 'OralArgumentsController@oralArgumentDetail');
     Route::resource('petition_order_sheets', 'PetitionOrderSheetController'); //middleware added in controller __construct()
     Route::POST('petition_order_sheets/by_petition', 'PetitionOrderSheetController@showOrderSheetByPetition');
-    Route::post('petition_reply_details/{id}', 'PetitionReplyController@replyDetail');
 });
 
 //contact request to save
