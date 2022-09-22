@@ -19,7 +19,7 @@ class SettingController extends Controller
         try {
 
             $request_domain = \Request::root();
-
+            info("Request domain $request_domain");
             //logged in User
             $user = request()->user();
 
