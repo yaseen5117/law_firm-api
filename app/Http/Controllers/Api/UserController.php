@@ -151,7 +151,6 @@ class UserController extends Controller
                     );
 
                     $setting = Setting::updateOrCreate(['company_id' => $request->company_id], $setting_data);
-
                     $setting->setMeta($request->only('site_name'));
                     $setting->save();
                 }
