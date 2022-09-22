@@ -105,7 +105,7 @@ class User extends Authenticatable
 
     public function nextInvoiceNum()
     {
-        $maxId = $this->invoices->max('id') + 1;
+        $maxId = $this->invoices()->withoutGlobalScopes()->max('id') + 1;
         return $invoiceNum = initialism($this->name) . "-" . $maxId . "-" . date("Y");
     }
 

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Scopes\CompanyScope;
 
 class Invoice extends Model
 {
@@ -16,6 +17,28 @@ class Invoice extends Model
         'due_date'  => 'date:d/m/Y',
         'paid_date'  => 'date:d/m/Y',
     ];
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new CompanyScope);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::created(function ($model) {
+            $model->company_id = request()->user()->company_id;
+            $model->invoice_sender_id = request()->user()->id;
+            $model->save();
+        });
+    }
+
 
     public function status()
     {

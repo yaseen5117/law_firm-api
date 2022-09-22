@@ -30,6 +30,15 @@ class Petition extends Model
         static::addGlobalScope(new CompanyScope);
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+        static::created(function ($model) {
+            $model->company_id = request()->user()->company_id;
+            $model->save();
+        });
+    }
+
 
     public function court()
     {

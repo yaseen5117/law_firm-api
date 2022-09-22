@@ -16,7 +16,10 @@ class SettingController extends Controller
     public function index()
     {
         try {
-            $setting = Setting::find(1)->getMeta()->toArray();
+            //logged in User
+            $user = request()->user();
+
+            $setting = Setting::find($user->company_id)->getMeta()->toArray();
             if (empty($setting["additionalemails"])) {
                 $setting["additionalemails"] = [];
             }
@@ -60,7 +63,9 @@ class SettingController extends Controller
             //     ['additionalemails' => $additional_emails_arr]
             // );
             //return response($additional_emails_arr,422);
-            $setting = Setting::find(1);
+            //logged in user
+            $user = request()->user();
+            $setting = Setting::find($user->company_id);
             $setting->setMeta($request->all());
             $setting->save();
             return response("Success", 200);

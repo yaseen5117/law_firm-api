@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Attachment;
+use App\Models\Company;
 use App\Models\Role;
 use App\Models\Setting;
 use App\Models\User;
@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use function GuzzleHttp\Promise\all;
-use File;
 
 class UserController extends Controller
 {
@@ -31,7 +30,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = User::with('roles', 'attachment', 'contact_persons')->excludeContactPersons();
+            $query = User::with('roles', 'contact_persons')->excludeContactPersons();
             if ($request->is_approved) {
                 if ($request->is_approved < 2) {
                     $query->where("is_approved", $request->is_approved);
@@ -53,7 +52,7 @@ class UserController extends Controller
                 $query->role($role->name);
             }
 
-            $users = $query->orderBy("is_approved")->orderBy("name")->paginate(10);
+            $users = $query->where("company_id", $request->user()->company_id)->orderBy("is_approved")->orderBy("name")->paginate(10);
 
             //$users = User::orderBy("name")->with('roles')->get();
             return response()->json(
@@ -105,28 +104,83 @@ class UserController extends Controller
                         401
                     );
                 }
+                // }else{
+                //     $validator = Validator::make($request->all(), [                
+                //         'password' => 'required', 
+                //         'email' => 'required|email|unique:users,email,'.$request->id,                              
+                //     ]);
+                //     if ($validator->fails()) {
+                //         return response()->json(
+                //             [
+                //                 'validation_error' => $validator->errors(),
+                //                 'error' => "Validation error..!"
+                //         ], 401);
+                //     } 
+                // }                   
 
-                if ($request->is_approved) {
+                $file = $request->file('file');
+
+                if ($file) {
+                    $name = time() . '_' . $file->getClientOriginalName();
+                    $file_name = time() . '_' . $file->getClientOriginalName();
                     $request->merge([
-                        'approved_at' => now(),
-                        'approved_by' => $request->user()->id,
-                    ]);
-                } else {
-                    $request->merge([
-                        'approved_at' => null,
-                        'approved_by' => null,
+                        'profile_image' => $file_name
                     ]);
                 }
+                // $request->merge([
+                //     'password' => bcrypt($request->password),                 
+                // ]);   
+                $setting = null;
+                if (!$request->company_id) {
+                    $request->merge([
+                        'company_id' => $request->user()->company_id
+                    ]);
+                } else {
+                    if ($request->company_name) {
+                        $request->merge([
+                            'site_name' => $request->company_name,
+                        ]);
+                    } else {
+                        $company = Company::find($request->company_id);
+                        $request->merge([
+                            'site_name' => $company->name,
+                        ]);
+                    }
+                    $setting_data = array(
+                        'name' => "General",
+                    );
+
+                    $setting = Setting::updateOrCreate(['company_id' => $request->company_id], $setting_data);
+                    $setting->setMeta($request->only('site_name'));
+                    $setting->save();
+                }
+
+                // if ($request->is_approved) {
+                $request->merge([
+                    'approved_at' => now(),
+                    'approved_by' => $request->user()->id,
+                    'is_approved' => 1
+                ]);
+                // } else {
+                //     $request->merge([
+                //         'approved_at' => null,
+                //         'approved_by' => null,
+                //     ]);
+                // }
                 $user = User::updateOrCreate(['id' => $request->id], $request->except('file', 'created_at_formated_date', 'roles', 'editMode', 'confirm_password', 'role_id', 'contact_persons', 'send_email'));
+
                 if ($request->role_id) {
                     $role = Role::find($request->role_id);
                     $user->roles()->detach();
                     $user->assignRole($role->name);
                 }
+                if ($file) {
+                    $file_path = $file->storeAs('users/' . $user->id, $name, 'public');
+                }
 
                 if (!empty($request->contact_persons)) {
                     foreach ($request->contact_persons as $contact_person) {
-                        $already_availabe_contact_person = User::where('email', $contact_person["email"])->first();
+                        $already_availabe_contact_person = User::where('email', $contact_person["email"])->where("company_id", $request->user()->company_id)->first();
                         if (empty($already_availabe_contact_person)) {
                             $contact_person['name'] = $contact_person["name"];
                             $contact_person['email'] = $contact_person["email"];
@@ -138,14 +192,17 @@ class UserController extends Controller
                             $contact_person_single->assignRole("client");
                         } else {
                             $contact_person['contact_person_parent_id'] = $user->id;
-                            $contact_person_single = User::where('id', $already_availabe_contact_person->id)->update(['contact_person_parent_id' => $user->id]);
+                            $contact_person_single = User::where('id', $already_availabe_contact_person->id)->where("company_id", $request->user()->company_id)->update(['contact_person_parent_id' => $user->id]);
                         }
                     }
                 }
                 //sending email to user 
                 if ($request->send_email) {
                     try {
-                        $setting = Setting::find(1)->getMeta();
+                        if (!$request->company_id) {
+                            $setting = Setting::where('company_id', $user->company_id)->first()->getMeta();
+                        }
+
                         $password = $request->password;
                         $login_url = url("login");
                         $send_email_and_password = true;
@@ -169,8 +226,7 @@ class UserController extends Controller
                     [
                         'user' => $user,
                         'status' => 200
-                    ],
-                    200
+                    ]
                 );
             } else {
                 return response(
@@ -201,7 +257,7 @@ class UserController extends Controller
     public function show($id)
     {
         try {
-            $user = User::with('roles', 'attachment', 'contact_persons')->find($id);
+            $user = User::with('roles', 'contact_persons')->where("company_id", request()->user()->company_id)->find($id);
 
             if ($user) {
                 return response()->json(
@@ -254,7 +310,7 @@ class UserController extends Controller
     public function destroy($userId)
     {
         try {
-            $user = User::find($userId);
+            $user = User::where("id", $userId)->where("company_id", request()->user()->company_id)->first();
 
             if ($user) {
                 $user->delete();
@@ -272,7 +328,7 @@ class UserController extends Controller
     public function getClient(Request $request)
     {
         try {
-            $query = User::query()->role('client');
+            $query = User::query()->where("company_id", $request->user()->company_id)->role('client');
             if (!empty($request->serach_param)) {
                 $query->where('name', 'LIKE', "%$request->serach_param%");
             }
@@ -312,7 +368,7 @@ class UserController extends Controller
                     ->get();
             }
             if ($user->hasRole('admin')) {
-                $clients = User::role('client')->orderBy("name")->get();
+                $clients = User::role('client')->where("company_id", $user->company_id)->orderBy("name")->get();
             }
             return response()->json(
                 [
@@ -330,7 +386,8 @@ class UserController extends Controller
     public function getLawyer()
     {
         try {
-            $lawyers = User::role('lawyer')->orderBy("name")->get();
+            $user = request()->user();
+            $lawyers = User::role('lawyer')->where("company_id", $user->company_id)->orderBy("name")->get();
             $lawyerUsers = [];
             foreach ($lawyers as $lawyer) {
                 $lawyerUsers[] = [
@@ -373,10 +430,23 @@ class UserController extends Controller
                 );
             }
 
+            $file = $request->file('file');
+
+            if ($file) {
+                $name = time() . '_' . $file->getClientOriginalName();
+                $file_name = time() . '_' . $file->getClientOriginalName();
+                $request->merge([
+                    'profile_image' => $file_name
+                ]);
+            }
             //initially set is_approved bit to false.
             $request->merge([
-                'is_approved' => 0
+                'is_approved' => 0,
+                'company_id' => 1
             ]);
+            // $request->merge([
+            //     'password' => bcrypt($request->password),                 
+            // ]);   
 
             $user = User::updateOrCreate(['id' => $request->id], $request->except('file', 'created_at_formated_date', 'roles', 'editMode', 'confirm_password', 'role_name'));
 
@@ -388,8 +458,11 @@ class UserController extends Controller
                 $user->assignRole('client');
             }
 
+            if ($file) {
+                $file_path = $file->storeAs('users/' . $user->id, $name, 'public');
+            }
             try {
-                $setting = Setting::find(1)->getMeta();
+                $setting = Setting::find($request->user()->company_id)->getMeta();
                 $password = $request->password;
                 $login_url = url("login");
                 $send_email_and_password = false;
@@ -411,8 +484,7 @@ class UserController extends Controller
                 [
                     'user' => $user,
                     'status' => 200
-                ],
-                200
+                ]
             );
         } catch (\Exception $e) {
             return response([
@@ -430,42 +502,5 @@ class UserController extends Controller
                 'code' => 200
             ]
         );
-    }
-    public function uploadImage(Request $request)
-    {
-        $files = $request->file('files');
-        if ($files) {
-            foreach ($files as $key => $file) {
-                info("UserController uploadImage Function: File mime_type: " . $file->getClientMimeType());
-                $file_name = time() . '_' . $file->getClientOriginalName();
-                Attachment::where('attachmentable_type', $request->attachmentable_id)->where('attachmentable_type', 'App\Models\User')->delete();
-                $public_path =  public_path();
-                $file_path = $public_path . '/storage/attachments/user/' . $request->attachmentable_id;
-                if (File::exists($file_path)) {
-                    File::deleteDirectory($file_path);
-                }
-                $file_path = $file->storeAs('attachments/user/' . $request->attachmentable_id . '/', $file_name, 'public');
-                $mime_type = $file->getClientMimeType();
-
-                $file_name = time() . '_' . $file->getClientOriginalName();
-                $title = $file_name;
-                $attachmentable_type = "App\Models\User";
-                $attachmentable_id = $request->attachmentable_id;
-                Attachment::updateOrCreate(
-                    [
-                        'attachmentable_id' => $attachmentable_id,
-                        'attachmentable_type' => $attachmentable_type
-                    ],
-                    [
-                        'file_name' => $file_name,
-                        'title' => $title,
-                        'attachmentable_type' => $attachmentable_type,
-                        'attachmentable_id' => $attachmentable_id,
-                        'mime_type' => $mime_type,
-                    ]
-                );
-            }
-            return response("Uploaded User Profile Image Successfully", 200);
-        }
     }
 }
