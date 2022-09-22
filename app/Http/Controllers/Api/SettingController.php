@@ -14,6 +14,10 @@ class SettingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        $this->middleware('role:admin')->except(['index']);
+    }
     public function index()
     {
         try {
@@ -23,17 +27,17 @@ class SettingController extends Controller
             //logged in User
             $user = request()->user();
 
-            if ($user && $user->company_id>0) {
-                
+            if ($user && $user->company_id > 0) {
+
                 $setting = Setting::find($user->company_id)->getMeta()->toArray();
-            }else{
-                
-                $allowed_domains = ["http://localhost:8080/","https://elawfirmpk.com/"];
+            } else {
+
+                $allowed_domains = ["http://localhost:8080/", "https://elawfirmpk.com/"];
 
                 if (in_array($request_domain, $allowed_domains)) {
-                    $company = Company::where('id',1)->first();
-                }else{
-                    $company = Company::where('domain',$request_domain)->first();
+                    $company = Company::where('id', 1)->first();
+                } else {
+                    $company = Company::where('domain', $request_domain)->first();
                 }
 
                 if (!$company) {
