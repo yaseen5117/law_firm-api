@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Models\Company;
 use Illuminate\Http\Request;
 
 class SettingController extends Controller
@@ -16,10 +17,34 @@ class SettingController extends Controller
     public function index()
     {
         try {
+
+            $request_domain = \Request::root();
+
             //logged in User
             $user = request()->user();
 
-            $setting = Setting::find($user->company_id)->getMeta()->toArray();
+            if ($user && $user->company_id>0) {
+                
+                $setting = Setting::find($user->company_id)->getMeta()->toArray();
+            }else{
+                
+                $allowed_domains = ["http://localhost:8000","https://localhost:8000","https://elawfirmpk.com"];
+
+                if (in_array($request_domain, $allowed_domains)) {
+                    $company = Company::where('id',1)->first();
+                }else{
+                    $company = Company::where('domain',$request_domain)->first();
+                }
+
+                if (!$company) {
+                    return response([
+                        "error" => "domain is unauthorized"
+                    ], 401);
+                }
+
+                $setting = Setting::withoutGlobalScopes()->find($company->id)->getMeta()->toArray();
+            }
+
             if (empty($setting["additionalemails"])) {
                 $setting["additionalemails"] = [];
             }

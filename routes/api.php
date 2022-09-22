@@ -30,7 +30,7 @@ Route::group(['middleware' => 'auth:sanctum', 'role:admin', 'namespace' => 'Api'
     Route::resource('links', 'LinkController');
 
     Route::get('contract_categories', 'ContractsAndAgreementController@contractCategory');
-    Route::resource('settings', 'SettingController');
+    
     Route::get('settings', 'SettingController@index');
     Route::get('get_order_sheet_types', 'PetitionOrderSheetController@getOrderSheetTypes');
     Route::get('get_naqal_form_types', 'NaqalFormController@getNaqalFormTypes');
@@ -142,6 +142,7 @@ Route::post('contact_requests', 'Api\FrontEndController@contactRequest'); //midd
 
 
 // Public routes
+Route::resource('settings', 'Api\SettingController');
 Route::post('register', 'AuthController@register');
 Route::post('login', 'AuthController@login');
 Route::post('signup', 'Api\UserController@signUp');
