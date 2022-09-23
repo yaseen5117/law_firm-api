@@ -15,7 +15,7 @@ class Attachment extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new CompanyScope);
+        //static::addGlobalScope(new CompanyScope);
     }
 
     protected static function boot()
