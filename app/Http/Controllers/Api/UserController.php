@@ -132,7 +132,8 @@ class UserController extends Controller
                 // $request->merge([
                 //     'password' => bcrypt($request->password),                 
                 // ]);   
-                $setting = null;
+
+                $companyID = $request->company_id;
                 if (!$request->company_id) {
                     $request->merge([
                         'company_id' => $request->user()->company_id
@@ -201,8 +202,8 @@ class UserController extends Controller
                 //sending email to user 
                 if ($request->send_email) {
                     try {
-                        if (!$request->company_id) {
-                            $setting = Setting::where('company_id', $user->company_id)->first()->getMeta();
+                        if (empty($companyID)) {
+                            $setting = Setting::where('company_id', request()->user()->company_id)->first();
                         }
 
                         $password = $request->password;

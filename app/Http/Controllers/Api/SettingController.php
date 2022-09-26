@@ -16,7 +16,7 @@ class SettingController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->except(['index']);
+        $this->middleware(['auth:sanctum', 'role:admin'])->except(['index']);
     }
     public function index()
     {

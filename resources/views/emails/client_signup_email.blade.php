@@ -17,7 +17,7 @@
     @endif
     <p>You can always change your password by logging in. <span style="color: red; font-weight: bold">Please do not share your login details with any one.</span> </p>
     <p>To proceed to Login page, please click the link below:</p>
-    <a href="{{@$login_url}}" target="_blank">{{@$login_url}}</a>
+    <a href="{{@$setting['site_url']}}/login" target="_blank">{{@$setting['site_url']}}/login</a>
     <p><b>Regards,</b></p>
     <p>ELAWFIRM TEAM</p>
 </body>
