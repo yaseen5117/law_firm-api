@@ -24,7 +24,6 @@ Route::get('/generate_slugs', 'TestController@generate_slugs');
 Route::get('/pdf_to_img', 'TestController@pdf_to_img');
 Route::get('download_invoice_pdf/{id}', 'Api\InvoiceController@downloadInvoicePdf');
 Route::get('download_petition_pdf/{id}', 'Api\PetitionController@downloadPetitionPdf');
-Route::get('send_email_before_hearing', 'Api\CronjobController@send_email_before_hearing');
 Route::get('download_pending_cases_pdf', 'Api\PetitionController@downloadPendingCase');
 Route::get('convert_word_to_pdf', 'Api\AttachmentController@convertWordToPDF');
 //Route to Move all files from old to new folder structure.
@@ -40,6 +39,11 @@ Route::get('move_synopsis_files/{id}', 'Api\AttachmentController@copySynopsisFil
 Route::get('move_judgement_files/{id}', 'Api\AttachmentController@copyJudgementFiles');
 Route::get('send_client_signup_email', 'Api\UserController@clientEmail');
 Route::get('create_petiiton_types_abbreviation', 'Api\PetitionTypeController@createAbbreviation');
+
+
+/*ALL CRONJOBS*/
+Route::get('send_email_before_hearing', 'Api\CronjobController@send_email_before_hearing');
+/*ALL CRONJOBS*/
 
 Route::get('phpmyinfo', function () {
     phpinfo();
