@@ -61,7 +61,8 @@ class EmailService
 		try {
 			info("EmailService: send_email_before_hearing for Hearing $tomorrow_hearing->id");
 			$user = request()->user();
-			$setting = Setting::getSetting();
+			
+			$setting = Setting::withoutGlobalScopes()->whereCompanyId($tomorrow_hearing->company_id)->first();
 			//[
 			// 	"site_name" => "site Name",
 			// 	"site_url" => "Url"
