@@ -22,7 +22,7 @@ class UserController extends Controller
 
     public function __construct()
     {
-        $this->middleware("role:admin", ['except' => ['store', 'show', 'index', 'getClient', 'getLoggedInUser', 'getRoles', 'signUp', 'getLawyer', 'getClientUsers', 'clientEmail']]);
+        $this->middleware("role:admin", ['except' => ['store', 'show', 'getClient', 'getLoggedInUser', 'getRoles', 'signUp', 'getLawyer', 'getClientUsers', 'clientEmail', 'uploadImage']]);
     }
     /**
      * Display a listing of the resource.
@@ -92,6 +92,11 @@ class UserController extends Controller
     {
         DB::beginTransaction();
         try {
+            if (!$request->user()->hasRole('admin') && !$request->id) {
+                return response([
+                    "error" => "Unauthorized User!"
+                ], 401);
+            }
             if ($request->id == $request->user()->id || $request->user()->hasRole('admin')) {
                 // if($request->id){
                 $validator = Validator::make($request->all(), [
@@ -228,6 +233,7 @@ class UserController extends Controller
                 return response(
                     [
                         'user' => $user,
+                        "is_admin_user" => $request->user()->hasRole('admin') ? true : false,
                         'status' => 200
                     ]
                 );

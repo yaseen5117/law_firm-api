@@ -30,7 +30,7 @@ Route::group(['middleware' => 'auth:sanctum', 'role:admin', 'namespace' => 'Api'
     Route::resource('links', 'LinkController');
 
     Route::get('contract_categories', 'ContractsAndAgreementController@contractCategory');
-    
+
     Route::get('settings', 'SettingController@index');
     Route::get('get_order_sheet_types', 'PetitionOrderSheetController@getOrderSheetTypes');
     Route::get('get_naqal_form_types', 'NaqalFormController@getNaqalFormTypes');
@@ -40,7 +40,6 @@ Route::group(['middleware' => 'auth:sanctum', 'role:admin', 'namespace' => 'Api'
     Route::get('clients', 'UserController@getClient');
     Route::get('client_users', 'UserController@getClientUsers');
     Route::get('lawyers', 'UserController@getLawyer');
-    Route::post('upload_user_image', 'UserController@uploadImage');
 
     //contact request    
     Route::get('get_contact_requests', 'FrontEndController@getContactRequest');
@@ -134,6 +133,9 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::post('module_index_details_oral_arguments/{id}', 'OralArgumentsController@oralArgumentDetail');
     Route::resource('petition_order_sheets', 'PetitionOrderSheetController'); //middleware added in controller __construct()
     Route::POST('petition_order_sheets/by_petition', 'PetitionOrderSheetController@showOrderSheetByPetition');
+
+    //upload user image route
+    Route::post('upload_user_image', 'UserController@uploadImage');
 });
 
 //contact request to save

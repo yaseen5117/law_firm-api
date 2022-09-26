@@ -16,8 +16,8 @@
         clients and other users and to generate invoices.
     </p>
     <p>Your Email and Password are provided below:</p>
-    <p><b>Email: <u>{{@$user->email}}</u></b></p>
-    <p><b>Password: <u>{{@$password}}</u></b></p>
+    <p><b>Email:</b> <u>{{@$user->email}}</u></p>
+    <p><b>Password:</b> <u>{{@$password}}</u></p>
     <p>You can always change your password by logging in. <span style="color: red; font-weight: bold">Please do not share your login details with any one.</span> </p>
     <p>To proceed to Login page, please click the link below:</p>
     <a href="{{@$setting['site_url']}}/login" target="_blank">{{@$setting['site_url']}}/login</a>
