@@ -265,7 +265,7 @@ class AttachmentController extends Controller
                     }
                 }
 
-                //SENDING EMAIL VIA QUEUE JOB
+                //SENDING EMAIL VIA QUEUE JOB                
                 $jobSendEmail = (new SendDocumentUploadEmail($attachmentable_type, $attachmentable_id))->delay(Carbon::now()->addSeconds(50));
                 $this->dispatch($jobSendEmail);
 

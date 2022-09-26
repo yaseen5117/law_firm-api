@@ -22,7 +22,7 @@ class CronjobController extends Controller
         info("CronjobController: send_email_before_hearing: START at " . date("d-M-Y h:i:s a"));
 
         $date_tomorrow = Date("Y-m-d", strtotime("+1 day"));
-        $hearings_tomorrow = PetitionHearing::where('hearing_date', $date_tomorrow)->get();
+        $hearings_tomorrow = PetitionHearing::withoutGlobalScopes()->where('hearing_date', $date_tomorrow)->get();
         foreach ($hearings_tomorrow as $tomorrow_hearing) {
             $emailService->send_email_before_hearing($tomorrow_hearing);
         }

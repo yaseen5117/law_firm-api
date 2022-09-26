@@ -61,8 +61,12 @@ class EmailService
 		try {
 			info("EmailService: send_email_before_hearing for Hearing $tomorrow_hearing->id");
 			$user = request()->user();
-			$setting = Setting::find($user->company_id)->getMeta()->toArray();
-			$petition = $tomorrow_hearing->petition;
+			$setting = Setting::getSetting();
+			//[
+			// 	"site_name" => "site Name",
+			// 	"site_url" => "Url"
+			// ]; 
+			$petition = $tomorrow_hearing->petition()->withoutGlobalScopes()->first();
 
 			if ($petition->petitioners->count() > 0) {
 				info("EmailService: send_email_before_hearing to petitioners" . print_r($petition->petitioners->pluck('petitioner_id')->all(), 1));

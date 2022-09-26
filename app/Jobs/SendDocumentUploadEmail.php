@@ -15,6 +15,7 @@ use App\Models\ExtraDocument;
 use App\Models\Invoice;
 use App\Models\Judgement;
 use App\Models\OralArgument;
+use App\Models\Petition;
 use App\Models\Setting;
 use App\Models\PetitionReply;
 use App\Models\PetitonOrderSheet;
@@ -54,63 +55,63 @@ class SendDocumentUploadEmail implements ShouldQueue
         switch ($attachmentable_type) {
             case 'App\Models\PetitonOrderSheet':
                 $entity_title = "Order Sheet";
-                $petition_ordersheet = PetitonOrderSheet::find($attachmentable_id);
-                $petition = $petition_ordersheet->petition;
+                $petition_ordersheet = PetitonOrderSheet::withoutGlobalScopes()->find($attachmentable_id);
+                $petition = $petition_ordersheet->petition->withoutGlobalScopes()->first();
                 break;
 
             case 'App\Models\PetitionIndex':
                 //id22
                 $entity_title = "Petition Index";
-                $petition_index = PetitionIndex::find($attachmentable_id);
-                $petition = $petition_index->petition;
+                $petition_index = PetitionIndex::withoutGlobalScopes()->find($attachmentable_id);
+                $petition = $petition_index->petition()->withoutGlobalScopes()->first();
                 break;
 
             case 'App\Models\PetitionReply':
                 $entity_title = "Replies";
-                $petition_reply = PetitionReply::find($attachmentable_id);
-                $petition = $petition_reply->petition_reply_parent->petition;
+                $petition_reply = PetitionReply::withoutGlobalScopes()->find($attachmentable_id);
+                $petition = $petition_reply->petition_reply_parent->petition()->withoutGlobalScopes()->first();
                 break;
 
             case 'App\Models\OralArgument':
                 $entity_title = "Oral Argument";
-                $petition_oral_argument = OralArgument::find($attachmentable_id);
-                $petition = $petition_oral_argument->petition;
+                $petition_oral_argument = OralArgument::withoutGlobalScopes()->find($attachmentable_id);
+                $petition = $petition_oral_argument->petition()->withoutGlobalScopes()->first();
                 break;
 
             case 'App\Models\PetitionNaqalForm':
                 $entity_title = "Naqal Form";
-                $petition_naqal_form = PetitionNaqalForm::find($attachmentable_id);
-                $petition = $petition_naqal_form->petition;
+                $petition_naqal_form = PetitionNaqalForm::withoutGlobalScopes()->find($attachmentable_id);
+                $petition = $petition_naqal_form->petition()->withoutGlobalScopes()->first();
                 break;
 
             case 'App\Models\PetitionTalbana':
                 $entity_title = "Talbana";
-                $petition_talbana = PetitionTalbana::find($attachmentable_id);
-                $petition = $petition_talbana->petition;
+                $petition_talbana = PetitionTalbana::withoutGlobalScopes()->find($attachmentable_id);
+                $petition = $petition_talbana->petition()->withoutGlobalScopes()->first();
                 break;
 
             case 'App\Models\CaseLaw':
                 $entity_title = "Case Laws";
-                $petition_case_law = CaseLaw::find($attachmentable_id);
-                $petition = $petition_case_law->petition;
+                $petition_case_law = CaseLaw::withoutGlobalScopes()->find($attachmentable_id);
+                $petition = $petition_case_law->petition()->withoutGlobalScopes()->first();
                 break;
 
             case 'App\Models\ExtraDocument':
                 $entity_title = "Extra Document";
-                $petition_extra_document = ExtraDocument::find($attachmentable_id);
-                $petition = $petition_extra_document->petition;
+                $petition_extra_document = ExtraDocument::withoutGlobalScopes()->find($attachmentable_id);
+                $petition = $petition_extra_document->petition()->withoutGlobalScopes()->first();
                 break;
 
             case 'App\Models\PetitionSynopsis':
                 $entity_title = "Synopsis";
-                $petition_synopsis = PetitionSynopsis::find($attachmentable_id);
-                $petition = $petition_synopsis->petition;
+                $petition_judgement = PetitionSynopsis::withoutGlobalScopes()->find($attachmentable_id);
+                $petition = $petition_judgement->petition()->withoutGlobalScopes()->first();
                 break;
 
             case 'App\Models\Judgement':
                 $entity_title = "Judgement";
-                $petition_judgement = Judgement::find($attachmentable_id);
-                $petition = $petition_judgement->petition;
+                $petition_judgement = Judgement::withoutGlobalScopes()->find($attachmentable_id);
+                $petition = $petition_judgement->petition()->withoutGlobalScopes()->first();
                 break;
 
             default:
