@@ -119,22 +119,35 @@ class EmailService
 				info("EmailService: send_document_uploading_email for petition  petitioners" . print_r($petition->petitioners->pluck('id')->all(), 1));
 				foreach ($petition->petitioners as $petition_petitioner) {
 					$user = $petition_petitioner->user;
-					Mail::send($view, compact('user', 'petition', 'attachmentable_type'), function ($message) use ($user, $petition, $subject) {
-						$message->subject($subject);
-						$message->to($user->email, $user->name);
-					});
-					info("EmailService: send_document_uploading_email  successfully sent to user email: " . $user->email);
+
+					if ($user) {
+						// code...
+						Mail::send($view, compact('user', 'petition', 'attachmentable_type'), function ($message) use ($user, $petition, $subject) {
+							$message->subject($subject);
+							$message->to($user->email, $user->name);
+						});
+						info("EmailService: send_document_uploading_email  successfully sent to user email: " . $user->email);
+					}else{
+						info("EmailService: send_document_uploading_email  petitioners. ERROR petition_petitioner # $petition_petitioner->petitioner_id  Not found");	
+					}
 				}
 			}
 			if ($petition->lawyers->count() > 0) {
 				info("EmailService: send_document_uploading_email to lawyers" . print_r($petition->lawyers->pluck('id')->all(), 1));
 				foreach ($petition->lawyers as $petition_lawyer) {
 					$user = $petition_lawyer->user;
-					Mail::send($view, compact('user', 'petition', 'attachmentable_type'), function ($message) use ($user, $petition, $subject) {
-						$message->subject($subject);
-						$message->to($user->email, $user->name);
-					});
-					info("EmailService: send_document_uploading_email  successfully sent to user email: " . $user->email);
+					if ($user) {
+						
+						Mail::send($view, compact('user', 'petition', 'attachmentable_type'), function ($message) use ($user, $petition, $subject) {
+							$message->subject($subject);
+							$message->to($user->email, $user->name);
+						});
+						info("EmailService: send_document_uploading_email  successfully sent to user email: " . $user->email);
+					}else{
+						else{
+						info("EmailService: send_document_uploading_email  to lawyers. ERROR petition_lawyer # $petition_lawyer->lawyer_id  Not found");	
+					}
+					}
 				}
 			}
 			info("EmailService: send_document_uploading_email function complete: ");
