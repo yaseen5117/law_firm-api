@@ -41,7 +41,7 @@ class Setting extends Model
             }
 
             if ($company) {
-                $setting = Setting::withoutGlobalScopes()->find($company->id)->getMeta()->toArray();
+                $setting = Setting::withoutGlobalScopes()->where('company_id',$company->id)->first()->getMeta()->toArray();
             }
         }
         return $setting;
