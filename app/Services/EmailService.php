@@ -144,9 +144,9 @@ class EmailService
 						});
 						info("EmailService: send_document_uploading_email  successfully sent to user email: " . $user->email);
 					}else{
-						else{
+						
 						info("EmailService: send_document_uploading_email  to lawyers. ERROR petition_lawyer # $petition_lawyer->lawyer_id  Not found");	
-					}
+					
 					}
 				}
 			}
