@@ -27,7 +27,7 @@ class Setting extends Model
 
         if ($user && $user->company_id > 0) {
             //WHEN USER IS LOGGED IN, WE SIMPLY GET COMPANY OF USER
-            $setting = Setting::withoutGlobalScopes()->where('company_id',$company->id)->first()->getMeta()->toArray();
+            $setting = Setting::withoutGlobalScopes()->where('company_id',$user->company_id)->first()->getMeta()->toArray();
         } else {
 
             //WHEN USER IS NOT LOGGED IN, NOW WE TRY TO GET SETTING BY DOMAIN
