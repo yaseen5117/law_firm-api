@@ -24,7 +24,7 @@ class SettingController extends Controller
 
             $setting = Setting::getSetting();
 
-            if (!is_null($setting)) {
+            if (is_null($setting)) {
                 return response([
                     "error" => "user or domain is unauthorized"
                 ], 401);
