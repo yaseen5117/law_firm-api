@@ -459,7 +459,8 @@ class UserController extends Controller
             }
 
             try {
-                $setting = Setting::where("company_id", $request->company_id)->first()->getMeta();
+                $setting = Setting::getSetting();
+                //$setting = Setting::where("company_id", $request->company_id)->first()->getMeta();
                 $password = $request->password;
                 $login_url = url("login");
                 $send_email_and_password = false;
