@@ -27,16 +27,19 @@ class Setting extends Model
 
         if ($user && $user->company_id > 0) {
             //WHEN USER IS LOGGED IN, WE SIMPLY GET COMPANY OF USER
-            info("WHEN USER IS LOGGED IN, WE SIMPLY GET COMPANY OF USER $user->id and company_id is $user->company_id");
             $setting = Setting::withoutGlobalScopes()->where('company_id',$user->company_id)->first()->getMeta()->toArray();
         } else {
+
+            info("user is not logged in.");
 
             //WHEN USER IS NOT LOGGED IN, NOW WE TRY TO GET SETTING BY DOMAIN
 
             if (in_array($request_domain, $allowed_domains)) {
+                info("user is in allowed_domains.");
                 //IF LOCAL OR ELAWFIRM USER, COMPANY ID OF ELAWFIRM IS 1
                 $company = Company::where('id', 1)->first();
             } else {
+                info("user is in not allowed_domains. user domain $request_domain");
                 //IF DOMAIN IS OTHER THAN ELAWFIRM, WE WILL TRY TO FIND OUT COMPANY ASSOCIATED WITH THIS DOMAIN
                 $company = Company::where('domain', $request_domain)->first();
             }
