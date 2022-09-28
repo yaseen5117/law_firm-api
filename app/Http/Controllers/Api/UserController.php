@@ -439,15 +439,6 @@ class UserController extends Controller
                 );
             }
 
-            $file = $request->file('file');
-
-            if ($file) {
-                $name = time() . '_' . $file->getClientOriginalName();
-                $file_name = time() . '_' . $file->getClientOriginalName();
-                $request->merge([
-                    'profile_image' => $file_name
-                ]);
-            }
             //initially set is_approved bit to false.
             $request->merge([
                 'is_approved' => 0,
@@ -467,11 +458,8 @@ class UserController extends Controller
                 $user->assignRole('client');
             }
 
-            if ($file) {
-                $file_path = $file->storeAs('users/' . $user->id, $name, 'public');
-            }
             try {
-                $setting = Setting::find($request->user()->company_id)->getMeta();
+                $setting = Setting::where("company_id", $request->company_id)->first()->getMeta();
                 $password = $request->password;
                 $login_url = url("login");
                 $send_email_and_password = false;
