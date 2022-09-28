@@ -61,7 +61,7 @@ class EmailService
 		try {
 			info("EmailService: send_email_before_hearing for Hearing $tomorrow_hearing->id");
 			$user = request()->user();
-			
+
 			$setting = Setting::withoutGlobalScopes()->whereCompanyId($tomorrow_hearing->company_id)->first();
 			//[
 			// 	"site_name" => "site Name",
@@ -77,7 +77,7 @@ class EmailService
 						$message->subject("Hearing Reminder: $petition->petition_standard_title_with_petitioner ");
 						$message->to($user->email, $user->name);
 					});
-					info("EmailService: sendInvoiceEmail successfully sent to user email: " . $user->email);
+					info("EmailService: send_email_before_hearing successfully sent to user email: " . $user->email);
 				}
 			}
 
@@ -89,12 +89,12 @@ class EmailService
 						$message->subject("Hearing Reminder: $petition->petition_standard_title_with_petitioner ");
 						$message->to($user->email, $user->name);
 					});
-					info("EmailService: sendInvoiceEmail successfully sent to user email: " . $user->email);
+					info("EmailService: send_email_before_hearing successfully sent to user email: " . $user->email);
 				}
 			}
 
 
-			info("EmailService: sendInvoiceEmail function complete: ");
+			info("EmailService: send_email_before_hearing function complete: ");
 		} catch (Exception $e) {
 			info("EmailService: send_email_before_hearing for Hearing $tomorrow_hearing->id ERROR SENDING EMAIL: " . $e->getMessage());
 		}
@@ -120,7 +120,7 @@ class EmailService
 				}
 			}
 			if ($petition->lawyers->count() > 0) {
-				info("EmailService: send_email_before_hearing to lawyers" . print_r($petition->lawyers->pluck('id')->all(), 1));
+				info("EmailService: send_document_uploading_email to lawyers" . print_r($petition->lawyers->pluck('id')->all(), 1));
 				foreach ($petition->lawyers as $petition_lawyer) {
 					$user = $petition_lawyer->user;
 					Mail::send($view, compact('user', 'petition', 'attachmentable_type'), function ($message) use ($user, $petition, $subject) {
