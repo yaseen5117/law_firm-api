@@ -49,6 +49,8 @@ class Setting extends Model
                 info("finding setting for company id $company->id");
 
                 $setting = Setting::withoutGlobalScopes()->where('company_id',$company->id)->first()->getMeta()->toArray();
+
+                info("settings: ".print_r($setting ,1));
             }
         }
         return $setting;
