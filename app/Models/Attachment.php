@@ -22,8 +22,8 @@ class Attachment extends Model
     {
         parent::boot();
         static::created(function ($model) {
-            $model->company_id = request()->user()->company_id;
-            $model->save();
+            //$model->company_id = request()->user()->company_id;
+            //$model->save();
         });
     }
 
