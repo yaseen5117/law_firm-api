@@ -27,6 +27,7 @@ class Setting extends Model
 
         if ($user && $user->company_id > 0) {
             //WHEN USER IS LOGGED IN, WE SIMPLY GET COMPANY OF USER
+            info("WHEN USER IS LOGGED IN, WE SIMPLY GET COMPANY OF USER $user->id and company_id is $user->company_id");
             $setting = Setting::withoutGlobalScopes()->where('company_id',$user->company_id)->first()->getMeta()->toArray();
         } else {
 
