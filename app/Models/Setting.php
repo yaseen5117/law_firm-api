@@ -21,30 +21,28 @@ class Setting extends Model
     public static function getSetting()
     {
         $request_domain = \Request::server('HTTP_REFERER');
-        info("Request domain $request_domain");
-        //logged in User
+        $setting = null;
         $user = request()->user();
+        $allowed_domains = ["http://localhost:8080/", "https://elawfirmpk.com/"];
 
         if ($user && $user->company_id > 0) {
-
+            //WHEN USER IS LOGGED IN, WE SIMPLY GET COMPANY OF USER
             $setting = Setting::find($user->company_id)->getMeta()->toArray();
         } else {
 
-            $allowed_domains = ["http://localhost:8080/", "https://elawfirmpk.com/"];
+            //WHEN USER IS NOT LOGGED IN, NOW WE TRY TO GET SETTING BY DOMAIN
 
             if (in_array($request_domain, $allowed_domains)) {
+                //IF LOCAL OR ELAWFIRM USER, COMPANY ID OF ELAWFIRM IS 1
                 $company = Company::where('id', 1)->first();
             } else {
+                //IF DOMAIN IS OTHER THAN ELAWFIRM, WE WILL TRY TO FIND OUT COMPANY ASSOCIATED WITH THIS DOMAIN
                 $company = Company::where('domain', $request_domain)->first();
             }
 
-            if (!$company) {
-                return response([
-                    "error" => "domain is unauthorized"
-                ], 401);
+            if ($company) {
+                $setting = Setting::withoutGlobalScopes()->find($company->id)->getMeta()->toArray();
             }
-
-            $setting = Setting::withoutGlobalScopes()->find($company->id)->getMeta()->toArray();
         }
         return $setting;
     }
