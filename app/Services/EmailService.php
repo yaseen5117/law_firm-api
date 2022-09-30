@@ -115,10 +115,10 @@ class EmailService
 		try {
 			info("EmailService: send_document_uploading_email for petition $petition->id");
 
-			if ($petition->petitioners->count() > 0) {
+			if ($petition()->withoutGlobalScopes()->petitioners->count() > 0) {
 				info("EmailService: send_document_uploading_email for petition  petitioners" . print_r($petition->petitioners->pluck('id')->all(), 1));
-				foreach ($petition->petitioners as $petition_petitioner) {
-					$user = $petition_petitioner->user;
+				foreach ($petition()->withoutGlobalScopes()->petitioners as $petition_petitioner) {
+					$user = $petition_petitioner()->withoutGlobalScopes()->user;
 
 					if ($user) {
 						// code...
@@ -132,10 +132,10 @@ class EmailService
 					}
 				}
 			}
-			if ($petition->lawyers->count() > 0) {
+			if ($petition()->withoutGlobalScopes()->lawyers->count() > 0) {
 				info("EmailService: send_document_uploading_email to lawyers" . print_r($petition->lawyers->pluck('id')->all(), 1));
-				foreach ($petition->lawyers as $petition_lawyer) {
-					$user = $petition_lawyer->user;
+				foreach ($petition()->withoutGlobalScopes()->lawyers as $petition_lawyer) {
+					$user = $petition_lawyer()->withoutGlobalScopes()->user;
 					if ($user) {
 						
 						Mail::send($view, compact('user', 'petition', 'attachmentable_type'), function ($message) use ($user, $petition, $subject) {
