@@ -56,7 +56,7 @@ class SendDocumentUploadEmail implements ShouldQueue
             case 'App\Models\PetitonOrderSheet':
                 $entity_title = "Order Sheet";
                 $petition_ordersheet = PetitonOrderSheet::withoutGlobalScopes()->find($attachmentable_id);
-                $petition = $petition_ordersheet->petition->withoutGlobalScopes()->first();
+                $petition = $petition_ordersheet->petition()->withoutGlobalScopes()->first();
                 break;
 
             case 'App\Models\PetitionIndex':
