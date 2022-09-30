@@ -23,11 +23,10 @@ class PetitionOrderSheetController extends Controller
      */
     public function __construct()
     {
-        
     }
     public function index(Request $request)
     {
-        
+
         try {
             $petitionOrderSheets = PetitonOrderSheet::with('petition', 'attachments', 'order_sheet_types')->where('petition_id', $request->petition_id)->orderby('order_sheet_date', 'desc')->get();
 
@@ -71,19 +70,19 @@ class PetitionOrderSheetController extends Controller
                 ]);
             }
             $petitionOrderSheet = PetitonOrderSheet::updateOrCreate(['id' => $request->id], $request->except('editMode', 'petition', 'attachments', 'order_sheet_types', 'next_hearing_date'));
-            $next_hearing_order_sheet = null;
-            if ($request->next_hearing_date) {
-                $request->merge([
-                    'order_sheet_date' => toDBDate($request->next_hearing_date),
-                ]);
+            // $next_hearing_order_sheet = null;
+            // if ($request->next_hearing_date) {
+            //     $request->merge([
+            //         'order_sheet_date' => toDBDate($request->next_hearing_date),
+            //     ]);
 
-                $next_hearing_order_sheet = PetitonOrderSheet::updateOrCreate(['order_sheet_date' => $request->order_sheet_date], $request->except('editMode', 'petition', 'attachments', 'order_sheet_types', 'order_sheet_type_id', 'next_hearing_date', 'id'));
-            }
+            //     $next_hearing_order_sheet = PetitonOrderSheet::updateOrCreate(['order_sheet_date' => $request->order_sheet_date], $request->except('editMode', 'petition', 'attachments', 'order_sheet_types', 'order_sheet_type_id', 'next_hearing_date', 'id'));
+            // }
 
             return response()->json(
                 [
                     'petitionOrderSheet' => $petitionOrderSheet,
-                    'next_hearing_order_sheet' => $next_hearing_order_sheet,
+                    // 'next_hearing_order_sheet' => $next_hearing_order_sheet,
                     'message' => 'Saved successfully',
                     'code' => 200
                 ]
