@@ -59,25 +59,28 @@ class EmailService
 	public function send_email_before_hearing($tomorrow_hearing)
 	{
 		try {
+			
 			info("EmailService: send_email_before_hearing for Hearing $tomorrow_hearing->id");
+			
 			$user = request()->user();
 
 			$setting = Setting::withoutGlobalScopes()->whereCompanyId($tomorrow_hearing->company_id)->first();
-			//[
-			// 	"site_name" => "site Name",
-			// 	"site_url" => "Url"
-			// ]; 
+			
 			$petition = $tomorrow_hearing->petition()->withoutGlobalScopes()->first();
 
 			if ($petition->petitioners->count() > 0) {
 				info("EmailService: send_email_before_hearing to petitioners" . print_r($petition->petitioners->pluck('petitioner_id')->all(), 1));
 				foreach ($petition->petitioners as $petition_petitioner) {
 					$user = $petition_petitioner->user;
-					Mail::send('emails.hearing_tomorrower_reminder', compact('user', 'petition', 'tomorrow_hearing', 'setting'), function ($message) use ($user, $petition) {
-						$message->subject("Hearing Reminder: $petition->petition_standard_title_with_petitioner ");
-						$message->to($user->email, $user->name);
-					});
-					info("EmailService: send_email_before_hearing successfully sent to user email: " . $user->email);
+					if ($user) {
+						Mail::send('emails.hearing_tomorrower_reminder', compact('user', 'petition', 'tomorrow_hearing', 'setting'), function ($message) use ($user, $petition) {
+							$message->subject("Hearing Reminder: $petition->petition_standard_title_with_petitioner ");
+							$message->to($user->email, $user->name);
+						});
+						info("EmailService: send_email_before_hearing successfully sent to user email: " . $user->email);
+					}else{
+						info("EmailService: send_email_before_hearing to petitioners. ERROR Petitioner # $petition_petitioner->petitioner_id  Not found");	
+					}
 				}
 			}
 
@@ -85,11 +88,15 @@ class EmailService
 				info("EmailService: send_email_before_hearing to lawyers" . print_r($petition->lawyers->pluck('lawyer_id')->all(), 1));
 				foreach ($petition->lawyers as $petition_lawyer) {
 					$user = $petition_lawyer->user;
-					Mail::send('emails.hearing_tomorrower_reminder', compact('user', 'petition', 'tomorrow_hearing', 'setting'), function ($message) use ($user, $petition) {
-						$message->subject("Hearing Reminder: $petition->petition_standard_title_with_petitioner ");
-						$message->to($user->email, $user->name);
-					});
-					info("EmailService: send_email_before_hearing successfully sent to user email: " . $user->email);
+					if ($user) {
+						Mail::send('emails.hearing_tomorrower_reminder', compact('user', 'petition', 'tomorrow_hearing', 'setting'), function ($message) use ($user, $petition) {
+							$message->subject("Hearing Reminder: $petition->petition_standard_title_with_petitioner ");
+							$message->to($user->email, $user->name);
+						});
+						info("EmailService: send_email_before_hearing successfully sent to user email: " . $user->email);
+					}else{
+						info("EmailService: send_email_before_hearing to petitioners. ERROR LAWYER # $petition_lawyer->lawyer_id  Not found");	
+					}
 				}
 			}
 
@@ -112,22 +119,35 @@ class EmailService
 				info("EmailService: send_document_uploading_email for petition  petitioners" . print_r($petition->petitioners->pluck('id')->all(), 1));
 				foreach ($petition->petitioners as $petition_petitioner) {
 					$user = $petition_petitioner->user;
-					Mail::send($view, compact('user', 'petition', 'attachmentable_type'), function ($message) use ($user, $petition, $subject) {
-						$message->subject($subject);
-						$message->to($user->email, $user->name);
-					});
-					info("EmailService: send_document_uploading_email  successfully sent to user email: " . $user->email);
+
+					if ($user) {
+						// code...
+						Mail::send($view, compact('user', 'petition', 'attachmentable_type'), function ($message) use ($user, $petition, $subject) {
+							$message->subject($subject);
+							$message->to($user->email, $user->name);
+						});
+						info("EmailService: send_document_uploading_email  successfully sent to user email: " . $user->email);
+					}else{
+						info("EmailService: send_document_uploading_email  petitioners. ERROR petition_petitioner # $petition_petitioner->petitioner_id  Not found");	
+					}
 				}
 			}
 			if ($petition->lawyers->count() > 0) {
 				info("EmailService: send_document_uploading_email to lawyers" . print_r($petition->lawyers->pluck('id')->all(), 1));
 				foreach ($petition->lawyers as $petition_lawyer) {
 					$user = $petition_lawyer->user;
-					Mail::send($view, compact('user', 'petition', 'attachmentable_type'), function ($message) use ($user, $petition, $subject) {
-						$message->subject($subject);
-						$message->to($user->email, $user->name);
-					});
-					info("EmailService: send_document_uploading_email  successfully sent to user email: " . $user->email);
+					if ($user) {
+						
+						Mail::send($view, compact('user', 'petition', 'attachmentable_type'), function ($message) use ($user, $petition, $subject) {
+							$message->subject($subject);
+							$message->to($user->email, $user->name);
+						});
+						info("EmailService: send_document_uploading_email  successfully sent to user email: " . $user->email);
+					}else{
+						
+						info("EmailService: send_document_uploading_email  to lawyers. ERROR petition_lawyer # $petition_lawyer->lawyer_id  Not found");	
+					
+					}
 				}
 			}
 			info("EmailService: send_document_uploading_email function complete: ");

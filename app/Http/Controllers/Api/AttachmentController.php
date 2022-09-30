@@ -507,6 +507,7 @@ class AttachmentController extends Controller
             info("Total Number Of Pages: $num_page");
             $page_counter = 1;
             for ($page = 0; $page < $num_page; $page++) {
+                //info("converting page $page");
                 $im = new Imagick();
                 $im->setResolution(300, 300);
                 $im->readimage($file_path . "[$page]");
@@ -528,7 +529,7 @@ class AttachmentController extends Controller
                     $constraint->aspectRatio();
                 });
                 $resizeImage->save($output_path . '/' . $generated_jpg_filename);
-
+                //info("converting page $page: file saved on server");
                 Attachment::create(
                     [
                         'title' => $generated_jpg_filename,
@@ -539,6 +540,7 @@ class AttachmentController extends Controller
                         'display_order' => $page_counter,
                     ]
                 );
+                //info("converting page $page: file saved on database");
                 $page_counter++;
             }
         } catch (\Exception $e) {
