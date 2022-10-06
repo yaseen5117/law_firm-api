@@ -513,7 +513,11 @@ class PetitionController extends Controller
                 $query->where('petitioner_id', $request->user()->id);
             }
 
-            $pending_cases = $query->where('archived', 0)->whereNotNull('pending_tag')->orderBy('id', 'DESC')->get();
+            $pending_cases = $query->where('archived', 0)
+                ->whereNotNull('pending_tag')
+                ->groupBy('petitions.id')
+                ->orderBy('petitions.id', 'DESC')->get();
+
             return response(
                 [
                     "pendingCases" => $pending_cases,
@@ -530,7 +534,7 @@ class PetitionController extends Controller
     public function downloadPendingCase(Request $request)
     {
         try {
-            $pendingCases = Petition::withoutGlobalScopes()->with('court')->where('archived', 0)->whereNotNull('pending_tag')->get();
+            $pendingCases = Petition::withoutGlobalScopes()->with('court')->where('archived', 0)->whereNotNull('pending_tag')->orderBy('id', 'DESC')->get();
             //return view('petition_pdf.pending_cases_pdf', compact('pendingCases'));
             if ($pendingCases) {
                 $pdf = PDF::loadView('petition_pdf.pending_cases_pdf', compact('pendingCases'));
