@@ -460,7 +460,7 @@ class PetitionController extends Controller
     public function downloadPetitionPdf($petition_id)
     {
         try {
-            $petition = Petition::withRelations()->where('id', $petition_id)->first();
+            $petition = Petition::withoutGlobalScopes()->withRelations()->where('id', $petition_id)->first();
             //return view('petition_pdf.petition_index_pdf', compact('petition'));
             if ($petition) {
                 info("Start Downloading Petition PDF");
@@ -530,7 +530,7 @@ class PetitionController extends Controller
     public function downloadPendingCase(Request $request)
     {
         try {
-            $pendingCases = Petition::with('court')->where('archived', 0)->whereNotNull('pending_tag')->get();
+            $pendingCases = Petition::withoutGlobalScopes()->with('court')->where('archived', 0)->whereNotNull('pending_tag')->get();
             //return view('petition_pdf.pending_cases_pdf', compact('pendingCases'));
             if ($pendingCases) {
                 $pdf = PDF::loadView('petition_pdf.pending_cases_pdf', compact('pendingCases'));
