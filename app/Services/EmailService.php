@@ -59,13 +59,13 @@ class EmailService
 	public function send_email_before_hearing($tomorrow_hearing)
 	{
 		try {
-			
+
 			info("EmailService: send_email_before_hearing for Hearing $tomorrow_hearing->id");
-			
+
 			$user = request()->user();
 
 			$setting = Setting::withoutGlobalScopes()->whereCompanyId($tomorrow_hearing->company_id)->first();
-			
+
 			$petition = $tomorrow_hearing->petition()->withoutGlobalScopes()->first();
 
 			if ($petition->petitioners->count() > 0) {
@@ -78,8 +78,8 @@ class EmailService
 							$message->to($user->email, $user->name);
 						});
 						info("EmailService: send_email_before_hearing successfully sent to user email: " . $user->email);
-					}else{
-						info("EmailService: send_email_before_hearing to petitioners. ERROR Petitioner # $petition_petitioner->petitioner_id  Not found");	
+					} else {
+						info("EmailService: send_email_before_hearing to petitioners. ERROR Petitioner # $petition_petitioner->petitioner_id  Not found");
 					}
 				}
 			}
@@ -94,8 +94,8 @@ class EmailService
 							$message->to($user->email, $user->name);
 						});
 						info("EmailService: send_email_before_hearing successfully sent to user email: " . $user->email);
-					}else{
-						info("EmailService: send_email_before_hearing to petitioners. ERROR LAWYER # $petition_lawyer->lawyer_id  Not found");	
+					} else {
+						info("EmailService: send_email_before_hearing to petitioners. ERROR LAWYER # $petition_lawyer->lawyer_id  Not found");
 					}
 				}
 			}
@@ -127,8 +127,8 @@ class EmailService
 							$message->to($user->email, $user->name);
 						});
 						info("EmailService: send_document_uploading_email  successfully sent to user email: " . $user->email);
-					}else{
-						info("EmailService: send_document_uploading_email  petitioners. ERROR petition_petitioner # $petition_petitioner->petitioner_id  Not found");	
+					} else {
+						info("EmailService: send_document_uploading_email  petitioners. ERROR petition_petitioner # $petition_petitioner->petitioner_id  Not found");
 					}
 				}
 			}
@@ -137,16 +137,15 @@ class EmailService
 				foreach ($petition->lawyers as $petition_lawyer) {
 					$user = $petition_lawyer->user;
 					if ($user) {
-						
+
 						Mail::send($view, compact('user', 'petition', 'attachmentable_type'), function ($message) use ($user, $petition, $subject) {
 							$message->subject($subject);
 							$message->to($user->email, $user->name);
 						});
 						info("EmailService: send_document_uploading_email  successfully sent to user email: " . $user->email);
-					}else{
-						
-						info("EmailService: send_document_uploading_email  to lawyers. ERROR petition_lawyer # $petition_lawyer->lawyer_id  Not found");	
-					
+					} else {
+
+						info("EmailService: send_document_uploading_email  to lawyers. ERROR petition_lawyer # $petition_lawyer->lawyer_id  Not found");
 					}
 				}
 			}
@@ -187,5 +186,16 @@ class EmailService
 		});
 
 		info("EmailService: sendLawyerSignUpEmail successfully sent Email TO: $user->email");
+	}
+	public function sendEmailToVerifyAccountByAdmin($setting, $user_profile_url)
+	{
+		info("EmailService: sendEmailToVerifyAccountByAdmin sending Email to Admin: " . $setting['site_email']);
+
+		Mail::send('emails.email_to_verify_account_by_admin', compact('setting', 'user_profile_url'), function ($message) use ($setting) {
+			$message->subject($setting['site_name'] . " | New User Registered");
+			$message->to($setting['site_email']);
+		});
+
+		info("EmailService: sendEmailToVerifyAccountByAdmin successfully sent Email To Admin" . $setting['site_email']);
 	}
 }

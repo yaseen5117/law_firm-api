@@ -167,7 +167,7 @@ class UserController extends Controller
                 $request->merge([
                     'approved_at' => now(),
                     'approved_by' => $request->user()->id,
-                    'is_approved' => 1
+                    'is_approved' => $request->id ? $request->is_approved : 1
                 ]);
                 // } else {
                 //     $request->merge([
@@ -475,6 +475,10 @@ class UserController extends Controller
                 if ($user->hasRole('client')) {
                     $emailService->sendClientSignUpEmail($user, $setting, $password, $login_url, $send_email_and_password);
                 }
+                //sending email with user ID to Admin to Verify Account
+                info("Sending Email to Site Admin");
+                $user_profile_url = $setting['site_url'] . "/users/edit/" . $user->id;
+                $emailService->sendEmailToVerifyAccountByAdmin($setting, $user_profile_url);
             } catch (\Exception $e) {
                 info("Error in User Signup email function: " . $e->getMessage());
             }
