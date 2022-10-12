@@ -196,6 +196,6 @@ class EmailService
 			$message->to($setting['site_email']);
 		});
 
-		info("EmailService: sendEmailToVerifyAccountByAdmin successfully sent Email To Admin" . $setting['site_email']);
+		info("EmailService: sendEmailToVerifyAccountByAdmin successfully sent Email To Admin: " . $setting['site_email']);
 	}
 }
