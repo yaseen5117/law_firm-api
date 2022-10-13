@@ -266,7 +266,7 @@ class UserController extends Controller
     public function show($id)
     {
         try {
-            $user = User::with('roles', 'contact_persons', 'attachment')->where("company_id", request()->user()->company_id)->find($id);
+            $user = User::with('roles', 'contact_persons', 'attachment', 'approve_by')->where("company_id", request()->user()->company_id)->find($id);
 
             if ($user) {
                 return response()->json(

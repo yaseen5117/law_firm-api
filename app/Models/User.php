@@ -38,6 +38,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'approved_at' => 'date:d/m/Y'
     ];
 
     protected $appends = [
@@ -130,5 +131,9 @@ class User extends Authenticatable
     public function attachment()
     {
         return $this->morphOne(Attachment::class, 'attachmentable');
+    }
+    public function approve_by()
+    {
+        return $this->belongsTo('App\Models\User', 'approved_by');
     }
 }
