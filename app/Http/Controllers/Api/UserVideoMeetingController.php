@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\UserVideoMeeting;
+use App\Services\VideoMeetingService;
 use Illuminate\Http\Request;
 
 class UserVideoMeetingController extends Controller
@@ -88,6 +89,12 @@ class UserVideoMeetingController extends Controller
         try {
             $user = request()->user();
             $meeting = UserVideoMeeting::where('user_id', $user->id)->first();
+            if (!$meeting) {
+                $videoMeetingService = new VideoMeetingService();
+                $videoMeetingService->initMeeting();
+                
+                
+            }
             return response(
                 [
                     'meeting' => $meeting,
