@@ -101,6 +101,7 @@ class UserVideoMeetingController extends Controller
                         "meeting_id_public"=>$meeting_data->roomUrl,
                         "meeting_expiration"=>$meeting_data->endDate,
                     ]);
+                    $meeting = UserVideoMeeting::where('user_id', $user->id)->first();
                 }
                 
                 
