@@ -91,7 +91,15 @@ class UserVideoMeetingController extends Controller
             $meeting = UserVideoMeeting::where('user_id', $user->id)->first();
             if (!$meeting) {
                 $videoMeetingService = new VideoMeetingService();
-                $videoMeetingService->initMeeting();
+                $meeting_response = $videoMeetingService->initMeeting();
+                dd($meeting_response);
+                if ($meeting_response->success) {
+                    UserVideoMeeting::create([
+                        "user_id"=>$user->id,
+                        "host_meeting_iframe"=>$user->id,
+                        "meeting_id_public"=>$user->id,
+                    ]);
+                }
                 
                 
             }

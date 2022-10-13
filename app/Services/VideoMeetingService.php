@@ -56,6 +56,18 @@ class VideoMeetingService
         
         $response = Http::withHeaders($headers)->post($url, $body);
         
-        dd($response->status());
+        if($response->status()==201){
+            $success = true;
+            $response_date = $response->object();
+        }else{
+            $status = false;
+            $response_date = null;
+            info("Error creating whereby meeting: ".print_r($response->object(),1));
+        }
+
+        return (object) [
+            "success"=>$success,
+            "response_date"=>$response_date,
+        ];
     }
 }
