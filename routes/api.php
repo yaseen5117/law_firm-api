@@ -134,8 +134,9 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::resource('petition_order_sheets', 'PetitionOrderSheetController'); //middleware added in controller __construct()
     Route::POST('petition_order_sheets/by_petition', 'PetitionOrderSheetController@showOrderSheetByPetition');
 
-    //upload user image route
+    //upload user image route 
     Route::post('upload_user_image', 'UserController@uploadImage');
+    Route::post('get_user_meeting', 'UserVideoMeetingController@getUserMeeting');
 });
 
 //contact request to save

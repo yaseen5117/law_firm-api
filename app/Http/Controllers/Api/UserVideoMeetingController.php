@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api;
 
+use App\Http\Controllers\Controller;
 use App\Models\UserVideoMeeting;
 use Illuminate\Http\Request;
 
@@ -41,10 +42,10 @@ class UserVideoMeetingController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\UserVideoMeeting  $userVideoMeeting
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(UserVideoMeeting $userVideoMeeting)
+    public function show($id)
     {
         //
     }
@@ -52,10 +53,10 @@ class UserVideoMeetingController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\UserVideoMeeting  $userVideoMeeting
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(UserVideoMeeting $userVideoMeeting)
+    public function edit($id)
     {
         //
     }
@@ -64,10 +65,10 @@ class UserVideoMeetingController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\UserVideoMeeting  $userVideoMeeting
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, UserVideoMeeting $userVideoMeeting)
+    public function update(Request $request, $id)
     {
         //
     }
@@ -75,11 +76,28 @@ class UserVideoMeetingController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\UserVideoMeeting  $userVideoMeeting
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(UserVideoMeeting $userVideoMeeting)
+    public function destroy($id)
     {
         //
+    }
+    public function getUserMeeting(Request $request)
+    {
+        try {
+            $user = request()->user();
+            $meeting = UserVideoMeeting::where('user_id', $user->id)->first();
+            return response(
+                [
+                    'meeting' => $meeting,
+                ],
+                200
+            );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 }
