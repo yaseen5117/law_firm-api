@@ -136,4 +136,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo('App\Models\User', 'approved_by');
     }
+
+    public function user_video_meeting()
+    {
+        return $this->hasOne("App\VideoMeeting");
+    }
 }
