@@ -55,6 +55,7 @@ class VideoMeetingService
         ];
         
         $response = Http::withHeaders($headers)->post($url, $body);
-        dd($response->object());
+        
+        dd($response->status());
     }
 }
