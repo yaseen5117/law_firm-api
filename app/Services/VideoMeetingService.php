@@ -58,16 +58,16 @@ class VideoMeetingService
         
         if($response->status()==201){
             $success = true;
-            $response_date = $response->object();
+            $response_data = $response->object();
         }else{
-            $status = false;
-            $response_date = null;
+            $success = false;
+            $response_data = null;
             info("Error creating whereby meeting: ".print_r($response->object(),1));
         }
 
         return (object) [
             "success"=>$success,
-            "response_date"=>$response_date,
+            "response_date"=>$response_data,
         ];
     }
 }
