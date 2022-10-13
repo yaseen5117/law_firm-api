@@ -92,7 +92,6 @@ class UserVideoMeetingController extends Controller
             if (!$meeting) {
                 $videoMeetingService = new VideoMeetingService();
                 $meeting_response = $videoMeetingService->initMeeting();
-                dd($meeting_response);
                 if ($meeting_response->success) {
                     $meeting_data = $meeting_response->response_data;
                     UserVideoMeeting::create([
