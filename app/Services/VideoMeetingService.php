@@ -67,7 +67,7 @@ class VideoMeetingService
 
         return (object) [
             "success"=>$success,
-            "response_date"=>$response_data,
+            "response_data"=>$response_data,
         ];
     }
 }
