@@ -94,10 +94,12 @@ class UserVideoMeetingController extends Controller
                 $meeting_response = $videoMeetingService->initMeeting();
                 dd($meeting_response);
                 if ($meeting_response->success) {
+                    $meeting_data = $meeting_response->response_data;
                     UserVideoMeeting::create([
                         "user_id"=>$user->id,
-                        "host_meeting_iframe"=>$user->id,
-                        "meeting_id_public"=>$user->id,
+                        "host_meeting_iframe"=>$meeting_data->hostRoomUrl,
+                        "meeting_id_public"=>$meeting_data->roomUrl,
+                        "meeting_expiration"=>$meeting_data->endDate,
                     ]);
                 }
                 
