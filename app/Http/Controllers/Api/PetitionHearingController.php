@@ -70,9 +70,11 @@ class PetitionHearingController extends Controller
         if (!empty($request->petition_id) && is_array($request->petition)) {
             PetitionHearing::updateOrCreate(['id' => $request->id], $request->except('petition', 'editMode'));
         } else {
+            $user = request()->user();
             $request->merge([
                 'hearing_summary' => $request->petition,
-                'petition_id' => null
+                'petition_id' => null,
+                'added_by' => $user->id
             ]);
             // return response($request->hearing_summary, 403);
             PetitionHearing::updateOrCreate(['id' => $request->id], $request->except('petition', 'editMode'));
