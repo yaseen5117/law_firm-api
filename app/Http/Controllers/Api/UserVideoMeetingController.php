@@ -120,6 +120,7 @@ class UserVideoMeetingController extends Controller
     {
         try {
             $user = request()->user();
+            UserVideoMeeting::where('user_id', $user->id)->delete();
 
             $videoMeetingService = new VideoMeetingService();
             $meeting_response = $videoMeetingService->initMeeting();
