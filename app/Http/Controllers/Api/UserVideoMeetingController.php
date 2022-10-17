@@ -90,20 +90,19 @@ class UserVideoMeetingController extends Controller
             $user = request()->user();
             $meeting = UserVideoMeeting::where('user_id', $user->id)->first();
             if (!$meeting) {
-                $videoMeetingService = new VideoMeetingService();
-                $meeting_response = $videoMeetingService->initMeeting();
-                if ($meeting_response->success) {
-                    $meeting_data = $meeting_response->response_data;
-                    UserVideoMeeting::create([
-                        "user_id"=>$user->id,
-                        "host_meeting_iframe"=>$meeting_data->hostRoomUrl,
-                        "meeting_id_public"=>$meeting_data->roomUrl,
-                        "meeting_expiration"=>$meeting_data->endDate,
-                    ]);
-                    $meeting = UserVideoMeeting::where('user_id', $user->id)->first();
-                }
-                
-                
+                $meeting = $this->createMeeting();
+                // $videoMeetingService = new VideoMeetingService();
+                // $meeting_response = $videoMeetingService->initMeeting();
+                // if ($meeting_response->success) {
+                //     $meeting_data = $meeting_response->response_data;
+                //     UserVideoMeeting::create([
+                //         "user_id" => $user->id,
+                //         "host_meeting_iframe" => $meeting_data->hostRoomUrl,
+                //         "meeting_id_public" => $meeting_data->roomUrl,
+                //         "meeting_expiration" => $meeting_data->endDate,
+                //     ]);
+                //     $meeting = UserVideoMeeting::where('user_id', $user->id)->first();
+                // }
             }
             return response(
                 [
@@ -111,6 +110,30 @@ class UserVideoMeetingController extends Controller
                 ],
                 200
             );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function createMeeting()
+    {
+        try {
+            $user = request()->user();
+
+            $videoMeetingService = new VideoMeetingService();
+            $meeting_response = $videoMeetingService->initMeeting();
+            if ($meeting_response->success) {
+                $meeting_data = $meeting_response->response_data;
+                UserVideoMeeting::create([
+                    "user_id" => $user->id,
+                    "host_meeting_iframe" => $meeting_data->hostRoomUrl,
+                    "meeting_id_public" => $meeting_data->roomUrl,
+                    "meeting_expiration" => $meeting_data->endDate,
+                ]);
+                $meeting = UserVideoMeeting::where('user_id', $user->id)->first();
+            }
+            return $meeting;
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
