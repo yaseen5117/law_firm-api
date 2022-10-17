@@ -19,13 +19,13 @@ class PetitionHearingController extends Controller
     public function index()
     {
         $events = [];
-        $petitionHearings = PetitionHearing::has('petition')->get();
+        $petitionHearings = PetitionHearing::with('petition')->get();
 
         foreach ($petitionHearings as $petitionHearing) {
 
             $events[] = [
                 'id' => @$petitionHearing->id,
-                'title' => @$petitionHearing->petition->petition_standard_title,
+                'title' => $petitionHearing->petition_id ? @$petitionHearing->petition->petition_standard_title : @$petitionHearing->hearing_summary,
                 'start' => @$petitionHearing->hearing_date,
                 'hearing_date' => @$petitionHearing->hearing_date,
                 'hearing_summary' => @$petitionHearing->hearing_summary,
@@ -57,6 +57,7 @@ class PetitionHearingController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->merge([
             'hearing_date' => toDBDate($request->hearing_date)
         ]);
@@ -66,8 +67,16 @@ class PetitionHearingController extends Controller
                 'petition_id' => $request->petition['id'],
             ]);
         }
-        //return response($request->all(), 403);
-        PetitionHearing::updateOrCreate(['id' => $request->id], $request->except('petition', 'editMode'));
+        if (!empty($request->petition_id) && is_array($request->petition)) {
+            PetitionHearing::updateOrCreate(['id' => $request->id], $request->except('petition', 'editMode'));
+        } else {
+            $request->merge([
+                'hearing_summary' => $request->petition,
+                'petition_id' => null
+            ]);
+            // return response($request->hearing_summary, 403);
+            PetitionHearing::updateOrCreate(['id' => $request->id], $request->except('petition', 'editMode'));
+        }
     }
 
     /**
