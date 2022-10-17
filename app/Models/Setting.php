@@ -23,7 +23,7 @@ class Setting extends Model
         $request_domain = \Request::server('HTTP_REFERER');
         $setting = null;
         $user = request()->user();
-        $allowed_domains = ["http://localhost:8080/", "https://elawfirmpk.com/"];
+        $allowed_domains = ["http://localhost:8080/", "https://elawfirmpk.com/","https://www.elawfirmpk.com/","http://www.elawfirmpk.com/","http://elawfirmpk.com/"];
 
         if ($user && $user->company_id > 0) {
             //WHEN USER IS LOGGED IN, WE SIMPLY GET COMPANY OF USER

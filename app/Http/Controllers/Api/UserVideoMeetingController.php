@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\UserVideoMeeting;
+use App\Services\VideoMeetingService;
 use Illuminate\Http\Request;
 
 class UserVideoMeetingController extends Controller
@@ -88,6 +89,22 @@ class UserVideoMeetingController extends Controller
         try {
             $user = request()->user();
             $meeting = UserVideoMeeting::where('user_id', $user->id)->first();
+            if (!$meeting) {
+                $videoMeetingService = new VideoMeetingService();
+                $meeting_response = $videoMeetingService->initMeeting();
+                if ($meeting_response->success) {
+                    $meeting_data = $meeting_response->response_data;
+                    UserVideoMeeting::create([
+                        "user_id"=>$user->id,
+                        "host_meeting_iframe"=>$meeting_data->hostRoomUrl,
+                        "meeting_id_public"=>$meeting_data->roomUrl,
+                        "meeting_expiration"=>$meeting_data->endDate,
+                    ]);
+                    $meeting = UserVideoMeeting::where('user_id', $user->id)->first();
+                }
+                
+                
+            }
             return response(
                 [
                     'meeting' => $meeting,
