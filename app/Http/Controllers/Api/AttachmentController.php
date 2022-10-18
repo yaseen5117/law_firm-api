@@ -509,7 +509,7 @@ class AttachmentController extends Controller
             for ($page = 0; $page < $num_page; $page++) {
                 //info("converting page $page");
                 $im = new Imagick();
-                $im->setResolution(300, 300);
+                $im->setResolution(600, 600);
                 $im->readimage($file_path . "[$page]");
                 $generated_jpg_filename = $page . " - " . $file_name_without_extention . '.jpg';
                 $im->setImageBackgroundColor('white');
