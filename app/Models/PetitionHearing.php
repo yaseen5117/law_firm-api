@@ -16,7 +16,10 @@ class PetitionHearing extends Model
     {
         return $this->belongsTo('App\Models\Petition');
     }
-
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User', 'added_by');
+    }
     protected static function booted()
     {
         static::addGlobalScope(new CompanyScope);
@@ -30,7 +33,4 @@ class PetitionHearing extends Model
             $model->save();
         });
     }
-    
-
-
 }

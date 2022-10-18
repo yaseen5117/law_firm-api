@@ -137,6 +137,7 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     //upload user image route 
     Route::post('upload_user_image', 'UserController@uploadImage');
     Route::post('get_user_meeting', 'UserVideoMeetingController@getUserMeeting');
+    Route::post('create_new_meeting', 'UserVideoMeetingController@createMeeting');
 });
 
 //contact request to save

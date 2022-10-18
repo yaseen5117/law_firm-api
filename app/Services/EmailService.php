@@ -65,41 +65,52 @@ class EmailService
 			$user = request()->user();
 
 			$setting = Setting::withoutGlobalScopes()->whereCompanyId($tomorrow_hearing->company_id)->first();
-
-			$petition = $tomorrow_hearing->petition()->withoutGlobalScopes()->first();
-
-			if ($petition->petitioners->count() > 0) {
-				info("EmailService: send_email_before_hearing to petitioners" . print_r($petition->petitioners->pluck('petitioner_id')->all(), 1));
-				foreach ($petition->petitioners as $petition_petitioner) {
-					$user = $petition_petitioner->user;
-					if ($user) {
-						Mail::send('emails.hearing_tomorrower_reminder', compact('user', 'petition', 'tomorrow_hearing', 'setting'), function ($message) use ($user, $petition) {
-							$message->subject("Hearing Reminder: $petition->petition_standard_title_with_petitioner ");
-							$message->to($user->email, $user->name);
-						});
-						info("EmailService: send_email_before_hearing successfully sent to user email: " . $user->email);
-					} else {
-						info("EmailService: send_email_before_hearing to petitioners. ERROR Petitioner # $petition_petitioner->petitioner_id  Not found");
+			if (!empty($tomorrow_hearing->petition_id)) {
+				$petition = $tomorrow_hearing->petition()->withoutGlobalScopes()->first();
+				if ($petition->petitioners->count() > 0) {
+					info("EmailService: send_email_before_hearing to petitioners" . print_r($petition->petitioners->pluck('petitioner_id')->all(), 1));
+					foreach ($petition->petitioners as $petition_petitioner) {
+						$user = $petition_petitioner->user;
+						if ($user) {
+							Mail::send('emails.hearing_tomorrower_reminder', compact('user', 'petition', 'tomorrow_hearing', 'setting'), function ($message) use ($user, $petition) {
+								$message->subject("Hearing Reminder: $petition->petition_standard_title_with_petitioner ");
+								$message->to($user->email, $user->name);
+							});
+							info("EmailService: send_email_before_hearing successfully sent to user email: " . $user->email);
+						} else {
+							info("EmailService: send_email_before_hearing to petitioners. ERROR Petitioner # $petition_petitioner->petitioner_id  Not found");
+						}
 					}
 				}
-			}
 
-			if ($petition->lawyers->count() > 0) {
-				info("EmailService: send_email_before_hearing to lawyers" . print_r($petition->lawyers->pluck('lawyer_id')->all(), 1));
-				foreach ($petition->lawyers as $petition_lawyer) {
-					$user = $petition_lawyer->user;
-					if ($user) {
-						Mail::send('emails.hearing_tomorrower_reminder', compact('user', 'petition', 'tomorrow_hearing', 'setting'), function ($message) use ($user, $petition) {
-							$message->subject("Hearing Reminder: $petition->petition_standard_title_with_petitioner ");
-							$message->to($user->email, $user->name);
-						});
-						info("EmailService: send_email_before_hearing successfully sent to user email: " . $user->email);
-					} else {
-						info("EmailService: send_email_before_hearing to petitioners. ERROR LAWYER # $petition_lawyer->lawyer_id  Not found");
+				if ($petition->lawyers->count() > 0) {
+					info("EmailService: send_email_before_hearing to lawyers" . print_r($petition->lawyers->pluck('lawyer_id')->all(), 1));
+					foreach ($petition->lawyers as $petition_lawyer) {
+						$user = $petition_lawyer->user;
+						if ($user) {
+							Mail::send('emails.hearing_tomorrower_reminder', compact('user', 'petition', 'tomorrow_hearing', 'setting'), function ($message) use ($user, $petition) {
+								$message->subject("Hearing Reminder: $petition->petition_standard_title_with_petitioner ");
+								$message->to($user->email, $user->name);
+							});
+							info("EmailService: send_email_before_hearing successfully sent to user email: " . $user->email);
+						} else {
+							info("EmailService: send_email_before_hearing to petitioners. ERROR LAWYER # $petition_lawyer->lawyer_id  Not found");
+						}
 					}
 				}
+			} else {
+				$added_by_user = $tomorrow_hearing->user()->first();
+				info("EmailService: send_email_before_hearing to Added By User" . print_r($added_by_user, 1));
+				if ($added_by_user) {
+					Mail::send('emails.event_tomorrow_reminder', compact('added_by_user', 'tomorrow_hearing', 'setting'), function ($message) use ($added_by_user) {
+						$message->subject("Event Reminder");
+						$message->to($added_by_user->email, $added_by_user->name);
+					});
+					info("EmailService: send_email_before_hearing successfully sent to Added By user email: " . $added_by_user->email);
+				} else {
+					info("EmailService: send_email_before_hearing with Hearing ID $tomorrow_hearing->id. Added By User Not found");
+				}
 			}
-
 
 			info("EmailService: send_email_before_hearing function complete: ");
 		} catch (Exception $e) {
