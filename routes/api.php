@@ -138,6 +138,11 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::post('upload_user_image', 'UserController@uploadImage');
     Route::post('get_user_meeting', 'UserVideoMeetingController@getUserMeeting');
     Route::post('create_new_meeting', 'UserVideoMeetingController@createMeeting');
+
+    //limitation_calculator_cases
+    Route::get('limitation_calculator_cases', 'LimitationCalculatorController@getLimitationCalculatorCases');
+    Route::post('limitation_calculator_case_questions', 'LimitationCalculatorController@getLimitationCalculatorCaseQuestions');
+    Route::post('limitation_calculator_case_sub_answers', 'LimitationCalculatorController@getlimitationCalculatorCaseSubAnswers');
 });
 
 //contact request to save
