@@ -14,6 +14,15 @@ class Fir extends Model
     
     protected $guarded = [];
 
+    protected static function boot()
+    {
+        parent::boot();
+        static::created(function ($model) {
+            $model->company_id = request()->user()->company_id;
+            $model->save();
+        });
+    }
+
     public function status()
     {
         return $this->belongsTo(FirStatus::class);

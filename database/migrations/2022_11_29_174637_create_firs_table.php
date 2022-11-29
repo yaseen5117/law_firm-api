@@ -15,14 +15,16 @@ class CreateFirsTable extends Migration
     {
         Schema::create('firs', function (Blueprint $table) {
             $table->id();
+            $table->unsignedInteger('company_id');
+            $table->unsignedInteger('user_id')->nullable(); //we assume petitioner id here
+            $table->unsignedInteger('court_id')->nullable();
+            $table->unsignedInteger('fir_status_id')->nullable();
             $table->string('section');
             $table->string('arrest_info')->nullable();
             $table->string('warrent_info')->nullable();
             $table->string('bailable_info')->nullable();
             $table->string('compoundable_info')->nullable();
             $table->string('punishment_info')->nullable();
-            $table->unsignedInteger('court_id')->nullable();
-            $table->unsignedInteger('fir_status_id')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
