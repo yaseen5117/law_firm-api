@@ -138,6 +138,12 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::post('upload_user_image', 'UserController@uploadImage');
     Route::post('get_user_meeting', 'UserVideoMeetingController@getUserMeeting');
     Route::post('create_new_meeting', 'UserVideoMeetingController@createMeeting');
+
+    //START route for FIR
+    Route::resource('fir', 'FirController');
+    //END route for Synopses forms
+
+
 });
 
 //contact request to save
