@@ -9,6 +9,8 @@ use App\Models\LimitationCalculatorCaseQuestion;
 use App\Models\LimitationCalculatorCaseSubAnswer;
 use Illuminate\Http\Request;
 
+use function GuzzleHttp\Promise\all;
+
 class LimitationCalculatorController extends Controller
 {
     /**
@@ -39,7 +41,17 @@ class LimitationCalculatorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $limitationCalculatorCase = LimitationCalculatorCase::updateOrCreate(['id' => $request->id], $request->except('editMode'));
+            return response([
+                "limitationCalculatorCase" => $limitationCalculatorCase,
+                "message" => "Save Successfully"
+            ], 200);
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -84,7 +96,22 @@ class LimitationCalculatorController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $record = LimitationCalculatorCase::find($id);
+
+            if ($record) {
+                $record->delete();
+                return response([
+                    "message" => "Record Deleted Successfully"
+                ], 200);
+            } else {
+                return response('Data Not Found', 404);
+            }
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
     public function getLimitationCalculatorCases()
     {
@@ -103,14 +130,10 @@ class LimitationCalculatorController extends Controller
     public function getLimitationCalculatorCaseQuestions(Request $request)
     {
         try {
-            $caseQuestion = LimitationCalculatorCaseQuestion::where('limitation_calculator_case_id', $request->case_id)->first();
-            $caseQuestionAnswers = null;
-            if ($caseQuestion) {
-                $caseQuestionAnswers = $this->limitationCalculatorCaseQuestionAnswers($caseQuestion->id);
-            }
+            $caseQuestion = LimitationCalculatorCaseQuestion::with("limitationCalculatorAnswers")->where('limitation_calculator_case_id', $request->case_id)->first();
+
             return response([
                 "caseQuestion" => $caseQuestion,
-                "caseQuestionAnswers" => $caseQuestionAnswers,
                 "message" => "limitation calculator case Question and answers"
             ], 200);
         } catch (\Exception $e) {
@@ -119,17 +142,23 @@ class LimitationCalculatorController extends Controller
             ], 500);
         }
     }
-    public function limitationCalculatorCaseQuestionAnswers($question_id)
+
+    public function getLimitationCalculatorCaseQuestionsAndAnswersBYQuestionId(Request $request)
     {
         try {
-            $caseQuestionAnswers = LimitationCalculatorCaseAnswer::where('limitation_calculator_question_id', $question_id)->get();
-            return $caseQuestionAnswers;
+
+            $caseQuestion = LimitationCalculatorCaseQuestion::with("limitationCalculatorAnswers", "limitationCalculatorAnswers.limitation_calculator_sub_answers")->where("id", $request->question_id)->first();
+            return response([
+                "caseQuestion" => $caseQuestion,
+                "message" => "limitation calculator case Question and answers BY Question ID"
+            ], 200);
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
             ], 500);
         }
     }
+
     public function getlimitationCalculatorCaseSubAnswers(Request $request)
     {
         try {
@@ -138,6 +167,128 @@ class LimitationCalculatorController extends Controller
                 "subAnswers" => $subAnswers,
                 "message" => "All Sub Answers against answer ID: " . $request->anser_id,
             ], 200);
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function getAllLimitationCalculatorCaseQuestions()
+    {
+        try {
+            $caseQuestions = LimitationCalculatorCaseQuestion::with('limitationCalculatorAnswers', 'limitation_calculator_case')->get();
+            return response([
+                "caseQuestions" => $caseQuestions,
+                "message" => "All Questions"
+            ], 200);
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function saveQuestionAndAnswers(Request $request)
+    {
+        //return response($request->all(), 403);
+        try {
+            $question = LimitationCalculatorCaseQuestion::updateOrCreate(["id" => $request->id], $request->except('answers', 'limitation_calculator_answers'));
+            $saved_answer = "";
+            $subAnswers = [];
+            if (!empty($request->limitation_calculator_answers)) {
+                foreach ($request->limitation_calculator_answers as $answer) {
+                    //Saving Answers
+                    if (!empty($answer['answer'])) {
+                        $saved_answer = $this->saveAnswer($answer, $question);
+                        foreach ($answer["limitation_calculator_sub_answers"] as  $sub_answer)
+                            //return response($sub_answer, 403);
+                            if (!empty($sub_answer['sub_answer'])) {
+                                //Saving Sub Answers                                        
+                                $subAnswers = $this->saveSubAnswer($saved_answer, $sub_answer);
+                            }
+                    }
+                }
+            }
+            return response([
+                "question" => $question,
+                "answers" => $saved_answer,
+                "subAnswers" => $subAnswers,
+                "message" => "Save Successfully"
+            ], 200);
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function saveAnswer($answer, $question)
+    {
+        $new_array = [
+            "limitation_calculator_question_id" => $question->id,
+            "answer" => $answer["answer"],
+        ];
+        //$answer["limitation_calculator_question_id"] = $question->id;
+        $answer = LimitationCalculatorCaseAnswer::updateOrCreate(["id" => $answer["id"]], $new_array);
+        return $answer;
+    }
+    public function saveSubAnswer($saved_answer, $sub_answer)
+    {
+        $sub_answer["limitation_calculator_answer_id"] = $saved_answer->id;
+        $sub_answer = LimitationCalculatorCaseSubAnswer::updateOrCreate(["id" => $sub_answer["id"]], $sub_answer);
+        return $sub_answer;
+    }
+
+    public function deleteLimitationCalculatorCaseQuestion($question_id)
+    {
+        try {
+            $record = LimitationCalculatorCaseQuestion::find($question_id);
+
+            if ($record) {
+                $record->delete();
+                return response([
+                    "message" => "Record Deleted Successfully"
+                ], 200);
+            } else {
+                return response('Data Not Found', 404);
+            }
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function deleteLimitationCalculatorCaseAnswer($answer_id)
+    {
+        try {
+            $record = LimitationCalculatorCaseAnswer::find($answer_id);
+
+            if ($record) {
+                $record->delete();
+                return response([
+                    "message" => "Record Deleted Successfully"
+                ], 200);
+            } else {
+                return response('Data Not Found', 404);
+            }
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function deleteLimitationCalculatorCaseSubAnswer($sub_answer_id)
+    {
+        try {
+            $record = LimitationCalculatorCaseSubAnswer::find($sub_answer_id);
+
+            if ($record) {
+                $record->delete();
+                return response([
+                    "message" => "Record Deleted Successfully"
+                ], 200);
+            } else {
+                return response('Data Not Found', 404);
+            }
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()

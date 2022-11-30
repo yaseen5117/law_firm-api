@@ -140,9 +140,22 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::post('create_new_meeting', 'UserVideoMeetingController@createMeeting');
 
     //limitation_calculator_cases
+    Route::resource('limitation_calculator_cases', 'LimitationCalculatorController');
     Route::get('limitation_calculator_cases', 'LimitationCalculatorController@getLimitationCalculatorCases');
     Route::post('limitation_calculator_case_questions', 'LimitationCalculatorController@getLimitationCalculatorCaseQuestions');
+    Route::post('get_limitation_calculator_case_questionand_answer/by_question_id/', 'LimitationCalculatorController@getLimitationCalculatorCaseQuestionsAndAnswersBYQuestionId');
+    //delete Case Question
+    Route::delete('delete_limitation_calculator_case_question/{question_id}', 'LimitationCalculatorController@deleteLimitationCalculatorCaseQuestion');
+    //delete Case Answer
+    Route::delete('delete_limitation_calculator_case_answer/{answer_id}', 'LimitationCalculatorController@deleteLimitationCalculatorCaseAnswer');
+    //delete Case Sub Answer
+    Route::delete('delete_limitation_calculator_sub_answer/{sub_answer_id}', 'LimitationCalculatorController@deleteLimitationCalculatorCaseSubAnswer');
+
+
+    Route::get('get_all_limitation_calculator_case_questions', 'LimitationCalculatorController@getAllLimitationCalculatorCaseQuestions');
     Route::post('limitation_calculator_case_sub_answers', 'LimitationCalculatorController@getlimitationCalculatorCaseSubAnswers');
+    //route to save limitation calculator question and answers.
+    Route::post('save_limitation_calculator_case_questions_and_answers', 'LimitationCalculatorController@saveQuestionAndAnswers');
 });
 
 //contact request to save
