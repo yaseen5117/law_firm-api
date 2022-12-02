@@ -258,9 +258,12 @@ class AttachmentController extends Controller
                         } else {
                             $file_path = $public_path . '/storage/attachments/petitions/' . $request->petition_id  . '/' . $sub_directory . $attachmentable_id . '/original/' . $pdf_file_name;
                             $output_path = $public_path . '/storage/attachments/petitions/' . $request->petition_id . '/'  . $sub_directory . $attachmentable_id;
-
-                            $JobConvertPdfToImages = (new JobConvertPdfToImages($file_path, $output_path, $file_name, $attachmentable_id, $attachmentable_type))->delay(Carbon::now()->addSeconds(20));
-                            $this->dispatch($JobConvertPdfToImages);
+                            if ($request->attachmentable_type == "App\Models\PetitonOrderSheet") {
+                                $this->convertPdftoimages($file_path, $output_path, $file_name, $attachmentable_id, $attachmentable_type);
+                            } else {
+                                $JobConvertPdfToImages = (new JobConvertPdfToImages($file_path, $output_path, $file_name, $attachmentable_id, $attachmentable_type))->delay(Carbon::now()->addSeconds(20));
+                                $this->dispatch($JobConvertPdfToImages);
+                            }
                         }
                     }
                 }

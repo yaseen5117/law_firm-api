@@ -16,7 +16,7 @@
         "laravel/framework": "^8.12",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
-        "laravel/ui": "^3.4",
+        "laravel/ui": "^3.4",         
         "phpoffice/phpword": "^0.18.3",
         "rap2hpoutre/laravel-log-viewer": "^2.2",
         "spatie/laravel-permission": "^5.3"

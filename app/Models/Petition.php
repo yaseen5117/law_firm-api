@@ -13,7 +13,7 @@ class Petition extends Model
     use SoftDeletes;
 
     protected $guarded = ['type_abrivation', 'petition_standard_title', 'petition_standard_title_with_petitioner'];
-    protected $appends = ['petitioner_names', 'opponent_names', 'type_abrivation', 'petition_standard_title', 'petition_standard_title_with_petitioner', 'pdf_download_url', 'index_total', 'order_sheet_total'];
+    protected $appends = ['petitioner_names', 'opponent_names', 'type_abrivation', 'petition_standard_title', 'petition_standard_title_with_petitioner', 'pdf_download_url', 'index_total', 'order_sheet_total', 'petition_reply_parent_total'];
     protected $dates = ['deleted_at'];
     protected $casts = [
         'institution_date'  => 'date:d/m/Y',
@@ -141,6 +141,11 @@ class Petition extends Model
     public function getOrderSheetTotalAttribute()
     {
         return $this->hasMany('App\Models\PetitonOrderSheet')->count();
+    }
+
+    public function getPetitionReplyParentTotalAttribute()
+    {
+        return $this->hasMany('App\Models\PetitionReplyParent')->count();
     }
 
     public function getPetitionStandardTitleAttribute()

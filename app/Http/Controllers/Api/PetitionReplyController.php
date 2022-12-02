@@ -172,25 +172,36 @@ class PetitionReplyController extends Controller
     {
         try {
 
-            $petition_reply_detail = PetitionReply::with('petition_reply_parent.petition', 'attachments')->where('id', $petitionReplyId)->first();
-            if (empty($petition_reply_detail)) {
+            $query = PetitionReply::with('petition_reply_parent.petition', 'attachments')->where('id', $petitionReplyId)->first();
+            if (empty($query)) {
                 return response([
                     "message" => "Data Not Found!",
                 ], 404);
             }
-            $petition_id = $petition_reply_detail->petition_reply_parent->petition->id;
+
+            $previous_index_id = null;
+            $next_index_id = null;
+            if ($petitionReplyId > 0) {
+                $previous_index_id = PetitionReply::where('petition_reply_parent_id', $query->petition_reply_parent_id)->where('id', '<', $petitionReplyId)->max('id');
+
+                $next_index_id = PetitionReply::where('petition_reply_parent_id', $query->petition_reply_parent_id)->where('id', '>', $petitionReplyId)->min('id');
+            }
+
+            $petition_id = $query->petition_reply_parent->petition->id;
 
             $petition = Petition::withRelations()->where('id', $petition_id)->first();
 
             return response()->json(
                 [
-                    'petition_reply' => $petition_reply_detail,
+                    'petition_reply' => $query,
                     'petition' => $petition,
+                    'previous_index_id' => $previous_index_id,
+                    'next_index_id' => $next_index_id,
                     'message' => 'Success',
                     'code' => 200
-                ]
+                ],
+                200
             );
-            return response($petition_reply_detail, 200);
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
