@@ -32,6 +32,10 @@ class Fir extends Model
     {
         return $this->belongsTo(FirStatus::class, 'fir_status_id', 'id');
     }
+    public function statute()
+    {
+        return $this->belongsTo(Statute::class, 'statute_id', 'id');
+    }
     public function court()
     {
         return $this->belongsTo('App\Models\Court', 'court_id', 'id');

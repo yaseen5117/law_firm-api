@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Fir;
-use App\Models\FirStatus;
+
+use App\Models\Statute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use PDF;
 
 class FirController extends Controller
 {
@@ -15,12 +17,28 @@ class FirController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+
+    public function __construct()
+    {
+        $this->middleware('role:admin')->except(['downloadAllFirPdf']);
+    }
+    public function index(Request $request)
     {
         try {
-            $firs = Fir::with("status", "court")->get();
+
+            $query = Fir::with("statute", "court");
+
+            if (!empty($request->statute_id)) {
+                $query->where('statute_id',  $request->statute_id);
+            }
+            if (!empty($request->section)) {
+                $query->where('section', 'like', '%' . $request->section . '%');
+            }
+
+            $firs = $query->groupBy('firs.id')->orderby('firs.id', 'desc')->get();
             return response([
                 "firs" => $firs,
+                "fir_pdf_download_url" => url("download_all_fir_pdf"),
                 "message" => "All Fir Data"
             ], 200);
         } catch (\Exception $e) {
@@ -150,14 +168,34 @@ class FirController extends Controller
             ], 500);
         }
     }
-    public function getFirStatus()
+    public function getStatute()
     {
         try {
-            $fir_statuses = FirStatus::get();
+            $statutes = Statute::get();
             return response([
-                "fir_statuses" => $fir_statuses,
+                "statutes" => $statutes,
                 "message" => "All Fir Statuses"
             ], 200);
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function downloadAllFirPdf()
+    {
+        try {
+            $firs = Fir::withoutGlobalScopes()->with("statute", "court")->where("deleted_at", null)->get();
+            //return view('fir_pdf.all_fir_pdf', compact('firs'));
+            if ($firs) {
+                info("Start Downloading Firs PDF");
+                ini_set('memory_limit', '-1');
+                $pdf = PDF::loadView('fir_pdf.all_fir_pdf', compact('firs'));
+                return $pdf->download("fir.pdf");
+                info("Complete Downloading Firs PDF");
+            } else {
+                return response('Firs Data Not Found', 404);
+            }
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()

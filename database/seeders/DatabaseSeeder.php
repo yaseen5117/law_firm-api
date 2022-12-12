@@ -36,6 +36,8 @@ class DatabaseSeeder extends Seeder
         $this->call([LimitationCalculatorCaseQuestionsTableSeeder::class]);
         $this->call([LimitationCalculatorCaseAnswersTableSeeder::class]);
         $this->call([LimitationCalculatorCaseSubAnswersTableSeeder::class]);
+        $this->call([StatutesTableSeeder::class]);
+
 
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }

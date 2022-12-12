@@ -142,7 +142,7 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
 
     //START route for FIR
     Route::resource('fir', 'FirController');
-    Route::get('get_fir_statuses', 'FirController@getFirStatus');
+    Route::get('get_statutes', 'FirController@getStatute');
     //END route for Synopses forms
 
 
@@ -150,7 +150,6 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::get('limitation_calculator_cases', 'LimitationCalculatorController@getLimitationCalculatorCases');
     Route::post('limitation_calculator_case_questions', 'LimitationCalculatorController@getLimitationCalculatorCaseQuestions');
     Route::post('limitation_calculator_case_sub_answers', 'LimitationCalculatorController@getlimitationCalculatorCaseSubAnswers');
-
 });
 
 //contact request to save
