@@ -54,6 +54,21 @@ class PetitionIndexController extends Controller
                     'date' => toDBDate($request->date), //\Carbon\Carbon::createFromFormat('d/m/Y', $request->date)->format('Y/m/d'),
                 ]);
             }
+
+            if (is_null($request->id)) {
+                $max_display_order = PetitionIndex::where('petition_id',$request->petition_id)->max('display_order');
+
+                /*return response([
+                    "max_display_order" => $max_display_order
+                ], 500);*/
+
+                $request->merge(
+                    [
+                        'display_order'=> $max_display_order+1,
+                    ]
+                );
+            }
+            
             PetitionIndex::updateOrCreate(['id' => $request->id], $request->except('editMode', 'petition', 'attachments'));
 
             return response()->json(
