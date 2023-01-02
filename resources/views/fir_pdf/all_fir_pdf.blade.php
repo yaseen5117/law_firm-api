@@ -35,6 +35,12 @@
             color: white;
         }
     </style>
+    <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            console.log("ready!");
+        });
+    </script>
 </head>
 
 <body>
@@ -53,18 +59,6 @@
             <th>Punishment Info</th>
         </tr>
 
-        @foreach(@$firs as $fir)
-        <tr>
-            <td>{{$fir->court->title}}</td>
-            <td>{{$fir->statute->title}}</td>
-            <td>{{$fir->section}}</td>
-            <td>{{$fir->arrest_info}}</td>
-            <td>{{$fir->warrent_info}}</td>
-            <td>{{$fir->bailable_info}}</td>
-            <td>{{$fir->compoundable_info}}</td>
-            <td>{{$fir->punishment_info}}</td>
-        </tr>
-        @endforeach
 
     </table>
 

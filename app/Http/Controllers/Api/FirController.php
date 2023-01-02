@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Fir;
-
+use App\Models\Section;
 use App\Models\Statute;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use PDF;
 
@@ -20,32 +21,11 @@ class FirController extends Controller
 
     public function __construct()
     {
-        $this->middleware('role:admin')->except(['downloadAllFirPdf']);
+        $this->middleware('role:admin')->except(['getStatute', 'sectionSearchResult', 'downloadAllFirPdf']);
     }
     public function index(Request $request)
     {
-        try {
-
-            $query = Fir::with("statute", "court");
-
-            if (!empty($request->statute_id)) {
-                $query->where('statute_id',  $request->statute_id);
-            }
-            if (!empty($request->section)) {
-                $query->where('section', 'like', '%' . $request->section . '%');
-            }
-
-            $firs = $query->groupBy('firs.id')->orderby('firs.id', 'desc')->get();
-            return response([
-                "firs" => $firs,
-                "fir_pdf_download_url" => url("download_all_fir_pdf"),
-                "message" => "All Fir Data"
-            ], 200);
-        } catch (\Exception $e) {
-            return response([
-                "error" => $e->getMessage()
-            ], 500);
-        }
+        //
     }
 
     /**
@@ -69,7 +49,7 @@ class FirController extends Controller
         try {
             //validate data 
             $validator = Validator::make($request->all(), [
-                'section' => 'required|max:190',
+
                 'arrest_info' => 'max:190',
                 'warrent_info' => 'max:190',
                 'bailable_info' => 'max:190',
@@ -85,7 +65,7 @@ class FirController extends Controller
                 );
             }
             //return response($request->all(), 403);
-            Fir::updateOrCreate(['id' => $request->id], $request->except(''));
+            Section::updateOrCreate(['id' => $request->id], $request->except(''));
 
             return response()->json(
                 [
@@ -109,7 +89,7 @@ class FirController extends Controller
     public function show($fir_id)
     {
         try {
-            $firData = Fir::find($fir_id);
+            $firData = Section::find($fir_id);
 
             return response([
                 "firData" => $firData,
@@ -154,7 +134,7 @@ class FirController extends Controller
     public function destroy($fir_id)
     {
         try {
-            $fir_data = Fir::find($fir_id);
+            $fir_data = Section::find($fir_id);
 
             if ($fir_data) {
                 $fir_data->delete();
@@ -185,7 +165,7 @@ class FirController extends Controller
     public function downloadAllFirPdf()
     {
         try {
-            $firs = Fir::withoutGlobalScopes()->with("statute", "court")->where("deleted_at", null)->get();
+            $firs = Section::with("statute")->where("deleted_at", null)->get();
             //return view('fir_pdf.all_fir_pdf', compact('firs'));
             if ($firs) {
                 info("Start Downloading Firs PDF");
@@ -196,6 +176,43 @@ class FirController extends Controller
             } else {
                 return response('Firs Data Not Found', 404);
             }
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function sectionSearchResult(Request $request)
+    {
+        try {
+            $sectionSearchResults = array();
+            if ($request->filterSections) {
+
+                foreach ($request->filterSections as $filterSection) {
+                    $query = Section::query();
+                    if (!empty($filterSection['statute_id'])) {
+                        $query->where('statute_id',  $filterSection['statute_id']);
+                    }
+                    if (!empty($filterSection['section'])) {
+                        $query->where('fir_no', 'like', '%' . $filterSection['section'] . '%');
+                    }
+                    $item = array();
+                    $item = [
+                        'fir_no' =>   $request->sectionData['fir_no'],
+                        'police_station' =>   $request->sectionData['police_station'],
+                        'year' =>   $request->sectionData['year']
+                    ];
+                    $item['data'] = $query->get();
+
+                    $sectionSearchResults[] = $item;
+                }
+            }
+
+            return response([
+                "sectionSearchResults" => $sectionSearchResults,
+                "fir_reader_result_pdf_download_url" => url("fir_reader_result_pdf_download"),
+                "message" => "All Fir Data"
+            ], 200);
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
