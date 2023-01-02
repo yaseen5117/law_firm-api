@@ -189,22 +189,24 @@ class FirController extends Controller
             if ($request->filterSections) {
 
                 foreach ($request->filterSections as $filterSection) {
-                    $query = Section::query();
-                    if (!empty($filterSection['statute_id'])) {
-                        $query->where('statute_id',  $filterSection['statute_id']);
-                    }
-                    if (!empty($filterSection['section'])) {
-                        $query->where('fir_no', 'like', '%' . $filterSection['section'] . '%');
-                    }
-                    $item = array();
-                    $item = [
-                        'fir_no' =>   $request->sectionData['fir_no'],
-                        'police_station' =>   $request->sectionData['police_station'],
-                        'year' =>   $request->sectionData['year']
-                    ];
-                    $item['data'] = $query->get();
+                    if (!empty($filterSection['statute_id']) || !empty($filterSection['section'])) {
+                        $query = Section::query();
+                        if (!empty($filterSection['statute_id'])) {
+                            $query->where('statute_id',  $filterSection['statute_id']);
+                        }
+                        if (!empty($filterSection['section'])) {
+                            $query->where('fir_no', 'like', '%' . $filterSection['section'] . '%');
+                        }
+                        $item = array();
+                        $item = [
+                            'fir_no' =>   $request->sectionData['fir_no'],
+                            'police_station' =>   $request->sectionData['police_station'],
+                            'year' =>   $request->sectionData['year']
+                        ];
+                        $item['data'] = $query->get();
 
-                    $sectionSearchResults[] = $item;
+                        $sectionSearchResults[] = $item;
+                    }
                 }
             }
 
