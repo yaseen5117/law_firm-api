@@ -52,7 +52,7 @@ class PetitionController extends Controller
 
             if (
                 empty($request->case_no) && empty($request->institution_date) &&
-                empty($request->year) && empty($request->court_id) && !isset($request->pending_tag)
+                empty($request->year) && !isset($request->pending_tag)
             ) {
                 if ($request->archived == "true") {
                     $query->where('archived', 1);
