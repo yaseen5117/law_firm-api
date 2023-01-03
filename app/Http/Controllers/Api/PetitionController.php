@@ -48,7 +48,18 @@ class PetitionController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Petition::select("petitions.*");
+            $query = Petition::select("petitions.*")->withRelationsIndex();
+
+            if (
+                empty($request->case_no) && empty($request->institution_date) &&
+                empty($request->year) && empty($request->court_id) && !isset($request->pending_tag)
+            ) {
+                if ($request->archived == "true") {
+                    $query->where('archived', 1);
+                } else {
+                    $query->where('archived', 0);
+                }
+            }
 
             $query
                 ->leftjoin('petition_petitioners', 'petitions.id', '=', 'petition_petitioners.petition_id')
@@ -68,14 +79,20 @@ class PetitionController extends Controller
                 $query->where('year', 'like', '%' . $request->year . '%');
             }
 
-            
+            if (!empty($request->pendingTag)) {
+                $query->where('pending_tag', 'like', '%' . $request->pendingTag . '%');
+            }
 
-            
+            if (!empty($request->court_id)) {
+                $query->where('court_id', $request->court_id);
+            }
             if (!empty($request->petitioner_name)) {
                 $query->where('users.name', 'like', '%' . $request->petitioner_name . '%')->orWhere('users_opp.name', 'like', '%' . $request->petitioner_name . '%');
             }
 
-            
+            if ($request->pending_tag == 'true') {
+                $query->whereNotNull('pending_tag');
+            }
 
             //getting logged in user
             $user = $request->user();
