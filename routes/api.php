@@ -141,8 +141,7 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
 
 
     //START route for FIR
-    Route::resource('fir', 'FirController');
-    Route::get('get_statutes', 'FirController@getStatute');
+    Route::resource('fir_sections', 'FirController');
     //END route for Synopses forms
 
 
@@ -164,6 +163,9 @@ Route::post('login', 'AuthController@login');
 Route::post('signup', 'Api\UserController@signUp');
 
 Route::get('get_html_content', 'Api\CmsPageController@index');
+//Fir reader public routes
+Route::get('get_statutes', 'Api\FirController@getStatute');
+Route::post('section_search_results', 'Api\FirController@sectionSearchResult');
 
 
 Route::middleware('auth:sanctum')->get('/user', 'Api\UserController@getLoggedInUser');
