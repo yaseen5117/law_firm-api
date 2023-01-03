@@ -94,7 +94,8 @@ class Petition extends Model
     }
     public function scopeWithRelationsIndex($query)
     {
-        return $query->with('court', 'type');
+        return $query;
+        //return $query->with('court', 'type');
     }
 
     public function getPetitionerNamesAttribute()
