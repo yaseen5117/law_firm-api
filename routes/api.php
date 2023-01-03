@@ -141,7 +141,7 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
 
 
     //START route for FIR
-    Route::resource('fir', 'FirController');
+    Route::resource('fir_sections', 'FirController');
     //END route for Synopses forms
 
 

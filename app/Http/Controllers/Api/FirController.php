@@ -25,7 +25,17 @@ class FirController extends Controller
     }
     public function index(Request $request)
     {
-        //
+        try {
+            $fir_sections = Section::get();
+            return response([
+                'fir_sections' => $fir_sections,
+                'message' => 'all fir sections'
+            ], 200);
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -49,7 +59,7 @@ class FirController extends Controller
         try {
             //validate data 
             $validator = Validator::make($request->all(), [
-
+                'title' => 'required|max:190',
                 'arrest_info' => 'max:190',
                 'warrent_info' => 'max:190',
                 'bailable_info' => 'max:190',
@@ -65,7 +75,7 @@ class FirController extends Controller
                 );
             }
             //return response($request->all(), 403);
-            Section::updateOrCreate(['id' => $request->id], $request->except(''));
+            Section::updateOrCreate(['id' => $request->id], $request->except('statute'));
 
             return response()->json(
                 [
@@ -89,10 +99,10 @@ class FirController extends Controller
     public function show($fir_id)
     {
         try {
-            $firData = Section::find($fir_id);
+            $firSectionData = Section::with("statute")->find($fir_id);
 
             return response([
-                "firData" => $firData,
+                "firSectionData" => $firSectionData,
                 "message" => "Single Fir Data"
             ], 200);
         } catch (\Exception $e) {
@@ -131,13 +141,13 @@ class FirController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($fir_id)
+    public function destroy($fir_section_id)
     {
         try {
-            $fir_data = Section::find($fir_id);
+            $fir_section_data = Section::find($fir_section_id);
 
-            if ($fir_data) {
-                $fir_data->delete();
+            if ($fir_section_data) {
+                $fir_section_data->delete();
                 return response("Deleted Successfully", 200);
             } else {
                 return response('Link Data Not Found', 404);
