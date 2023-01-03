@@ -174,7 +174,9 @@ function initialism($str, $as_space = array('-'))
     $str = str_replace($as_space, ' ', trim($str));
     $ret = '';
     foreach (explode(' ', $str) as $word) {
-        $ret .= strtoupper($word[0]);
+        if (!empty($word)) {
+            $ret .= strtoupper(@$word[0]);
+        }
     }
     return $ret;
 }
