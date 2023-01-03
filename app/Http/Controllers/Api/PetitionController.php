@@ -30,6 +30,7 @@ use App\Models\PetitonOrderSheet;
 use PDF;
 use Auth;
 use File;
+use Illuminate\Support\Facades\Log;
 
 use function GuzzleHttp\Promise\all;
 
@@ -131,6 +132,7 @@ class PetitionController extends Controller
                 ]
             );
         } catch (\Exception $e) {
+            Log::error("Error in fetching petitions: ".print_r($e->getMessage(),1));
             return response([
                 "error" => $e->getMessage()
             ], 500);
