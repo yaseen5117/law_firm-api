@@ -68,18 +68,14 @@ class PetitionController extends Controller
                 $query->where('year', 'like', '%' . $request->year . '%');
             }
 
-            if (!empty($request->pendingTag)) {
-                $query->where('pending_tag', 'like', '%' . $request->pendingTag . '%');
-            }
+            
 
             
             if (!empty($request->petitioner_name)) {
                 $query->where('users.name', 'like', '%' . $request->petitioner_name . '%')->orWhere('users_opp.name', 'like', '%' . $request->petitioner_name . '%');
             }
 
-            if ($request->pending_tag == 'true') {
-                $query->whereNotNull('pending_tag');
-            }
+            
 
             //getting logged in user
             $user = $request->user();
