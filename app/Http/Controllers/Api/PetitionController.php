@@ -48,18 +48,7 @@ class PetitionController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Petition::select("petitions.*")->withRelationsIndex();
-
-            if (
-                empty($request->case_no) && empty($request->institution_date) &&
-                empty($request->year) && !isset($request->pending_tag)
-            ) {
-                if ($request->archived == "true") {
-                    $query->where('archived', 1);
-                } else {
-                    $query->where('archived', 0);
-                }
-            }
+            $query = Petition::select("petitions.*");
 
             $query
                 ->leftjoin('petition_petitioners', 'petitions.id', '=', 'petition_petitioners.petition_id')
