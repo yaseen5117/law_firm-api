@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,7 +25,7 @@ Route::get('/generate_slugs', 'TestController@generate_slugs');
 Route::get('/pdf_to_img', 'TestController@pdf_to_img');
 Route::get('download_invoice_pdf/{id}', 'Api\InvoiceController@downloadInvoicePdf');
 Route::get('download_petition_pdf/{id}', 'Api\PetitionController@downloadPetitionPdf');
-Route::get('fir_reader_result_pdf_download/{filterSections}/{sectionData}', 'Api\FirController@downloadAllFirPdf');
+Route::get('fir_reader_result_pdf_download', 'Api\FirController@downloadFirReaderResultAsPdf');
 Route::get('download_pending_cases_pdf', 'Api\PetitionController@downloadPendingCase');
 Route::get('convert_word_to_pdf', 'Api\AttachmentController@convertWordToPDF');
 //Route to Move all files from old to new folder structure.
@@ -40,7 +41,14 @@ Route::get('move_synopsis_files/{id}', 'Api\AttachmentController@copySynopsisFil
 Route::get('move_judgement_files/{id}', 'Api\AttachmentController@copyJudgementFiles');
 Route::get('send_client_signup_email', 'Api\UserController@clientEmail');
 Route::get('create_petiiton_types_abbreviation', 'Api\PetitionTypeController@createAbbreviation');
-
+//change column type
+Route::get('change_db_col_type', function (Request $request) {
+    $table = $request->table;
+    $column = $request->column;
+    $newColumnType = $request->colType;
+    changeColumnType($table, $column, $newColumnType);
+    return "success";
+});
 
 /*ALL CRONJOBS*/
 Route::get('send_email_before_hearing', 'Api\CronjobController@send_email_before_hearing');

@@ -21,12 +21,23 @@ class FirController extends Controller
 
     public function __construct()
     {
-        $this->middleware('role:admin')->except(['getStatute', 'sectionSearchResult', 'downloadAllFirPdf']);
+        $this->middleware('role:admin')->except(['getStatute', 'sectionSearchResult', 'downloadFirReaderResultAsPdf']);
     }
     public function index(Request $request)
     {
+
         try {
-            $fir_sections = Section::get();
+            $query = Section::with('statute', 'user');
+            if (!empty($request->statute_id)) {
+                $query->where('statute_id',  $request->statute_id);
+            }
+            if (!empty($request->section)) {
+                $query->where('fir_no', 'like', '%' . $request->section . '%');
+            }
+            if (!empty($request->title)) {
+                $query->where('title', 'like', '%' . $request->title . '%');
+            }
+            $fir_sections = $query->get();
             return response([
                 'fir_sections' => $fir_sections,
                 'message' => 'all fir sections'
@@ -58,22 +69,25 @@ class FirController extends Controller
     {
         try {
             //validate data 
-            $validator = Validator::make($request->all(), [
-                'title' => 'required|max:190',
-                'arrest_info' => 'max:190',
-                'warrent_info' => 'max:190',
-                'bailable_info' => 'max:190',
-                'compoundable_info' => 'max:190',
-                'punishment_info' => 'max:190',
+            // $validator = Validator::make($request->all(), [
+            //     'title' => 'required|max:190',
+            //     'arrest_info' => 'max:190',
+            //     'warrent_info' => 'max:190',
+            //     'bailable_info' => 'max:190',
+            //     'compoundable_info' => 'max:190',
+            //     'punishment_info' => 'max:190',
+            // ]);
+            // if ($validator->fails()) {
+            //     return response()->json(
+            //         [
+            //             "validation_error" => $validator->errors(),
+            //         ],
+            //         422
+            //     );
+            // }
+            $request->merge([
+                'created_by' => auth()->user()->id
             ]);
-            if ($validator->fails()) {
-                return response()->json(
-                    [
-                        "validation_error" => $validator->errors(),
-                    ],
-                    422
-                );
-            }
             //return response($request->all(), 403);
             Section::updateOrCreate(['id' => $request->id], $request->except('statute'));
 
@@ -172,19 +186,24 @@ class FirController extends Controller
             ], 500);
         }
     }
-    public function downloadAllFirPdf()
+    public function downloadFirReaderResultAsPdf(Request $request)
     {
         try {
-            $firs = Section::with("statute")->where("deleted_at", null)->get();
-            //return view('fir_pdf.all_fir_pdf', compact('firs'));
-            if ($firs) {
-                info("Start Downloading Firs PDF");
+            $sectionSearchResults = array();
+            if ($request->filterSections) {
+                $sectionSearchResults = $this->getSectionSearchResult($request);
+            }
+
+            //return view('fir_pdf.all_fir_pdf', compact('sectionSearchResults'));
+            if ($sectionSearchResults) {
+                info("Start Downloading sectionSearchResults PDF");
                 ini_set('memory_limit', '-1');
-                $pdf = PDF::loadView('fir_pdf.all_fir_pdf', compact('firs'));
-                return $pdf->download("fir.pdf");
-                info("Complete Downloading Firs PDF");
+                $pdf = PDF::loadView('fir_pdf.all_fir_pdf', compact('sectionSearchResults'));
+
+                return $pdf->download("sectionSearchResults.pdf");
+                info("Complete Downloading sectionSearchResults PDF");
             } else {
-                return response('Firs Data Not Found', 404);
+                return response('sectionSearchResults Data Not Found', 404);
             }
         } catch (\Exception $e) {
             return response([
@@ -197,27 +216,7 @@ class FirController extends Controller
         try {
             $sectionSearchResults = array();
             if ($request->filterSections) {
-
-                foreach ($request->filterSections as $filterSection) {
-                    if (!empty($filterSection['statute_id']) || !empty($filterSection['section'])) {
-                        $query = Section::query();
-                        if (!empty($filterSection['statute_id'])) {
-                            $query->where('statute_id',  $filterSection['statute_id']);
-                        }
-                        if (!empty($filterSection['section'])) {
-                            $query->where('fir_no', 'like', '%' . $filterSection['section'] . '%');
-                        }
-                        $item = array();
-                        $item = [
-                            'fir_no' =>   $request->sectionData['fir_no'],
-                            'police_station' =>   $request->sectionData['police_station'],
-                            'year' =>   $request->sectionData['year']
-                        ];
-                        $item['data'] = $query->get();
-
-                        $sectionSearchResults[] = $item;
-                    }
-                }
+                $sectionSearchResults = $this->getSectionSearchResult($request);
             }
 
             return response([
@@ -230,5 +229,30 @@ class FirController extends Controller
                 "error" => $e->getMessage()
             ], 500);
         }
+    }
+    public function getSectionSearchResult($request)
+    {
+        $sectionSearchResults = array();
+        foreach ($request->filterSections as $filterSection) {
+            if (!empty($filterSection['statute_id']) || !empty($filterSection['section'])) {
+                $query = Section::query();
+                if (!empty($filterSection['statute_id'])) {
+                    $query->where('statute_id',  $filterSection['statute_id']);
+                }
+                if (!empty($filterSection['section'])) {
+                    $query->where('fir_no', 'like', '%' . $filterSection['section'] . '%');
+                }
+                $item = array();
+                $item = [
+                    'fir_no' =>   $request->sectionData['fir_no'],
+                    'police_station' =>   $request->sectionData['police_station'],
+                    'year' =>   $request->sectionData['year']
+                ];
+                $item['data'] = $query->get();
+
+                $sectionSearchResults[] = $item;
+            }
+        }
+        return $sectionSearchResults;
     }
 }

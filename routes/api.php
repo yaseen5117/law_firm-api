@@ -166,6 +166,7 @@ Route::get('get_html_content', 'Api\CmsPageController@index');
 //Fir reader public routes
 Route::get('get_statutes', 'Api\FirController@getStatute');
 Route::post('section_search_results', 'Api\FirController@sectionSearchResult');
+Route::post('download_fir_reader_result_pdf', 'Api\FirController@downloadFirReaderResultAsPdf');
 
 
 Route::middleware('auth:sanctum')->get('/user', 'Api\UserController@getLoggedInUser');

@@ -16,6 +16,7 @@ use App\Models\PetitionReply;
 use App\Models\PetitionSynopsis;
 use App\Models\PetitionTalbana;
 use App\Models\PetitonOrderSheet;
+use Illuminate\Support\Facades\DB;
 
 define('SITE_NAME', 'E Law Firm');
 define('ORDER_SHEET', 1);
@@ -283,4 +284,9 @@ function textualDateFormate($date_in_any_format)
     } else {
         return null;
     }
+}
+function changeColumnType($table, $column, $newColumnType)
+{
+    DB::statement("ALTER TABLE $table MODIFY COLUMN $column $newColumnType");
+    return;
 }

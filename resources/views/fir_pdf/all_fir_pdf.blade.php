@@ -31,8 +31,8 @@
             padding-top: 12px;
             padding-bottom: 12px;
             text-align: left;
-            background-color: rgb(143 58 48);
-            color: white;
+            background-color: rgb(245, 245, 240);
+            color: black;
         }
     </style>
     <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
@@ -44,21 +44,59 @@
 </head>
 
 <body>
-
-    <h1 id="heading">Fir List</h1>
+    <h2 id="heading">ELAWFIRM PK</h2>
+    <h4 id="heading">Fir Reader | Search Results</h4>
 
     <table id="fir_table">
-        <tr>
-            <th>Court</th>
-            <th>Statute</th>
-            <th>Section</th>
-            <th>Arrest Info</th>
-            <th>Warrent Info</th>
-            <th>Bailable Info</th>
-            <th>Compoundable Info</th>
-            <th>Punishment Info</th>
-        </tr>
+        <thead>
+            <tr>
+                <th scope="col">Section</th>
+                <th scope="col">Offences</th>
+                <th scope="col">
+                    Whether the police may arrest without warrant or
+                    not
+                </th>
+                <th scope="col">
+                    Whether a warrant or a summon shall ordinarily be
+                    issued in the first instance.
+                </th>
+                <th scope="col">Whether bailable or not</th>
+                <th scope="col">Punishment</th>
+                <th scope="col">By what Court triable</th>
+                <th scope="col">Defination</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($sectionSearchResults as $sectionSearchResult)
+            @foreach($sectionSearchResult['data'] as $singleSectionResult)
+            <tr>
+                <td scope="row">
+                    {{ $singleSectionResult->fir_no }}
+                </td>
+                <td>{{ $singleSectionResult->title }}</td>
+                <td>{{ $singleSectionResult->arrest_info }}</td>
+                <td>{{ $singleSectionResult->warrent_info }}</td>
+                <td>{{ $singleSectionResult->bailable_info }}</td>
+                <td>{{ $singleSectionResult->punishment_info }}</td>
+                <td></td>
+                <td>{{ $singleSectionResult->defination }}</td>
+            </tr>
 
+            <tr>
+                <td colspan="5">
+                    Police Station:
+                    <b>{{ $sectionSearchResult['police_station'] }}</b>
+                </td>
+                <td colspan="3">
+                    Fir No:
+                    <b>{{ $sectionSearchResult['fir_no'] }}</b> of Year:
+                    <b>{{ $sectionSearchResult['year'] }}</b>
+                </td>
+            </tr>
+            @endforeach
+            @endforeach
+
+        </tbody>
 
     </table>
 
