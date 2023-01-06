@@ -45,7 +45,7 @@
 
 <body>
     <h2 id="heading">ELAWFIRM PK</h2>
-    <h4 id="heading">Fir Reader | Search Results</h4>
+    <h4 id="heading">FIR Reader | Search Results</h4>
 
     <table id="fir_table">
         <thead>
@@ -88,7 +88,7 @@
                     <b>{{ $sectionSearchResult['police_station'] }}</b>
                 </td>
                 <td colspan="3">
-                    Fir No:
+                    FIR No:
                     <b>{{ $sectionSearchResult['fir_no'] }}</b> of Year:
                     <b>{{ $sectionSearchResult['year'] }}</b>
                 </td>
