@@ -67,6 +67,7 @@ class FirController extends Controller
      */
     public function store(Request $request)
     {
+        //return response($request->all(), 403);
         try {
             //validate data 
             // $validator = Validator::make($request->all(), [
@@ -93,7 +94,7 @@ class FirController extends Controller
 
             return response()->json(
                 [
-                    'message' => 'Fir Data Saved Successfully',
+                    'message' => 'FIR Data Saved Successfully',
                     'code' => 200
                 ]
             );

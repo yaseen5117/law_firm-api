@@ -9,13 +9,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Section extends Model
 {
     use HasFactory;
-    use SoftDeletes;
 
     protected $guarded = [];
-    protected $casts = [
-        'created_at'  => 'date:d/m/Y',
-
-    ];
 
     public function statute()
     {
