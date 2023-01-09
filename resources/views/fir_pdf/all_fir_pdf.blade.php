@@ -3,15 +3,25 @@
 
 <head>
     <style>
+        table {
+            border: 1px solid #ccc;
+            border-collapse: collapse;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        /* general styling */
+        body {
+            font-family: "Open Sans", sans-serif;
+
+        }
+
         #heading {
             text-align: center;
         }
 
-        #fir_table {
-            font-family: Arial, Helvetica, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-        }
 
         #fir_table td,
         #fir_table th {
