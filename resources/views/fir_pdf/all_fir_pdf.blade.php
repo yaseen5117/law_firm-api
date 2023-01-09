@@ -67,8 +67,8 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($sectionSearchResults as $sectionSearchResult)
-            @foreach($sectionSearchResult['data'] as $singleSectionResult)
+
+            @foreach($sectionSearchResults as $singleSectionResult)
             <tr>
                 <td scope="row">
                     {{ $singleSectionResult->fir_no }}
@@ -78,23 +78,23 @@
                 <td>{{ $singleSectionResult->warrent_info }}</td>
                 <td>{{ $singleSectionResult->bailable_info }}</td>
                 <td>{{ $singleSectionResult->punishment_info }}</td>
-                <td></td>
+                <td>{{ $singleSectionResult->court_triable }}</td>
                 <td>{{ $singleSectionResult->defination }}</td>
             </tr>
 
+            @endforeach
             <tr>
                 <td colspan="5">
                     Police Station:
-                    <b>{{ $sectionSearchResult['police_station'] }}</b>
+                    <b>{{ $search_item['police_station'] }}</b>
                 </td>
                 <td colspan="3">
                     FIR No:
-                    <b>{{ $sectionSearchResult['fir_no'] }}</b> of Year:
-                    <b>{{ $sectionSearchResult['year'] }}</b>
+                    <b>{{ $search_item['fir_no'] }}</b> of Year:
+                    <b>{{ $search_item['year'] }}</b>
                 </td>
             </tr>
-            @endforeach
-            @endforeach
+
 
         </tbody>
 

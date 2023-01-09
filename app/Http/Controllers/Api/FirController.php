@@ -194,12 +194,16 @@ class FirController extends Controller
             if ($request->filterSections) {
                 $sectionSearchResults = $this->getSectionSearchResult($request);
             }
-
-            //return view('fir_pdf.all_fir_pdf', compact('sectionSearchResults'));
+            $search_item = [
+                'fir_no' =>   $request->sectionData['fir_no'],
+                'police_station' =>   $request->sectionData['police_station'],
+                'year' =>   $request->sectionData['year']
+            ];
+            //return view('fir_pdf.all_fir_pdf', compact('sectionSearchResults','search_item'));
             if ($sectionSearchResults) {
                 info("Start Downloading sectionSearchResults PDF");
                 ini_set('memory_limit', '-1');
-                $pdf = PDF::loadView('fir_pdf.all_fir_pdf', compact('sectionSearchResults'));
+                $pdf = PDF::loadView('fir_pdf.all_fir_pdf', compact('sectionSearchResults', 'search_item'));
 
                 return $pdf->download("sectionSearchResults.pdf");
                 info("Complete Downloading sectionSearchResults PDF");
@@ -219,9 +223,14 @@ class FirController extends Controller
             if ($request->filterSections) {
                 $sectionSearchResults = $this->getSectionSearchResult($request);
             }
-
+            $search_item = [
+                'fir_no' =>   $request->sectionData['fir_no'],
+                'police_station' =>   $request->sectionData['police_station'],
+                'year' =>   $request->sectionData['year']
+            ];
             return response([
                 "sectionSearchResults" => $sectionSearchResults,
+                "search_item" => $search_item,
                 "fir_reader_result_pdf_download_url" => url("fir_reader_result_pdf_download"),
                 "message" => "All Fir Data"
             ], 200);
@@ -243,15 +252,8 @@ class FirController extends Controller
                 if (!empty($filterSection['section'])) {
                     $query->where('fir_no', 'like', '%' . $filterSection['section'] . '%');
                 }
-                $item = array();
-                $item = [
-                    'fir_no' =>   $request->sectionData['fir_no'],
-                    'police_station' =>   $request->sectionData['police_station'],
-                    'year' =>   $request->sectionData['year']
-                ];
-                $item['data'] = $query->get();
 
-                $sectionSearchResults[] = $item;
+                $sectionSearchResults = $query->get();
             }
         }
         return $sectionSearchResults;
