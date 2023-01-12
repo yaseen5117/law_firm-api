@@ -223,6 +223,12 @@ class FirController extends Controller
             if ($request->filterSections) {
                 $sectionSearchResults = $this->getSectionSearchResult($request);
             }
+            //check the given result array empty or not, checking @ 0 index
+            $result_not_found = true;
+            if (!$sectionSearchResults[0]->isEmpty()) {
+                $result_not_found = false;
+            }
+
             $search_item = [
                 'fir_no' =>   $request->sectionData['fir_no'],
                 'police_station' =>   $request->sectionData['police_station'],
@@ -231,6 +237,7 @@ class FirController extends Controller
             return response([
                 "sectionSearchResults" => $sectionSearchResults,
                 "search_item" => $search_item,
+                'noResultFound' => $result_not_found,
                 "fir_reader_result_pdf_download_url" => url("fir_reader_result_pdf_download"),
                 "message" => "All Fir Data"
             ], 200);
@@ -244,17 +251,14 @@ class FirController extends Controller
     {
         $sectionSearchResults = array();
         foreach ($request->filterSections as $filterSection) {
-            if (!empty($filterSection['statute_id']) || !empty($filterSection['section'])) {
-                $query = Section::query();
-                if (!empty($filterSection['statute_id'])) {
-                    $query->where('statute_id',  $filterSection['statute_id']);
-                }
-                if (!empty($filterSection['section'])) {
-                    $query->where('fir_no', 'like', '%' . $filterSection['section'] . '%');
-                }
-
-                $sectionSearchResults = $query->get();
+            $query = Section::query();
+            if (!empty($filterSection['statute_id'])) {
+                $query->where('statute_id',  $filterSection['statute_id']);
             }
+            if (!empty($filterSection['section'])) {
+                $query->where('fir_no', 'like', '%' . $filterSection['section'] . '%');
+            }
+            $sectionSearchResults[] = $query->get();
         }
         return $sectionSearchResults;
     }

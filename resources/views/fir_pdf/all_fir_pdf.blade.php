@@ -29,9 +29,9 @@
             padding: 8px;
         }
 
-        #fir_table tr:nth-child(even) {
+        /* #fir_table tr:nth-child(even) {
             background-color: #f2f2f2;
-        }
+        } */
 
         #fir_table tr:hover {
             background-color: #ddd;
@@ -77,8 +77,8 @@
             </tr>
         </thead>
         <tbody>
-
-            @foreach($sectionSearchResults as $singleSectionResult)
+            @foreach($sectionSearchResults as $sectionResults)
+            @foreach($sectionResults as $singleSectionResult)
             <tr>
                 <td scope="row">
                     {{ $singleSectionResult->fir_no }}
@@ -91,7 +91,7 @@
                 <td>{{ $singleSectionResult->court_triable }}</td>
                 <td>{{ $singleSectionResult->defination }}</td>
             </tr>
-
+            @endforeach
             @endforeach
             <tr>
                 <td colspan="5">
