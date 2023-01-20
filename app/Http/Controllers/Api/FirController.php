@@ -32,7 +32,7 @@ class FirController extends Controller
                 $query->where('statute_id',  $request->statute_id);
             }
             if (!empty($request->section)) {
-                $query->where('fir_no', 'like', '%' . $request->section . '%');
+                $query->where('fir_no', 'like', $request->section );
             }
             if (!empty($request->title)) {
                 $query->where('title', 'like', '%' . $request->title . '%');
@@ -256,7 +256,7 @@ class FirController extends Controller
                 $query->where('statute_id',  $filterSection['statute_id']);
             }
             if (!empty($filterSection['section'])) {
-                $query->where('fir_no', 'like', '%' . $filterSection['section'] . '%');
+                $query->where('fir_no', 'like',  $filterSection['section'] );
             }
             $sectionSearchResults[] = $query->get();
         }
