@@ -521,7 +521,7 @@ class UserController extends Controller
                 $file_path = $file->storeAs('attachments/user/' . $request->attachmentable_id . '/', $file_name, 'public');
                 $mime_type = $file->getClientMimeType();
 
-                $file_name = time() . '_' . $file->getClientOriginalName();
+                //$file_name = time() . '_' . $file->getClientOriginalName();
                 $title = $file_name;
                 $attachmentable_type = "App\Models\User";
                 $attachmentable_id = $request->attachmentable_id;
