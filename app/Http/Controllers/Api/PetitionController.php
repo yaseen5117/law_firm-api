@@ -27,6 +27,7 @@ use App\Models\PetitionNaqalForm;
 use App\Models\PetitionSynopsis;
 use App\Models\PetitionTalbana;
 use App\Models\PetitonOrderSheet;
+use App\Models\StudentCasesAccess;
 use PDF;
 use Auth;
 use File;
@@ -103,6 +104,12 @@ class PetitionController extends Controller
                 $query->where('petitioner_id', $request->user()->id);
             }
 
+            if ($user->hasRole('student')) {
+                $student_cases_ids = StudentCasesAccess::where("user_id", $user->id)->pluck("case_id");
+
+                $query->whereIn('petitions.id', $student_cases_ids);
+            }
+
             //$query->orderBy('display_order');
             $petitions = [];
             if ($request->force_all_records) {
@@ -132,7 +139,7 @@ class PetitionController extends Controller
                 ]
             );
         } catch (\Exception $e) {
-            Log::error("Error in fetching petitions: ".print_r($e->getMessage(),1));
+            Log::error("Error in fetching petitions: " . print_r($e->getMessage(), 1));
             return response([
                 "error" => $e->getMessage()
             ], 500);

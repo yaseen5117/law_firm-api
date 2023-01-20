@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\PetitionPetitioner;
 use App\Models\PetitionLawyer;
+use App\Models\StudentCasesAccess;
 use Mail;
 use Exception;
 
@@ -36,6 +37,9 @@ class CasePermissionService
 			$hasPermission = PetitionLawyer::wherePetitionId($petition_id)->where('lawyer_id', $user->id)->exists();
 		}
 
+		if ($user->hasRole('student')) {
+			$hasPermission = StudentCasesAccess::where("case_id", $petition_id)->where('user_id', $user->id)->exists();
+		}
 		return $hasPermission;
 	}
 }

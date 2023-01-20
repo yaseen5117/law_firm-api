@@ -456,6 +456,8 @@ class UserController extends Controller
                 $user->assignRole('lawyer');
             } else if ($request->role_name == "CLIENT") {
                 $user->assignRole('client');
+            } else if ($request->role_name == "STUDENT") {
+                $user->assignRole('student');
             }
 
             try {

@@ -42,7 +42,7 @@ class User extends Authenticatable
     ];
 
     protected $appends = [
-        'created_at_formated_date', 'is_admin', 'is_lawyer', 'is_client', 'next_invoice_num'
+        'created_at_formated_date', 'is_admin', 'is_lawyer', 'is_client', 'next_invoice_num', 'is_student'
     ];
 
     /**
@@ -106,6 +106,10 @@ class User extends Authenticatable
     public function getIsClientAttribute()
     {
         return $this->hasRole(['client']);
+    }
+    public function getIsStudentAttribute()
+    {
+        return $this->hasRole(['student']);
     }
 
     public function nextInvoiceNum()

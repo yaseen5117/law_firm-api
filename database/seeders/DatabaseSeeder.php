@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
         $this->call([LimitationCalculatorCaseAnswersTableSeeder::class]);
         $this->call([LimitationCalculatorCaseSubAnswersTableSeeder::class]);
         $this->call([StatutesTableSeeder::class]);
-
+        $this->call([AddStudentRoleSeeder::class]);
 
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
