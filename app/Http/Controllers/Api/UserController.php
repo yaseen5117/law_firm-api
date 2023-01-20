@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Attachment;
 use App\Models\Company;
+use App\Models\DefaultStudentCase;
 use App\Models\Role;
 use App\Models\Setting;
+use App\Models\StudentCasesAccess;
 use App\Models\User;
 use App\Services\EmailService;
 use Illuminate\Http\Request;
@@ -181,6 +183,10 @@ class UserController extends Controller
                     $role = Role::find($request->role_id);
                     $user->roles()->detach();
                     $user->assignRole($role->name);
+                    //assign cases to Student User
+                    if ($user->hasRole('student')) {
+                        $assignCases = $this->assignDefaultCasesToStudent($user);
+                    }
                 }
                 if ($file) {
                     $file_path = $file->storeAs('users/' . $user->id, $name, 'public');
@@ -458,6 +464,7 @@ class UserController extends Controller
                 $user->assignRole('client');
             } else if ($request->role_name == "STUDENT") {
                 $user->assignRole('student');
+                $assignCases = $this->assignDefaultCasesToStudent($user);
             }
 
             try {
@@ -543,5 +550,21 @@ class UserController extends Controller
             }
             return response("Uploaded User Profile Image Successfully", 200);
         }
+    }
+    public function assignDefaultCasesToStudent($user)
+    {
+        $student_default_cases_ids = DefaultStudentCase::get()->pluck('case_id');
+        if ($student_default_cases_ids) {
+            $data = [];
+            foreach ($student_default_cases_ids as $case_id) {
+                $data[] = [
+                    'case_id' => $case_id,
+                    'user_id' => $user->id,
+                ];
+            }
+            $assignedCases = StudentCasesAccess::insert($data);
+            info("Assigned Cases IDs To Student User: " . $student_default_cases_ids);
+        }
+        return true;
     }
 }
