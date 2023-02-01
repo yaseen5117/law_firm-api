@@ -20,10 +20,14 @@ class StatuteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $statutes = Statute::orderBy('display_order', 'ASC')->get();
+            $query = Statute::query();
+            if (!empty($request->title)) {
+                $query->where('title', 'like', '%' . $request->title . '%');
+            }
+            $statutes = $query->orderBy('display_order', 'ASC')->get();
             return response([
                 "statutes" => $statutes,
                 "message" => "All Statuses"
@@ -54,7 +58,16 @@ class StatuteController extends Controller
     public function store(Request $request)
     {
         try {
-            //return response($request->all(), 403);
+            //if diplay_order empty then get max from Existing Rec. and increment by 1
+            if (empty($request->display_order)) {
+                $maxDisplayOrder = Statute::max('display_order');
+                if (!empty($maxDisplayOrder)) {
+                    $request->merge([
+                        "display_order" => $maxDisplayOrder + 1,
+                    ]);
+                }
+            }
+
             Statute::updateOrCreate(['id' => $request->id], $request->except('editMode'));
 
             return response()->json(

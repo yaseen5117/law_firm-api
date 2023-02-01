@@ -37,8 +37,8 @@ class FirController extends Controller
             if (!empty($request->title)) {
                 $query->where('title', 'like', '%' . $request->title . '%');
             }
-            $fir_sections = $query->get();
-            return response([
+            $fir_sections = $query->paginate(20);
+            return response()->json([
                 'fir_sections' => $fir_sections,
                 'message' => 'all fir sections'
             ], 200);
