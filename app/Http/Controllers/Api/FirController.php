@@ -21,7 +21,7 @@ class FirController extends Controller
 
     public function __construct()
     {
-        $this->middleware('role:admin')->except(['getStatute', 'sectionSearchResult', 'downloadFirReaderResultAsPdf']);
+        $this->middleware('role:admin|staff')->except(['index', 'sectionSearchResult', 'downloadFirReaderResultAsPdf']);
     }
     public function index(Request $request)
     {
@@ -32,7 +32,7 @@ class FirController extends Controller
                 $query->where('statute_id',  $request->statute_id);
             }
             if (!empty($request->section)) {
-                $query->where('fir_no', 'like', $request->section );
+                $query->where('fir_no', 'like', $request->section);
             }
             if (!empty($request->title)) {
                 $query->where('title', 'like', '%' . $request->title . '%');
@@ -173,20 +173,7 @@ class FirController extends Controller
             ], 500);
         }
     }
-    public function getStatute()
-    {
-        try {
-            $statutes = Statute::get();
-            return response([
-                "statutes" => $statutes,
-                "message" => "All Fir Statuses"
-            ], 200);
-        } catch (\Exception $e) {
-            return response([
-                "error" => $e->getMessage()
-            ], 500);
-        }
-    }
+
     public function downloadFirReaderResultAsPdf(Request $request)
     {
         try {
@@ -256,7 +243,7 @@ class FirController extends Controller
                 $query->where('statute_id',  $filterSection['statute_id']);
             }
             if (!empty($filterSection['section'])) {
-                $query->where('fir_no', 'like',  $filterSection['section'] );
+                $query->where('fir_no', 'like',  $filterSection['section']);
             }
             $sectionSearchResults[] = $query->get();
         }

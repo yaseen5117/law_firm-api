@@ -10,6 +10,11 @@ use Illuminate\Support\Str;
 
 class SamplePleadingController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('role:admin|staff')->except(['index', 'show']);
+    }
     /**
      * Display a listing of the resource.
      *

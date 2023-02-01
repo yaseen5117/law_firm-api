@@ -16,7 +16,7 @@ class PetitionTalbanaController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->only(['store', 'destroy']);
+        $this->middleware('role:admin|staff')->only(['store', 'destroy']);
     }
 
     public function index(Request $request)

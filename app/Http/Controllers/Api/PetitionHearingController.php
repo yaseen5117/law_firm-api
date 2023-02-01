@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Petition;
 use App\Models\PetitionHearing;
+use App\Models\PetitionLawyer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 use function GuzzleHttp\Promise\all;
 
@@ -18,8 +20,16 @@ class PetitionHearingController extends Controller
      */
     public function index()
     {
+        $user = Auth::user();
         $events = [];
-        $petitionHearings = PetitionHearing::with('petition')->get();
+        $petitionHearings = [];
+        $petition_ids = null;
+        $query = PetitionHearing::with('petition');
+        if ($user && $user->hasRole('lawyer')) {
+            $petition_ids = PetitionLawyer::where("lawyer_id", $user->id)->pluck("petition_id");
+            $query->whereIn('id', $petition_ids);
+        }
+        $petitionHearings = $query->get();
 
         foreach ($petitionHearings as $petitionHearing) {
 

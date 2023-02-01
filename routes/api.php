@@ -15,9 +15,45 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('test_convert', 'Api\PetitionController@test_convert');
 
-Route::group(['middleware' => 'auth:sanctum', 'role:admin', 'namespace' => 'Api'], function () {
-    Route::resource('users', 'UserController');
+//ADMIN AND STUDENT ROUTES
+Route::group(['middleware' => ['auth:sanctum', 'role:admin|student'], 'namespace' => 'Api'], function () {
+    Route::post('petition_reply_details/{id}', 'PetitionReplyController@replyDetail');
+});
+
+//ADMIN,STAFF LAWYER, STUDENT ROUTES
+Route::group(['middleware' => ['auth:sanctum', 'role:admin|lawyer|student|staff'], 'namespace' => 'Api'], function () {
+    Route::resource('contracts_and_agreements', 'ContractsAndAgreementController');
+    Route::get('contract_categories', 'ContractsAndAgreementController@contractCategory');
+
+    Route::resource('sample_pleadings', 'SamplePleadingController');
+
+    //START route for General Case Law
+    Route::resource('general_case_laws', 'GeneralCaseLawController');
+    //END route for General Case Law
+});
+
+//ADMIN,STAFF AND LAWYER ROUTES
+Route::group(['middleware' => ['auth:sanctum', 'role:admin|lawyer|staff'], 'namespace' => 'Api'], function () {
     Route::resource('petition_hearing', 'PetitionHearingController');
+    //opinions
+    Route::resource('opinions', 'OpinionController');
+
+    Route::get('client_users', 'UserController@getClientUsers');
+
+    Route::resource('links', 'LinkController');
+
+    //limitation_calculator_cases
+    Route::get('limitation_calculator_cases', 'LimitationCalculatorController@getLimitationCalculatorCases');
+    Route::post('limitation_calculator_case_questions', 'LimitationCalculatorController@getLimitationCalculatorCaseQuestions');
+    Route::post('limitation_calculator_case_sub_answers', 'LimitationCalculatorController@getlimitationCalculatorCaseSubAnswers');
+
+    //route for FIR
+    Route::resource('fir_sections', 'FirController');
+});
+
+//ADMIN,STAFF ROUTES
+Route::group(['middleware' => ['auth:sanctum', 'role:admin|staff'], 'namespace' => 'Api'], function () {
+
     Route::get('invoices/stats', 'InvoiceController@invoicesStats');
     Route::resource('invoices', 'InvoiceController');
 
@@ -26,10 +62,6 @@ Route::group(['middleware' => 'auth:sanctum', 'role:admin', 'namespace' => 'Api'
     Route::get('invoice_templates', 'InvoiceController@invoice_templates');
     Route::post('invoice/mark_as_paid', 'InvoiceController@markAsPaid');
     Route::delete('invoice/delete_payment/{payment_id}', 'InvoiceController@deleteInvoicePayment');
-    Route::resource('contracts_and_agreements', 'ContractsAndAgreementController');
-    Route::resource('links', 'LinkController');
-
-    Route::get('contract_categories', 'ContractsAndAgreementController@contractCategory');
 
     Route::get('settings', 'SettingController@index');
     Route::get('get_order_sheet_types', 'PetitionOrderSheetController@getOrderSheetTypes');
@@ -38,33 +70,29 @@ Route::group(['middleware' => 'auth:sanctum', 'role:admin', 'namespace' => 'Api'
     Route::get('get_synopsis_types', 'PetitionSynopsisController@getSynopsisTypes');
 
     Route::get('clients', 'UserController@getClient');
-    Route::get('client_users', 'UserController@getClientUsers');
+
     Route::get('lawyers', 'UserController@getLawyer');
 
     //contact request    
     Route::get('get_contact_requests', 'FrontEndController@getContactRequest');
 
-    //opinions
-    Route::resource('opinions', 'OpinionController');
 
     Route::post('delete_selected', 'AttachmentController@deleteSelected');
     Route::resource('module_types', 'PetitionModuleTypeController');
     Route::resource('petition_types', 'PetitionTypeController');
     Route::get('get_court_names', 'PetitionTypeController@getCourtsName');
-    Route::resource('courts', 'CourtController');
 
-    //START route for General Case Law
-    Route::resource('general_case_laws', 'GeneralCaseLawController');
-    //END route for General Case Law
 
     Route::resource('attachments', 'AttachmentController');
-    Route::post('petition_reply_details/{id}', 'PetitionReplyController@replyDetail');
 
-    Route::resource('sample_pleadings', 'SamplePleadingController');
     Route::resource('companies', 'CompanyController');
 });
 
+//ROUTES FOR LOGGED IN USER
 Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function () {
+
+    Route::resource('users', 'UserController');
+
     Route::post('petitions_index/update_display_order', 'PetitionIndexController@update_display_order');
     Route::post('petitions/toggle_archived', 'PetitionController@toggleArchivedStatus');
     Route::resource('petitions', 'PetitionController'); //middleware added in controller __construct()
@@ -86,6 +114,7 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
 
     Route::post('delete_folder', 'AttachmentController@findOriginalFolder');
 
+    Route::resource('courts', 'CourtController');
 
     Route::POST('get_next_hearing_ordersheet', 'PetitionOrderSheetController@getNextHearingOrderSheet');
     Route::POST('add_hearing_date', 'PetitionOrderSheetController@addNextHearingDateToOrderSheet');
@@ -138,17 +167,6 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::post('upload_user_image', 'UserController@uploadImage');
     Route::post('get_user_meeting', 'UserVideoMeetingController@getUserMeeting');
     Route::post('create_new_meeting', 'UserVideoMeetingController@createMeeting');
-
-
-    //START route for FIR
-    Route::resource('fir_sections', 'FirController');
-    //END route for Synopses forms
-
-
-    //limitation_calculator_cases
-    Route::get('limitation_calculator_cases', 'LimitationCalculatorController@getLimitationCalculatorCases');
-    Route::post('limitation_calculator_case_questions', 'LimitationCalculatorController@getLimitationCalculatorCaseQuestions');
-    Route::post('limitation_calculator_case_sub_answers', 'LimitationCalculatorController@getlimitationCalculatorCaseSubAnswers');
 });
 
 //contact request to save
@@ -164,7 +182,7 @@ Route::post('signup', 'Api\UserController@signUp');
 
 Route::get('get_html_content', 'Api\CmsPageController@index');
 //Fir reader public routes
-Route::get('get_statutes', 'Api\FirController@getStatute');
+Route::resource('statutes', 'Api\StatuteController'); //middleware added in controller __construct()
 Route::post('section_search_results', 'Api\FirController@sectionSearchResult');
 Route::post('download_fir_reader_result_pdf', 'Api\FirController@downloadFirReaderResultAsPdf');
 

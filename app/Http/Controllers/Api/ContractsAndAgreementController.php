@@ -12,6 +12,11 @@ use Illuminate\Support\Str;
 
 class ContractsAndAgreementController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('role:admin|staff')->except(['index', 'contractCategory', 'show']);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -53,7 +58,7 @@ class ContractsAndAgreementController extends Controller
     {
         try {
             $request->merge([
-                'slug'=>Str::slug($request->title)
+                'slug' => Str::slug($request->title)
             ]);
             $contract_and_agreement = ContractsAndAgreement::updateOrCreate(['id' => $request->id], $request->except('editMode', 'files'));
             //getting files from request

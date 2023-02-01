@@ -3,48 +3,31 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Opinion;
+use App\Models\Statute;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class OpinionController extends Controller
+use function GuzzleHttp\Promise\all;
+
+class StatuteController extends Controller
 {
 
-    public function __construct()
-    {
-        $this->middleware('role:admin|staff')->except(['index']);
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('role:admin|staff')->except(['index']);
+    // }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
         try {
-
-            $query = Opinion::with('user');
-            $user = $request->user();
-            if ($user->hasRole('lawyer')) {
-                $query->where('lawyer_id', $user->id);
-            }
-
-            if (!empty($request->client_id)) {
-                $query->where('client_id', $request->client_id);
-            }
-            if (!empty($request->reference_no)) {
-                $query->where('reference_no', 'like', '%' . $request->reference_no . '%');
-            }
-            if (!empty($request->subject)) {
-                $query->where('subject', 'like', '%' . $request->subject . '%');
-            }
-
-            $opinions = $query->get();
+            $statutes = Statute::orderBy('display_order', 'ASC')->get();
             return response([
-                'opinions' => $opinions,
-                'message' => 'All Opinions',
-                'status' => 200
-            ]);
+                "statutes" => $statutes,
+                "message" => "All Statuses"
+            ], 200);
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
@@ -71,24 +54,15 @@ class OpinionController extends Controller
     public function store(Request $request)
     {
         try {
-            if ($request->issuance_date) {
-                $request->merge([
-                    'issuance_date' => toDBDate($request->issuance_date), //\Carbon\Carbon::createFromFormat('d/m/Y', $request->issuance_date)->format('Y/m/d'),
-                ]);
-            }
-            $user = $request->user();
-            if ($user->hasRole('lawyer')) {
-                $request->merge([
-                    'lawyer_id' =>  $user->id,
-                ]);
-            }
-            Opinion::updateOrCreate(['id' => $request->id], $request->except('editMode', 'user'));
+            //return response($request->all(), 403);
+            Statute::updateOrCreate(['id' => $request->id], $request->except('editMode'));
 
             return response()->json(
                 [
-                    'message' => 'Saved successfully',
+                    'message' => 'Statute Saved Successfully',
                     'code' => 200
-                ]
+                ],
+                200
             );
         } catch (\Exception $e) {
             return response([
@@ -140,13 +114,13 @@ class OpinionController extends Controller
     public function destroy($id)
     {
         try {
-            $record = Opinion::find($id);
+            $record = Statute::find($id);
 
             if ($record) {
                 $record->delete();
                 return response($record, 200);
             } else {
-                return response('Data Not Found', 404);
+                return response('Statute Not Found', 404);
             }
         } catch (\Exception $e) {
             return response([

@@ -24,7 +24,7 @@ class UserController extends Controller
 
     public function __construct()
     {
-        $this->middleware("role:admin", ['except' => ['store', 'show', 'getClient', 'getLoggedInUser', 'getRoles', 'signUp', 'getLawyer', 'getClientUsers', 'clientEmail', 'uploadImage']]);
+        $this->middleware("role:admin|staff", ['except' => ['store', 'show', 'destroy', 'getClient', 'getLoggedInUser', 'getRoles', 'signUp', 'getLawyer', 'getClientUsers', 'clientEmail', 'uploadImage']]);
     }
     /**
      * Display a listing of the resource.
@@ -166,11 +166,19 @@ class UserController extends Controller
                 }
 
                 // if ($request->is_approved) {
-                $request->merge([
-                    'approved_at' => now(),
-                    'approved_by' => $request->user()->id,
-                    'is_approved' => $request->id ? $request->is_approved : 1
-                ]);
+                if ($request->user()->hasRole('admin') && !$request->approved_at) {
+                    $request->merge([
+
+                        'approved_at' => now(),
+                        'approved_by' => $request->user()->id,
+                        'is_approved' => $request->id ? $request->is_approved : 1
+                    ]);
+                } else {
+                    $request->merge([
+                        'approved_at' => toDBDate($request->approved_at)
+                    ]);
+                }
+
                 // } else {
                 //     $request->merge([
                 //         'approved_at' => null,
@@ -196,6 +204,7 @@ class UserController extends Controller
                     foreach ($request->contact_persons as $contact_person) {
                         $already_availabe_contact_person = User::where('email', $contact_person["email"])->where("company_id", $request->user()->company_id)->first();
                         if (empty($already_availabe_contact_person)) {
+                            $contact_person['company_id'] = $user->company_id;
                             $contact_person['name'] = $contact_person["name"];
                             $contact_person['email'] = $contact_person["email"];
                             $contact_person['phone'] = $contact_person["phone"];

@@ -33,5 +33,23 @@ class StatutesTableSeeder extends Seeder
             'display_order' => 3,
 
         ]);
+        DB::table('statutes')->insert([
+            'id' => 4,
+            'title' => 'Control of Narcotic Substances Act, 1997',
+            'display_order' => 4,
+
+        ]);
+        DB::table('statutes')->insert([
+            'id' => 5,
+            'title' => 'Maintenance of Public Order Ordinance, 1960',
+            'display_order' => 5,
+
+        ]);
+        DB::table('statutes')->insert([
+            'id' => 6,
+            'title' => 'Prevention of Corruption Act, 1947',
+            'display_order' => 6,
+
+        ]);
     }
 }

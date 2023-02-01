@@ -16,7 +16,7 @@ class PetitionIndexController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin')->only(['store', 'destroy']);
+        $this->middleware('role:admin|staff')->only(['store', 'destroy']);
     }
     public function index()
     {
@@ -56,7 +56,7 @@ class PetitionIndexController extends Controller
             }
 
             if (is_null($request->id)) {
-                $max_display_order = PetitionIndex::where('petition_id',$request->petition_id)->max('display_order');
+                $max_display_order = PetitionIndex::where('petition_id', $request->petition_id)->max('display_order');
 
                 /*return response([
                     "max_display_order" => $max_display_order
@@ -64,11 +64,11 @@ class PetitionIndexController extends Controller
 
                 $request->merge(
                     [
-                        'display_order'=> $max_display_order+1,
+                        'display_order' => $max_display_order + 1,
                     ]
                 );
             }
-            
+
             PetitionIndex::updateOrCreate(['id' => $request->id], $request->except('editMode', 'petition', 'attachments'));
 
             return response()->json(
@@ -172,7 +172,7 @@ class PetitionIndexController extends Controller
 
 
         foreach ($request->petition_details as $index => $petition_detail) {
-            
+
             PetitionIndex::whereId($petition_detail['id'])->update([
                 'display_order' => $index
             ]);
