@@ -12,11 +12,25 @@ class Petition extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $guarded = ['type_abrivation', 'petition_standard_title', 'petition_standard_title_with_petitioner'];
-    protected $appends = ['petitioner_names', 'opponent_names', 'type_abrivation', 'petition_standard_title', 'petition_standard_title_with_petitioner', 'pdf_download_url', 'index_total', 'order_sheet_total', 'petition_reply_parent_total'];
+    protected $guarded = [
+        'type_abrivation',
+        'petition_standard_title',
+        'petition_standard_title_with_petitioner',
+    ];
+    protected $appends = [
+        'petitioner_names',
+        'opponent_names',
+        'type_abrivation',
+        'petition_standard_title',
+        'petition_standard_title_with_petitioner',
+        'pdf_download_url',
+        'index_total',
+        'order_sheet_total',
+        'petition_reply_parent_total',
+    ];
     protected $dates = ['deleted_at'];
     protected $casts = [
-        'institution_date'  => 'date:d/m/Y',
+        'institution_date' => 'date:d/m/Y',
     ];
 
     /**
@@ -27,7 +41,7 @@ class Petition extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new CompanyScope);
+        static::addGlobalScope(new CompanyScope());
     }
 
     protected static function boot()
@@ -39,14 +53,17 @@ class Petition extends Model
         });
     }
 
-
     public function court()
     {
         return $this->belongsTo('App\Models\Court', 'court_id', 'id');
     }
     public function type()
     {
-        return $this->belongsTo('App\Models\PetitionType', 'petition_type_id', 'id');
+        return $this->belongsTo(
+            'App\Models\PetitionType',
+            'petition_type_id',
+            'id'
+        );
     }
     public function lawyers()
     {
@@ -71,7 +88,11 @@ class Petition extends Model
 
     public function petition_type()
     {
-        return $this->belongsTo('App\Models\PetitionType', 'petition_type_id', 'id');
+        return $this->belongsTo(
+            'App\Models\PetitionType',
+            'petition_type_id',
+            'id'
+        );
     }
 
     public function petition_judges()
@@ -85,12 +106,21 @@ class Petition extends Model
     }
     public function attachments()
     {
-        return $this->morphMany(Attachment::class, 'attachmentable')->orderBy('display_order');
+        return $this->morphMany(Attachment::class, 'attachmentable')->orderBy(
+            'display_order'
+        );
     }
 
     public function scopeWithRelations($query)
     {
-        return $query->with('petitioners.user', 'opponents.user', 'court', 'lawyers.user.attachment', 'type', 'petition_indexes.attachments');
+        return $query->with(
+            'petitioners.user',
+            'opponents.user',
+            'court',
+            'lawyers.user.attachment',
+            'type',
+            'petition_indexes.attachments'
+        );
     }
     public function scopeWithRelationsIndex($query)
     {
@@ -99,20 +129,20 @@ class Petition extends Model
 
     public function getPetitionerNamesAttribute()
     {
-        $str = "";
+        $str = '';
         foreach ($this->petitioners as $petitioner) {
-            $str .= @$petitioner->user->name . ", ";
+            $str .= @$petitioner->user->name . ', ';
         }
-        return rtrim($str, ", ");
+        return rtrim($str, ', ');
     }
 
     public function getOpponentNamesAttribute()
     {
-        $str = "";
+        $str = '';
         foreach ($this->opponents as $opponent) {
-            $str .= @$opponent->user->name . ", ";
+            $str .= @$opponent->user->name . ', ';
         }
-        return rtrim($str, ", ");
+        return rtrim($str, ', ');
     }
     // public function getLawyerNamesAttribute()
     // {
@@ -150,12 +180,26 @@ class Petition extends Model
 
     public function getPetitionStandardTitleAttribute()
     {
-        return $this->type_abrivation . " " . $this->case_no . "/" . $this->year . " " . $this->title;
+        return $this->type_abrivation .
+            ' ' .
+            $this->case_no .
+            '/' .
+            $this->year .
+            ' ' .
+            $this->title;
     }
 
     public function getPetitionStandardTitleWithPetitionerAttribute()
     {
-        return $this->type_abrivation . " " . $this->case_no . "/" . $this->year . " " . $this->petitioner_names . " " . $this->title;
+        return $this->type_abrivation .
+            ' ' .
+            $this->case_no .
+            '/' .
+            $this->year .
+            ' ' .
+            $this->petitioner_names .
+            ' ' .
+            $this->title;
     }
     public function petition_indexes()
     {
@@ -163,7 +207,7 @@ class Petition extends Model
     }
     public function getPdfDownloadUrlAttribute()
     {
-        return url("download_petition_pdf/" . +$this->id);
+        return url('download_petition_pdf/' . +$this->id);
     }
     public function petition_ordersheets()
     {
