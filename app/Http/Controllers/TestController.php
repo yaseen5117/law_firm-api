@@ -12,6 +12,7 @@ use App\Services\EmailService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use App\Jobs\SendDocumentUploadEmail;
+use App\Models\User;
 use Illuminate\Support\Str;
 use DB;
 
@@ -26,44 +27,44 @@ class TestController extends Controller
         $file_path = "$public_path/storage/attachments/$petition_id/$pdf_file_name";
         $output_path = "$public_path/storage/attachments/$petition_id/";
         /****************CONVERTING PDF TO IMAGES**********************/
-        try{
+        try {
             $fileone  = $file_path;
             $im = new Imagick();
             //$im->setResolution(300,300);
-            $im->readimage($fileone); 
+            $im->readimage($fileone);
             $num_page = $im->getnumberimages();
-            $im->clear(); 
-            $im->destroy(); 
-            
-            for($page = 0; $page<$num_page ; $page++){
+            $im->clear();
+            $im->destroy();
+
+            for ($page = 0; $page < $num_page; $page++) {
                 $im = new Imagick();
 
                 info("converting page: $page");
 
-                $im->readimage($fileone."[$page]"); 
-                $im->setImageFormat('jpeg');    
-                $im->writeImage($output_path."/".$page ." - " .time().'.jpg'); 
-                
+                $im->readimage($fileone . "[$page]");
+                $im->setImageFormat('jpeg');
+                $im->writeImage($output_path . "/" . $page . " - " . time() . '.jpg');
+
                 info("converting page: $page DONE");
-                $im->clear(); 
-                $im->destroy();     
+                $im->clear();
+                $im->destroy();
             }
 
 
 
 
             info("conversion done");
-        }catch(Exception $e) {
-          info('Message: ' .$e->getMessage());
+        } catch (Exception $e) {
+            info('Message: ' . $e->getMessage());
         }
         /****************CONVERTING PDF TO IMAGES**********************/
     }
 
     public function test_send_document_uploading_email()
     {
-        $attachmentable_type="App\Models\PetitonOrderSheet";
-        $attachmentable_id=22;
-        
+        $attachmentable_type = "App\Models\PetitonOrderSheet";
+        $attachmentable_id = 22;
+
         switch ($attachmentable_type) {
             case 'App\Models\PetitonOrderSheet':
                 $entity_title = "Order Sheet";
@@ -82,7 +83,7 @@ class TestController extends Controller
                 $petition_reply = PetitionReply::find($attachmentable_id);
                 $petition = $petition_reply->petition_reply_parent->petition;
                 break;
-            
+
             default:
                 $entity_title = "";
                 break;
@@ -91,7 +92,7 @@ class TestController extends Controller
 
         try {
             $emailService = new EmailService;
-            $emailService->send_document_uploading_email($petition,$entity_title);      
+            $emailService->send_document_uploading_email($petition, $entity_title);
         } catch (\Exception $e) {
             info(print_r($e->getMessage()));
         }
@@ -102,10 +103,9 @@ class TestController extends Controller
     {
         $attachmentable_id = 22;
         $attachmentable_type = "App\Models\PetitionIndex";
-        $job=(new SendDocumentUploadEmail($attachmentable_type,$attachmentable_id))->delay(Carbon::now()->addSeconds(40));
+        $job = (new SendDocumentUploadEmail($attachmentable_type, $attachmentable_id))->delay(Carbon::now()->addSeconds(40));
         $this->dispatch($job);
         dd("done");
-
     }
 
     public function generate_slugs()
@@ -113,8 +113,13 @@ class TestController extends Controller
         $records = DB::table('contracts_and_agreements')->get();
         foreach ($records as $record) {
             DB::table('contracts_and_agreements')->whereId($record->id)->update([
-                'slug'=>Str::slug($record->title)
+                'slug' => Str::slug($record->title)
             ]);
         }
+    }
+    public function testCode()
+    {
+        $petition = Petition::find(167);
+        return $petition->petition_standard_title_with_petitioner;
     }
 }

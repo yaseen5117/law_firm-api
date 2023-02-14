@@ -289,7 +289,7 @@ class PetitionController extends Controller
                         PetitionPetitioner::create([
                             'petition_id' => $petition->id,
                             'petitioner_id' =>
-                                $petitioner['user']['name']['id'],
+                            $petitioner['user']['name']['id'],
                         ]);
                     } else {
                         if (
@@ -310,6 +310,9 @@ class PetitionController extends Controller
                             $userData['password'] = bcrypt('test1234');
                             $userData['email'] = $randomString . '@lfms.com';
                             $userData['is_approved'] = 1;
+                            $userData['approved_at'] = now();
+                            $userData['approved_by'] = $request->user()->id;
+                            $userData['company_id'] = $request->user()->company_id;
                             if (isset($petitioner['user']['id'])) {
                                 $user = User::where(
                                     'id',
@@ -318,7 +321,7 @@ class PetitionController extends Controller
                                 PetitionPetitioner::create([
                                     'petition_id' => $petition->id,
                                     'petitioner_id' =>
-                                        $petitioner['user']['id'],
+                                    $petitioner['user']['id'],
                                 ]);
                             } else {
                                 $user = User::create($userData);
@@ -365,7 +368,9 @@ class PetitionController extends Controller
                             $oppData['password'] = bcrypt('test1234');
                             $oppData['email'] = $randomString . '@lfms.com';
                             $oppData['is_approved'] = 1;
-
+                            $oppData['approved_at'] = now();
+                            $oppData['approved_by'] = $request->user()->id;
+                            $oppData['company_id'] = $request->user()->company_id;
                             if (isset($opponent['user']['id'])) {
                                 $user = User::where(
                                     'id',
@@ -436,7 +441,7 @@ class PetitionController extends Controller
                     [
                         'error' => CasePermissionService::$unauthorizedMessage,
                         'message' =>
-                            CasePermissionService::$unauthorizedMessage,
+                        CasePermissionService::$unauthorizedMessage,
                     ],
                     CasePermissionService::$unauthorizedCode
                 );
