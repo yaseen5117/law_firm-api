@@ -44,7 +44,7 @@ class PetitionController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin|staff')->except([
+        $this->middleware('role:admin|staff|lawyer')->except([
             'index',
             'show',
             'toggleArchivedStatus',

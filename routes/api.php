@@ -16,8 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('test_convert', 'Api\PetitionController@test_convert');
 
 //ADMIN AND STUDENT ROUTES
-Route::group(['middleware' => ['auth:sanctum', 'role:admin|student'], 'namespace' => 'Api'], function () {
-    Route::post('petition_reply_details/{id}', 'PetitionReplyController@replyDetail');
+Route::group(['middleware' => ['auth:sanctum', 'role:admin|student|lawyer'], 'namespace' => 'Api'], function () {
 });
 
 //ADMIN,STAFF LAWYER, STUDENT ROUTES
@@ -26,6 +25,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|lawyer|student|staff'
     Route::get('contract_categories', 'ContractsAndAgreementController@contractCategory');
 
     Route::resource('sample_pleadings', 'SamplePleadingController');
+    Route::post('petition_reply_details/{id}', 'PetitionReplyController@replyDetail');
 
     //START route for General Case Law
     Route::resource('general_case_laws', 'GeneralCaseLawController');
@@ -49,6 +49,15 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|lawyer|staff'], 'name
 
     //route for FIR
     Route::resource('fir_sections', 'FirController');
+    Route::get('lawyers', 'UserController@getLawyer');
+    Route::resource('petition_types', 'PetitionTypeController');
+    Route::get('clients', 'UserController@getClient');
+    Route::resource('attachments', 'AttachmentController');
+    Route::post('delete_selected', 'AttachmentController@deleteSelected');
+    Route::get('get_order_sheet_types', 'PetitionOrderSheetController@getOrderSheetTypes');
+    Route::get('get_naqal_form_types', 'NaqalFormController@getNaqalFormTypes');
+    Route::get('get_talbana_types', 'PetitionTalbanaController@getTalbanaTypes');
+    Route::get('get_synopsis_types', 'PetitionSynopsisController@getSynopsisTypes');
 });
 
 //ADMIN,STAFF ROUTES
@@ -64,26 +73,15 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|staff'], 'namespace' 
     Route::delete('invoice/delete_payment/{payment_id}', 'InvoiceController@deleteInvoicePayment');
 
     Route::get('settings', 'SettingController@index');
-    Route::get('get_order_sheet_types', 'PetitionOrderSheetController@getOrderSheetTypes');
-    Route::get('get_naqal_form_types', 'NaqalFormController@getNaqalFormTypes');
-    Route::get('get_talbana_types', 'PetitionTalbanaController@getTalbanaTypes');
-    Route::get('get_synopsis_types', 'PetitionSynopsisController@getSynopsisTypes');
 
-    Route::get('clients', 'UserController@getClient');
 
-    Route::get('lawyers', 'UserController@getLawyer');
 
     //contact request    
     Route::get('get_contact_requests', 'FrontEndController@getContactRequest');
 
-
-    Route::post('delete_selected', 'AttachmentController@deleteSelected');
     Route::resource('module_types', 'PetitionModuleTypeController');
-    Route::resource('petition_types', 'PetitionTypeController');
+
     Route::get('get_court_names', 'PetitionTypeController@getCourtsName');
-
-
-    Route::resource('attachments', 'AttachmentController');
 
     Route::resource('companies', 'CompanyController');
 });

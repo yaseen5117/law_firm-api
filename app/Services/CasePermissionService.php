@@ -25,7 +25,7 @@ class CasePermissionService
 	{
 		$hasPermission = false;
 
-		if ($user->hasRole('admin|staff')) {
+		if ($user->hasRole('admin|staff|lawyer')) {
 			return true;
 		}
 

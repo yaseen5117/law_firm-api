@@ -18,7 +18,7 @@ class PetitionReplyController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin|staff')->except(['show', 'replyDetail']);
+        $this->middleware('role:admin|staff|lawyer')->except(['show', 'replyDetail']);
     }
     public function index()
     {

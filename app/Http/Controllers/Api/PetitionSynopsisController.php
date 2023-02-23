@@ -16,7 +16,7 @@ class PetitionSynopsisController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:admin|staff')->only(['store', 'destroy']);
+        $this->middleware('role:admin|staff|lawyer')->only(['store', 'destroy']);
     }
     public function index(Request $request)
     {
