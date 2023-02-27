@@ -412,7 +412,7 @@ class UserController extends Controller
     {
         try {
             $user = request()->user();
-            $lawyers = User::role('lawyer')->where("company_id", $user->company_id)->orderBy("name")->get();
+            $lawyers = User::role('lawyer')->where("company_id", $user->company_id)->where("is_approved", 1)->orderBy("name")->get();
             $lawyerUsers = [];
             foreach ($lawyers as $lawyer) {
                 $lawyerUsers[] = [
