@@ -165,7 +165,7 @@ class UserController extends Controller
                     $setting->setMeta($request->only('site_name'));
                     $setting->save();
                 }
-
+                $send_user_approved_mail = false;
                 // if ($request->is_approved) {
                 if ($request->user()->hasRole('admin') && !$request->approved_at) {
                     $request->merge([
@@ -174,12 +174,13 @@ class UserController extends Controller
                         'approved_by' => $request->user()->id,
                         'is_approved' => $request->id ? $request->is_approved : 1
                     ]);
+                    $send_user_approved_mail = true;
                 } else {
                     $request->merge([
                         'approved_at' => toDBDate($request->approved_at)
                     ]);
                 }
-
+                 
                 // } else {
                 //     $request->merge([
                 //         'approved_at' => null,
@@ -220,6 +221,16 @@ class UserController extends Controller
                         }
                     }
                 }
+                //send mail when user approved
+                if(!empty($send_user_approved_mail)){
+                    try{
+                        $emailService = new EmailService;
+                        $emailService->sendUserApprovedEmail($user);
+                    }catch (\Exception $e) {
+                        info("UserController store Function: Error in sending User Approved emial at Line# ".__line__ .': '. $e->getMessage());
+                    }
+                }
+
                 //sending email to user 
                 if ($request->send_email) {
                     try {

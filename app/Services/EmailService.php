@@ -209,4 +209,15 @@ class EmailService
 
 		info("EmailService: sendEmailToVerifyAccountByAdmin successfully sent Email To Admin: " . $setting['site_email']);
 	}
+	public function sendUserApprovedEmail($user)
+	{
+		info("EmailService: sendUserApprovedEmail sending Email to User: " . $user);
+
+		Mail::send('emails.user_approved_email', compact('user'), function ($message) use ($user) {
+			$message->subject("User Account Approved");
+			$message->to($user->email);
+		});
+
+		info("EmailService: sendUserApprovedEmail successfully sent Email To User: ". $user);
+	}
 }
