@@ -3,6 +3,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="">
 <meta name="author" content="">
+<!-- Favicons -->
+<link href="{{ asset('template/assets/img/fav.png') }}" rel="icon" />
+<link href="{{ asset('assets/img/fav.png') }}" rel="apple-touch-icon" />
 
 <title>@yield('title')</title>
 <!-- Google Fonts -->
