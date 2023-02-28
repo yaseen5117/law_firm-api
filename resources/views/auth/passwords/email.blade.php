@@ -42,7 +42,7 @@
                     @enderror
 
                 </div>
-                <div class="form-group">
+                <div class="form-group mt-3">
                     <button type="submit" class="btn btn-block reset-btn">
                         {{ __('Reset Password') }}
                     </button>
@@ -51,7 +51,7 @@
 
             </form>
             <!-- <hr> -->
-            <div class="text-center mt-4">
+            <div class="text-center mt-3">
                 <a class="small badge rounded-pill btn-success" style="margin-right:1px"
                     href="https://elawfirmpk.com/sign-up">Create an
                     Account!</a>

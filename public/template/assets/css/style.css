@@ -1686,8 +1686,17 @@ h2 span {
 
 /*password reset button link*/
 .reset-btn {
-    background: rgb(143 58 48);
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    letter-spacing: 1px;
+    display: inline-block;
+    padding: 6px 10px 6px 10px;
+    border-radius: 5px;
+    transition: 0.5s;
     color: #f3be32;
+    background: linear-gradient(45deg, rgb(143 58 48) 0%, rgb(143 58 48) 100%);
+    position: relative;
 }
 .reset-btn:hover {
     background: rgb(116, 49, 42);
