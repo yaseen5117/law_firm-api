@@ -165,22 +165,27 @@ class UserController extends Controller
                     $setting->setMeta($request->only('site_name'));
                     $setting->save();
                 }
+                
                 $send_user_approved_mail = false;
                 // if ($request->is_approved) {
-                if ($request->user()->hasRole('admin') && !$request->approved_at) {
+                if ($request->user()->hasRole('admin') && empty($request->approved_at)) {
                     $request->merge([
 
                         'approved_at' => now(),
                         'approved_by' => $request->user()->id,
                         'is_approved' => $request->id ? $request->is_approved : 1
                     ]);
-                    $send_user_approved_mail = true;
+                    if($request->is_approved){
+                        $send_user_approved_mail = true;
+                    }  
+                     //return response($request->all(), 403);               
+                 
                 } else {
                     $request->merge([
                         'approved_at' => toDBDate($request->approved_at)
                     ]);
                 }
-                 
+                 //return response($send_user_approved_mail, 403);
                 // } else {
                 //     $request->merge([
                 //         'approved_at' => null,
