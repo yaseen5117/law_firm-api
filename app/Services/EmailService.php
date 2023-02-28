@@ -214,7 +214,7 @@ class EmailService
 		info("EmailService: sendUserApprovedEmail sending Email to User: " . $user);
 
 		Mail::send('emails.user_approved_email', compact('user'), function ($message) use ($user) {
-			$message->subject("User Account Approved");
+			$message->subject("Account Approved");
 			$message->to($user->email);
 		});
 
