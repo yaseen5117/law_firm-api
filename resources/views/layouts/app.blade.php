@@ -17,12 +17,12 @@
             <nav id="navbar" class="navbar">
                 <ul>
                     <li><a class="nav-link text-color" href="https://elawfirmpk.com/">Home</a></li>
-
+                    <li><a class="nav-link text-color" href="https://elawfirmpk.com/#about">About Us
+                        </a></li>
                     <li><a class="nav-link text-color" href="https://elawfirmpk.com/#features">Features</a></li>
                     <li><a class="nav-link text-color" href="https://elawfirmpk.com/#pricing">Pricing</a>
                     </li>
-                    <li><a class="nav-link text-color" href="https://elawfirmpk.com/#about">About Us
-                        </a></li>
+
 
                     <li><a class="nav-link text-color" href="https://elawfirmpk.com/sign-up">Sign
                             Up</a></li>
