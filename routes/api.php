@@ -41,12 +41,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|lawyer|staff'], 'name
     Route::get('client_users', 'UserController@getClientUsers');
 
     Route::resource('links', 'LinkController');
-
-    //limitation_calculator_cases
-    Route::get('limitation_calculator_cases', 'LimitationCalculatorController@getLimitationCalculatorCases');
-    Route::post('limitation_calculator_case_questions', 'LimitationCalculatorController@getLimitationCalculatorCaseQuestions');
-    Route::post('limitation_calculator_case_sub_answers', 'LimitationCalculatorController@getlimitationCalculatorCaseSubAnswers');
-
+ 
     //route for FIR
     Route::resource('fir_sections', 'FirController');
     Route::get('lawyers', 'UserController@getLawyer');
@@ -177,6 +172,13 @@ Route::resource('settings', 'Api\SettingController');
 Route::post('register', 'AuthController@register');
 Route::post('login', 'AuthController@login');
 Route::post('signup', 'Api\UserController@signUp');
+
+//Limitation Calculator Public route    
+ Route::post('limitation_calculator_case_questions', 'Api\LimitationCalculatorController@getLimitationCalculatorCaseQuestions');
+ Route::post('limitation_calculator_case_sub_answers', 'Api\LimitationCalculatorController@getlimitationCalculatorCaseSubAnswers');
+
+Route::get('limitation_calculator_cases', 'Api\LimitationCalculatorController@getLimitationCalculatorCases');
+
 
 Route::get('get_html_content', 'Api\CmsPageController@index');
 //Fir reader public routes
