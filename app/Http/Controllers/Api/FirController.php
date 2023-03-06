@@ -9,6 +9,7 @@ use App\Models\Statute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Response;
 use PDF;
 
 class FirController extends Controller
@@ -192,7 +193,11 @@ class FirController extends Controller
                 ini_set('memory_limit', '-1');
                 $pdf = PDF::loadView('fir_pdf.all_fir_pdf', compact('sectionSearchResults', 'search_item'));
 
-                return $pdf->download("sectionSearchResults.pdf");
+                return Response::make($pdf->output(), 200, [
+                    'Content-Type' => 'application/pdf',
+                    'Content-Disposition' => 'attachment; filename="sectionSearchResults.pdf"',
+                ]);
+                //return $pdf->download("sectionSearchResults.pdf");
                 info("Complete Downloading sectionSearchResults PDF");
             } else {
                 return response('sectionSearchResults Data Not Found', 404);
