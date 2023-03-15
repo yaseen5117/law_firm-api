@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Petition;
+use App\Models\PetitionHearing;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -53,6 +56,16 @@ Route::get('change_db_col_type', function (Request $request) {
 /*ALL CRONJOBS*/
 Route::get('send_email_before_hearing', 'Api\CronjobController@send_email_before_hearing');
 /*ALL CRONJOBS*/
+
+Route::get('test_before_hearing_reminder_mail', function () {
+    $user = auth()->user();
+    $petition = Petition::find(181);
+    $date_tomorrow = Date("Y-m-d", strtotime("+1 day"));
+    $tomorrow_hearing = PetitionHearing::withoutGlobalScopes()->where('hearing_date', $date_tomorrow)->first();
+    $setting = Setting::where('company_id', request()->user()->company_id)->first();
+    return view('emails.hearing_tomorrower_reminder', compact('user','petition','setting','tomorrow_hearing'));
+});
+
 
 Route::get('phpmyinfo', function () {
     phpinfo();
