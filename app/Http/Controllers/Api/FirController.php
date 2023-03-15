@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Response;
 use PDF;
-
+use Dompdf\Dompdf;
+use File;
 class FirController extends Controller
 {
     /**
@@ -191,13 +192,30 @@ class FirController extends Controller
             if ($sectionSearchResults) {
                 info("Start Downloading sectionSearchResults PDF");
                 ini_set('memory_limit', '-1');
-                $pdf = PDF::loadView('fir_pdf.all_fir_pdf', compact('sectionSearchResults', 'search_item'));
+                
+                // Instantiate Dompdf class
+                $dompdf = new Dompdf();
+                
+                // Load HTML content
+                $dompdf->loadHtml(view('fir_pdf.all_fir_pdf', compact('sectionSearchResults', 'search_item')));
+                
+                // Render PDF
+                $dompdf->render();
+                
+                // Save PDF
+                $pdf_file = 'fir-search-result-pdf/' . time() . '_document.pdf';
+                $output = $dompdf->output();
+                $path =  storage_path('app/public/fir-search-result-pdf');
+                if (!File::isDirectory($path)) {
+                    File::makeDirectory($path, 0777, true, true);
+                }
+                $save_file = file_put_contents(storage_path('app/public/' . $pdf_file), $output);
 
-                return Response::make($pdf->output(), 200, [
-                    'Content-Type' => 'application/pdf',
-                    'Content-Disposition' => 'attachment; filename="sectionSearchResults.pdf"',
-                ]);
-                //return $pdf->download("sectionSearchResults.pdf");
+               return response([
+                "file_path"=> url('storage/' . $pdf_file),
+                "message"=>"Search Result File Saved Successfully."
+               ], 200);
+               
                 info("Complete Downloading sectionSearchResults PDF");
             } else {
                 return response('sectionSearchResults Data Not Found', 404);
