@@ -892,12 +892,61 @@ class PetitionController extends Controller
     public function downloadPendingCase(Request $request)
     {
         try {
-            $pendingCases = Petition::withoutGlobalScopes()
-                ->with('court')
+            $query = Petition::withoutGlobalScopes()->select('petitions.*')->with('court');
+            $query
+                ->leftjoin(
+                    'petition_petitioners',
+                    'petitions.id',
+                    '=',
+                    'petition_petitioners.petition_id'
+                )
+                ->leftjoin(
+                    'users',
+                    'users.id',
+                    '=',
+                    'petition_petitioners.petitioner_id'
+                )
+                ->leftjoin(
+                    'petition_opponents',
+                    'petitions.id',
+                    '=',
+                    'petition_opponents.petition_id'
+                )
+                ->leftjoin(
+                    'users as users_opp',
+                    'users_opp.id',
+                    '=',
+                    'petition_opponents.opponent_id'
+                )
+                ->leftjoin(
+                    'petition_lawyers',
+                    'petition_lawyers.petition_id',
+                    '=',
+                    'petitions.id'
+                );
+
+            //getting logged in user
+            $user = $request->user();
+            if ($user->hasRole('lawyer')) {
+                $query->where('lawyer_id', $user->id);
+            }
+            if ($user->hasRole('client')) {
+                $query->where('petitioner_id', $request->user()->id);
+            }
+
+            $pendingCases = $query
                 ->where('archived', 0)
                 ->whereNotNull('pending_tag')
-                ->orderBy('id', 'DESC')
+                ->groupBy('petitions.id')
+                ->orderBy('petitions.id', 'DESC')
                 ->get();
+  
+            // $pendingCases = Petition::withoutGlobalScopes()
+            //     ->with('court')
+            //     ->where('archived', 0)
+            //     ->whereNotNull('pending_tag')
+            //     ->orderBy('id', 'DESC')
+            //     ->get();
             //return view('petition_pdf.pending_cases_pdf', compact('pendingCases'));
             if ($pendingCases) {
                 $pdf = PDF::loadView(

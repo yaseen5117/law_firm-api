@@ -36,6 +36,12 @@ class InvoiceController extends Controller
     {
         try {
             $query = Invoice::with('invoice_meta', 'client', 'invoice_expenses', 'status', 'attachment', 'invoice_payments.attachment')->select("invoices.*");
+            $query->leftjoin(
+                'payments',
+                'payments.invoiceable_id',
+                '=',
+                'invoices.id'
+            );
             if (!empty($request->invoice_no)) {
                 $query->where('invoice_no', 'like', '%' . $request->invoice_no . '%');
             }
@@ -75,7 +81,7 @@ class InvoiceController extends Controller
                 $query->whereDate('invoices.due_date', ">=", $today_date);
             }
             $invoices_total = $query->sum('amount');
-            $paid_invoices_total = $query->sum('amount');
+            $paid_invoices_total = $query->sum('payments.paid_amount');
             $due_invoices_total = $invoices_total - $paid_invoices_total;
 
 

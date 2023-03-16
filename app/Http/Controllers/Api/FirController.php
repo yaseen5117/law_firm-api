@@ -207,15 +207,15 @@ class FirController extends Controller
                 $output = $dompdf->output();
                
                 $path =  storage_path('app/public/fir-search-result-pdf');
-                 //delete directory
-                if (File::isDirectory($path)) {
-                    File::deleteDirectory($path);
-                }
+                //  //delete directory
+                // if (File::isDirectory($path)) {
+                //     File::deleteDirectory($path);
+                // }
                 
                 if (!File::isDirectory($path)) {
                     File::makeDirectory($path, 0777, true, true);
                 }
-                $save_file = file_put_contents(storage_path('app/public/' . $pdf_file), $output);
+                $file_saved = file_put_contents(storage_path('app/public/' . $pdf_file), $output);
 
                return response([
                 "file_path"=> url('storage/' . $pdf_file),
