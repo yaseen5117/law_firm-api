@@ -4,7 +4,7 @@
 @section('content')
 <section id="breadcrumbs" class="breadcrumbs" v-if="!hide">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-center align-items-center">
             <h4>Forgot Your Password?</h4>
         </div>
     </div>

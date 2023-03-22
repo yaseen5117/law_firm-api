@@ -1,56 +1,74 @@
 @extends('layouts.app')
 
 @section('content')
+<section id="breadcrumbs" class="breadcrumbs" v-if="!hide">
+    <div class="container">
+        <div class="d-flex justify-content-center align-items-center">
+            <h4>Reset Your Password</h4>
+        </div>
+    </div>
+
+</section>
 <!-- Nested Row within Card Body -->
-<div class="row" style="margin-top: 100px">
-    <div class="offset-lg-3 col-lg-6">
-        <div class="p-5">
-            <div class="text-center">
+<div class="container">
+    <div class="row mt-4">
+
+        <div class="col-md-4 offset-md-4 col-sm-10 offset-sm-1 card mt-3 p-3">
+
+            <!-- <div class="text-center">
                 <h1 class="h4 text-gray-900 mb-4">{{ __('Reset Password') }}</h1>
-            </div>
+            </div> -->
             <form class="user" method="POST" action="{{ route('password.update') }}">
                 @csrf
 
                 <input type="hidden" name="token" value="{{ $token }}">
 
-                <div class="form-group">
-                    <input type="email" class="form-control @error('email') is-invalid @enderror"
-                        placeholder="Email Address" id="email" name="email" value="{{ old('email') }}" required
-                        autocomplete="email">
+                <div class="form-group row">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <label><b>Email</b></label>
+                        <input type="email" class="form-control"
+                            style="@if(session()->has('token')) border-color: #dc3545; @endif"
+                            placeholder="Email Address" id="email" name="email" value="{{ old('email') }}" required
+                            autocomplete="email">
 
-                    @error('email')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-
+                        @if(session()->has('token'))
+                        <span style="font-size: .875em; color: #dc3545;">
+                            <strong>{{ session()->get('token') }}</strong>
+                        </span>
+                        @endif
+                    </div>
                 </div>
                 <div class="form-group row">
-                    <div class="col-sm-6 mb-3 mb-sm-0">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <label><b>Password</b></label>
                         <input type="password" placeholder="Password" id="password"
                             class="form-control @error('password') is-invalid @enderror" name="password" required
                             autocomplete="new-password">
 
                         @error('password')
-                        <span class="invalid-feedback" role="alert">
+                        <span style="font-size: .875em; color: #dc3545;" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>
                         @enderror
 
                     </div>
-                    <div class="col-sm-6">
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <label><b>Confirm Password</b></label>
                         <input type="password" class="form-control" placeholder="Repeat Password" id="password-confirm"
                             name="password_confirmation" required autocomplete="new-password">
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-block">
+                <button type="submit" class="btn btn-primary btn-block auth-btn mt-3">
                     {{ __('Reset Password') }}
                 </button>
                 <!-- <hr> -->
 
             </form>
-            <hr>
+
         </div>
     </div>
 </div>
