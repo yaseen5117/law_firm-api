@@ -61,10 +61,10 @@ class User extends Authenticatable
         //return to_date($this->created_at,1);
         return $this->created_at;
     }
-    public function setPasswordAttribute($value)
+    /*public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = bcrypt($value);
-    }
+    }*/
     public function products()
     {
         return $this->hasMany(UserProduct::class, "user_id");

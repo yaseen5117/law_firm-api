@@ -476,9 +476,10 @@ class UserController extends Controller
                 'is_approved' => 1,
                 'company_id' => 1
             ]);
-            $request->merge([
+            
+            /*$request->merge([
                 'password' => bcrypt($request->password),                 
-            ]);   
+            ]);   */
 
             $user = User::updateOrCreate(['id' => $request->id], $request->except('file', 'created_at_formated_date', 'roles', 'editMode', 'confirm_password', 'role_name'));
 
