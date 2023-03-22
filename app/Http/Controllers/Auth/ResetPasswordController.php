@@ -48,7 +48,7 @@ class ResetPasswordController extends Controller
                 return back(); 
         }   
     
-        $user->password = $request->password;    
+        $user->password = bcrypt($request->password);
         $user->save();
          
         return redirect(RouteServiceProvider::HOME);
