@@ -32,7 +32,7 @@
                 <div class="form-group">
                     <label><b>Email</b></label>
                     <input type="email" class="form-control  @error('email') is-invalid @enderror"
-                        id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter Email Address..."
+                        id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter email address"
                         value="{{ old('email') }}" name="email" id="email" required autocomplete="email" autofocus>
 
                     @error('email')
