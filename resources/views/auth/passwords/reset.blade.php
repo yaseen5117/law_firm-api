@@ -18,6 +18,11 @@
             <!-- <div class="text-center">
                 <h1 class="h4 text-gray-900 mb-4">{{ __('Reset Password') }}</h1>
             </div> -->
+            @if(session()->has('reset_sucess_message'))
+            <div class="alert alert-success" role="alert">
+                {{ session('reset_sucess_message') }}
+            </div>
+            @endif
             <form class="user" method="POST" action="{{ route('password.update') }}">
                 @csrf
 
