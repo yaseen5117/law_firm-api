@@ -42,8 +42,8 @@
                     @enderror
 
                 </div>
-                <div class="form-group mt-3">
-                    <button type="submit" class="btn btn-block reset-btn">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block auth-btn mt-3">
                         {{ __('Reset Password') }}
                     </button>
                 </div>

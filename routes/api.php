@@ -79,6 +79,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|staff'], 'namespace' 
     Route::get('get_court_names', 'PetitionTypeController@getCourtsName');
 
     Route::resource('companies', 'CompanyController');
+    Route::post('approve_or_block', 'UserController@approveOrBlock');
 });
 
 //ROUTES FOR LOGGED IN USER
