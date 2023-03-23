@@ -478,12 +478,12 @@ class UserController extends Controller
 
             //initially set is_approved bit to false.
             $request->merge([
-                'is_approved' => 0,
+                'is_approved' => 1,
                 'company_id' => 1
             ]);
 
             $request->merge([
-                'password' => bcrypt($request->password),                 
+                'password' => ($request->password),                 
             ]);   
 
             $user = User::updateOrCreate(['id' => $request->id], $request->except('file', 'created_at_formated_date', 'roles', 'editMode', 'confirm_password', 'role_name'));
