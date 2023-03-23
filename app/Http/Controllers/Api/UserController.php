@@ -483,7 +483,7 @@ class UserController extends Controller
             ]);
 
             $request->merge([
-                'password' => ($request->password),                 
+                'password' => bcrypt($request->password),                 
             ]);   
 
             $user = User::updateOrCreate(['id' => $request->id], $request->except('file', 'created_at_formated_date', 'roles', 'editMode', 'confirm_password', 'role_name'));
