@@ -99,6 +99,11 @@ class UserController extends Controller
                     "error" => "Unauthorized User!"
                 ], 401);
             }
+            
+            $request->merge([
+                'password' => bcrypt($request->password),                 
+            ]);  
+
             if ($request->id == $request->user()->id || $request->user()->hasRole('admin')) {
                 // if($request->id){
                 $validator = Validator::make($request->all(), [
