@@ -478,7 +478,7 @@ class UserController extends Controller
 
             //initially set is_approved bit to false.
             $request->merge([
-                'is_approved' => 0,
+                'is_approved' => 1,
                 'company_id' => 1
             ]);
 
