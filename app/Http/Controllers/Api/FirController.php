@@ -272,7 +272,7 @@ class FirController extends Controller
                 $query->where('statute_id',  $filterSection['statute_id']);
             }
             if (!empty($filterSection['section'])) {
-                $query->where('fir_no', 'like', '%' . $filterSection['section'] . '%');
+                $query->where('fir_no', $filterSection['section']);
             }
             $sectionSearchResults[] = $query->get();
         }
