@@ -18,6 +18,11 @@
             <!-- <div class="text-center">
                 <h1 class="h4 text-gray-900 mb-4">{{ __('Reset Password') }}</h1>
             </div> -->
+            @if(session()->has('reset_sucess_message'))
+            <div class="alert alert-success" role="alert">
+                {{ session('reset_sucess_message') }}
+            </div>
+            @endif
             <form class="user" method="POST" action="{{ route('password.update') }}">
                 @csrf
 
@@ -28,7 +33,7 @@
                         <label><b>Email</b></label>
                         <input type="email" class="form-control"
                             style="@if(session()->has('token')) border-color: #dc3545; @endif"
-                            placeholder="Email Address" id="email" name="email" value="{{ old('email') }}" required
+                            placeholder="Email address" id="email" name="email" value="{{ old('email') }}" required
                             autocomplete="email">
 
                         @if(session()->has('token'))
@@ -57,7 +62,7 @@
                 <div class="form-group row">
                     <div class="col-lg-12 col-md-12 col-sm-12">
                         <label><b>Confirm Password</b></label>
-                        <input type="password" class="form-control" placeholder="Repeat Password" id="password-confirm"
+                        <input type="password" class="form-control" placeholder="Repeat password" id="password-confirm"
                             name="password_confirmation" required autocomplete="new-password">
                     </div>
                 </div>

@@ -25,7 +25,7 @@
 <link href="{{ asset('template/assets/css/style.css') }}" rel="stylesheet">
 <style>
 .auth-btn {
-    font-family: "Poppins", sans-serif;
+    font-family: "Open Sans", sans-serif;
     font-weight: 500;
     font-size: 16px;
     letter-spacing: 1px;

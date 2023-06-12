@@ -299,8 +299,9 @@ class PetitionController extends Controller
                             $slug = Str::of($petitioner['user']['name'])->slug(
                                 '-'
                             );
+                            $slug = mb_substr($slug, 0, 12);
 
-                            $randomString = $slug . '-' . rand(10000, 99999);
+                            $randomString = $slug . '-' . now()->timestamp;
                             //check the special char — in the name string and replace it with -
                             $userData['name'] = str_replace(
                                 '—',
@@ -358,7 +359,10 @@ class PetitionController extends Controller
                             $slug = Str::of($opponent['user']['name'])->slug(
                                 '-'
                             );
-                            $randomString = $slug . '-' . rand(10000, 99999);
+                            
+                            $slug = mb_substr($slug, 0, 12);
+
+                            $randomString = $slug . '-' . now()->timestamp;
 
                             $oppData['name'] = str_replace(
                                 '—',

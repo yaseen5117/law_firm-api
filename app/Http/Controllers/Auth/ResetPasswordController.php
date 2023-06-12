@@ -51,7 +51,8 @@ class ResetPasswordController extends Controller
         $user->password = bcrypt($request->password);
         $user->save();
          
-        return redirect(RouteServiceProvider::HOME);
+        request()->session()->flash('reset_sucess_message', 'Success! Your password has been reset. You can now use your new password to log in to your account.');
+        return back(); 
     }
 
     /**

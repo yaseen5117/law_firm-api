@@ -599,4 +599,29 @@ class UserController extends Controller
         }
         return true;
     }
+    public function approveOrBlock(Request $request)
+    {
+        try {    
+            info($request->user['is_approved']?"Function approveOrBlock: START to approve user":"Function approveOrBlock: START to block user");       
+            
+            $user = User::where('id',$request->user['id'])->update([
+                "is_approved"=> $request->user['is_approved'],
+                "approved_at"=> $request->user['is_approved']?now():null,
+                "approved_by"=> $request->user['is_approved']?$request->user()->id:null
+            ]);
+            
+            info($request->user['is_approved']?"Function approveOrBlock: END to approve user":"Function approveOrBlock: END to block user");       
+            
+            return response([
+                "user"=>$user,
+                "message"=> $request->user['is_approved']?"User approved successfully":"User Blocked successfully"
+            ],200
+            );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+        
+    }
 }

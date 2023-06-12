@@ -32,7 +32,7 @@
                 <div class="form-group">
                     <label><b>Email</b></label>
                     <input type="email" class="form-control  @error('email') is-invalid @enderror"
-                        id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter Email Address..."
+                        id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter email address"
                         value="{{ old('email') }}" name="email" id="email" required autocomplete="email" autofocus>
 
                     @error('email')
@@ -42,8 +42,8 @@
                     @enderror
 
                 </div>
-                <div class="form-group mt-3">
-                    <button type="submit" class="btn btn-block reset-btn">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block auth-btn mt-3">
                         {{ __('Reset Password') }}
                     </button>
                 </div>
