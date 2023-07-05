@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -53,6 +54,7 @@ class RolesTableSeeder extends Seeder
         $user->assignRole($roleAdmin);
 
         $JudgeUser = User::create([
+            'company_id' => Company::first()->id,
             'name' => 'Judge 1',
             'email' => 'judge@qc.com',
             'password' => bcrypt('test1234'),
@@ -62,6 +64,7 @@ class RolesTableSeeder extends Seeder
         $JudgeUser->assignRole($judge);
 
         $LawyerUser = User::create([
+            'company_id' => Company::first()->id,
             'name' => 'Lawyer 1',
             'email' => 'lawyer@qc.com',
             'password' => bcrypt('test1234'),
@@ -70,6 +73,7 @@ class RolesTableSeeder extends Seeder
         $LawyerUser->assignRole($lawyer);
 
         $StaffUser = User::create([
+            'company_id' => Company::first()->id,
             'name' => 'Staff 1',
             'email' => 'staff@qc.com',
             'password' => bcrypt('test1234'),
@@ -79,8 +83,8 @@ class RolesTableSeeder extends Seeder
 
         $ClientUser = User::create([
             'id' => 5,
-            'name' => 'Kamran Khan',
-            'company_name' => 'KAMRAN KHAN AND OTHERS',
+            'company_id' => Company::first()->id,
+            'name' => 'Client QC',
             'email' => 'kamran@qc.com',
             'password' => 'test1234',
         ]);
@@ -90,6 +94,7 @@ class RolesTableSeeder extends Seeder
 
         $ClientUser = User::create([
             'id' => 6,
+            'company_id' => Company::first()->id,
             'name' => 'CDA Others',
             'company_name' => 'CDA AND OTHERS',
             'email' => 'cda@qc.com',
