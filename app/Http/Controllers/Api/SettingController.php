@@ -75,7 +75,7 @@ class SettingController extends Controller
             //return response($additional_emails_arr,422);
             //logged in user
             $user = request()->user();
-            info("setting update for user: ".print_r($user->toArray,1);
+            info("setting update for user: ".print_r($user->toArray,1));
             $setting = Setting::find($user->company_id);
             $setting->setMeta($request->all());
             $setting->save();
