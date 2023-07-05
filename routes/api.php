@@ -67,7 +67,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|staff'], 'namespace' 
     Route::post('invoice/mark_as_paid', 'InvoiceController@markAsPaid');
     Route::delete('invoice/delete_payment/{payment_id}', 'InvoiceController@deleteInvoicePayment');
 
-    Route::resource('settings', 'Api\SettingController');
+    Route::resource('settings', 'SettingController');
 
 
 
