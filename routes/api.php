@@ -67,7 +67,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|staff'], 'namespace' 
     Route::post('invoice/mark_as_paid', 'InvoiceController@markAsPaid');
     Route::delete('invoice/delete_payment/{payment_id}', 'InvoiceController@deleteInvoicePayment');
 
-    Route::get('settings', 'SettingController@index');
+    Route::resource('settings', 'Api\SettingController');
 
 
 
@@ -169,7 +169,7 @@ Route::post('contact_requests', 'Api\FrontEndController@contactRequest'); //midd
 
 
 // Public routes
-Route::resource('settings', 'Api\SettingController');
+Route::get('settings', 'SettingController@index');
 Route::post('register', 'AuthController@register');
 Route::post('login', 'AuthController@login');
 Route::post('signup', 'Api\UserController@signUp');
