@@ -23,7 +23,14 @@ class Setting extends Model
         $request_domain = \Request::server('HTTP_REFERER');
         $setting = null;
         $user = request()->user();
-        $allowed_domains = ["http://localhost:8080/", "https://elawfirmpk.com/","https://www.elawfirmpk.com/","http://www.elawfirmpk.com/","http://elawfirmpk.com/"];
+        $allowed_domains = [
+            "http://localhost:8080/", 
+            "https://elawfirmpk.com/",
+            "https://www.elawfirmpk.com/",
+            "http://www.elawfirmpk.com/",
+            "http://elawfirmpk.com/",
+            "https://lums-law-firm.elawfirmpk.com"
+        ];
 
         if ($user && $user->company_id > 0) {
             //WHEN USER IS LOGGED IN, WE SIMPLY GET COMPANY OF USER
@@ -37,7 +44,7 @@ class Setting extends Model
             if (in_array($request_domain, $allowed_domains)) {
                 //info("user is in allowed_domains.");
                 //IF LOCAL OR ELAWFIRM USER, COMPANY ID OF ELAWFIRM IS 1
-                $company = Company::where('id', 1)->first();
+                $company = Company::first();
             } else {
                 //info("user is in not allowed_domains. user domain $request_domain");
                 //IF DOMAIN IS OTHER THAN ELAWFIRM, WE WILL TRY TO FIND OUT COMPANY ASSOCIATED WITH THIS DOMAIN
@@ -45,7 +52,7 @@ class Setting extends Model
             }
 
             if ($company) {
-                
+
                 //info("finding setting for company id $company->id");
 
                 $setting = Setting::withoutGlobalScopes()->where('company_id',$company->id)->first()->getMeta()->toArray();
