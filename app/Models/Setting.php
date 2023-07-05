@@ -29,7 +29,7 @@ class Setting extends Model
             "https://www.elawfirmpk.com/",
             "http://www.elawfirmpk.com/",
             "http://elawfirmpk.com/",
-            "https://lums-law-firm.elawfirmpk.com"
+            "https://lums-law-firm.elawfirmpk.com/"
         ];
 
         if ($user && $user->company_id > 0) {
