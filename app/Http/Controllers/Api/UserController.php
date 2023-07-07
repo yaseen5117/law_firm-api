@@ -99,10 +99,15 @@ class UserController extends Controller
                     "error" => "Unauthorized User!"
                 ], 401);
             }
-            
-            $request->merge([
-                'password' => bcrypt($request->password),                 
-            ]);  
+
+
+
+            if (!empty($request->password)) {
+                $request->merge([
+                    'password' => bcrypt($request->password),
+                ]);
+            }
+
 
             if ($request->id == $request->user()->id || $request->user()->hasRole('admin')) {
                 // if($request->id){
@@ -119,19 +124,6 @@ class UserController extends Controller
                         401
                     );
                 }
-                // }else{
-                //     $validator = Validator::make($request->all(), [                
-                //         'password' => 'required', 
-                //         'email' => 'required|email|unique:users,email,'.$request->id,                              
-                //     ]);
-                //     if ($validator->fails()) {
-                //         return response()->json(
-                //             [
-                //                 'validation_error' => $validator->errors(),
-                //                 'error' => "Validation error..!"
-                //         ], 401);
-                //     } 
-                // }                   
 
                 $file = $request->file('file');
 
@@ -142,9 +134,6 @@ class UserController extends Controller
                         'profile_image' => $file_name
                     ]);
                 }
-                // $request->merge([
-                //     'password' => bcrypt($request->password),                 
-                // ]);   
 
                 $companyID = $request->company_id;
                 if (!$request->company_id) {
@@ -170,7 +159,7 @@ class UserController extends Controller
                     $setting->setMeta($request->only('site_name'));
                     $setting->save();
                 }
-                
+
                 $send_user_approved_mail = false;
                 // if ($request->is_approved) {
                 if ($request->user()->hasRole('admin') && empty($request->approved_at)) {
@@ -182,21 +171,22 @@ class UserController extends Controller
                     ]);
                     if($request->is_approved){
                         $send_user_approved_mail = true;
-                    }  
-                     //return response($request->all(), 403);               
-                 
+                    }
+                     //return response($request->all(), 403);
+
                 } else {
                     $request->merge([
                         'approved_at' => toDBDate($request->approved_at)
                     ]);
                 }
-                 //return response($send_user_approved_mail, 403);
-                // } else {
-                //     $request->merge([
-                //         'approved_at' => null,
-                //         'approved_by' => null,
-                //     ]);
-                // }
+
+                if (!$request->id) {
+                    //here we will connect the setting for document approval.
+                    $request->merge([
+                        'documents_required' => 1
+                    ]);
+                }
+
                 $user = User::updateOrCreate(['id' => $request->id], $request->except('file', 'created_at_formated_date', 'roles', 'editMode', 'confirm_password', 'role_id', 'contact_persons', 'send_email'));
 
                 if ($request->role_id) {
@@ -207,6 +197,12 @@ class UserController extends Controller
                     if ($user->hasRole('student')) {
                         $assignCases = $this->assignDefaultCasesToStudent($user);
                     }
+
+                    // if ($user->hasRole('client') || $user->hasRole('lawyer') || $user->hasRole('staff')) {
+                    //     $user->update([
+                    //         'documents_required' => 1
+                    //     ]);
+                    // }
                 }
                 if ($file) {
                     $file_path = $file->storeAs('users/' . $user->id, $name, 'public');
@@ -241,7 +237,7 @@ class UserController extends Controller
                     }
                 }
 
-                //sending email to user 
+                //sending email to user
                 if ($request->send_email) {
                     try {
                         if (empty($companyID)) {
@@ -291,7 +287,7 @@ class UserController extends Controller
         // [
         //     'name' => $request->name,
         //     'email' => $request->email
-        // ]       
+        // ]
     }
 
     /**
@@ -303,7 +299,7 @@ class UserController extends Controller
     public function show($id)
     {
         try {
-            $user = User::with('roles', 'contact_persons', 'attachment', 'approve_by')->where("company_id", request()->user()->company_id)->find($id);
+            $user = User::with('roles', 'contact_persons', 'attachment', 'approve_by','required_documents')->where("company_id", request()->user()->company_id)->find($id);
 
             if ($user) {
                 return response()->json(
@@ -384,9 +380,9 @@ class UserController extends Controller
             //     $clientUsers[] = [
             //         "title"
             //         "label" => $client->name,
-            //         "value" =>  $client->id,             
+            //         "value" =>  $client->id,
             //     ];
-            // } 
+            // }
             return response()->json(
                 [
                     'clients' => $clients,
@@ -460,6 +456,11 @@ class UserController extends Controller
         $requeset_user = $request->user();
         return User::with('roles')->whereId($requeset_user->id)->first();
     }
+
+    /**
+     * this function handles frontend user signup
+     *
+     **/
     public function signUp(Request $request)
     {
         try {
@@ -483,8 +484,8 @@ class UserController extends Controller
             ]);
 
             $request->merge([
-                'password' => bcrypt($request->password),                 
-            ]);   
+                'password' => bcrypt($request->password),
+            ]);
 
             $user = User::updateOrCreate(['id' => $request->id], $request->except('file', 'created_at_formated_date', 'roles', 'editMode', 'confirm_password', 'role_name'));
 
@@ -601,17 +602,17 @@ class UserController extends Controller
     }
     public function approveOrBlock(Request $request)
     {
-        try {    
-            info($request->user['is_approved']?"Function approveOrBlock: START to approve user":"Function approveOrBlock: START to block user");       
-            
+        try {
+            info($request->user['is_approved']?"Function approveOrBlock: START to approve user":"Function approveOrBlock: START to block user");
+
             $user = User::where('id',$request->user['id'])->update([
                 "is_approved"=> $request->user['is_approved'],
                 "approved_at"=> $request->user['is_approved']?now():null,
                 "approved_by"=> $request->user['is_approved']?$request->user()->id:null
             ]);
-            
-            info($request->user['is_approved']?"Function approveOrBlock: END to approve user":"Function approveOrBlock: END to block user");       
-            
+
+            info($request->user['is_approved']?"Function approveOrBlock: END to approve user":"Function approveOrBlock: END to block user");
+
             return response([
                 "user"=>$user,
                 "message"=> $request->user['is_approved']?"User approved successfully":"User Blocked successfully"
@@ -622,6 +623,6 @@ class UserController extends Controller
                 "error" => $e->getMessage()
             ], 500);
         }
-        
+
     }
 }

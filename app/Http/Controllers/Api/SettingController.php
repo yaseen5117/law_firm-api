@@ -64,16 +64,9 @@ class SettingController extends Controller
      */
     public function store(Request $request)
     {
-        //return $request;
+        
         try {
-
-            // $additional_emails_collection = collect($request->additionalemails);
-            // $additional_emails_arr = $additional_emails_collection->pluck('additional_email')->all();
-            // $request->merge(
-            //     ['additionalemails' => $additional_emails_arr]
-            // );
-            //return response($additional_emails_arr,422);
-            //logged in user
+            info("setting update start");
             $user = request()->user();
             info("setting update for user: ".print_r($user->toArray,1));
             $setting = Setting::find($user->company_id);
@@ -81,6 +74,7 @@ class SettingController extends Controller
             $setting->save();
             return response("Success", 200);
         } catch (\Exception $e) {
+            info("EXCEPTION IN SETTING UPDATE: ".print_r($e->getMessage()));
             return response([
                 "error" => $e->getMessage()
             ], 500);

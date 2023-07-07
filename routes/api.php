@@ -47,6 +47,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|lawyer|staff'], 'name
     Route::get('lawyers', 'UserController@getLawyer');
     Route::resource('petition_types', 'PetitionTypeController');
     Route::get('clients', 'UserController@getClient');
+    Route::post('attachments/upload_user_required_docs/{userId}', 'AttachmentController@uploadUserRequiredDocs');
     Route::resource('attachments', 'AttachmentController');
     Route::post('delete_selected', 'AttachmentController@deleteSelected');
     Route::get('get_order_sheet_types', 'PetitionOrderSheetController@getOrderSheetTypes');
@@ -68,8 +69,6 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|staff'], 'namespace' 
     Route::delete('invoice/delete_payment/{payment_id}', 'InvoiceController@deleteInvoicePayment');
 
     Route::resource('settings', 'SettingController');
-
-
 
     //contact request    
     Route::get('get_contact_requests', 'FrontEndController@getContactRequest');
@@ -169,7 +168,7 @@ Route::post('contact_requests', 'Api\FrontEndController@contactRequest'); //midd
 
 
 // Public routes
-Route::get('settings', 'SettingController@index');
+Route::get('settings', 'Api\SettingController@index');
 Route::post('register', 'AuthController@register');
 Route::post('login', 'AuthController@login');
 Route::post('signup', 'Api\UserController@signUp');

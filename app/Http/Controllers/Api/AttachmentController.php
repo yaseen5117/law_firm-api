@@ -6,7 +6,9 @@ use Imagick;
 use Image;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FilesRequest;
 use App\Models\Attachment;
+use App\Models\User;
 use App\Models\CaseLaw;
 use App\Models\ExtraDocument;
 use App\Models\Invoice;
@@ -20,6 +22,7 @@ use App\Models\PetitionNaqalForm;
 use App\Models\PetitionSynopsis;
 use App\Models\PetitionTalbana;
 use App\Services\EmailService;
+use App\Services\FileUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use File;
@@ -33,11 +36,20 @@ use App\Jobs\SendDocumentUploadEmail;
 use App\Jobs\JobConvertPdfToImages;
 use App\Models\Petition;
 use App\Models\PetitionReplyParent;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class AttachmentController extends Controller
 {
 
     use DispatchesJobs;
+
+    protected $fileUploadService;
+
+    public function __construct()
+    {
+        $this->fileUploadService = new FileUploadService;
+    }
 
     /**
      * Display a listing of the resource.
@@ -268,7 +280,7 @@ class AttachmentController extends Controller
                     }
                 }
 
-                //SENDING EMAIL VIA QUEUE JOB                
+                //SENDING EMAIL VIA QUEUE JOB
                 $jobSendEmail = (new SendDocumentUploadEmail($attachmentable_type, $attachmentable_id))->delay(Carbon::now()->addSeconds(50));
                 $this->dispatch($jobSendEmail);
 
@@ -360,7 +372,7 @@ class AttachmentController extends Controller
         try {
             $attachment = Attachment::find($id);
             if ($attachment) {
-                //getting module Id 
+                //getting module Id
                 $standard_module = getIndexData($attachment->attachmentable_type, $attachment->attachmentable_id);
                 $sub_directory = substr($attachment->attachmentable_type, strpos($attachment->attachmentable_type, "'\'") + 11);
                 //return response($standard_module, 403);
@@ -390,7 +402,7 @@ class AttachmentController extends Controller
     {
         try {
             //return response($request->all(), 403);
-            //request contains all selected records ids   
+            //request contains all selected records ids
             if ($request) {
                 foreach ($request->id as $id) {
                     $attachment = Attachment::find($id);
@@ -459,7 +471,7 @@ class AttachmentController extends Controller
                         //keep ids of folder that have original folder
                         $original_folders[] = $folder;
                         // Yes, delete the directory.
-                        //$FileSystem->deleteDirectory($file_path);                         
+                        //$FileSystem->deleteDirectory($file_path);
                     } else {
                         //keep ids of folder that have original folder
                         $original_folders[] = $folder;
@@ -812,6 +824,53 @@ class AttachmentController extends Controller
             return  response("Move all files Successfully", 200);
         } else {
             return response("judgement Not Found", 404);
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\FilesRequest  $request
+     * @return AnonymousResourceCollection|Response
+     */
+    public function uploadUserRequiredDocs(FilesRequest $request, int $userId): AnonymousResourceCollection | JsonResponse
+    {
+        $files = $request->file('files');
+        $uploadedFiles = [];
+        if ($files) {
+            foreach ($files as $key => $file) {
+                try {
+                    $disk = 'public';
+                    $user = User::find($userId);
+                    $morphToId = $user->id;
+                    $morphToType = $user->getMorphClass();
+                    $directory = "users/{$user->id}/required_documents";
+                    //dd($directory);
+                    $fileData = $this->fileUploadService->uploadFile(
+                        $file,
+                        $directory,
+                        $disk,
+                        $file->getClientOriginalName()
+                    );
+
+                    $file = Attachment::create([
+                        'attachmentable_type' => $morphToType,
+                        'attachmentable_id' => $morphToId,
+                        'file_name' => $fileData->name,
+                        'mime_type' => $fileData->mimeType,
+                        'type' => 'user_required_document',
+                        'path' => $fileData->path,
+                        'size' => $fileData->size,
+                    ]);
+                    $uploadedFiles[] = $file;
+                } catch (\Exception $e) {
+                    info("Error while storing file: {$e->__toString()}");
+                    return response()->json([
+                        'error' => 'Something went wrong while storing file. Please try again later.'
+                    ], 500);
+                }
+            }
+            return response()->json($uploadedFiles);
         }
     }
 }

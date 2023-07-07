@@ -138,7 +138,12 @@ class User extends Authenticatable
     }
     public function attachment()
     {
-        return $this->morphOne(Attachment::class, 'attachmentable');
+        return $this->morphOne(Attachment::class, 'attachmentable')->where('type','avatar');
+    }
+
+    public function required_documents()
+    {
+        return $this->morphMany(Attachment::class, 'attachmentable')->where('type','user_required_document');
     }
     public function approve_by()
     {
