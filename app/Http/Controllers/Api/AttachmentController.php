@@ -829,7 +829,7 @@ class AttachmentController extends Controller
     }
 
     
-    public function uploadUserRequiredDocs(FilesRequest $request, int $userId): AnonymousResourceCollection | JsonResponse
+    public function uploadUserRequiredDocs(FilesRequest $request, int $userId)
     {
         $user = User::findorfail($userId);
         $files = $request->file('files');
