@@ -32,12 +32,20 @@ class FileUploadService
             Storage::disk($disk)->makeDirectory($directory);
         }
         $path = $file->storeAs($directory, $fileName, ['disk' => $disk]);
-        return new FileData(
-            name: $file->getClientOriginalName(),
-            path: $path, 
-            mimeType: $file->getMimeType(), 
-            size: $file->getSize()
-        );
+        
+        return (object) [
+            "name" => $file->getClientOriginalName(),
+            "path" => $path, 
+            "mimeType" => $file->getMimeType(), 
+            "size" => $file->getSize()
+        ];
+
+        // return new FileData(
+        //     name: $file->getClientOriginalName(),
+        //     path: $path, 
+        //     mimeType: $file->getMimeType(), 
+        //     size: $file->getSize()
+        // );
     }
 
     /**
