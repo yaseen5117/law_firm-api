@@ -22,7 +22,7 @@ class FileUploadService
         string $directory,
         string $disk = null,
         string $fileName = null
-    ): FileData {
+    ) {
         // If no disk is specified, use the default disk from the filesystem config
         $disk = $disk ?? config('filesystems.default');
         // Generate a unique filename if not provided
@@ -47,7 +47,7 @@ class FileUploadService
      * @param string|null $disk
      * @return bool
      */
-    public function deleteFile(string $filePath, string $disk = null): bool
+    public function deleteFile(string $filePath, string $disk = null)
     {
         $disk = $disk ?? config('filesystems.default');
         return Storage::disk($disk)->delete($filePath);
@@ -60,7 +60,7 @@ class FileUploadService
      * @param string|null $disk
      * @return string|null
      */
-    public function getFileUrl(string $filePath, ?string $disk = null): ?string
+    public function getFileUrl(string $filePath, ?string $disk = null)
     {
         $disk = $disk ?? config('filesystems.default');
         return Storage::disk($disk)->url($filePath);
