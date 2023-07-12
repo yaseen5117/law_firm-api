@@ -154,4 +154,10 @@ class User extends Authenticatable
     {
         return $this->hasOne("App\VideoMeeting");
     }
+
+    public static function getAdmin()
+    {
+        return Self::role('admin')->first();
+    }
+
 }

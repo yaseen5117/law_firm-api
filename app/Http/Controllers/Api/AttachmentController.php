@@ -7,6 +7,7 @@ use Image;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FilesRequest;
+use App\Notifications\UserUploadedRequiredDocs;
 use App\Models\Attachment;
 use App\Models\User;
 use App\Models\CaseLaw;
@@ -835,17 +836,16 @@ class AttachmentController extends Controller
      */
     public function uploadUserRequiredDocs(FilesRequest $request, int $userId): AnonymousResourceCollection | JsonResponse
     {
+        $user = User::findorfail($userId);
         $files = $request->file('files');
         $uploadedFiles = [];
         if ($files) {
             foreach ($files as $key => $file) {
                 try {
                     $disk = 'public';
-                    $user = User::find($userId);
                     $morphToId = $user->id;
                     $morphToType = $user->getMorphClass();
                     $directory = "users/{$user->id}/required_documents";
-                    //dd($directory);
                     $fileData = $this->fileUploadService->uploadFile(
                         $file,
                         $directory,
@@ -869,6 +869,11 @@ class AttachmentController extends Controller
                         'error' => 'Something went wrong while storing file. Please try again later.'
                     ], 500);
                 }
+            }
+            $setting = Setting::withoutGlobalScopes()->whereCompanyId($user->company_id)->first();
+            $admin = User::getAdmin();
+            if (count($uploadedFiles) > 0) {
+                $admin->notify(new UserUploadedRequiredDocs($user, $setting['site_url']));
             }
             return response()->json($uploadedFiles);
         }

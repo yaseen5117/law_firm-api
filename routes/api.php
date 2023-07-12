@@ -47,7 +47,6 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|lawyer|staff'], 'name
     Route::get('lawyers', 'UserController@getLawyer');
     Route::resource('petition_types', 'PetitionTypeController');
     Route::get('clients', 'UserController@getClient');
-    Route::post('attachments/upload_user_required_docs/{userId}', 'AttachmentController@uploadUserRequiredDocs');
     Route::resource('attachments', 'AttachmentController');
     Route::post('delete_selected', 'AttachmentController@deleteSelected');
     Route::get('get_order_sheet_types', 'PetitionOrderSheetController@getOrderSheetTypes');
@@ -158,6 +157,7 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
 
     //upload user image route 
     Route::post('upload_user_image', 'UserController@uploadImage');
+    Route::post('upload_user_required_docs/{userId}', 'AttachmentController@uploadUserRequiredDocs');
     Route::post('get_user_meeting', 'UserVideoMeetingController@getUserMeeting');
     Route::post('create_new_meeting', 'UserVideoMeetingController@createMeeting');
 });
