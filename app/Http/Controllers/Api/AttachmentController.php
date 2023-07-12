@@ -828,12 +828,7 @@ class AttachmentController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\FilesRequest  $request
-     * @return AnonymousResourceCollection|Response
-     */
+    
     public function uploadUserRequiredDocs(FilesRequest $request, int $userId): AnonymousResourceCollection | JsonResponse
     {
         $user = User::findorfail($userId);
