@@ -833,46 +833,63 @@ class AttachmentController extends Controller
     public function uploadUserRequiredDocs(FilesRequest $request, int $userId)
     {
         $user = User::findorfail($userId);
-        $files = $request->file('files');
+        $cnic = $request->file('cnic');
+        $nda = $request->file('nda');
         $uploadedFiles = [];
-        if ($files) {
-            foreach ($files as $key => $file) {
-                try {
-                    $disk = 'public';
-                    $morphToId = $user->id;
-                    $morphToType = $user->getMorphClass();
-                    $directory = "users/{$user->id}/required_documents";
-                    $fileData = $this->fileUploadService->uploadFile(
-                        $file,
-                        $directory,
-                        $disk,
-                        $file->getClientOriginalName()
-                    );
 
-                    $file = Attachment::create([
-                        'attachmentable_type' => $morphToType,
-                        'attachmentable_id' => $morphToId,
-                        'file_name' => $fileData->name,
-                        'mime_type' => $fileData->mimeType,
-                        'type' => 'user_required_document',
-                        'path' => $fileData->path,
-                        'size' => $fileData->size,
-                    ]);
-                    $uploadedFiles[] = $file;
-                } catch (\Exception $e) {
-                    info("Error while storing file: {$e->__toString()}");
-                    return response()->json([
-                        'error' => 'Something went wrong while storing file. Please try again later.'
-                    ], 500);
-                }
-            }
+        try {
+
+            $disk = 'public';
+            $morphToId = $user->id;
+            $morphToType = $user->getMorphClass();
+            $directory = "users/{$user->id}/required_documents";
+
+            /*CNIC UPLOAD*/
+            $fileData = $this->fileUploadService->uploadFile(
+                $cnic,
+                $directory,
+                $disk,
+                $cnic->getClientOriginalName()
+            );
+
+            Attachment::create([
+                'attachmentable_type' => $morphToType,
+                'attachmentable_id' => $morphToId,
+                'file_name' => $fileData->name,
+                'mime_type' => $fileData->mimeType,
+                'type' => 'user_required_document',
+                'path' => $fileData->path,
+                'size' => $fileData->size,
+            ]);
+
+            /*NDA UPLOAD*/
+            $fileData = $this->fileUploadService->uploadFile(
+                $nda,
+                $directory,
+                $disk,
+                $nda->getClientOriginalName()
+            );
+
+            Attachment::create([
+                'attachmentable_type' => $morphToType,
+                'attachmentable_id' => $morphToId,
+                'file_name' => $fileData->name,
+                'mime_type' => $fileData->mimeType,
+                'type' => 'user_required_document',
+                'path' => $fileData->path,
+                'size' => $fileData->size,
+            ]);
+
             $setting = Setting::withoutGlobalScopes()->whereCompanyId($user->company_id)->first();
             $admin = User::getAdmin();
-            if (count($uploadedFiles) > 0) {
-                $admin->notify(new UserUploadedRequiredDocs($user, $setting['site_url']));
-                $user->notify(new ThanksForUploadingNDA($user));
-            }
+            $admin->notify(new UserUploadedRequiredDocs($user, $setting['site_url']));
+            $user->notify(new ThanksForUploadingNDA($user));
             return response()->json($uploadedFiles);
+        } catch (\Exception $e) {
+            info("Error while storing file: {$e->__toString()}");
+            return response()->json([
+                'error' => 'Something went wrong while storing file. Please try again later.'
+            ], 500);
         }
     }
 }

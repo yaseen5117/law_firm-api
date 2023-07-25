@@ -25,7 +25,8 @@ class FilesRequest extends FormRequest
     public function rules()
     {
         return [
-            'files.*' => 'required|mimes:jpeg,png,pdf,heic|max:2048',
+            'cnic*' => 'required|mimes:jpeg,png,pdf,heic|max:2048',
+            'nda*' => 'required|mimes:jpeg,png,pdf,heic|max:2048',
        ];
     }
 }
