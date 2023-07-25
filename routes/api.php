@@ -41,7 +41,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|lawyer|staff'], 'name
     Route::get('client_users', 'UserController@getClientUsers');
 
     Route::resource('links', 'LinkController');
- 
+
     //route for FIR
     Route::resource('fir_sections', 'FirController');
     Route::get('lawyers', 'UserController@getLawyer');
@@ -69,7 +69,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|staff'], 'namespace' 
 
     Route::resource('settings', 'SettingController');
 
-    //contact request    
+    //contact request
     Route::get('get_contact_requests', 'FrontEndController@getContactRequest');
 
     Route::resource('module_types', 'PetitionModuleTypeController');
@@ -99,7 +99,7 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
 
     Route::resource('petition_reply_parents', 'PetitionReplyParentController'); //middleware added in controller __construct()
     Route::post('petition_reply_parents/update_display_order', 'PetitionReplyParentController@update_display_order');
-    //Route::post('invoices/mark_paid', 'InvoiceController@mark_paid'); 
+    //Route::post('invoices/mark_paid', 'InvoiceController@mark_paid');
     Route::get('download_pdf/{id}', 'InvoiceController@downloadInvoicePdf');
 
     //Route::post('delete_additional_email','SettingController@deleteAdditionalEmail');
@@ -131,6 +131,10 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::resource('case_laws', 'CaseLawController'); //middleware added in controller __construct()
     //END route for standard page Case Law
 
+    //START route for standard page Case Law
+    Route::resource('petition_meta', 'PetitionMetaController'); //middleware added in controller __construct()
+    //END route for standard page Case Law
+
     //START route for standard page Extra Document
     Route::resource('extra_documents', 'ExtraDocumentController'); //middleware added in controller __construct()
     //END route for standard page Extra Document
@@ -150,12 +154,13 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::post('module_index_details_judgements/{id}', 'JudgementController@judgementDetail');
     Route::post('module_index_details_extra_documents/{id}', 'ExtraDocumentController@extraDocsDetail');
     Route::post('module_index_details_case_laws/{id}', 'CaseLawController@caseLawDetail');
+    Route::post('module_index_details_petition_meta/{id}', 'PetitionMetaController@detail');
 
     Route::post('module_index_details_oral_arguments/{id}', 'OralArgumentsController@oralArgumentDetail');
     Route::resource('petition_order_sheets', 'PetitionOrderSheetController'); //middleware added in controller __construct()
     Route::POST('petition_order_sheets/by_petition', 'PetitionOrderSheetController@showOrderSheetByPetition');
 
-    //upload user image route 
+    //upload user image route
     Route::post('upload_user_image', 'UserController@uploadImage');
     Route::post('upload_user_required_docs/{userId}', 'AttachmentController@uploadUserRequiredDocs');
     Route::post('get_user_meeting', 'UserVideoMeetingController@getUserMeeting');
@@ -173,7 +178,7 @@ Route::post('register', 'AuthController@register');
 Route::post('login', 'AuthController@login');
 Route::post('signup', 'Api\UserController@signUp');
 
-//Limitation Calculator Public route    
+//Limitation Calculator Public route
  Route::post('limitation_calculator_case_questions', 'Api\LimitationCalculatorController@getLimitationCalculatorCaseQuestions');
  Route::post('limitation_calculator_case_sub_answers', 'Api\LimitationCalculatorController@getlimitationCalculatorCaseSubAnswers');
 
@@ -191,7 +196,7 @@ Route::middleware('auth:sanctum')->get('/user', 'Api\UserController@getLoggedInU
 Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function () {
 
 
-    // Route::resource('admins', AdminController::class);  
+    // Route::resource('admins', AdminController::class);
     // Route::put('company/update/{id}', 'CompanyController@update');
     // Route::get('company/{id}', 'CompanyController@show');
     // Route::get('customer', 'CustomerController@index');
@@ -204,7 +209,7 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     // Route::get('product/{id}', 'ProductController@show');
     // Route::post('logout', 'CustomerController@logout');
 });
- 
+
 // // Public routes
 // Route::post('register', 'AuthController@register');
 // Route::post('login', 'AuthController@login');
@@ -269,7 +274,7 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
 // Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function () {
 
 
-//     // Route::resource('admins', AdminController::class);  
+//     // Route::resource('admins', AdminController::class);
 //     // Route::put('company/update/{id}', 'CompanyController@update');
 //     // Route::get('company/{id}', 'CompanyController@show');
 //     // Route::get('customer', 'CustomerController@index');

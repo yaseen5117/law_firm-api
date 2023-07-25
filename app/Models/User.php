@@ -160,4 +160,8 @@ class User extends Authenticatable
         return Self::role('admin')->first();
     }
 
+    public function hasUploadedRequiredDocs()  {
+        return $this->required_documents->count()>= 2;
+    }
+
 }

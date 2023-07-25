@@ -2,30 +2,25 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class UserUploadedRequiredDocs extends Notification
+class ThanksForUploadingNDA extends Notification
 {
     use Queueable;
-    protected $user;
-    protected $siteUrl;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-
-    public function __construct($user, $siteUrl)
+    public function __construct(private User $user)
     {
-        $this->user = $user;
-        $this->siteUrl = $siteUrl;
+        //
     }
-
-    // Rest of the class...
 
     /**
      * Get the notification's delivery channels.
@@ -46,12 +41,9 @@ class UserUploadedRequiredDocs extends Notification
      */
     public function toMail($notifiable)
     {
-    return (new MailMessage)
-                ->subject('User has Uploaded Required Documents')
-                ->greeting('Hi Admin,')
-                ->line('A user has uploaded his required documents. Please click the link below to review.')
-                ->action('See Documents', "{$this->siteUrl}/{$this->user->id}")
-                ->salutation('Best regards, '.SITE_NAME);
+        return (new MailMessage)
+            ->markdown('vendor.notifications.standard',['user'=>$this->user])
+            ->subject('Documents Uploaded');
     }
 
     /**

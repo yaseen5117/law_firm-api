@@ -18,7 +18,7 @@ use App\Models\PetitionTalbana;
 use App\Models\PetitonOrderSheet;
 use Illuminate\Support\Facades\DB;
 
-define('SITE_NAME', 'E Law Firm');
+define('SITE_NAME', 'Lums Law Firm');
 define('ORDER_SHEET', 1);
 define('NAQAL_FORM', 2);
 define('TALBANA', 3);

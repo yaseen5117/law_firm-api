@@ -37,6 +37,7 @@ use App\Jobs\SendDocumentUploadEmail;
 use App\Jobs\JobConvertPdfToImages;
 use App\Models\Petition;
 use App\Models\PetitionReplyParent;
+use App\Notifications\ThanksForUploadingNDA;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -828,7 +829,7 @@ class AttachmentController extends Controller
         }
     }
 
-    
+
     public function uploadUserRequiredDocs(FilesRequest $request, int $userId)
     {
         $user = User::findorfail($userId);
@@ -869,6 +870,7 @@ class AttachmentController extends Controller
             $admin = User::getAdmin();
             if (count($uploadedFiles) > 0) {
                 $admin->notify(new UserUploadedRequiredDocs($user, $setting['site_url']));
+                $user->notify(new ThanksForUploadingNDA($user));
             }
             return response()->json($uploadedFiles);
         }

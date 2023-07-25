@@ -453,8 +453,9 @@ class UserController extends Controller
 
     public function getLoggedInUser(Request $request)
     {
-        $requeset_user = $request->user();
-        return User::with('roles')->whereId($requeset_user->id)->first();
+        $user = User::with('roles', 'required_documents')->find($request->user()->id);
+        $user->has_uploaded_required_docs = $user->hasUploadedRequiredDocs();
+        return $user;
     }
 
     /**
