@@ -882,8 +882,12 @@ class AttachmentController extends Controller
 
             $setting = Setting::withoutGlobalScopes()->whereCompanyId($user->company_id)->first();
             $admin = User::getAdmin();
-            $admin->notify(new UserUploadedRequiredDocs($user, $setting['site_url']));
-            $user->notify(new ThanksForUploadingNDA($user));
+            try {
+                $admin->notify(new UserUploadedRequiredDocs($user, $setting['site_url']));
+                $user->notify(new ThanksForUploadingNDA($user));
+            } catch (\Exception $e) {
+                info("ERROR SENDING NOTIFICATIONS FOR USER REQUIRED DOCUMENTS.");
+            }
             return response()->json($uploadedFiles);
         } catch (\Exception $e) {
             info("Error while storing file: {$e->__toString()}");
