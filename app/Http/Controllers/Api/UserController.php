@@ -92,6 +92,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        /* admin panel account create */
         DB::beginTransaction();
         try {
             if (!$request->user()->hasRole('admin') && !$request->id) {
@@ -135,12 +136,10 @@ class UserController extends Controller
                     ]);
                 }
 
-                $companyID = $request->company_id;
-                if (!$request->company_id) {
-                    $request->merge([
-                        'company_id' => $request->user()->company_id
-                    ]);
-                } else {
+                $request->merge([
+                    'company_id' => $request->user()->company_id
+                ]);
+
                     if ($request->company_name) {
                         $request->merge([
                             'site_name' => $request->company_name,
@@ -158,7 +157,7 @@ class UserController extends Controller
                     $setting = Setting::updateOrCreate(['company_id' => $request->company_id], $setting_data);
                     $setting->setMeta($request->only('site_name'));
                     $setting->save();
-                }
+
 
                 $send_user_approved_mail = false;
                 // if ($request->is_approved) {
@@ -240,7 +239,7 @@ class UserController extends Controller
                 //sending email to user
                 if ($request->send_email) {
                     try {
-                        if (empty($companyID)) {
+                        if (empty($request->company_id)) {
                             $setting = Setting::where('company_id', request()->user()->company_id)->first();
                         }
 
@@ -249,15 +248,20 @@ class UserController extends Controller
                         $send_email_and_password = true;
                         info("Sending Email to $user->email");
                         $emailService = new EmailService;
-                        if ($user->hasRole('admin')) {
-                            $emailService->sendAdminSignUpEmail($user, $setting, $password, $login_url, $send_email_and_password);
+                        if ($request->company_id) {
+                            if ($user->hasRole('admin')) {
+                                $emailService->sendAdminSignUpEmail($user, $setting, $password, $login_url, $send_email_and_password);
+                            }
+                            if ($user->hasRole('lawyer')) {
+                                $emailService->sendLawyerSignUpEmail($user, $setting, $password, $login_url, $send_email_and_password);
+                            }
+                            if ($user->hasRole('client')) {
+                                $emailService->sendClientSignUpEmail($user, $setting, $password, $login_url, $send_email_and_password);
+                            }
+                        }else{
+                            $emailService->sendGeneralSignupEmail($user, $setting, $password, $login_url, $send_email_and_password);
                         }
-                        if ($user->hasRole('lawyer')) {
-                            $emailService->sendLawyerSignUpEmail($user, $setting, $password, $login_url, $send_email_and_password);
-                        }
-                        if ($user->hasRole('client')) {
-                            $emailService->sendClientSignUpEmail($user, $setting, $password, $login_url, $send_email_and_password);
-                        }
+
                     } catch (\Exception $e) {
                         info("Error in User Signup email function: " . $e->getMessage());
                     }
@@ -464,6 +468,7 @@ class UserController extends Controller
      **/
     public function signUp(Request $request)
     {
+        //frontend signup
         try {
             $validator = Validator::make($request->all(), [
                 'email' => 'required|email|unique:users',

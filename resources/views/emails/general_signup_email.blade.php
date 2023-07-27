@@ -9,7 +9,7 @@
 
 <body>
     <p>Dear {{@$user->name}},</p>
-    <p>Thank you for visiting {{@$setting['site_name']}} and registering yourself with us. You can always login to {{@$setting['site_name']}} in order to access your case status, case records, invoices and other useful legal information.</p>
+    <p>Your account has been created on {{@$setting['site_name']}}. You can always login to {{@$setting['site_name']}} in order to access your case status, case records, invoices and other useful legal information.</p>
     @if(@$send_email_and_password)
     <p>Your Email and Password are provided below:</p>
     <p><b>Email:</b> <u>{{@$user->email}}</u></p>
@@ -19,7 +19,7 @@
     <p>To proceed to Login page, please click the link below:</p>
     <a href="{{@$setting['site_url']}}/login" target="_blank">{{@$setting['site_url']}}/login</a>
     <p><b>Regards,</b></p>
-    <p>ELAWFIRM TEAM</p>
+    <p>{{@$setting['site_name']}}</p>
 </body>
 
 </html>

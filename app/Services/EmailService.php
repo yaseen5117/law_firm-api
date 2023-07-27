@@ -7,7 +7,7 @@ use Mail;
 use Exception;
 
 /**
- * 
+ *
  */
 class EmailService
 {
@@ -16,14 +16,14 @@ class EmailService
 	{
 	}
 	// public function adminEmails(){
-	// 	$setting = Setting::find(1)->getMeta()->toArray();		 
+	// 	$setting = Setting::find(1)->getMeta()->toArray();
 	// 	$adminEmails[] = $setting["site_email"];
 
 	// 	info("EmailService: Site Email: ".$setting["site_email"]);
-	// 	if(!empty($setting["additionalemails"])){  			 
-	// 		return array_merge($adminEmails,$setting["additionalemails"]);     
-	// 		$additional_emails = $setting["additionalemails"];	
-	// 		info("EmailService: Additional Emails: ".$setting["additionalemails"]);		
+	// 	if(!empty($setting["additionalemails"])){
+	// 		return array_merge($adminEmails,$setting["additionalemails"]);
+	// 		$additional_emails = $setting["additionalemails"];
+	// 		info("EmailService: Additional Emails: ".$setting["additionalemails"]);
 	// 		return $adminEmails = array_merge($adminEmails,$additional_emails);
 	// 	}else{
 	// 		return $adminEmails;
@@ -176,6 +176,19 @@ class EmailService
 
 		info("EmailService: sendClientSignUpEmail successfully sent Email TO: $user->email");
 	}
+
+    public function sendGeneralSignupEmail($user, $setting, $password, $login_url, $send_email_and_password)
+	{
+		info("EmailService: sendGeneralSignupEmail for User Eamil TO: $user->email");
+
+		Mail::send('emails.general_signup_email', compact('user', 'setting', 'password', 'login_url', 'send_email_and_password'), function ($message) use ($setting, $user) {
+			$message->subject("Welcome to " . $setting['site_name']);
+			$message->to($user->email, $user->name);
+		});
+
+		info("EmailService: sendGeneralSignupEmail successfully sent Email TO: $user->email");
+	}
+
 	public function sendAdminSignUpEmail($user, $setting, $password, $login_url, $send_email_and_password)
 	{
 		info("EmailService: sendAdminSignUpEmail for User Eamil TO: $user->email");
