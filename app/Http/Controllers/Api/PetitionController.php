@@ -206,7 +206,7 @@ class PetitionController extends Controller
                 $events[] = [
                     'title' => $petition->petition_standard_title,
                     'start' => $petition->institution_date,
-                    'url' => 'http://localhost:8080/petitions/' . $petition->id,
+                    'url' => url("petitions") . $petition->id,
                 ];
             }
             return response()->json([

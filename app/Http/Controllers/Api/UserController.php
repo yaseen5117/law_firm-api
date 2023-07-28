@@ -140,23 +140,23 @@ class UserController extends Controller
                     'company_id' => $request->user()->company_id
                 ]);
 
-                    if ($request->company_name) {
-                        $request->merge([
-                            'site_name' => $request->company_name,
-                        ]);
-                    } else {
-                        $company = Company::find($request->company_id);
-                        $request->merge([
-                            'site_name' => $company->name,
-                        ]);
-                    }
-                    $setting_data = array(
-                        'name' => "General",
-                    );
+                if ($request->company_name) {
+                    $request->merge([
+                        'site_name' => $request->company_name,
+                    ]);
+                } else {
+                    $company = Company::find($request->company_id);
+                    $request->merge([
+                        'site_name' => $company->name,
+                    ]);
+                }
+                $setting_data = array(
+                    'name' => "General",
+                );
 
-                    $setting = Setting::updateOrCreate(['company_id' => $request->company_id], $setting_data);
-                    $setting->setMeta($request->only('site_name'));
-                    $setting->save();
+                $setting = Setting::updateOrCreate(['company_id' => $request->company_id], $setting_data);
+                $setting->setMeta($request->only('site_name'));
+                $setting->save();
 
 
                 $send_user_approved_mail = false;
@@ -168,10 +168,10 @@ class UserController extends Controller
                         'approved_by' => $request->user()->id,
                         'is_approved' => $request->id ? $request->is_approved : 1
                     ]);
-                    if($request->is_approved){
+                    if ($request->is_approved) {
                         $send_user_approved_mail = true;
                     }
-                     //return response($request->all(), 403);
+                    //return response($request->all(), 403);
 
                 } else {
                     $request->merge([
@@ -182,7 +182,7 @@ class UserController extends Controller
                 if (!$request->id) {
                     //here we will connect the setting for document approval.
                     $request->merge([
-                        'documents_required' => 1
+                        'req_docs_uploaded' => 1
                     ]);
                 }
 
@@ -227,12 +227,12 @@ class UserController extends Controller
                     }
                 }
                 //send mail when user approved
-                if(!empty($send_user_approved_mail)){
-                    try{
+                if (!empty($send_user_approved_mail)) {
+                    try {
                         $emailService = new EmailService;
                         $emailService->sendUserApprovedEmail($user);
-                    }catch (\Exception $e) {
-                        info("UserController store Function: Error in sending User Approved emial at Line# ".__line__ .': '. $e->getMessage());
+                    } catch (\Exception $e) {
+                        info("UserController store Function: Error in sending User Approved emial at Line# " . __line__ . ': ' . $e->getMessage());
                     }
                 }
 
@@ -243,6 +243,7 @@ class UserController extends Controller
                             $setting = Setting::where('company_id', request()->user()->company_id)->first();
                         }
 
+                        
                         $password = $request->password;
                         $login_url = url("login");
                         $send_email_and_password = true;
@@ -258,10 +259,9 @@ class UserController extends Controller
                             if ($user->hasRole('client')) {
                                 $emailService->sendClientSignUpEmail($user, $setting, $password, $login_url, $send_email_and_password);
                             }
-                        }else{
+                        } else {
                             $emailService->sendGeneralSignupEmail($user, $setting, $password, $login_url, $send_email_and_password);
                         }
-
                     } catch (\Exception $e) {
                         info("Error in User Signup email function: " . $e->getMessage());
                     }
@@ -303,7 +303,7 @@ class UserController extends Controller
     public function show($id)
     {
         try {
-            $user = User::with('roles', 'contact_persons', 'attachment', 'approve_by','required_documents')->where("company_id", request()->user()->company_id)->find($id);
+            $user = User::with('roles', 'contact_persons', 'attachment', 'approve_by', 'required_documents')->where("company_id", request()->user()->company_id)->find($id);
 
             if ($user) {
                 return response()->json(
@@ -609,50 +609,58 @@ class UserController extends Controller
     public function approveOrBlock(Request $request)
     {
         try {
-            info($request->user['is_approved']?"Function approveOrBlock: START to approve user":"Function approveOrBlock: START to block user");
+            info($request->user['is_approved'] ? "Function approveOrBlock: START to approve user" : "Function approveOrBlock: START to block user");
 
-            $user = User::where('id',$request->user['id'])->update([
-                "is_approved"=> $request->user['is_approved'],
-                "approved_at"=> $request->user['is_approved']?now():null,
-                "approved_by"=> $request->user['is_approved']?$request->user()->id:null
+            $user = User::where('id', $request->user['id'])->update([
+                "is_approved" => $request->user['is_approved'],
+                "approved_at" => $request->user['is_approved'] ? now() : null,
+                "approved_by" => $request->user['is_approved'] ? $request->user()->id : null
             ]);
 
-            info($request->user['is_approved']?"Function approveOrBlock: END to approve user":"Function approveOrBlock: END to block user");
+            info($request->user['is_approved'] ? "Function approveOrBlock: END to approve user" : "Function approveOrBlock: END to block user");
 
-            return response([
-                "user"=>$user,
-                "message"=> $request->user['is_approved']?"User approved successfully":"User Blocked successfully"
-            ],200
+            return response(
+                [
+                    "user" => $user,
+                    "message" => $request->user['is_approved'] ? "User approved successfully" : "User Blocked successfully"
+                ],
+                200
             );
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
             ], 500);
         }
-
     }
 
     public function approveRejectDocs(Request $request)
     {
-        try {
+        try { 
 
-
-            $user = User::where('id',$request->user_id)->update([
-                "required_documents"=> $request->documents_required
+            $user = User::where('id', $request->user_id)->update([
+                "req_docs_uploaded" => $request->req_docs_uploaded
             ]);
+ 
 
-            $user->required_documents()->delete();
+            if (!$request->req_docs_uploaded) {
+                //first find rejected user by id
+                $rejectedDocUser = User::findorfail($request->user_id); 
+                 
+                //now delete uploaded docs from folder
+                $rejectedDocUser->required_documents()->delete();
+            }
 
-            return response([
-                "user"=>$user,
-                "message"=> "done"
-            ],200
+            return response(
+                [
+                    "user" => $user,
+                    "message" => "done"
+                ],
+                200
             );
         } catch (\Exception $e) {
             return response([
                 "error" => $e->getMessage()
             ], 500);
         }
-
     }
 }
