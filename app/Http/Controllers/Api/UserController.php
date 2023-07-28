@@ -631,4 +631,28 @@ class UserController extends Controller
         }
 
     }
+
+    public function approveRejectDocs(Request $request)
+    {
+        try {
+
+
+            $user = User::where('id',$request->user_id)->update([
+                "required_documents"=> $request->documents_required
+            ]);
+
+            $user->required_documents()->delete();
+
+            return response([
+                "user"=>$user,
+                "message"=> "done"
+            ],200
+            );
+        } catch (\Exception $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+
+    }
 }

@@ -78,6 +78,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|staff'], 'namespace' 
 
     Route::resource('companies', 'CompanyController');
     Route::post('approve_or_block', 'UserController@approveOrBlock');
+    Route::post('approve_reject_docs', 'UserController@approveRejectDocs');
 });
 
 //ROUTES FOR LOGGED IN USER
