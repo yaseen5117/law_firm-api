@@ -48,7 +48,12 @@ class PetitionMetaController extends Controller
                 ]);
             }
 
-            PetitionMeta::updateOrCreate(['id' => $request->id], $request->except('editMode'));
+            PetitionMeta::updateOrCreate(
+                [
+                    'created_by' => auth()->user()->id,
+                    'id' => $request->id]
+                , $request->except('editMode')
+            );
 
             return response()->json(
                 [
@@ -73,7 +78,7 @@ class PetitionMetaController extends Controller
     {
         try {
 
-            $caseLaws = PetitionMeta::where('petition_id', $id)->orderBy('display_order')->get();
+            $caseLaws = PetitionMeta::with('author')->where('petition_id', $id)->orderBy('display_order')->get();
             //$petitionReply = PetitionReply::with('petition','attachments')->where('petition_reply_parent_id',$petitionReplyId)->get();
 
             return response()->json(
@@ -81,6 +86,10 @@ class PetitionMetaController extends Controller
                     'index_annexure_data' => $caseLaws,
                     'case_laws' => $caseLaws,
                     'index_data' => $caseLaws,
+                    'page_setup' => [
+                        'hide_annexure_column' => true,
+                        'hide_page_column' => true,
+                    ],
                     'model_type' => "App\Models\PetitionMeta",
                     'message' => 'Success',
                     'page_title' => "Petition Meta",
@@ -144,7 +153,7 @@ class PetitionMetaController extends Controller
     {
         try {
 
-            $data = PetitionMeta::with('petition', 'petition.court', 'attachments')->whereId($id)->first();
+            $data = PetitionMeta::with('petition', 'petition.court', 'attachments', 'author')->whereId($id)->first();
 
             return response()->json(
                 [

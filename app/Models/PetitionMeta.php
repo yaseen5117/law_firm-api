@@ -14,6 +14,11 @@ class PetitionMeta extends Model
         'date'  => 'date:d/m/Y',
     ];
 
+    public function author()
+    {
+        return $this->belongsTo('App\Models\User', 'created_by');
+    }
+
     public function petition()
     {
         return $this->belongsTo('App\Models\Petition');
