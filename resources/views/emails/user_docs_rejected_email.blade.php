@@ -9,7 +9,7 @@
 
 <body>
     <p>Dear {{@$user->name}},</p>
-    <p>Your account has been approved.</p>
+    <p>Unfortunately, the documents you uploaded have been rejected by our admin. Please consider re-uploading them or get in touch with the admin for further assistance.</p>
     <p><b>Regards,</b></p>
     <p>{{SITE_NAME}}</p>
 </body>

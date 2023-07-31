@@ -243,7 +243,7 @@ class UserController extends Controller
                             $setting = Setting::where('company_id', request()->user()->company_id)->first();
                         }
 
-                        
+
                         $password = $request->password;
                         $login_url = url("login");
                         $send_email_and_password = true;
@@ -635,19 +635,19 @@ class UserController extends Controller
 
     public function approveRejectDocs(Request $request)
     {
-        try { 
-
-            $user = User::where('id', $request->user_id)->update([
+        try {
+            $user = User::findorfail($request->user_id);
+            $emailService = new EmailService;
+            User::where('id', $request->user_id)->update([
                 "req_docs_uploaded" => $request->req_docs_uploaded
             ]);
- 
 
-            if (!$request->req_docs_uploaded) {
-                //first find rejected user by id
-                $rejectedDocUser = User::findorfail($request->user_id); 
-                 
+            if ($request->req_docs_uploaded) {
+                $emailService->sendDocsApprovedEmail($user);
+            }else{
                 //now delete uploaded docs from folder
-                $rejectedDocUser->required_documents()->delete();
+                $user->required_documents()->delete();
+                $emailService->sendDocsRejectedEmail($user);
             }
 
             return response(

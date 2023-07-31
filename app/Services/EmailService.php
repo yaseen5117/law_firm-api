@@ -233,4 +233,28 @@ class EmailService
 
 		info("EmailService: sendUserApprovedEmail successfully sent Email To User: ". $user);
 	}
+
+    public function sendDocsApprovedEmail($user)
+	{
+		info("EmailService: sendDocsApprovedEmail sending Email to User: " . $user);
+
+		Mail::send('emails.user_docs_approved_email', compact('user'), function ($message) use ($user) {
+			$message->subject("Documents Approved");
+			$message->to($user->email);
+		});
+
+		info("EmailService: sendDocsApprovedEmail successfully sent Email To User: ". $user);
+	}
+
+    public function sendDocsRejectedEmail($user)
+	{
+		info("EmailService: sendDocsRejectedEmail sending Email to User: " . $user);
+
+		Mail::send('emails.user_docs_rejected_email', compact('user'), function ($message) use ($user) {
+			$message->subject("Documents Rejected");
+			$message->to($user->email);
+		});
+
+		info("EmailService: sendDocsRejectedEmail successfully sent Email To User: ". $user);
+	}
 }

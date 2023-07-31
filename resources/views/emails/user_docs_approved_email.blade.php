@@ -9,7 +9,7 @@
 
 <body>
     <p>Dear {{@$user->name}},</p>
-    <p>Your account has been approved.</p>
+    <p>Congratulations, your documents have been successfully approved, granting you full access to the system. Feel free to start utilizing its features right away.</p>
     <p><b>Regards,</b></p>
     <p>{{SITE_NAME}}</p>
 </body>
