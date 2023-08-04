@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\PetitionIndex;
 use App\Models\Petition;
 use Illuminate\Http\Request;
+use PDF;
 use App\Http\Controllers\Controller;
 
 class PetitionIndexController extends Controller
@@ -178,5 +179,37 @@ class PetitionIndexController extends Controller
             ]);
         }
         return response("done");
+    }
+    public function downloadSingleIndexAsPdf(Request $request)
+    {
+        // Process the received images data and create a PDF
+        // Replace this with your logic to create the PDF
+        $indexData = $request;
+        $pdf = PDF::loadView('petition_pdf.download_index_images_as_pdf', compact("indexData"));
+
+        // Return the PDF as a response
+        return $pdf->download('images.pdf');
+
+        // foreach ($request->attachments as $image) {
+        //     $file_name = $image["file_name"];
+        //     $public_path =  public_path();
+        //     $file_path = $public_path . '/storage/attachments/petitions/' . $request->petition_id . '/PetitionIndex/' . $image['attachmentable_id'] . '/' . $file_name;
+
+        //     $imageData = file_get_contents($file_path);
+        //     $base64Image = base64_encode($imageData);
+        //     $imageTag = '<img src="data:image/jpeg;base64,' . $base64Image . '"/>';
+        //     $pdf->loadHtml($imageTag);
+        //     $pdf->setPaper('A4', 'portrait');
+        //     $pdf->render();
+        // }
+        // // Generate a unique filename for the PDF
+        // $pdfFileName = Str::random(10) . '.pdf';
+        // $pdfFilePath = public_path('pdf/' . $pdfFileName);
+
+        // // Save the PDF to the specified file path
+        // file_put_contents($pdfFilePath, $pdf->output());
+
+        // // Return the path to the generated PDF
+        // return $pdfFilePath;
     }
 }
