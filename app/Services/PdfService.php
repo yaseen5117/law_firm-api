@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Attachment;
 use App\Models\PetitionIndex;
-use App\Models\Setting;
+use App\Models\Setting; 
 use Exception;
 use Imagick;
 use Image;
@@ -115,7 +115,7 @@ class PdfService
             $dompdf->loadHtml($htmlContent);
 
             // Set paper size and orientation (optional)
-            // $dompdf->setPaper('A4', 'portrait');
+            $dompdf->setPaper('A4', 'portrait');
 
             // Render PDF
             $dompdf->render();
