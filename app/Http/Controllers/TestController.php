@@ -122,23 +122,5 @@ class TestController extends Controller
         $petition = Petition::find(167);
         return $petition->petition_standard_title_with_petitioner;
     }
-    public function downloadSingleIndexAsPdf()
-    { 
-
-        $request = PetitionIndex::with('attachments')->whereId(2211)->first();
-        
-        $attachments = $request->attachments;
-       
-        $petition_id = $request->petition_id;
-        $index_id = $request->id;
-        $index_name = "PetitionIndex";
-
-        $file_path = "storage/attachments/petitions/$petition_id/$index_name/$index_id/";
-
-        $downloaded_folder_name = "petition-indexes-pdf/";
-        $downloaded_file_name = time() . "_document.pdf";
-
-        return view('petition_pdf.download_index_images_as_pdf', compact('attachments', 'file_path'));
- 
-    }
+     
 }

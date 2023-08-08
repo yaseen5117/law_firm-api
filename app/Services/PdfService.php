@@ -110,7 +110,7 @@ class PdfService
             $dompdf = new Dompdf();
 
             // Load HTML content
-            $htmlContent = view('petition_pdf.download_index_images_as_pdf', compact('attachments', 'file_path'))->render();
+            $htmlContent = view('petition_pdf.download_index_images_as_pdf', compact('attachments', 'file_path'));
 
             $dompdf->loadHtml($htmlContent);
 
