@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Models\PetitionIndex;
 use App\Models\Petition;
 use Illuminate\Http\Request;
-use PDF;
+
 use App\Http\Controllers\Controller;
+use App\Services\PdfService;
 
 class PetitionIndexController extends Controller
 {
@@ -182,34 +183,24 @@ class PetitionIndexController extends Controller
     }
     public function downloadSingleIndexAsPdf(Request $request)
     {
-        // Process the received images data and create a PDF
-        // Replace this with your logic to create the PDF
-        $indexData = $request;
-        $pdf = PDF::loadView('petition_pdf.download_index_images_as_pdf', compact("indexData"));
+        $pdfService = new PdfService;
 
-        // Return the PDF as a response
-        return $pdf->download('images.pdf');
+        $attachments = $request->attachments;
+        $petition_id = $request->petition_id;
+        $index_id = $request->id;
+        $index_name = "PetitionIndex";
 
-        // foreach ($request->attachments as $image) {
-        //     $file_name = $image["file_name"];
-        //     $public_path =  public_path();
-        //     $file_path = $public_path . '/storage/attachments/petitions/' . $request->petition_id . '/PetitionIndex/' . $image['attachmentable_id'] . '/' . $file_name;
+        $file_path = "storage/attachments/petitions/$petition_id/$index_name/$index_id/";
 
-        //     $imageData = file_get_contents($file_path);
-        //     $base64Image = base64_encode($imageData);
-        //     $imageTag = '<img src="data:image/jpeg;base64,' . $base64Image . '"/>';
-        //     $pdf->loadHtml($imageTag);
-        //     $pdf->setPaper('A4', 'portrait');
-        //     $pdf->render();
-        // }
-        // // Generate a unique filename for the PDF
-        // $pdfFileName = Str::random(10) . '.pdf';
-        // $pdfFilePath = public_path('pdf/' . $pdfFileName);
+        $downloaded_folder_name = "petition-indexes-pdf/";
+        $downloaded_file_name = time() . "_document.pdf";
 
-        // // Save the PDF to the specified file path
-        // file_put_contents($pdfFilePath, $pdf->output());
 
-        // // Return the path to the generated PDF
-        // return $pdfFilePath;
+        $file_path = $pdfService->convertImagesToPdf($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name);
+
+        return response([
+            "file_path" => $file_path,
+            "message" => "Downloaded File Saved Successfully."
+        ], 200);
     }
 }

@@ -41,7 +41,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|lawyer|staff'], 'name
     Route::get('client_users', 'UserController@getClientUsers');
 
     Route::resource('links', 'LinkController');
- 
+
     //route for FIR
     Route::resource('fir_sections', 'FirController');
     Route::get('lawyers', 'UserController@getLawyer');
@@ -162,8 +162,7 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::post('get_user_meeting', 'UserVideoMeetingController@getUserMeeting');
     Route::post('create_new_meeting', 'UserVideoMeetingController@createMeeting');
 
-    //Download single petition index as pdf 
-    Route::post('download_single_petiton_index_pdf', 'PetitionIndexController@downloadSingleIndexAsPdf');
+    Route::POST('download_single_petition_index_pdf', 'PetitionIndexController@downloadSingleIndexAsPdf');
 });
 
 //contact request to save
@@ -178,8 +177,8 @@ Route::post('login', 'AuthController@login');
 Route::post('signup', 'Api\UserController@signUp');
 
 //Limitation Calculator Public route    
- Route::post('limitation_calculator_case_questions', 'Api\LimitationCalculatorController@getLimitationCalculatorCaseQuestions');
- Route::post('limitation_calculator_case_sub_answers', 'Api\LimitationCalculatorController@getlimitationCalculatorCaseSubAnswers');
+Route::post('limitation_calculator_case_questions', 'Api\LimitationCalculatorController@getLimitationCalculatorCaseQuestions');
+Route::post('limitation_calculator_case_sub_answers', 'Api\LimitationCalculatorController@getlimitationCalculatorCaseSubAnswers');
 
 Route::get('limitation_calculator_cases', 'Api\LimitationCalculatorController@getLimitationCalculatorCases');
 

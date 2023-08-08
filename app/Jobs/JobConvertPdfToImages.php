@@ -7,8 +7,9 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use App\Http\Controllers\Api\AttachmentController;
+use Illuminate\Queue\SerializesModels; 
+use App\Services\PdfService;
+
 class JobConvertPdfToImages implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -23,7 +24,7 @@ class JobConvertPdfToImages implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($file_path,$output_path,$file_name,$attachmentable_id,$attachmentable_type)
+    public function __construct($file_path, $output_path, $file_name, $attachmentable_id, $attachmentable_type)
     {
         $this->file_path = $file_path;
         $this->output_path = $output_path;
@@ -39,7 +40,7 @@ class JobConvertPdfToImages implements ShouldQueue
      */
     public function handle()
     {
-        $objAttachmentController = new AttachmentController;
-        $objAttachmentController->convertPdftoimages($this->file_path, $this->output_path, $this->file_name ,$this->attachmentable_id,$this->attachmentable_type);
+        $pdfService = new PdfService;
+        $pdfService->convertPdftoimages($this->file_path, $this->output_path, $this->file_name, $this->attachmentable_id, $this->attachmentable_type);
     }
 }

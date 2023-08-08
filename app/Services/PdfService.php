@@ -4,10 +4,13 @@ namespace App\Services;
 
 use App\Models\Attachment;
 use App\Models\PetitionIndex;
-use App\Models\Setting;
+use App\Models\Setting; 
 use Exception;
 use Imagick;
 use Image;
+use PDF;
+use File;
+use Dompdf\Dompdf;
 
 class PdfService
 {
@@ -100,15 +103,47 @@ class PdfService
      * @return type
      * @throws conditon
      **/
-    public function convertImagesToPdf($petitionIdexId)
+    public function convertImagesToPdf($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name)
     {
+        try {
+            // Instantiate Dompdf class
+            $dompdf = new Dompdf();
 
-        // $petitionIndexeAttachments = PetitionIndex::with('attachments')->whereId($petitionIdexId)->first();
+            // Load HTML content
+            $htmlContent = view('petition_pdf.download_index_images_as_pdf', compact('attachments', 'file_path'))->render();
 
-        // Image::load($imagePath)
-        //     ->fit(Manipulations::FIT_CONTAIN, 1200, 1800)
-        //     ->save($pdfPath, ImageManipulations::FORMAT_PDF);
+            $dompdf->loadHtml($htmlContent);
 
-        // return response()->download($pdfPath);
+            // Set paper size and orientation (optional)
+            $dompdf->setPaper('A4', 'portrait');
+
+            // Render PDF
+            $dompdf->render();
+
+            // Save PDF
+            $pdf_file = $downloaded_folder_name . $downloaded_file_name;
+            $output = $dompdf->output();
+
+            $path = storage_path('app/public/' . $downloaded_folder_name);
+            if (!File::isDirectory($path)) {
+                File::makeDirectory($path, 0777, true, true);
+            }
+
+            $file_saved = file_put_contents(storage_path('app/public/' . $pdf_file), $output);
+
+            if ($file_saved === false) {
+                // Log the error or handle it accordingly
+                info("Failed to save the PDF file");
+                return response([
+                    "message" => "Failed to save the PDF file."
+                ], 500);
+            }
+
+            return url('storage/' . $pdf_file);
+        } catch (\ErrorException $e) {
+            return response([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 }

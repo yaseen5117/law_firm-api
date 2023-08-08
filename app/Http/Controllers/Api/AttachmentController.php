@@ -493,6 +493,7 @@ class AttachmentController extends Controller
     }
 
 
+    //this function move to PdfService 
     public function convertPdftoimages($file_path, $output_path, $file_name, $attachmentable_id, $attachmentable_type)
     {
         info("****************CONVERTING PDF TO IMAGES START**********************");
