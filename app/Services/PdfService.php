@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Attachment;
 use App\Models\PetitionIndex;
-use App\Models\Setting; 
+use App\Models\Setting;
 use Exception;
 use Imagick;
 use Image;
@@ -110,12 +110,12 @@ class PdfService
             $dompdf = new Dompdf();
 
             // Load HTML content
-            $htmlContent = view('petition_pdf.download_index_images_as_pdf', compact('attachments', 'file_path'));
+            $htmlContent = view('petition_pdf.download_index_images_as_pdf', compact('attachments', 'file_path'))->render();
 
             $dompdf->loadHtml($htmlContent);
 
             // Set paper size and orientation (optional)
-            $dompdf->setPaper('A4', 'portrait');
+            // $dompdf->setPaper('A4', 'portrait');
 
             // Render PDF
             $dompdf->render();
