@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::GET('test_download_single_petition_index_pdf', 'TestController@downloadSingleIndexAsPdf');
+
 Route::get('test_code', 'TestController@testCode');
 Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
 Route::get('/test_send_document_uploading_email', 'TestController@test_send_document_uploading_email');
