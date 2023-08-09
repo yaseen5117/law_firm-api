@@ -15,6 +15,7 @@ use App\Jobs\SendDocumentUploadEmail;
 use App\Models\User;
 use Illuminate\Support\Str;
 use DB;
+use PDF;
 
 class TestController extends Controller
 {
@@ -122,5 +123,34 @@ class TestController extends Controller
         $petition = Petition::find(167);
         return $petition->petition_standard_title_with_petitioner;
     }
-     
+
+    public function downloadPetitionPdf(Request $request)
+    {
+        try {
+            $petition = PetitionIndex::with("attachments")
+                ->whereId(2211)
+                ->first();
+            $attachments =  $petition->attachments;
+            $file_path = "storage/attachments/petitions/220/PetitionIndex/2211/";
+            // return view('petition_pdf.download_index_images_as_pdf', compact('attachments', 'file_path'));
+
+            info('Start Downloading Petition Index PDF');
+            ini_set('memory_limit', '-1');
+            $pdf = PDF::loadView(
+                'petition_pdf.download_index_images_as_pdf',
+                compact('attachments', 'file_path')
+            );
+            return $pdf->download(
+                'abc.pdf'
+            );
+            info('Complete Downloading Petition PDF');
+        } catch (\Exception $e) {
+            return response(
+                [
+                    'error' => $e->getMessage(),
+                ],
+                500
+            );
+        }
+    }
 }
