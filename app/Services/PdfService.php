@@ -109,6 +109,8 @@ class PdfService
     {
         try {
 
+            // return response("SDDDDD", 403);
+
             $options = new Options();
             $options->set('isHtml5ParserEnabled', true);
             $options->set('isRemoteEnabled', true);
@@ -116,7 +118,7 @@ class PdfService
             $dompdf = new Dompdf();
 
             // Load HTML content
-            $htmlContent = view('petition_pdf.download_index_images_as_pdf', compact('attachments', 'file_path'))->render();
+            $htmlContent = view('petition_pdf.download_index_images_as_pdf', compact('attachments', 'file_path', 'downloaded_file_name'))->render();
             $htmlContent = trim($htmlContent); // Trim the HTML content
 
             $dompdf->loadHtml($htmlContent);
@@ -128,7 +130,7 @@ class PdfService
             $dompdf->render();
 
             // Save PDF
-            $pdf_file = $downloaded_folder_name . $downloaded_file_name;
+            $pdf_file = $downloaded_folder_name . "/" . $downloaded_file_name;
             $output = $dompdf->output();
 
             $path = storage_path('app/public/' . $downloaded_folder_name);
