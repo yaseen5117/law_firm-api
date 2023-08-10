@@ -2,14 +2,7 @@
 <html>
 
 <head>
-    <title></title>
-    <!-- Additional meta tags, stylesheets, scripts, etc. -->
-
-    <style>
-        .page-break {
-            page-break-after: always;
-        }
-    </style>
+    <title>{{$downloaded_file_name}}</title>
 </head>
 
 <body>
