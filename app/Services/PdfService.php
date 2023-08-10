@@ -4,13 +4,15 @@ namespace App\Services;
 
 use App\Models\Attachment;
 use App\Models\PetitionIndex;
-use App\Models\Setting; 
+use App\Models\Setting;
 use Exception;
 use Imagick;
 use Image;
 use PDF;
 use File;
 use Dompdf\Dompdf;
+use Dompdf\Options;
+
 
 class PdfService
 {
@@ -106,11 +108,16 @@ class PdfService
     public function convertImagesToPdf($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name)
     {
         try {
+
+            $options = new Options();
+            $options->set('isHtml5ParserEnabled', true);
+            $options->set('isRemoteEnabled', true);
             // Instantiate Dompdf class
             $dompdf = new Dompdf();
 
             // Load HTML content
             $htmlContent = view('petition_pdf.download_index_images_as_pdf', compact('attachments', 'file_path'))->render();
+            $htmlContent = trim($htmlContent); // Trim the HTML content
 
             $dompdf->loadHtml($htmlContent);
 

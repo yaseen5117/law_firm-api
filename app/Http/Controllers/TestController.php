@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use App\Jobs\SendDocumentUploadEmail;
 use App\Models\User;
+use App\Services\PdfService;
 use Illuminate\Support\Str;
 use DB; 
 
