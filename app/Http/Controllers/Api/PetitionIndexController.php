@@ -186,8 +186,7 @@ class PetitionIndexController extends Controller
         $pdfService = new PdfService;
 
         $case_no = $request->petition["case_no"];
-        $doc_title = $request->document_description;
-
+         
         $attachments = $request->attachments;
         $petition_id = $request->petition_id;
         $index_id = $request->id;
@@ -196,7 +195,7 @@ class PetitionIndexController extends Controller
         $file_path = "storage/attachments/petitions/$petition_id/$index_name/$index_id/";
 
         $downloaded_folder_name = "petition-indexes-pdf";
-        $downloaded_file_name = $case_no . "_" . $doc_title . ".pdf";
+        $downloaded_file_name = $case_no . "_" . $index_id . ".pdf";
 
 
         $file_path = $pdfService->convertImagesToPdf($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name);
