@@ -121,6 +121,7 @@ class PdfService
             $html = view('layouts.pdf.template', compact('attachments', 'file_path', 'downloaded_file_name'))->render();
             $html = trim($html); // Trim the HTML content
             $html = preg_replace('/\s+/', ' ', $html);
+            info("HTML GENERATED FOR PDF: ".print_r($html, 1));
 
 
             $dompdf->loadHtml($html);
