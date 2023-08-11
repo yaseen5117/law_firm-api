@@ -118,7 +118,7 @@ class PdfService
             $dompdf = new Dompdf();
 
             // Load HTML content
-            $htmlContent = view('petition_pdf.download_index_images_as_pdf', compact('attachments', 'file_path', 'downloaded_file_name'))->render();
+            $htmlContent = view('layouts.pdf.template', compact('attachments', 'file_path', 'downloaded_file_name'))->render();
             $htmlContent = trim($htmlContent); // Trim the HTML content
 
             $dompdf->loadHtml($htmlContent);
