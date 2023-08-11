@@ -24,6 +24,7 @@ Route::get('/', function () {
 Route::get('test_deploy', function () {
     return "deployed on 11 august.";
 });
+Route::get('testPdfGen/{petitionIndexId}', 'TestController@testPdfGen');
 Route::get('test_code', 'TestController@testCode');
 Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
 Route::get('/test_send_document_uploading_email', 'TestController@test_send_document_uploading_email');

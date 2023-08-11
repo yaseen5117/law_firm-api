@@ -15,7 +15,9 @@ use App\Jobs\SendDocumentUploadEmail;
 use App\Models\User;
 use App\Services\PdfService;
 use Illuminate\Support\Str;
-use DB; 
+use DB;
+use PDF;
+
 
 class TestController extends Controller
 {
@@ -122,5 +124,38 @@ class TestController extends Controller
     {
         $petition = Petition::find(167);
         return $petition->petition_standard_title_with_petitioner;
+    }
+
+    function testPdfGen($indexId) {
+        info(__CLASS__.': downloadSingleIndexAsPdf function started');
+        $pdfService = new PdfService;
+        $petitionIndex = PetitionIndex::find($indexId);
+        $case_no = "abc";
+
+        $attachments = $petitionIndex->attachments;
+        $petition_id = $petitionIndex->petition_id;
+        $index_id = $petitionIndex->id;
+        $index_name = "PetitionIndex";
+
+        $file_path = "storage/attachments/petitions/$petition_id/$index_name/$index_id/";
+
+        $downloaded_folder_name = "petition-indexes-pdf";
+        $downloaded_file_name = $case_no . "_" . $index_id . ".pdf";
+
+        return $response = $pdfService->convertImagesToPdfNew($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name);
+        info('pdfService convertImagesToPdf function response.'.print_r($response, 1));
+        if ($response['status']) {
+            return response([
+                "file_path" => $response['file_url'],
+                "message" => "Downloaded File Saved Successfully."
+            ], 200);
+        }else{
+            return response([
+                "file_path" => "",
+                "message" => "something went wrong."
+            ], 500);
+        }
+
+
     }
 }
