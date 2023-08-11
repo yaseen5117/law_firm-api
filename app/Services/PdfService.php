@@ -118,10 +118,12 @@ class PdfService
             $dompdf = new Dompdf();
 
             // Load HTML content
-            $htmlContent = view('layouts.pdf.template', compact('attachments', 'file_path', 'downloaded_file_name'))->render();
-            $htmlContent = trim($htmlContent); // Trim the HTML content
+            $html = view('layouts.pdf.template', compact('attachments', 'file_path', 'downloaded_file_name'))->render();
+            $html = trim($html); // Trim the HTML content
+            $html = preg_replace('/\s+/', ' ', $html);
 
-            $dompdf->loadHtml($htmlContent);
+
+            $dompdf->loadHtml($html);
 
             // Set paper size and orientation (optional)
             $dompdf->setPaper('A4', 'portrait');
