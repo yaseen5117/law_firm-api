@@ -200,7 +200,7 @@ class PetitionIndexController extends Controller
 
 
         $response = $pdfService->convertImagesToPdf($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name);
-        info(__CLASS__.': downloadSingleIndexAsPdf function response.'.print_r($response, 1));
+        info('pdfService convertImagesToPdf function response.'.print_r($response, 1));
         if ($response['status']) {
             return response([
                 "file_path" => $response['file_url'],

@@ -141,9 +141,9 @@ class PdfService
                 ];
             }
             $generated_pdf_file_url = url('storage/' . $pdf_file);
-            Log::error("CREATED PDF FILE: {$generated_pdf_file_url}");
+            Log::info("GENERATED PDF FILE: {$generated_pdf_file_url}");
             return [
-                'status' => false,
+                'status' => true,
                 'file_url' => $generated_pdf_file_url,
                 'message' => "FILE CREATED SUCCESSFULLY",
             ];
