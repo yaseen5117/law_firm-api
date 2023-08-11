@@ -12,7 +12,7 @@ use PDF;
 use File;
 use Dompdf\Dompdf;
 use Dompdf\Options;
-
+use Illuminate\Support\Facades\Log;
 
 class PdfService
 {
@@ -108,7 +108,7 @@ class PdfService
     public function convertImagesToPdf($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name)
     {
         try {
-
+            Log::error("converting images to PDF");
             // return response("SDDDDD", 403);
 
             $options = new Options();
@@ -146,13 +146,15 @@ class PdfService
             if ($file_saved === false) {
                 // Log the error or handle it accordingly
                 info("Failed to save the PDF file");
+                Log::error("Failed to save the PDF file");
                 return response([
                     "message" => "Failed to save the PDF file."
                 ], 500);
             }
 
             return url('storage/' . $pdf_file);
-        } catch (\ErrorException $e) {
+        } catch (\Exception $e) {
+            Log::error("Failed to save the PDF file {$e->getMessage()}");
             return response([
                 "error" => $e->getMessage()
             ], 500);
