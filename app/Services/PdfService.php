@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Attachment;
-use App\Models\PetitionIndex;
 use App\Models\Setting;
 use Exception;
 use Imagick;
@@ -105,59 +104,56 @@ class PdfService
      * @return type
      * @throws conditon
      **/
-    public function convertImagesToPdf($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name)
+    public function convertImagesToPdf($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name): array
     {
+        Log::info("converting images to PDF");
         try {
-            Log::error("converting images to PDF");
-            // return response("SDDDDD", 403);
-
             $options = new Options();
             $options->set('isHtml5ParserEnabled', true);
             $options->set('isRemoteEnabled', true);
             // Instantiate Dompdf class
             $dompdf = new Dompdf();
-
             // Load HTML content
             $html = view('layouts.pdf.template', compact('attachments', 'file_path', 'downloaded_file_name'))->render();
             $html = trim($html); // Trim the HTML content
             $html = preg_replace('/\s+/', ' ', $html);
-            info("HTML GENERATED FOR PDF: ".print_r($html, 1));
-
-
             $dompdf->loadHtml($html);
-
             // Set paper size and orientation (optional)
             $dompdf->setPaper('A4', 'portrait');
-
             // Render PDF
             $dompdf->render();
-
             // Save PDF
             $pdf_file = $downloaded_folder_name . "/" . $downloaded_file_name;
             $output = $dompdf->output();
-
             $path = storage_path('app/public/' . $downloaded_folder_name);
             if (!File::isDirectory($path)) {
                 File::makeDirectory($path, 0777, true, true);
             }
-
             $file_saved = file_put_contents(storage_path('app/public/' . $pdf_file), $output);
-
             if ($file_saved === false) {
                 // Log the error or handle it accordingly
                 info("Failed to save the PDF file");
                 Log::error("Failed to save the PDF file");
-                return response([
-                    "message" => "Failed to save the PDF file."
-                ], 500);
+                return [
+                    'status' => false,
+                    'file_url' => "",
+                    'message' => "Failed to save the PDF file",
+                ];
             }
-
-            return url('storage/' . $pdf_file);
-        } catch (\Exception $e) {
+            $generated_pdf_file_url = url('storage/' . $pdf_file);
+            Log::error("CREATED PDF FILE: {$generated_pdf_file_url}");
+            return [
+                'status' => false,
+                'file_url' => $generated_pdf_file_url,
+                'message' => "FILE CREATED SUCCESSFULLY",
+            ];
+        } catch (Exception $e) {
             Log::error("Failed to save the PDF file {$e->getMessage()}");
-            return response([
-                "error" => $e->getMessage()
-            ], 500);
+            return [
+                'status' => false,
+                'file_url' => "",
+                'message' => "Failed to save the PDF file {$e->getMessage()}",
+            ];
         }
     }
 }
