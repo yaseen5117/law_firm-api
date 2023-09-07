@@ -183,14 +183,16 @@ class PetitionIndexController extends Controller
     }
     public function downloadSingleIndexAsPdf(Request $request)
     {
-        info(__CLASS__.': downloadSingleIndexAsPdf function started');
+        info(__CLASS__ . ': downloadSingleIndexAsPdf function started');
         $pdfService = new PdfService;
 
-        $case_no = $request->petition["case_no"];
-
-        $attachments = $request->attachments;
-        $petition_id = $request->petition_id;
         $index_id = $request->id;
+        $petitionIndexData = PetitionIndex::with("attachments", "petition")->whereId($index_id)->first();
+ 
+        $case_no = $petitionIndexData->petition->case_no;
+        $attachments = $petitionIndexData->attachments;
+        $petition_id = $petitionIndexData->petition_id;
+        
         $index_name = "PetitionIndex";
 
         $file_path = "storage/attachments/petitions/$petition_id/$index_name/$index_id/";
@@ -199,19 +201,18 @@ class PetitionIndexController extends Controller
         $downloaded_file_name = $case_no . "_" . $index_id . ".pdf";
 
 
-        $response = $pdfService->convertImagesToPdf($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name);
-        info('pdfService convertImagesToPdf function response.'.print_r($response, 1));
+        $response = $pdfService->convertImagesToPdfNew($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name,$petition_id);
+        info('pdfService convertImagesToPdf function response.' . print_r($response, 1));
         if ($response['status']) {
             return response([
                 "file_path" => $response['file_url'],
                 "message" => "Downloaded File Saved Successfully."
             ], 200);
-        }else{
+        } else {
             return response([
                 "file_path" => "",
                 "message" => "something went wrong."
             ], 500);
         }
-
     }
 }

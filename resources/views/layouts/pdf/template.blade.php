@@ -39,7 +39,7 @@
     }
 </style>
 
-<table class="main" cellspacing="0" cellpadding="0">
+<!-- <table class="main" cellspacing="0" cellpadding="0">
     <tr class="line-height">
         <td colspan="4">
             <h2>W.P. 4645/2022 Ehsaan Ullah Qureshi - VS -Learned District Judge (West), Islamabad etc. | PETITION UNDER ARTICLE 199 OF THE CONSTITUTION OF THE ISLAMIC REPUBLIC OF PAKISTAN, 1973 ALONG WITH AFFIDAVIT</h2>
@@ -48,7 +48,7 @@
 
 </table>
 <div class="page-break">
-</div>
+</div> -->
 
 <div>
 
@@ -56,7 +56,7 @@
     @if($attachment)
     <div>
 
-        <img class="image_style" width="100%" src="{{ asset('').'storage/attachments/petitions/221/PetitionIndex/2219/'.$attachment->file_name }}" alt="File Not Found">
+        <img class="image_style" width="100%" src="{{ asset('').'storage/attachments/petitions/@$petition_id/PetitionIndex/@$attachment->attachmentable_id/'.$attachment->file_name }}" alt="File Not Found">
 
     </div>
     @endif

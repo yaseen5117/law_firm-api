@@ -166,17 +166,17 @@ class PdfService
      * @return type
      * @throws conditon
      **/
-    public function convertImagesToPdfNew($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name)
+    public function convertImagesToPdfNew($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name,$petition_id)
     {
         Log::info("converting images to PDF");
         try {
 
             $html = "";
             foreach ($attachments as $attachment) {
-                $baseImg = public_path($file_path . $attachment['file_name']);
+                $baseImg = public_path($file_path . $attachment->file_name);
                 $html.= '<img src="'.$baseImg.'">';
             }
-            $pdf = PDF::loadView('layouts.pdf.template', compact('attachments', 'file_path', 'downloaded_file_name'));
+            $pdf = PDF::loadView('layouts.pdf.template', compact('attachments', 'file_path', 'downloaded_file_name','petition_id'));
             return $pdf->download('images.pdf');
         } catch (Exception $e) {
             Log::error("Failed to save the PDF file {$e->getMessage()}");
