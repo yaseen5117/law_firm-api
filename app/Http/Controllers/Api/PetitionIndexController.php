@@ -182,13 +182,13 @@ class PetitionIndexController extends Controller
         return response("done");
     }
     public function downloadSingleIndexAsPdf(Request $request)
-    {
+    {     
         info(__CLASS__ . ': downloadSingleIndexAsPdf function started');
         $pdfService = new PdfService;
 
         $index_id = $request->id;
         $petitionIndexData = PetitionIndex::with("attachments", "petition")->whereId($index_id)->first();
- 
+       
         $case_no = $petitionIndexData->petition->case_no;
         $attachments = $petitionIndexData->attachments;
         $petition_id = $petitionIndexData->petition_id;
@@ -196,12 +196,13 @@ class PetitionIndexController extends Controller
         $index_name = "PetitionIndex";
 
         $file_path = "storage/attachments/petitions/$petition_id/$index_name/$index_id/";
-
+      
         $downloaded_folder_name = "petition-indexes-pdf";
         $downloaded_file_name = $case_no . "_" . $index_id . ".pdf";
 
 
         $response = $pdfService->convertImagesToPdfNew($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name,$petition_id);
+        
         info('pdfService convertImagesToPdf function response.' . print_r($response, 1));
         if ($response['status']) {
             return response([

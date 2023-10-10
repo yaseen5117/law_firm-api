@@ -166,18 +166,43 @@ class PdfService
      * @return type
      * @throws conditon
      **/
-    public function convertImagesToPdfNew($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name,$petition_id)
+    public function convertImagesToPdfNew($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name, $petition_id)
     {
         Log::info("converting images to PDF");
         try {
-
             $html = "";
             foreach ($attachments as $attachment) {
-                $baseImg = public_path($file_path . $attachment->file_name);
-                $html.= '<img src="'.$baseImg.'">';
+                if ($attachment) {
+                    $baseImg = public_path($file_path . $attachment->file_name);
+                    $html .= '<img width="100%" src="' . $baseImg . '">';
+                }
             }
-            $pdf = PDF::loadView('layouts.pdf.template', compact('attachments', 'file_path', 'downloaded_file_name','petition_id'));
-            return $pdf->download('images.pdf');
+
+            // Generate the PDF
+            $pdf = PDF::loadHTML($html)->setPaper('A4', 'portrait');
+
+            $time = time();
+
+            // Define the directory to save the PDF
+            $directory_to_save = "storage/attachments/downloaded-files/$downloaded_folder_name";
+
+            // Check if the directory exists; if not, create it
+            if (!File::isDirectory(public_path($directory_to_save))) {
+                File::makeDirectory(public_path($directory_to_save), 0777, true, true);
+            }
+
+            $file_name = "$time" . "_" . "$downloaded_file_name";
+            // Define the full path to save the PDF file
+            $pdf_file_path = public_path("$directory_to_save/$file_name");
+
+            // Save the PDF to the specified path
+            $pdf->save($pdf_file_path);
+            $file_url = url($directory_to_save . "/" . $file_name);
+            return [
+                'status' => true,
+                'file_url' => $file_url,
+                'message' => "PDF created successfully",
+            ];
         } catch (Exception $e) {
             Log::error("Failed to save the PDF file {$e->getMessage()}");
             return [

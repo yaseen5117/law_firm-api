@@ -56,7 +56,7 @@
     @if($attachment)
     <div>
 
-        <img class="image_style" width="100%" src="{{ asset('').'storage/attachments/petitions/@$petition_id/PetitionIndex/@$attachment->attachmentable_id/'.$attachment->file_name }}" alt="File Not Found">
+        <img width="100%" src="{{ asset('').'storage/attachments/petitions/@$petition_id/PetitionIndex/@$attachment->attachmentable_id/'.$attachment->file_name }}" alt="File Not Found">
 
     </div>
     @endif
