@@ -191,7 +191,7 @@ class PdfService
                 File::makeDirectory(public_path($directory_to_save), 0777, true, true);
             }
 
-            $file_name = "$time" . "_" . "$downloaded_file_name";
+            $file_name = $time . "_" . $downloaded_file_name;
             // Define the full path to save the PDF file
             $pdf_file_path = public_path("$directory_to_save/$file_name");
 

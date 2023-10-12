@@ -162,7 +162,7 @@ Route::group(['middleware' => 'auth:sanctum', 'namespace' => 'Api'], function ()
     Route::post('get_user_meeting', 'UserVideoMeetingController@getUserMeeting');
     Route::post('create_new_meeting', 'UserVideoMeetingController@createMeeting');
 
-    Route::POST('download_single_petition_index_pdf', 'PetitionIndexController@downloadSingleIndexAsPdf');
+    Route::POST('download_single_petition_index_pdf', 'AttachmentController@downloadSingleIndexAsPdf');
 });
 
 //contact request to save

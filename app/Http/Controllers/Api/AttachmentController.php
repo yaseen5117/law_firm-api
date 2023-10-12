@@ -33,6 +33,7 @@ use App\Jobs\SendDocumentUploadEmail;
 use App\Jobs\JobConvertPdfToImages;
 use App\Models\Petition;
 use App\Models\PetitionReplyParent;
+use App\Services\PdfService;
 
 class AttachmentController extends Controller
 {
@@ -813,6 +814,86 @@ class AttachmentController extends Controller
             return  response("Move all files Successfully", 200);
         } else {
             return response("judgement Not Found", 404);
+        }
+    }
+    public function downloadSingleIndexAsPdf(Request $request)
+    {
+        info(__CLASS__ . ': downloadSingleIndexAsPdf function started');
+        $pdfService = new PdfService;
+
+        $index_id = $request->id;
+        $model = $request->model;
+
+        if ($model == "PetitionIndex") {
+            $petitionIndexData = PetitionIndex::with("attachments", "petition")->whereId($index_id)->first();
+            $addExtraDetail = true;
+            $index_name = "PetitionIndex";
+        } else if ($model == "PetitionReply") {
+            $petitionIndexData = PetitionReply::with("attachments", "petition_reply_parent.petition")->whereId($index_id)->first();
+            $case_no = $petitionIndexData->petition_reply_parent->petition->case_no;
+            $petition_id = $petitionIndexData->petition_reply_parent->petition_id;
+            $index_name = "PetitionReply";
+        } else if ($model == "PetitonOrderSheet") {
+            $petitionIndexData = PetitonOrderSheet::with("attachments", "petition")->whereId($index_id)->first();
+            $addExtraDetail = true;
+            $index_name = "PetitonOrderSheet";
+        } else if ($model == "oral_arguments") {
+            $petitionIndexData = OralArgument::with("attachments", "petition")->whereId($index_id)->first();
+            $addExtraDetail = true;
+            $index_name = "OralArgument";
+        } else if ($model == "PetitionNaqalForm") {
+            $petitionIndexData = PetitionNaqalForm::with("attachments", "petition")->whereId($index_id)->first();
+            $addExtraDetail = true;
+            $index_name = "PetitionNaqalForm";
+        } else if ($model == "PetitionTalbana") {
+            $petitionIndexData = PetitionTalbana::with("attachments", "petition")->whereId($index_id)->first();
+            $addExtraDetail = true;
+            $index_name = "PetitionTalbana";
+        } else if ($model == "case_laws") {
+            $petitionIndexData = CaseLaw::with("attachments", "petition")->whereId($index_id)->first();
+            $addExtraDetail = true;
+            $index_name = "CaseLaw";
+        } else if ($model == "extra_documents") {
+            $petitionIndexData = ExtraDocument::with("attachments", "petition")->whereId($index_id)->first();
+            $addExtraDetail = true;
+            $index_name = "ExtraDocument";
+        } else if ($model == "PetitionSynopsis") {
+            $petitionIndexData = PetitionSynopsis::with("attachments", "petition")->whereId($index_id)->first();
+            $addExtraDetail = true;
+            $index_name = "PetitionSynopsis";
+        } else if ($model == "judgements") {
+            $petitionIndexData = Judgement::with("attachments", "petition")->whereId($index_id)->first();
+            $addExtraDetail = true;
+            $index_name = "Judgement";
+        }
+
+        if ($addExtraDetail) {
+            $case_no = $petitionIndexData->petition->case_no;
+            $petition_id = $petitionIndexData->petition_id;
+        }
+
+
+        $attachments = $petitionIndexData->attachments;
+
+        $file_path = "storage/attachments/petitions/$petition_id/$index_name/$index_id/";
+
+        $downloaded_folder_name = "petition-indexes-pdf";
+        $downloaded_file_name = $case_no . "_" . $index_id . ".pdf";
+
+
+        $response = $pdfService->convertImagesToPdfNew($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name, $petition_id);
+
+        info('pdfService convertImagesToPdf function response.' . print_r($response, 1));
+        if ($response['status']) {
+            return response([
+                "file_path" => $response['file_url'],
+                "message" => "Downloaded File Saved Successfully."
+            ], 200);
+        } else {
+            return response([
+                "file_path" => "",
+                "message" => "something went wrong."
+            ], 500);
         }
     }
 }
