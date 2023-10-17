@@ -34,6 +34,7 @@ use App\Jobs\JobConvertPdfToImages;
 use App\Models\Petition;
 use App\Models\PetitionReplyParent;
 use App\Services\PdfService;
+use Exception;
 
 class AttachmentController extends Controller
 {
@@ -818,39 +819,48 @@ class AttachmentController extends Controller
     }
     public function downloadSingleIndexAsPdf(Request $request)
     {
-        info(__CLASS__ . ': downloadSingleIndexAsPdf function started');
+        try {
+            info(__CLASS__ . ': downloadSingleIndexAsPdf function started');
 
-        $model_type = $request->model_type;
-        $index_id = $request->id;
+            $model_type = $request->model_type;
+            $index_id = $request->id;
 
-        $data = $this->getAttachmentData($model_type, $index_id);
-        $petitionIndexData = $data['petitionIndexData'];
-        $case_no = $data['case_no'];
-        $petition_id = $data['petition_id'];
-        $index_name = $data['index_name'];
+            $data = $this->getAttachmentData($model_type, $index_id);
+            $petitionIndexData = $data['petitionIndexData'];
+            $case_no = $data['case_no'];
+            $petition_id = $data['petition_id'];
+            $index_name = $data['index_name'];
 
 
-        $attachments = $petitionIndexData->attachments;
+            $attachments = $petitionIndexData->attachments;
 
-        $file_path = "storage/attachments/petitions/$petition_id/$index_name/$index_id/";
+            $file_path = "storage/attachments/petitions/$petition_id/$index_name/$index_id/";
 
-        $downloaded_folder_name = "petition-indexes-pdf";
-        $downloaded_file_name = $case_no . "_" . $index_id . ".pdf";
+            $downloaded_folder_name = "petition-indexes-pdf";
+            $downloaded_file_name = $case_no . "_" . $index_id . ".pdf";
 
-        $pdfService = new PdfService;
-        $response = $pdfService->convertImagesToPdfNew($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name, $petition_id);
+            $pdfService = new PdfService;
+            $response = $pdfService->convertImagesToPdfNew($attachments, $file_path, $downloaded_folder_name, $downloaded_file_name, $petition_id);
 
-        info('pdfService convertImagesToPdf function response.' . print_r($response, 1));
-        if ($response['status']) {
-            return response([
-                "file_path" => $response['file_url'],
-                "message" => "Downloaded File Saved Successfully."
-            ], 200);
-        } else {
-            return response([
-                "file_path" => "",
-                "message" => "something went wrong."
-            ], 500);
+            info('pdfService convertImagesToPdf function response.' . print_r($response, 1));
+            if ($response['status']) {
+                return response([
+                    "file_path" => $response['file_url'],
+                    "message" => "Downloaded File Saved Successfully."
+                ], 200);
+            } else {
+                return response([
+                    "file_path" => "",
+                    "message" => "something went wrong."
+                ], 500);
+            }
+        } catch (Exception $e) {
+            info(__CLASS__ . "Failed to Save Downloaded File {$e->getMessage()}");
+            return [
+                'status' => false,
+                'file_url' => "",
+                'message' => "Failed to Save Downloaded File {$e->getMessage()}",
+            ];
         }
     }
     public function getAttachmentData($model_type, $index_id)
