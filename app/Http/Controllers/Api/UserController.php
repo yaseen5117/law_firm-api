@@ -99,10 +99,10 @@ class UserController extends Controller
                     "error" => "Unauthorized User!"
                 ], 401);
             }
-            
+
             $request->merge([
-                'password' => bcrypt($request->password),                 
-            ]);  
+                'password' => bcrypt($request->password),
+            ]);
 
             if ($request->id == $request->user()->id || $request->user()->hasRole('admin')) {
                 // if($request->id){
@@ -120,9 +120,9 @@ class UserController extends Controller
                     );
                 }
                 // }else{
-                //     $validator = Validator::make($request->all(), [                
-                //         'password' => 'required', 
-                //         'email' => 'required|email|unique:users,email,'.$request->id,                              
+                //     $validator = Validator::make($request->all(), [
+                //         'password' => 'required',
+                //         'email' => 'required|email|unique:users,email,'.$request->id,
                 //     ]);
                 //     if ($validator->fails()) {
                 //         return response()->json(
@@ -130,8 +130,8 @@ class UserController extends Controller
                 //                 'validation_error' => $validator->errors(),
                 //                 'error' => "Validation error..!"
                 //         ], 401);
-                //     } 
-                // }                   
+                //     }
+                // }
 
                 $file = $request->file('file');
 
@@ -143,8 +143,8 @@ class UserController extends Controller
                     ]);
                 }
                 // $request->merge([
-                //     'password' => bcrypt($request->password),                 
-                // ]);   
+                //     'password' => bcrypt($request->password),
+                // ]);
 
                 $companyID = $request->company_id;
                 if (!$request->company_id) {
@@ -170,7 +170,7 @@ class UserController extends Controller
                     $setting->setMeta($request->only('site_name'));
                     $setting->save();
                 }
-                
+
                 $send_user_approved_mail = false;
                 // if ($request->is_approved) {
                 if ($request->user()->hasRole('admin') && empty($request->approved_at)) {
@@ -182,9 +182,9 @@ class UserController extends Controller
                     ]);
                     if($request->is_approved){
                         $send_user_approved_mail = true;
-                    }  
-                     //return response($request->all(), 403);               
-                 
+                    }
+                     //return response($request->all(), 403);
+
                 } else {
                     $request->merge([
                         'approved_at' => toDBDate($request->approved_at)
@@ -241,7 +241,7 @@ class UserController extends Controller
                     }
                 }
 
-                //sending email to user 
+                //sending email to user
                 if ($request->send_email) {
                     try {
                         if (empty($companyID)) {
@@ -291,7 +291,7 @@ class UserController extends Controller
         // [
         //     'name' => $request->name,
         //     'email' => $request->email
-        // ]       
+        // ]
     }
 
     /**
@@ -384,9 +384,9 @@ class UserController extends Controller
             //     $clientUsers[] = [
             //         "title"
             //         "label" => $client->name,
-            //         "value" =>  $client->id,             
+            //         "value" =>  $client->id,
             //     ];
-            // } 
+            // }
             return response()->json(
                 [
                     'clients' => $clients,
@@ -463,6 +463,11 @@ class UserController extends Controller
     public function signUp(Request $request)
     {
         try {
+
+            return response([
+                "error" => "something went wrong"
+            ], 500);
+
             $validator = Validator::make($request->all(), [
                 'email' => 'required|email|unique:users',
             ]);
@@ -483,8 +488,8 @@ class UserController extends Controller
             ]);
 
             $request->merge([
-                'password' => bcrypt($request->password),                 
-            ]);   
+                'password' => bcrypt($request->password),
+            ]);
 
             $user = User::updateOrCreate(['id' => $request->id], $request->except('file', 'created_at_formated_date', 'roles', 'editMode', 'confirm_password', 'role_name'));
 
@@ -601,17 +606,17 @@ class UserController extends Controller
     }
     public function approveOrBlock(Request $request)
     {
-        try {    
-            info($request->user['is_approved']?"Function approveOrBlock: START to approve user":"Function approveOrBlock: START to block user");       
-            
+        try {
+            info($request->user['is_approved']?"Function approveOrBlock: START to approve user":"Function approveOrBlock: START to block user");
+
             $user = User::where('id',$request->user['id'])->update([
                 "is_approved"=> $request->user['is_approved'],
                 "approved_at"=> $request->user['is_approved']?now():null,
                 "approved_by"=> $request->user['is_approved']?$request->user()->id:null
             ]);
-            
-            info($request->user['is_approved']?"Function approveOrBlock: END to approve user":"Function approveOrBlock: END to block user");       
-            
+
+            info($request->user['is_approved']?"Function approveOrBlock: END to approve user":"Function approveOrBlock: END to block user");
+
             return response([
                 "user"=>$user,
                 "message"=> $request->user['is_approved']?"User approved successfully":"User Blocked successfully"
@@ -622,6 +627,6 @@ class UserController extends Controller
                 "error" => $e->getMessage()
             ], 500);
         }
-        
+
     }
 }
